@@ -19,7 +19,7 @@ public class SwaggerConfig {
     private Info apiInfo() {
         return new Info()
                 .title("Codiary Swagger")
-                .description("Codiary swagger")
+                .description("UMC-6th-Project Codiary Swagger")
                 .version("1.0.0");
     }
 }
