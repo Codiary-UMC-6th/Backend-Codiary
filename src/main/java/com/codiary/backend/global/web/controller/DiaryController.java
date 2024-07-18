@@ -95,4 +95,17 @@ public class DiaryController {
         return null;
     }
 
+    // 글 공동 저자 설정
+    @PatchMapping("/{diaryId}/coauthors")
+    @Operation(
+            summary = "글 공동 저자 설정 API"
+            , description = "글의 공동 저자를 설정합니다. Param으로 diaryId를 입력하세요"
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<DiaryResponseDTO> setDiaryCoauthor(
+    ){
+        return null;
+    }
+
+
 }
