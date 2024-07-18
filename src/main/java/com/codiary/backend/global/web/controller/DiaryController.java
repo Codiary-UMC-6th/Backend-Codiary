@@ -83,6 +83,16 @@ public class DiaryController {
         return null;
     }
 
-
+    // 글 커스터마이징 옵션 변경
+    @PatchMapping("/{diaryId}/customize")
+    @Operation(
+            summary = "글 커스터마이징 옵션 변경 API"
+            , description = "글의 커스터마이징 옵션을 변경합니다. Param으로 diaryId를 입력하세요"
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<DiaryResponseDTO> customizeDiary(
+    ){
+        return null;
+    }
 
 }
