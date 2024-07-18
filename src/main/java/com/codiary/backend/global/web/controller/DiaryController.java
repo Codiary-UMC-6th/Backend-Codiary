@@ -107,5 +107,15 @@ public class DiaryController {
         return null;
     }
 
-
+    // 글의 소속 팀 설정
+    @PatchMapping("/{diaryId}/team")
+    @Operation(
+            summary = "글의 소속 팀 설정 API"
+            , description = "글의 소속 팀을 설정합니다. Param으로 diaryId를 입력하세요"
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<DiaryResponseDTO> setDiaryTeam(
+    ){
+        return null;
+    }
 }
