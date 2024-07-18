@@ -118,4 +118,19 @@ public class DiaryController {
     ){
         return null;
     }
+
+    // 글의 카테고리 및 키워드 설정
+    @PatchMapping("/{diaryId}/categories")
+    @Operation(
+            summary = "글의 카테고리 및 키워드 설정 API"
+            , description = "글의 카테고리 및 키워드를 설정합니다. Param으로 diaryId를 입력하세요"
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<DiaryResponseDTO> setDiaryCategory(
+    ){
+        return null;
+    }
+
+
+
 }
