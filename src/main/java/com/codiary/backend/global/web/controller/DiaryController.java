@@ -61,12 +61,28 @@ public class DiaryController {
     @DeleteMapping("/{diaryId}")
     @Operation(
             summary = "글 삭제 API"
-            , description = "글을 삭제합니다. Param으로 memberId를 입력하세요"
+            , description = "글을 삭제합니다. Param으로 diaryId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<DiaryResponseDTO> deleteDiary(
     ){
         return null;
     }
+
+
+
+    // 글 공개/비공개 설정
+    @PatchMapping("/{diaryId}/visibility")
+    @Operation(
+            summary = "글 공개/비공개 API"
+            , description = "글의 공개/비공개 유무를 설정합니다. Param으로 diaryId를 입력하세요"
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<DiaryResponseDTO> setDiaryVisibility(
+    ){
+        return null;
+    }
+
+
 
 }
