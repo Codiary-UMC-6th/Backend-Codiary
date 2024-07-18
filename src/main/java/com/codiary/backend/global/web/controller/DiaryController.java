@@ -131,6 +131,16 @@ public class DiaryController {
         return null;
     }
 
-
+    // AI로 코드 실행 미리보기
+    @GetMapping("/{diaryId}/code-preview")
+    @Operation(
+            summary = "AI로 코드 실행 미리보기 API"
+            , description = "AI로 특정 글에 포함된 코드를 실행하여 미리보기 결과를 반환합니다. Param으로 diaryId를 입력하세요"
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<DiaryResponseDTO> showDiaryCodePreview(
+    ){
+        return null;
+    }
 
 }
