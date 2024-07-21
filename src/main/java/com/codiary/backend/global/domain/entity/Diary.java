@@ -29,15 +29,15 @@ public class Diary extends BaseEntity {
   @JoinColumn(name = "team_id")
   private Team team;
 
-  // String?
   private String postCategory;
 
   private String postTitle;
 
   private String postBody;
 
+  @Enumerated(EnumType.STRING)
   private PostAccess postAccess;
-  
+
   private Boolean postStatus;
 
   @ElementCollection
