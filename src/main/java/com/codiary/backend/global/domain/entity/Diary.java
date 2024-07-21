@@ -1,10 +1,14 @@
 package com.codiary.backend.global.domain.entity;
 
 import com.codiary.backend.global.domain.common.BaseEntity;
+import com.codiary.backend.global.domain.entity.mapping.Authors;
+import com.codiary.backend.global.domain.entity.mapping.Catecories;
+import com.codiary.backend.global.domain.entity.mapping.TeamMember;
 import com.codiary.backend.global.domain.enums.PostAccess;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,19 +19,37 @@ import java.util.List;
 public class Diary extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long diaryId;
+  private Long postId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id")
+  private Member member;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "team_id")
+  private Team team;
 
   // String?
-  private String diaryCategory;
+  private String postCategory;
 
-  private String diaryTitle;
+  private String postTitle;
 
-  private String diaryBody;
+  private String postBody;
 
-  private PostAccess diaryAccess;
+  private PostAccess postAccess;
+
+  //게시글 임시저장 여부
 
   @ElementCollection
   private List<String> keywords;
-  // 게시글 임시저장?
+
+  @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
+  private List<DiaryPhoto> diaryPhotoList = new ArrayList<>();
+
+  @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
+  private List<Catecories> catecoriesList = new ArrayList<>();
+
+  @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
+  private List<Authors> authorsList = new ArrayList<>();
 
 }

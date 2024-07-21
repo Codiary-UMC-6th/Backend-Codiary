@@ -18,7 +18,7 @@ public class TeamMember {
   //팀원 직책
   private String teamMemberRole;
 
-  @OneToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id")
   private Member member;
 

@@ -1,9 +1,6 @@
 package com.codiary.backend.global.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +14,10 @@ public class DiaryPhoto {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long postPhotoId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "post_id")
+  private Diary diary;
 
   private String photoUrl;
 
