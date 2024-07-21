@@ -2,8 +2,7 @@ package com.codiary.backend.global.domain.entity;
 
 import com.codiary.backend.global.domain.common.BaseEntity;
 import com.codiary.backend.global.domain.entity.mapping.Authors;
-import com.codiary.backend.global.domain.entity.mapping.Catecories;
-import com.codiary.backend.global.domain.entity.mapping.TeamMember;
+import com.codiary.backend.global.domain.entity.mapping.Categories;
 import com.codiary.backend.global.domain.enums.PostAccess;
 import jakarta.persistence.*;
 import lombok.*;
@@ -47,7 +46,7 @@ public class Diary extends BaseEntity {
   private List<DiaryPhoto> diaryPhotoList = new ArrayList<>();
 
   @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
-  private List<Catecories> catecoriesList = new ArrayList<>();
+  private List<Categories> catecoriesList = new ArrayList<>();
 
   @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
   private List<Authors> authorsList = new ArrayList<>();

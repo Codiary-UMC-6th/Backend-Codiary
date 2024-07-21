@@ -2,12 +2,10 @@ package com.codiary.backend.global.domain.entity;
 
 import com.codiary.backend.global.domain.common.BaseEntity;
 import com.codiary.backend.global.domain.entity.mapping.*;
-import com.codiary.backend.global.domain.enums.MemberRole;
 import com.codiary.backend.global.domain.enums.MemberState;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +60,7 @@ public class Member extends BaseEntity {
   private List<MemberProjectMap> memberProjectMapList = new ArrayList<>();
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-  private List<Catecories> catecoriesList = new ArrayList<>();
+  private List<Categories> catecoriesList = new ArrayList<>();
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
   private List<Comment> commentList = new ArrayList<>();

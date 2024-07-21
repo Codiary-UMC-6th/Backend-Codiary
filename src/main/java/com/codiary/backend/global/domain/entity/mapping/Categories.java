@@ -2,7 +2,6 @@ package com.codiary.backend.global.domain.entity.mapping;
 
 import com.codiary.backend.global.domain.entity.Diary;
 import com.codiary.backend.global.domain.entity.Member;
-import com.codiary.backend.global.domain.entity.Project;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +10,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Catecories {
+public class Categories {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long categoryId;
 
