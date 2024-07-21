@@ -41,9 +41,7 @@ public class Member extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private MemberState status;
 
-  //휴면 유무
-  @Enumerated(EnumType.STRING)
-  private MemberRole inactiveDate;
+  private Boolean inactiveDate;
 
   private String github;
 
