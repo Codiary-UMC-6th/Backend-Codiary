@@ -2,6 +2,7 @@ package com.codiary.backend.global.domain.entity.mapping;
 
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Team;
+import com.codiary.backend.global.domain.enums.MemberRole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +17,7 @@ public class TeamMember {
   private Long teamMemberId;
 
   //팀원 직책
-  private String teamMemberRole;
+  private MemberRole teamMemberRole;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id")
