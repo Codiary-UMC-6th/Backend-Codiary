@@ -37,8 +37,8 @@ public class Diary extends BaseEntity {
   private String postBody;
 
   private PostAccess postAccess;
-
-  //게시글 임시저장 여부
+  
+  private Boolean postStatus;
 
   @ElementCollection
   private List<String> keywords;
