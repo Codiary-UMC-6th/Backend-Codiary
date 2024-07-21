@@ -15,16 +15,16 @@ import java.util.List;
 public class Diary extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long postId;
+  private Long diaryId;
 
   // String?
-  private String postCategory;
+  private String diaryCategory;
 
-  private String postTitle;
+  private String diaryTitle;
 
-  private String postBody;
+  private String diaryBody;
 
-  private PostAccess postAccess;
+  private PostAccess diaryAccess;
 
   @ElementCollection
   private List<String> keywords;
