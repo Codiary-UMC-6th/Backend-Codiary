@@ -12,12 +12,11 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Post extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "post_id", nullable = false,columnDefinition = "bigint")
   private Long postId;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -28,32 +27,32 @@ public class Post extends BaseEntity {
   @JoinColumn(name = "team_id")
   private Team team;
 
-
+  @Column(name = "post_category",  columnDefinition = "varchar(500)")
   private String postCategory;
 
+  @Column(name = "post_title", nullable = false, columnDefinition = "varchar(500)")
   private String postTitle;
 
+  @Column(name = "post_body", nullable = false, columnDefinition = "varchar(500)")
   private String postBody;
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "post_access", nullable = false, columnDefinition = "varchar(500)")
   private PostAccess postAccess;
 
+  @Column(name = "post_status", nullable = false, columnDefinition = "tinyint")
   private Boolean postStatus;
 
-  @ElementCollection
-  private List<String> keywords;
-
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<PostPhoto> postPhotoList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Categories> catecoriesList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Authors> authorsList = new ArrayList<>();
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-  @Builder.Default
   private List<Comment> commentList = new ArrayList<>();
 
 }

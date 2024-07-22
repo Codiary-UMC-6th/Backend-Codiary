@@ -9,12 +9,11 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Comment extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "comment_id", nullable = false, columnDefinition = "bigint")
   private Long commentId;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -25,12 +24,11 @@ public class Comment extends BaseEntity {
   @JoinColumn(name = "post_id")
   private Post post;
 
+  @Column(name = "comment_body", nullable = false,columnDefinition = "varchar(500)")
   private String commentBody;
 
   @ManyToOne
   @JoinColumn(name = "parent_id")
   private Comment parent;
-
-
 
 }

@@ -8,15 +8,16 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class TeamMember {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "team_member_id", nullable = false, columnDefinition = "bigint")
   private Long teamMemberId;
 
   //팀원 직책
+  @Column(name = "member_role", columnDefinition = "varchar(500)")
+  @Enumerated(EnumType.STRING)
   private MemberRole teamMemberRole;
 
   @ManyToOne(fetch = FetchType.LAZY)
