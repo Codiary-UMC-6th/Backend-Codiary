@@ -22,7 +22,7 @@ public class Comment extends BaseEntity {
   private Member member;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "diary_id")
+  @JoinColumn(name = "post_id")
   private Diary diary;
 
   private String commentBody;
