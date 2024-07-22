@@ -52,8 +52,8 @@ public class Member extends BaseEntity {
   @Column(name = "linkedin", columnDefinition = "varchar(500)")
   private String linkedin;
 
-  @Column(name = "techStacks", columnDefinition = "varchar(500)")
-  private String techStacks;
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+  private List<TechStacks> techStackList = new ArrayList<>();
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
   private List<Diary> diaryList = new ArrayList<>();

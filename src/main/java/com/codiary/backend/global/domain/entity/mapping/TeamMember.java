@@ -16,7 +16,8 @@ public class TeamMember {
   private Long teamMemberId;
 
   //팀원 직책
-  @Column(name = "member_role", nullable = false, columnDefinition = "varchar(500)")
+  @Column(name = "member_role", columnDefinition = "varchar(500)")
+  @Enumerated(EnumType.STRING)
   private MemberRole teamMemberRole;
 
   @ManyToOne(fetch = FetchType.LAZY)

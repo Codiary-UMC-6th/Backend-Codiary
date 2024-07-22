@@ -13,6 +13,7 @@ public class Categories {
   @Column(name = "category_id", nullable = false, columnDefinition = "bigint")
   private Long categoryId;
 
+  //우선 String으로 설정, Category 나오면 enum으로 변경 필요
   @Column(name = "name", nullable = false, columnDefinition = "varchar(500)")
   private String name;
 
