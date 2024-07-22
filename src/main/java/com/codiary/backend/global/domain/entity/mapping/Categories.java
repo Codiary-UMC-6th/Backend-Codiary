@@ -10,8 +10,10 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Categories {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "category_id", nullable = false, columnDefinition = "bigint")
   private Long categoryId;
 
+  @Column(name = "name", nullable = false, columnDefinition = "varchar(500)")
   private String name;
 
   @ManyToOne(fetch = FetchType.LAZY)

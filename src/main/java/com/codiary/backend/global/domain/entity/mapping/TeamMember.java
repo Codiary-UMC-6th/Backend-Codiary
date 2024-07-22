@@ -12,9 +12,11 @@ import lombok.*;
 public class TeamMember {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "team_member_id", nullable = false, columnDefinition = "bigint")
   private Long teamMemberId;
 
   //팀원 직책
+  @Column(name = "member_role", nullable = false, columnDefinition = "varchar(500)")
   private MemberRole teamMemberRole;
 
   @ManyToOne(fetch = FetchType.LAZY)

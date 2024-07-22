@@ -13,6 +13,7 @@ import java.util.List;
 public class Comment extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "comment_id", nullable = false, columnDefinition = "bigint")
   private Long commentId;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -23,6 +24,7 @@ public class Comment extends BaseEntity {
   @JoinColumn(name = "post_id")
   private Diary diary;
 
+  @Column(name = "comment_body", nullable = false,columnDefinition = "varchar(500)")
   private String commentBody;
 
   @ManyToOne

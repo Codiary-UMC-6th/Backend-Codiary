@@ -1,9 +1,6 @@
 package com.codiary.backend.global.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -13,5 +10,6 @@ public class Project {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "project_id", nullable = false, columnDefinition = "bigint")
   private Long projectId;
 }

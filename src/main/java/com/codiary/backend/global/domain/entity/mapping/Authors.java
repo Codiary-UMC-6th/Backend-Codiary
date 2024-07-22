@@ -11,6 +11,7 @@ import lombok.*;
 public class Authors {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "coAuthorId", nullable = false,columnDefinition = "bigint")
   private Long coAuthorId;
 
   @ManyToOne(fetch = FetchType.LAZY)

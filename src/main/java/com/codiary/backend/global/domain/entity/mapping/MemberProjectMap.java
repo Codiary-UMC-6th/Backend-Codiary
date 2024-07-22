@@ -11,6 +11,7 @@ import lombok.*;
 public class MemberProjectMap {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "member_project_id", nullable = false, columnDefinition = "bigint")
   private Long memberProjectId;
 
   @ManyToOne(fetch = FetchType.LAZY)
