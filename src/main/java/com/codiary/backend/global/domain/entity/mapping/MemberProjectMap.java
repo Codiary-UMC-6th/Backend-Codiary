@@ -1,8 +1,7 @@
 package com.codiary.backend.global.domain.entity.mapping;
 
 import com.codiary.backend.global.domain.entity.Member;
-import com.codiary.backend.global.domain.entity.Team;
-import com.codiary.backend.global.domain.enums.MemberRole;
+import com.codiary.backend.global.domain.entity.Project;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,20 +9,17 @@ import lombok.*;
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TeamMember {
+public class MemberProjectMap {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long teamMemberId;
-
-  //팀원 직책
-  private MemberRole teamMemberRole;
+  private Long memberProjectId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id")
   private Member member;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "team_id")
-  private Team team;
+  @JoinColumn(name = "project_id")
+  private Project project;
 
 }
