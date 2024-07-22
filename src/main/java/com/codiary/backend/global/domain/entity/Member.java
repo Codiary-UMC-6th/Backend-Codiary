@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Member extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

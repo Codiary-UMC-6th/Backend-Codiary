@@ -7,6 +7,7 @@ import lombok.*;
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class DiaryPhoto {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

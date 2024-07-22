@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Diary extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +27,7 @@ public class Diary extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "team_id")
   private Team team;
+
 
   private String postCategory;
 
@@ -49,5 +51,9 @@ public class Diary extends BaseEntity {
 
   @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
   private List<Authors> authorsList = new ArrayList<>();
+
+  @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<Comment> commentList = new ArrayList<>();
 
 }

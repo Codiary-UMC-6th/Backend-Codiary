@@ -9,6 +9,7 @@ import lombok.*;
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class MemberProjectMap {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
