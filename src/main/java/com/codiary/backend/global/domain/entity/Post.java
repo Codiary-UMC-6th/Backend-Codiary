@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Diary extends BaseEntity {
+public class Post extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long postId;
@@ -43,16 +43,16 @@ public class Diary extends BaseEntity {
   @ElementCollection
   private List<String> keywords;
 
-  @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
-  private List<DiaryPhoto> diaryPhotoList = new ArrayList<>();
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+  private List<PostPhoto> postPhotoList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
   private List<Categories> catecoriesList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
   private List<Authors> authorsList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<Comment> commentList = new ArrayList<>();
 

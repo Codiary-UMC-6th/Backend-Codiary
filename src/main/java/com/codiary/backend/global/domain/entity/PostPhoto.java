@@ -8,14 +8,14 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class DiaryPhoto {
+public class PostPhoto {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long postPhotoId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id")
-  private Diary diary;
+  private Post post;
 
   private String photoUrl;
 

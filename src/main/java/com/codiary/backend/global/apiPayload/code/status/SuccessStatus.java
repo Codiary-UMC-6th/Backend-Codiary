@@ -14,12 +14,12 @@ public enum SuccessStatus implements BaseCode {
     MEMBER_OK(HttpStatus.OK, "MEMBER_1000", "성공입니다."),
     // 팀 관련 응답
     TEAM_OK(HttpStatus.OK, "TEAM_2000", "성공입니다."),
-    // 일기 관련 응답
-    DIARY_OK(HttpStatus.OK, "DIARY_3000", "성공입니다."),
+    // 포스트 관련 응답
+    POST_OK(HttpStatus.OK, "POST_3000", "성공입니다."),
     // 코멘트 관련 응답
     COMMENT_OK(HttpStatus.OK, "COMMENT_4000", "성공입니다."),
-    // 일기사진 관련 응답
-    DIARYPHOTO_OK(HttpStatus.OK, "DIARYPHOTO_5000", "성공입니다.");
+    // 포스트사진 관련 응답
+    DIARYPHOTO_OK(HttpStatus.OK, "POSTPHOTO_5000", "성공입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
