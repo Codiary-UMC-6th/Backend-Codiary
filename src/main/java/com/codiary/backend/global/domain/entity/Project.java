@@ -10,7 +10,6 @@ import lombok.*;
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Project {
 
   @Id
