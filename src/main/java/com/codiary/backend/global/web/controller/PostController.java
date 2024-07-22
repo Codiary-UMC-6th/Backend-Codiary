@@ -1,11 +1,8 @@
 package com.codiary.backend.global.web.controller;
 
 import com.codiary.backend.global.apiPayload.ApiResponse;
-import com.codiary.backend.global.service.DiaryService.DiaryCommandService;
-import com.codiary.backend.global.service.DiaryService.DiaryQueryService;
-import com.codiary.backend.global.web.dto.Diary.DiaryResponseDTO;
+import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -17,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RequestMapping("/diaries")
 @Slf4j
-public class DiaryController {
+public class PostController {
     //private final DiaryCommandService diaryCommandService;
     //private final DiaryQueryService diaryQueryService;
 
@@ -28,7 +25,7 @@ public class DiaryController {
             , description = "글을 생성합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<DiaryResponseDTO> createDiary(
+    public ApiResponse<PostResponseDTO> createDiary(
     ){
         return null;
     }
@@ -40,7 +37,7 @@ public class DiaryController {
             , description = "글을 상세 조회합니다. Param으로 diaryId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<DiaryResponseDTO> findDiary(
+    public ApiResponse<PostResponseDTO> findDiary(
     ){
         return null;
     }
@@ -52,7 +49,7 @@ public class DiaryController {
             , description = "글을 수정합니다. Param으로 diaryId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<DiaryResponseDTO> updateDiary(
+    public ApiResponse<PostResponseDTO> updateDiary(
     ){
         return null;
     }
@@ -64,7 +61,7 @@ public class DiaryController {
             , description = "글을 삭제합니다. Param으로 diaryId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<DiaryResponseDTO> deleteDiary(
+    public ApiResponse<PostResponseDTO> deleteDiary(
     ){
         return null;
     }
@@ -78,7 +75,7 @@ public class DiaryController {
             , description = "글의 공개/비공개 유무를 설정합니다. Param으로 diaryId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<DiaryResponseDTO> setDiaryVisibility(
+    public ApiResponse<PostResponseDTO> setDiaryVisibility(
     ){
         return null;
     }
@@ -90,7 +87,7 @@ public class DiaryController {
             , description = "글의 커스터마이징 옵션을 변경합니다. Param으로 diaryId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<DiaryResponseDTO> customizeDiary(
+    public ApiResponse<PostResponseDTO> customizeDiary(
     ){
         return null;
     }
@@ -102,7 +99,7 @@ public class DiaryController {
             , description = "글의 공동 저자를 설정합니다. Param으로 diaryId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<DiaryResponseDTO> setDiaryCoauthor(
+    public ApiResponse<PostResponseDTO> setDiaryCoauthor(
     ){
         return null;
     }
@@ -114,7 +111,7 @@ public class DiaryController {
             , description = "글의 소속 팀을 설정합니다. Param으로 diaryId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<DiaryResponseDTO> setDiaryTeam(
+    public ApiResponse<PostResponseDTO> setDiaryTeam(
     ){
         return null;
     }
@@ -126,7 +123,7 @@ public class DiaryController {
             , description = "글의 카테고리 및 키워드를 설정합니다. Param으로 diaryId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<DiaryResponseDTO> setDiaryCategory(
+    public ApiResponse<PostResponseDTO> setDiaryCategory(
     ){
         return null;
     }
@@ -138,7 +135,7 @@ public class DiaryController {
             , description = "AI로 특정 글에 포함된 코드를 실행하여 미리보기 결과를 반환합니다. Param으로 diaryId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<DiaryResponseDTO> showDiaryCodePreview(
+    public ApiResponse<PostResponseDTO> showDiaryCodePreview(
     ){
         return null;
     }

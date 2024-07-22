@@ -1,4 +1,4 @@
 package com.codiary.backend.global.web.controller;
 
-public class DiaryPhotoController {
+public class PostPhotoController {
 }

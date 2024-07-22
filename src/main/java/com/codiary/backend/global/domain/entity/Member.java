@@ -52,25 +52,25 @@ public class Member extends BaseEntity {
   @Column(name = "linkedin", columnDefinition = "varchar(500)")
   private String linkedin;
 
-  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<TechStacks> techStackList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-  private List<Diary> diaryList = new ArrayList<>();
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Post> postList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<TeamMember> teamMemberList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Authors> authorsList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<MemberProjectMap> memberProjectMapList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Categories> catecoriesList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> commentList = new ArrayList<>();
 
 }

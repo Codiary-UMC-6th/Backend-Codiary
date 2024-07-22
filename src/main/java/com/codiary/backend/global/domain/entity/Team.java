@@ -38,13 +38,13 @@ public class Team {
   @Column(name = "instagram", columnDefinition = "varchar(256)")
   private String instagram;
 
-  @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<TeamProjectMap> teamProjectMapList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
-  private List<Diary> diaryList = new ArrayList<>();
+  @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Post> postList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<TeamMember> teamMemberList = new ArrayList<>();
 
 }
