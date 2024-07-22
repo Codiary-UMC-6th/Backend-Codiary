@@ -4,12 +4,14 @@ import com.codiary.backend.global.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Comment extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +22,7 @@ public class Comment extends BaseEntity {
   private Member member;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "post_id")
+  @JoinColumn(name = "diary_id")
   private Diary diary;
 
   private String commentBody;
@@ -29,7 +31,6 @@ public class Comment extends BaseEntity {
   @JoinColumn(name = "parent_id")
   private Comment parent;
 
-  @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Comment> replies;
+
 
 }
