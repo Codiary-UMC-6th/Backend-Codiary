@@ -12,9 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Diary extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,7 +51,6 @@ public class Diary extends BaseEntity {
   private List<Authors> authorsList = new ArrayList<>();
 
   @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, orphanRemoval = true)
-  @Builder.Default
   private List<Comment> commentList = new ArrayList<>();
 
 }

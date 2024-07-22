@@ -8,9 +8,7 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class TeamMember {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
