@@ -29,12 +29,12 @@ public enum ErrorStatus implements BaseErrorCode {
     TEAM_ALREADY_EXISTS(HttpStatus.CONFLICT, "TEAM_2003", "이미 존재하는 팀입니다."),
     TEAM_ADMIN_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "TEAM_2004", "관리자 권한이 없습니다."),
 
-    // 일기 관려 에러 3000
-    DIARY_CREATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "DIARY_3001", "일기 생성 권한이 없습니다."),
-    DIARY_UPDATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "DIARY_3002", "일기 수정 권한이 없습니다."),
-    DIARY_DELETE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "DIARY_3003", "일기 삭제 권한이 없습니다."),
-    DIARY_ADD_MEMBER_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "DIARY_3004", "일기에 사용자를 추가할 권한이 없습니다."),
-    DIARY_MEMBER_DELETE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "DIARY_3005", "일기 참여자 삭제 권한이 없습니다.");
+    // 포스트 관려 에러 3000
+    POST_CREATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3001", "포스트 생성 권한이 없습니다."),
+    POST_UPDATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3002", "포스트 수정 권한이 없습니다."),
+    POST_DELETE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3003", "포스트 삭제 권한이 없습니다."),
+    POST_ADD_MEMBER_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3004", "포스트에 사용자를 추가할 권한이 없습니다."),
+    POST_MEMBER_DELETE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3005", "포스트 참여자 삭제 권한이 없습니다.");
 
     // 코멘트 관련 에러 4000
 

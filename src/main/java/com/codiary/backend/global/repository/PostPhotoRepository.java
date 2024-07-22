@@ -1,4 +1,4 @@
 package com.codiary.backend.global.repository;
 
-public interface DiaryRepository {
+public interface PostPhotoRepository {
 }

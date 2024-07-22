@@ -37,7 +37,7 @@ public class Team {
   private List<TeamProjectMap> teamProjectMapList = new ArrayList<>();
 
   @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
-  private List<Diary> diaryList = new ArrayList<>();
+  private List<Post> postList = new ArrayList<>();
 
   @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
   private List<TeamMember> teamMemberList = new ArrayList<>();

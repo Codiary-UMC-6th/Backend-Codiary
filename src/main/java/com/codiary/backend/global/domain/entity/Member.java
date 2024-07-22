@@ -48,7 +48,7 @@ public class Member extends BaseEntity {
   private String techStacks;
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-  private List<Diary> diaryList = new ArrayList<>();
+  private List<Post> postList = new ArrayList<>();
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
   private List<TeamMember> teamMemberList = new ArrayList<>();
