@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface FollowRepository extends JpaRepository<Follow, Long> {
     Optional<Follow> findByFromMemberAndToMember(Member fromMember, Member toMember);
 
-    List<Follow> findByFromMemberAndFollowStatus(Member member, boolean status);
+    List<Follow> findByFromMemberAndFollowStatusTrueOrderByUpdatedAt(Member member);
 
-    List<Follow> findByToMemberAndFollowStatus(Member member, boolean status);
+    List<Follow> findByToMemberAndFollowStatusTrueOrderByUpdatedAt(Member member);
 }

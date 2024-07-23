@@ -88,7 +88,7 @@ public class FollowService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<Follow> followings = followRepository.findByFromMemberAndFollowStatus(member, true);
+        List<Follow> followings = followRepository.findByFromMemberAndFollowStatusTrueOrderByUpdatedAt(member);
 
         return followings.stream()
                 .map(follow -> memberConverter.toFollowResponseDto(follow.getToMember()))
@@ -100,7 +100,7 @@ public class FollowService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<Follow> followings = followRepository.findByToMemberAndFollowStatus(member, true);
+        List<Follow> followings = followRepository.findByToMemberAndFollowStatusTrueOrderByUpdatedAt(member);
 
         return followings.stream()
                 .map(follow -> memberConverter.toFollowResponseDto(follow.getFromMember()))
