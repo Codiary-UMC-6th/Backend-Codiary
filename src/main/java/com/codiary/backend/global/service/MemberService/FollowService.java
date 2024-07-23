@@ -8,9 +8,13 @@ import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.repository.FollowRepository;
 import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.web.dto.Member.FollowResponseDto;
+import com.codiary.backend.global.web.dto.Member.MemberSumResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -77,6 +81,29 @@ public class FollowService {
         return followRepository.findByFromMemberAndToMember(fromMember, toMember)
                 .map(Follow::getFollowStatus)
                 .orElse(false);
+    }
 
+    @Transactional
+    public List<MemberSumResponseDto> getFollowings(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<Follow> followings = followRepository.findByFromMemberAndFollowStatus(member, true);
+
+        return followings.stream()
+                .map(follow -> memberConverter.toFollowResponseDto(follow.getToMember()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<MemberSumResponseDto> getFollowers(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<Follow> followings = followRepository.findByToMemberAndFollowStatus(member, true);
+
+        return followings.stream()
+                .map(follow -> memberConverter.toFollowResponseDto(follow.getFromMember()))
+                .collect(Collectors.toList());
     }
 }

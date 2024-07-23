@@ -1,6 +1,5 @@
 package com.codiary.backend.global.web.dto.Member;
 
-import com.codiary.backend.global.domain.entity.Follow;
 import lombok.Builder;
 
 @Builder
