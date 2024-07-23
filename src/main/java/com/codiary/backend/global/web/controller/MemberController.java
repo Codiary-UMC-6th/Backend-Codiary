@@ -5,10 +5,7 @@ import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.service.MemberService.FollowService;
 import com.codiary.backend.global.web.dto.Member.FollowResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/members")
@@ -24,6 +21,11 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.follow(toId, fromId));
     }
 
-
+    //TODO: 로그인 구현 완료 시 principal 추가(follow 주체) 필요
+    @GetMapping("/follow/{id}")
+    public ApiResponse<Boolean> isFollowing(@PathVariable("id") Long toId) {
+        Long fromId = 1L;
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.isFollowing(toId, fromId));
+    }
 
 }

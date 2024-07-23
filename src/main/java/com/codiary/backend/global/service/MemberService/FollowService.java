@@ -62,4 +62,21 @@ public class FollowService {
 
         return memberConverter.toManageFollowDto(follow);
     }
+
+    @Transactional
+    public Boolean isFollowing(Long toId, Long fromId) {
+        if (toId.equals(fromId)) {
+            throw new GeneralException(ErrorStatus.MEMBER_SELF_FOLLOW);
+        }
+
+        Member fromMember = memberRepository.findById(fromId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        Member toMember = memberRepository.findById(toId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return followRepository.findByFromMemberAndToMember(fromMember, toMember)
+                .map(Follow::getFollowStatus)
+                .orElse(false);
+
+    }
 }
