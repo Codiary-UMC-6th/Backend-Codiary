@@ -9,6 +9,7 @@ import com.codiary.backend.global.service.PostService.PostQueryService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -58,8 +59,28 @@ public class PostController {
         return null;
     }
 
-    // 제목의 키워드로 멤버가 작성한 모든 글 리스트 조회
+
+    // 멤버가 작성한 모든 글 조회
     @GetMapping("/lists/{memberId}")
+    @Operation(
+            summary = "멤버가 작성한 모든 글 조회 API"
+            , description = "로그인된 멤버가 작성한 모든 글을 조회할 수 있습니다."
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<PostResponseDTO.MemberPostResultListDTO> findUserDiary(
+            @PathVariable Long memberId
+    ) {
+        // 토큰 유효성 검사 (memberId)
+        //jwtTokenProvider.isValidToken(memberId);
+        List<Post> memberPostList = postQueryService.getMemberPost(memberId);
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toMemberPostResultListDTO(memberPostList)
+        );
+    }
+
+    // 제목의 키워드로 멤버가 작성한 모든 글 리스트 조회
+    @GetMapping("/lists/keyword/{memberId}")
     @Operation(
             summary = "제목의 키워드로 멤버가 작성한 글 리스트 조회 API"
             , description = "키워드를 통해 멤버가 작성한 모든 글의 리스트를 조회합니다. Param으로 키워드를 입력하세요"

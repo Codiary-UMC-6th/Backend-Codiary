@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface PostQueryService {
 
     List<Post> findAllBySearch(Optional<String> optSearch);
+    List<Post> getMemberPost(Long memberId);
 }

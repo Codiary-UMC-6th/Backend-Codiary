@@ -61,4 +61,22 @@ public class PostConverter {
                 .posts(postPreviewDTOList)
                 .build();
     }
+
+    public static PostResponseDTO.MemberPostResultDTO toMemberPostResultDTO(Post post) {
+        return PostResponseDTO.MemberPostResultDTO.builder()
+                .postId(post.getPostId())
+                .postTitle(post.getPostTitle())
+                .postStatus(post.getPostStatus())
+                .postCategory(post.getPostCategory())
+                .build();
+    }
+
+    public static PostResponseDTO.MemberPostResultListDTO toMemberPostResultListDTO(List<Post> memberPostList) {
+        List<PostResponseDTO.MemberPostResultDTO> memberPostResultDTOList = IntStream.range(0, memberPostList.size())
+                .mapToObj(i->toMemberPostResultDTO(memberPostList.get(i)))
+                .collect(Collectors.toList());
+        return PostResponseDTO.MemberPostResultListDTO.builder()
+                .posts(memberPostResultDTOList)
+                .build();
+    }
 }

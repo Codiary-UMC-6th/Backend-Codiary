@@ -52,4 +52,26 @@ public class PostResponseDTO {
     public static class PostPreviewListDTO {
         List<PostPreviewDTO> posts;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberPostResultDTO {
+        Long postId;
+        String postTitle;
+        Boolean postStatus;
+        String postCategory;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberPostResultListDTO {
+        List<MemberPostResultDTO> posts;
+    }
+
 }

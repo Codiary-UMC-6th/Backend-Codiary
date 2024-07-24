@@ -1,6 +1,8 @@
 package com.codiary.backend.global.service.PostService;
 
+import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
+import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.repository.PostRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.Optional;
 @Getter
 public class PostQueryServiceImpl implements PostQueryService {
 
+    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
 
     @Override
@@ -30,5 +33,13 @@ public class PostQueryServiceImpl implements PostQueryService {
         }
         // 검색어 존재 X
         return postRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    public List<Post> getMemberPost(Long memberId) {
+        Member getMember = memberRepository.findById(memberId).get();
+        List<Post> MemberPostList = postRepository.findAllByMember(getMember);
+
+        return MemberPostList;
     }
 }
