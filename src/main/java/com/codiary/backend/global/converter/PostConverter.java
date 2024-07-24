@@ -45,9 +45,12 @@ public class PostConverter {
     public static PostResponseDTO.PostPreviewDTO toPostPreviewDTO(Post post) {
         return PostResponseDTO.PostPreviewDTO.builder()
                 .postId(post.getPostId())
+                .memberId(post.getMember().getMemberId())
                 .postTitle(post.getPostTitle())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
                 .build();
     }
 
@@ -68,6 +71,8 @@ public class PostConverter {
                 .postTitle(post.getPostTitle())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
                 .build();
     }
 

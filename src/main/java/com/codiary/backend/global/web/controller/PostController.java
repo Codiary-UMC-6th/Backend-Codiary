@@ -47,18 +47,6 @@ public class PostController {
         );
     }
 
-    // 글 상세 조회
-    @GetMapping("/{postId}")
-    @Operation(
-            summary = "글 상세 조회 API"
-            , description = "글을 상세 조회합니다. Param으로 Id를 입력하세요"
-            //, security = @SecurityRequirement(name = "accessToken")
-    )
-    public ApiResponse<PostResponseDTO> findPost(
-    ){
-        return null;
-    }
-
 
     // 멤버가 작성한 모든 글 조회
     @GetMapping("/lists/{memberId}")
@@ -79,11 +67,11 @@ public class PostController {
         );
     }
 
-    // 제목의 키워드로 멤버가 작성한 모든 글 리스트 조회
-    @GetMapping("/lists/keyword/{memberId}")
+    // 제목의 키워드에 해당하는 모든 글 리스트 조회
+    @GetMapping("/lists/keyword")
     @Operation(
-            summary = "제목의 키워드로 멤버가 작성한 글 리스트 조회 API"
-            , description = "키워드를 통해 멤버가 작성한 모든 글의 리스트를 조회합니다. Param으로 키워드를 입력하세요"
+            summary = "제목의 키워드에 해당하는 모든 글 리스트 조회 API"
+            , description = "키워드 검색을 통해 모든 글의 리스트를 조회합니다. Param으로 키워드를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<?> findPostList(

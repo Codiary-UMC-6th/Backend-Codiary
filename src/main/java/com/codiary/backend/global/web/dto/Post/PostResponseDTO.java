@@ -40,9 +40,12 @@ public class PostResponseDTO {
     @AllArgsConstructor
     public static class PostPreviewDTO {
         Long postId;
+        Long memberId;
         String postTitle;
         Boolean postStatus;
         String postCategory;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
     @Getter
