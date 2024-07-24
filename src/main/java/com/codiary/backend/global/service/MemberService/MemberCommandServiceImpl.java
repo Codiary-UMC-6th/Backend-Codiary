@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,26 +47,27 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> login(MemberRequestDTO.MemberLoginRequestDTO loginRequest) {
-        if (!memberRepository.existsByEmail(loginRequest.getEmail())) {
-            // 없는 회원에 대한 예외 처리
+
+        try {
+            // 1. Login ID/PW를 기반으로 Authentication 객체 생성
+            UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
+
+            // 2. 비밀번호 체크
+            // loadUserByUsername method 실행됨
+            Authentication authentication = authenticationManagerBuilder.getObject()
+                    .authenticate(authenticationToken);
+
+            // 3. 인증 정보를 기반으로 JWT 토큰 생성
+            TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+            Member member = memberRepository.findByEmail(loginRequest.getEmail()).orElseThrow(); // 예외 처리 필요
+
+            return ApiResponse.of(SuccessStatus.MEMBER_OK, MemberResponseDTO.MemberTokenResponseDTO.builder()
+                    .email(member.getEmail())
+                    .nickname(member.getNickname())
+                    .tokenInfo(tokenInfo)
+                    .build());
+        } catch (AuthenticationException e) {
+            return null; // 잘못 입력한 경우에 대한 예외 처리 필요
         }
-
-        // 1. Login ID/PW를 기반으로 Authentication 객체 생성
-        UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
-
-        // 2. 비밀번호 체크
-        // loadUserByUsername method 실행됨
-        Authentication authentication = authenticationManagerBuilder.getObject()
-                .authenticate(authenticationToken);
-
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-        Member member = memberRepository.findByEmail(loginRequest.getEmail()).orElseThrow(); // 예외 처리 필요
-
-        return ApiResponse.of(SuccessStatus.MEMBER_OK, MemberResponseDTO.MemberTokenResponseDTO.builder()
-                .email(member.getEmail())
-                .nickname(member.getNickname())
-                .tokenInfo(tokenInfo)
-                .build());
     }
 }
