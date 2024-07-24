@@ -26,4 +26,14 @@ public class PostConverter {
                 .postCategory(post.getPostCategory())
                 .build();
     }
+
+    public static PostResponseDTO.UpdatePostResultDTO UpdatePostResultDTO(Post post) {
+        return PostResponseDTO.UpdatePostResultDTO.builder()
+                .postId(post.getPostId())
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .postCategory(post.getPostCategory())
+                .build();
+    }
 }

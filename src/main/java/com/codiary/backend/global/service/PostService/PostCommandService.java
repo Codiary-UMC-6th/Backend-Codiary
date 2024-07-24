@@ -7,4 +7,7 @@ public interface PostCommandService {
 
     // 포스트 생성
     Post createPost(Long memberId, Long teamId,PostRequestDTO.CreatePostRequestDTO request);
+
+    //포스트 수정
+    Post updatePost(Long memberId, Long postId, PostRequestDTO.UpdatePostDTO request);
 }
