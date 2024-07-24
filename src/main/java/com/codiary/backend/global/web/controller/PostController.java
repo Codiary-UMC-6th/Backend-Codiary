@@ -81,9 +81,15 @@ public class PostController {
             , description = "글을 삭제합니다. Param으로 Id를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> postDiary(
+    public ApiResponse<?> deletePost(
+            @RequestParam Long memberId,
+            @PathVariable Long postId
     ){
-        return null;
+        postCommandService.deletePost(memberId, postId);
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                null
+        );
     }
 
 

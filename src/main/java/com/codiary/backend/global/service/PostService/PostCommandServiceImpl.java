@@ -52,6 +52,13 @@ public class PostCommandServiceImpl implements PostCommandService{
         return updatePost;
     }
 
+    @Override
+    public void deletePost(Long memberId, Long postId) {
+        Member getMember = memberRepository.findById(memberId).get();
+
+        Post deletePost = postRepository.findById(postId).get();
+        postRepository.delete(deletePost);
+    }
 
 
 
