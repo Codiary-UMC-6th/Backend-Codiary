@@ -4,6 +4,7 @@ import com.codiary.backend.global.domain.common.BaseEntity;
 import com.codiary.backend.global.domain.entity.mapping.Authors;
 import com.codiary.backend.global.domain.entity.mapping.Categories;
 import com.codiary.backend.global.domain.enums.PostAccess;
+import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,9 @@ import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Post extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +41,7 @@ public class Post extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "post_access", nullable = false, columnDefinition = "varchar(500)")
-  private PostAccess postAccess;
+  private PostAccess postAccess = PostAccess.MEMBER;
 
   @Column(name = "post_status", nullable = false, columnDefinition = "tinyint")
   private Boolean postStatus;
@@ -54,5 +57,23 @@ public class Post extends BaseEntity {
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> commentList = new ArrayList<>();
+
+
+  public void setMember(Member member) {
+    this.member = member;
+  }
+
+  public void setTeam(Team team) {
+    this.team = team;
+  }
+
+  public void update(PostRequestDTO.UpdatePostDTO request) {
+    this.postTitle = request.getPostTitle();
+    this.postBody = request.getPostBody();
+    this.postAccess = request.getPostAccess();
+    this.postStatus = request.getPostStatus();
+    this.postCategory = request.getPostCategory();
+  }
+
 
 }
