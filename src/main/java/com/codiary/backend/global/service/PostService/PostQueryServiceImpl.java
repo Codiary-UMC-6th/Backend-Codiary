@@ -1,4 +1,4 @@
 package com.codiary.backend.global.service.PostService;
 
-public class PostQueryServiceImpl {
+public class PostQueryServiceImpl implements PostQueryService {
 }

@@ -16,7 +16,7 @@ public class PostResponseDTO {
     public static class CreatePostResultDTO {
         Long postId;
         String postTitle;
-        String postBody;
+        //String postBody;
         Boolean postStatus;
         String postCategory;
     }
@@ -28,7 +28,7 @@ public class PostResponseDTO {
     public static class UpdatePostResultDTO {
         Long postId;
         String postTitle;
-        String postBody;
+        //String postBody;
         Boolean postStatus;
         String postCategory;
     }

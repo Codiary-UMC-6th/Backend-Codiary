@@ -21,7 +21,7 @@ public class PostConverter {
         return PostResponseDTO.CreatePostResultDTO.builder()
                 .postId(post.getPostId())
                 .postTitle(post.getPostTitle())
-                .postBody(post.getPostBody())
+                //.postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
                 .build();
@@ -31,7 +31,7 @@ public class PostConverter {
         return PostResponseDTO.UpdatePostResultDTO.builder()
                 .postId(post.getPostId())
                 .postTitle(post.getPostTitle())
-                .postBody(post.getPostBody())
+                //.postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
                 .build();
