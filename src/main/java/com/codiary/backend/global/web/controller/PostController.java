@@ -5,6 +5,7 @@ import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.converter.PostConverter;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.service.PostService.PostCommandService;
+import com.codiary.backend.global.service.PostService.PostQueryService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class PostController {
     private final PostCommandService postCommandService;
-    //private final PostQueryService postQueryService;
+    private final PostQueryService postQueryService;
 
     // 글 생성하기
     @PostMapping()
@@ -52,6 +56,23 @@ public class PostController {
     public ApiResponse<PostResponseDTO> findPost(
     ){
         return null;
+    }
+
+    // 제목의 키워드로 멤버가 작성한 모든 글 리스트 조회
+    @GetMapping("/lists/{memberId}")
+    @Operation(
+            summary = "제목의 키워드로 멤버가 작성한 글 리스트 조회 API"
+            , description = "키워드를 통해 멤버가 작성한 모든 글의 리스트를 조회합니다. Param으로 키워드를 입력하세요"
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<?> findPostList(
+            @RequestParam Optional<String> search
+    ){
+        List<Post> Posts = postQueryService.findAllBySearch(search);
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toPostPreviewListDTO(Posts)
+        );
     }
 
     // 글 수정하기

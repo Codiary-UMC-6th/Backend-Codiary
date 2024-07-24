@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PostResponseDTO {
 
@@ -33,4 +34,22 @@ public class PostResponseDTO {
         String postCategory;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostPreviewDTO {
+        Long postId;
+        String postTitle;
+        Boolean postStatus;
+        String postCategory;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostPreviewListDTO {
+        List<PostPreviewDTO> posts;
+    }
 }
