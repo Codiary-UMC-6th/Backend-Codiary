@@ -57,7 +57,7 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
                 .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         return TokenInfo.builder()

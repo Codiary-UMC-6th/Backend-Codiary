@@ -9,4 +9,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 이미 가입된 메일인지 확인
     Boolean existsByEmail(String email);
+
+    Optional<Member> findByEmail(String email);
 }

@@ -32,6 +32,6 @@ public class MemberController {
             summary = "로그인"
     )
     public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> login(@Valid @RequestBody MemberRequestDTO.MemberLoginRequestDTO request) {
-        return null;
+        return memberCommandService.login(request);
     }
 }
