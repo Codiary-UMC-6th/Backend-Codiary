@@ -6,6 +6,7 @@ import com.codiary.backend.global.domain.enums.MemberState;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,8 @@ public class Member extends BaseEntity {
   private MemberState status;
 
   @Column(name = "inactiveDate", columnDefinition = "timestamp")
-  private Boolean inactiveDate;
+  //private Boolean inactiveDate;
+  private LocalDateTime inacticeDate;
 
   @Column(name = "github", columnDefinition = "varchar(500)")
   private String github;
