@@ -1,5 +1,6 @@
 package com.codiary.backend.global.web.dto.Post;
 
+import com.codiary.backend.global.domain.enums.PostAccess;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,10 +13,13 @@ public class PostRequestDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CreatePostRequestDTO {
+        private Long memberId;
+        private Long teamId;
         private String postTitle;
         private String postBody;
         private Boolean postStatus;
         private String postCategory;
+        private PostAccess postAccess;
     }
 
 

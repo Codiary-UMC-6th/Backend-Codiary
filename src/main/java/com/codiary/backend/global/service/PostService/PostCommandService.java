@@ -6,5 +6,5 @@ import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 public interface PostCommandService {
 
     // 포스트 생성
-    Post createPost(Long memberId, PostRequestDTO.CreatePostRequestDTO request);
+    Post createPost(Long memberId, Long teamId,PostRequestDTO.CreatePostRequestDTO request);
 }

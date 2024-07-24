@@ -40,7 +40,7 @@ public class Post extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "post_access", nullable = false, columnDefinition = "varchar(500)")
-  private PostAccess postAccess;
+  private PostAccess postAccess = PostAccess.MEMBER;
 
   @Column(name = "post_status", nullable = false, columnDefinition = "tinyint")
   private Boolean postStatus;
@@ -60,6 +60,10 @@ public class Post extends BaseEntity {
 
   public void setMember(Member member) {
     this.member = member;
+  }
+
+  public void setTeam(Team team) {
+    this.team = team;
   }
 
 

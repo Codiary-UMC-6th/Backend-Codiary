@@ -7,16 +7,17 @@ import lombok.Builder;
 
 public class PostConverter {
 
-    public static Post toPost(PostRequestDTO.CreatePostRequestDTO request){
+    public static Post toPost(PostRequestDTO.CreatePostRequestDTO request) {
         return Post.builder()
                 .postTitle(request.getPostTitle())
                 .postBody(request.getPostBody())
                 .postStatus(request.getPostStatus())
                 .postCategory(request.getPostCategory())
+                .postAccess(request.getPostAccess())
                 .build();
     }
 
-    public static PostResponseDTO.CreatePostResultDTO toCreateResultDTO(Post post){
+    public static PostResponseDTO.CreatePostResultDTO toCreateResultDTO(Post post) {
         return PostResponseDTO.CreatePostResultDTO.builder()
                 .postId(post.getPostId())
                 .postTitle(post.getPostTitle())
