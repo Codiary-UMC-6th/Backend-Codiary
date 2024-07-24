@@ -4,6 +4,7 @@ import com.codiary.backend.global.domain.common.BaseEntity;
 import com.codiary.backend.global.domain.entity.mapping.Authors;
 import com.codiary.backend.global.domain.entity.mapping.Categories;
 import com.codiary.backend.global.domain.enums.PostAccess;
+import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -64,6 +65,14 @@ public class Post extends BaseEntity {
 
   public void setTeam(Team team) {
     this.team = team;
+  }
+
+  public void update(PostRequestDTO.UpdatePostDTO request) {
+    this.postTitle = request.getPostTitle();
+    this.postBody = request.getPostBody();
+    this.postAccess = request.getPostAccess();
+    this.postStatus = request.getPostStatus();
+    this.postCategory = request.getPostCategory();
   }
 
 

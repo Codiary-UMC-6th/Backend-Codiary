@@ -19,6 +19,18 @@ public class PostResponseDTO {
         String postBody;
         Boolean postStatus;
         String postCategory;
-        //LocalDateTime createdAt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdatePostResultDTO {
+        Long postId;
+        String postTitle;
+        String postBody;
+        Boolean postStatus;
+        String postCategory;
+    }
+
 }

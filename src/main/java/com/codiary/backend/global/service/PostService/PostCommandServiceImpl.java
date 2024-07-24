@@ -25,26 +25,32 @@ public class PostCommandServiceImpl implements PostCommandService{
 
     @Override
     public Post createPost(Long memberId, Long teamId, PostRequestDTO.CreatePostRequestDTO request) {
-        // DTO를 Post 객체로 변환
+
         Post newPost = PostConverter.toPost(request);
 
-        // Member와 Team을 가져오기
         Member getMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
         Team getTeam = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("Team not found"));
 
-        // Post 객체에 Member와 Team 설정
         newPost.setMember(getMember);
         newPost.setTeam(getTeam);
 
-        // 저장
         Post savedPost = postRepository.save(newPost);
 
         return savedPost;
     }
 
+    @Override
+    public Post updatePost(Long memberId, Long postId, PostRequestDTO.UpdatePostDTO request) {
+        Member getMember = memberRepository.findById(memberId).get();
+
+        Post updatePost = postRepository.findById(postId).get();
+        updatePost.update(request);
+
+        return updatePost;
+    }
 
 
 

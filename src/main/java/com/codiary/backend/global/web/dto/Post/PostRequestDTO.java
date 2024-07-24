@@ -13,7 +13,6 @@ public class PostRequestDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CreatePostRequestDTO {
-        private Long memberId;
         private Long teamId;
         private String postTitle;
         private String postBody;
@@ -21,6 +20,20 @@ public class PostRequestDTO {
         private String postCategory;
         private PostAccess postAccess;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdatePostDTO {
+        private String postTitle;
+        private String postBody;
+        private Boolean postStatus;
+        private String postCategory;
+        private PostAccess postAccess;
+    }
+
+
 
 
 }

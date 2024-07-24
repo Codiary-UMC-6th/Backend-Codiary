@@ -61,9 +61,17 @@ public class PostController {
             , description = "글을 수정합니다. Param으로 Id를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> updatePost(
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(
+            @RequestParam Long memberId,
+            @RequestBody PostRequestDTO.UpdatePostDTO request,
+            @PathVariable Long postId
     ){
-        return null;
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.UpdatePostResultDTO(
+                        postCommandService.updatePost(memberId, postId, request)
+                )
+        );
     }
 
     // 글 삭제하기
