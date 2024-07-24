@@ -19,7 +19,7 @@ public enum SuccessStatus implements BaseCode {
     // 코멘트 관련 응답
     COMMENT_OK(HttpStatus.OK, "COMMENT_4000", "성공입니다."),
     // 포스트사진 관련 응답
-    DIARYPHOTO_OK(HttpStatus.OK, "POSTPHOTO_5000", "성공입니다.");
+    POSTPHOTO_OK(HttpStatus.OK, "POSTPHOTO_5000", "성공입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

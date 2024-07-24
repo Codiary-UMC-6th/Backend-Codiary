@@ -12,7 +12,9 @@ import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Post extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,5 +56,11 @@ public class Post extends BaseEntity {
 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> commentList = new ArrayList<>();
+
+
+  public void setMember(Member member) {
+    this.member = member;
+  }
+
 
 }
