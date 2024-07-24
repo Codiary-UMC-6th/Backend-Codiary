@@ -26,7 +26,6 @@ public class MemberRequestDTO {
         private String nickname;
         private LocalDate birth;
         private Member.Gender gender;
-        private String photoUrl;
         private String github;
         private String linkedin;
     }

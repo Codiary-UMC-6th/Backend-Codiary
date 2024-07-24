@@ -36,7 +36,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .nickname(signUpRequest.getNickname())
                 .birth(signUpRequest.getBirth().toString())
                 .gender(Member.Gender.Female)
-                .photoUrl(signUpRequest.getPhotoUrl())
                 .github(signUpRequest.getGithub())
                 .linkedin(signUpRequest.getLinkedin())
                 .build();
