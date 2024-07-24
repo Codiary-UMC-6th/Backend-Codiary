@@ -1,4 +1,7 @@
 package com.codiary.backend.global.repository;
 
-public interface MemberRepository {
+import com.codiary.backend.global.domain.entity.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MemberRepository extends JpaRepository<Member, Long> {
 }
