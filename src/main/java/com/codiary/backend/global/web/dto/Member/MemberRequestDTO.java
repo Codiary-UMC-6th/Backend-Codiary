@@ -1,5 +1,6 @@
 package com.codiary.backend.global.web.dto.Member;
 
+import com.codiary.backend.global.domain.entity.Member;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -24,7 +25,7 @@ public class MemberRequestDTO {
         @NotBlank(message = "닉네임은 필수 입력 값입니다.")
         private String nickname;
         private LocalDate birth;
-        private String genderString;
+        private Member.Gender gender;
         private String photoUrl;
         private String github;
         private String linkedin;
