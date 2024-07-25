@@ -6,6 +6,7 @@ import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
+import com.codiary.backend.global.jwt.SecurityUtil;
 import com.codiary.backend.global.jwt.TokenInfo;
 import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.web.dto.Member.MemberRequestDTO;
@@ -73,5 +74,13 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         } catch (AuthenticationException e) {
             throw new MemberHandler(ErrorStatus.MEMBER_LOGIN_FAIL);
         }
+    }
+
+    public Member getRequester() {
+        String userEmail = SecurityUtil.getCurrentMemberEmail();
+        System.out.println(userEmail);
+
+        Member member = memberRepository.findByEmail(userEmail).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        return member;
     }
 }
