@@ -1,8 +1,9 @@
 package com.codiary.backend.global.web.dto.Member;
 
+import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
+import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.domain.entity.Member;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,28 +15,37 @@ import java.time.LocalDate;
 @Setter
 public class MemberRequestDTO {
 
-
     @Getter
     @Setter
     public static class MemberSignUpRequestDTO {
-        @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "이메일 형식이 올바르지 않습니다.")
         private String email;
-        @Pattern(regexp = "^[a-zA-Z0-9@$!%*#?&]{8,}$", message = "비밀번호 형식이 올바르지 않습니다.")
         private String password;
-        @NotBlank(message = "닉네임은 필수 입력 값입니다.")
         private String nickname;
         private LocalDate birth;
         private Member.Gender gender;
         private String github;
         private String linkedin;
+
+        @JsonIgnore
+        public Boolean isCorrect() {
+
+            if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+                throw new MemberHandler(ErrorStatus.MEMBER_WRONG_EMAIL);
+            }
+            if (!password.matches("^[a-zA-Z0-9@$!%*#?&]{8,}$")) {
+                throw new MemberHandler(ErrorStatus.MEMBER_WRONG_PASSWORD);
+            }
+            if (nickname.trim() == "") {
+                throw new MemberHandler(ErrorStatus.MEMBER_NAME_NOT_EXIST);
+            }
+            return true;
+        }
     }
 
     @Getter
     @Setter
     public static class MemberLoginRequestDTO {
-        @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "이메일 형식이 올바르지 않습니다.")
         private String email;
-        @Pattern(regexp = "^[a-zA-Z0-9@$!%*#?&]{8,}$", message = "비밀번호 형식이 올바르지 않습니다.")
         private String password;
 
         public UsernamePasswordAuthenticationToken toAuthentication() {
