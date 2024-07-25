@@ -26,6 +26,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_WRONG_EMAIL(HttpStatus.BAD_REQUEST, "MEMBER_1007", "이메일 형식이 올바르지 않습니다."),
     MEMBER_WRONG_PASSWORD(HttpStatus.BAD_REQUEST, "MEMBER_1008", "비밀번호 형식이 올바르지 않습니다."),
 
+    MEMBER_SELF_FOLLOW(HttpStatus.BAD_REQUEST, "MEMBER_1100", "셀프 팔로우 기능은 제공하지 않습니다"),
+
     // 팀 관련 에러 2000
     TEAM_NOT_FOUND(HttpStatus.BAD_REQUEST, "TEAM_2001", "팀이 없습니다."),
     TEAM_NAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "TEAM_2002", "팀 이름입력은 필수 입니다."),
