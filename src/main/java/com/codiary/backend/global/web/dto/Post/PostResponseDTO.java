@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PostResponseDTO {
 
@@ -16,7 +17,7 @@ public class PostResponseDTO {
     public static class CreatePostResultDTO {
         Long postId;
         String postTitle;
-        String postBody;
+        //String postBody;
         Boolean postStatus;
         String postCategory;
     }
@@ -28,9 +29,52 @@ public class PostResponseDTO {
     public static class UpdatePostResultDTO {
         Long postId;
         String postTitle;
-        String postBody;
+        //String postBody;
         Boolean postStatus;
         String postCategory;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostPreviewDTO {
+        Long postId;
+        Long memberId;
+        String postTitle;
+        Boolean postStatus;
+        String postCategory;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostPreviewListDTO {
+        List<PostPreviewDTO> posts;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberPostResultDTO {
+        Long postId;
+        String postTitle;
+        Boolean postStatus;
+        String postCategory;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberPostResultListDTO {
+        List<MemberPostResultDTO> posts;
     }
 
 }

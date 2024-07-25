@@ -5,13 +5,18 @@ import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.converter.PostConverter;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.service.PostService.PostCommandService;
+import com.codiary.backend.global.service.PostService.PostQueryService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class PostController {
     private final PostCommandService postCommandService;
-    //private final PostQueryService postQueryService;
+    private final PostQueryService postQueryService;
 
     // 글 생성하기
     @PostMapping()
@@ -42,16 +47,41 @@ public class PostController {
         );
     }
 
-    // 글 상세 조회
-    @GetMapping("/{postId}")
+
+    // 멤버가 작성한 모든 글 조회
+    @GetMapping("/lists/{memberId}")
     @Operation(
-            summary = "글 상세 조회 API"
-            , description = "글을 상세 조회합니다. Param으로 Id를 입력하세요"
+            summary = "멤버가 작성한 모든 글 조회 API"
+            , description = "로그인된 멤버가 작성한 모든 글을 조회할 수 있습니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> findPost(
+    public ApiResponse<PostResponseDTO.MemberPostResultListDTO> findUserDiary(
+            @PathVariable Long memberId
+    ) {
+        // 토큰 유효성 검사 (memberId)
+        //jwtTokenProvider.isValidToken(memberId);
+        List<Post> memberPostList = postQueryService.getMemberPost(memberId);
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toMemberPostResultListDTO(memberPostList)
+        );
+    }
+
+    // 제목의 키워드에 해당하는 모든 글 리스트 조회
+    @GetMapping("/lists/keyword")
+    @Operation(
+            summary = "제목의 키워드에 해당하는 모든 글 리스트 조회 API"
+            , description = "키워드 검색을 통해 모든 글의 리스트를 조회합니다. Param으로 키워드를 입력하세요"
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<?> findPostList(
+            @RequestParam Optional<String> search
     ){
-        return null;
+        List<Post> Posts = postQueryService.findAllBySearch(search);
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toPostPreviewListDTO(Posts)
+        );
     }
 
     // 글 수정하기
@@ -81,9 +111,15 @@ public class PostController {
             , description = "글을 삭제합니다. Param으로 Id를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> postDiary(
+    public ApiResponse<?> deletePost(
+            @RequestParam Long memberId,
+            @PathVariable Long postId
     ){
-        return null;
+        postCommandService.deletePost(memberId, postId);
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                null
+        );
     }
 
 
