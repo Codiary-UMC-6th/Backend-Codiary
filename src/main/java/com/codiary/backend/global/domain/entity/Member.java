@@ -75,4 +75,9 @@ public class Member extends BaseEntity {
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> commentList = new ArrayList<>();
 
+  @OneToMany(mappedBy = "fromMember", fetch = FetchType.LAZY)
+  private List<Follow> followings = new ArrayList<>();
+
+  @OneToMany(mappedBy = "toMember", fetch = FetchType.LAZY)
+  private List<Follow> followers = new ArrayList<>();
 }
