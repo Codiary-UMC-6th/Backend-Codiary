@@ -1,4 +1,4 @@
-package com.codiary.backend.global.service.PostPhotoService;
+package com.codiary.backend.global.service.PostFileService;
 
-public interface PostPhotoCommandService {
+public interface PostFileCommandService {
 }

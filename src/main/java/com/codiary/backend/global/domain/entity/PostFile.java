@@ -6,11 +6,11 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostPhoto {
+public class PostFile {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "post_photo_id", nullable = false, columnDefinition = "bigint")
-  private Long postPhotoId;
+  @Column(name = "post_file_id", nullable = false, columnDefinition = "bigint")
+  private Long postFileId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id")

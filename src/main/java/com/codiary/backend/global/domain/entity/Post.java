@@ -53,7 +53,7 @@ public class Post extends BaseEntity {
 
   @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<PostPhoto> postPhotoList = new ArrayList<>();
+  private List<PostFile> postFileList = new ArrayList<>();
 
   @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
