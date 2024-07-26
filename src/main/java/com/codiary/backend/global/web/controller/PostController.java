@@ -174,11 +174,11 @@ public class PostController {
     }
 
 
-    // 글의 카테고리 및 키워드 설정
+    // 글의 카테고리 설정
     @PatchMapping("/categories/{postId}")
     @Operation(
-            summary = "글의 카테고리 및 키워드 설정 API"
-            , description = "글의 카테고리 및 키워드를 설정합니다."
+            summary = "글의 카테고리 설정 API"
+            , description = "글의 카테고리를 설정합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO> setDiaryCategory(

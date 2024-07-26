@@ -21,6 +21,7 @@ public class PostResponseDTO {
         //String postBody;
         Boolean postStatus;
         String postCategory;
+        Set<Long> coauthorIds;
     }
 
     @Getter
@@ -46,6 +47,7 @@ public class PostResponseDTO {
         String postTitle;
         Boolean postStatus;
         String postCategory;
+        Set<Long> coauthorIds;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }
@@ -67,6 +69,7 @@ public class PostResponseDTO {
         String postTitle;
         Boolean postStatus;
         String postCategory;
+        Set<Long> coauthorIds;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }

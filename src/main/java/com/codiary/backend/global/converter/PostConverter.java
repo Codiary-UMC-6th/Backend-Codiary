@@ -28,6 +28,9 @@ public class PostConverter {
                 //.postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
                 .build();
     }
 
@@ -51,6 +54,9 @@ public class PostConverter {
                 .postTitle(post.getPostTitle())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -71,6 +77,9 @@ public class PostConverter {
                 .postTitle(post.getPostTitle())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
