@@ -53,5 +53,12 @@ public class PostRequestDTO {
         private List<Long> memberIds;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SetTeamRequestDTO {
+        private Long teamId;
+    }
 
 }

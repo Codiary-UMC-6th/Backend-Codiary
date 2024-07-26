@@ -15,4 +15,7 @@ public interface PostCommandService {
     Post updateVisibility(Long postId, PostRequestDTO.UpdateVisibilityRequestDTO request);
     // 공동 저자 설정
     Post updateCoauthors(Long postId, PostRequestDTO.UpdateCoauthorRequestDTO request);
+    // 글 소속 팀 설정
+    Post setPostTeam(Long postId, Long teamId);
+
 }

@@ -95,4 +95,16 @@ public class PostCommandServiceImpl implements PostCommandService{
         return postRepository.save(post);
     }
 
+    @Override
+    public Post setPostTeam(Long postId, Long teamId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new IllegalArgumentException("Team not found"));
+
+        post.setTeam(team);
+
+        return postRepository.save(post);
+    }
 }

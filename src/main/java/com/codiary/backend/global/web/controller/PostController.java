@@ -29,6 +29,7 @@ public class PostController {
     private final PostQueryService postQueryService;
 
     // 글 생성하기
+    // TODO: 현재 teamId=1로 되어 있는 부분 수정 구현 필요
     @PostMapping()
     @Operation(
             summary = "글 생성 API"
@@ -49,6 +50,7 @@ public class PostController {
 
 
     // 멤버가 작성한 모든 글 조회
+    // TODO: 멤버별 작성한 글 조회시 공동 저자로 등록된 멤버도 조회가능하도록 기능 수정 필요
     @GetMapping("/lists/{memberId}")
     @Operation(
             summary = "멤버가 작성한 모든 글 조회 API"
@@ -123,7 +125,6 @@ public class PostController {
     }
 
 
-
     // 글 공개/비공개 설정
     @PatchMapping("/visibility/{postId}")
     @Operation(
@@ -164,14 +165,20 @@ public class PostController {
     // 글의 소속 팀 설정
     @PatchMapping("/team/{postId}")
     @Operation(
-            summary = "글의 소속 팀 설정 API"
-            , description = "글의 소속 팀을 설정합니다."
-            //, security = @SecurityRequirement(name = "accessToken")
+            summary = "글의 소속 팀 설정 API",
+            description = "글의 소속 팀을 설정합니다."
     )
-    public ApiResponse<PostResponseDTO> setDiaryTeam(
-    ){
-        return null;
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setDiaryTeam(
+            @PathVariable Long postId,
+            @RequestBody PostRequestDTO.SetTeamRequestDTO request
+    ) {
+        Post updatedPost = postCommandService.setPostTeam(postId, request.getTeamId());
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toUpdatePostResultDTO(updatedPost)
+        );
     }
+
 
 
     // 글의 카테고리 설정

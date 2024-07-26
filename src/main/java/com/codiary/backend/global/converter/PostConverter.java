@@ -31,6 +31,7 @@ public class PostConverter {
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .build();
     }
 
@@ -44,6 +45,7 @@ public class PostConverter {
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .build();
     }
 
@@ -57,6 +59,7 @@ public class PostConverter {
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -80,6 +83,7 @@ public class PostConverter {
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();

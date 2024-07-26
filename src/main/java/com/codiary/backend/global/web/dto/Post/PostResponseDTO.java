@@ -22,6 +22,7 @@ public class PostResponseDTO {
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
+        Long teamId;
     }
 
     @Getter
@@ -35,6 +36,7 @@ public class PostResponseDTO {
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
+        Long teamId;
     }
 
     @Getter
@@ -50,6 +52,7 @@ public class PostResponseDTO {
         Set<Long> coauthorIds;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
+        Long teamId;
     }
 
     @Getter
@@ -70,6 +73,7 @@ public class PostResponseDTO {
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
+        Long teamId;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }
