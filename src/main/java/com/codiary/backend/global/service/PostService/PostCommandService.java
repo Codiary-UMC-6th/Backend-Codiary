@@ -11,4 +11,6 @@ public interface PostCommandService {
     Post updatePost(Long memberId, Long postId, PostRequestDTO.UpdatePostDTO request);
     //포스트 삭제
     void deletePost(Long memberId, Long postId);
+    // 공개/비공개 설정
+    Post updateVisibility(Long postId, PostRequestDTO.UpdateVisibilityRequestDTO request);
 }

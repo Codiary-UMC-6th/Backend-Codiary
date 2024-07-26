@@ -127,26 +127,21 @@ public class PostController {
     // 글 공개/비공개 설정
     @PatchMapping("/visibility/{postId}")
     @Operation(
-            summary = "글 공개/비공개 API"
-            , description = "글의 공개/비공개 유무를 설정합니다. Param으로 diaryId를 입력하세요"
+            summary = "글 공개/비공개 API",
+            description = "글의 공개/비공개 유무를 설정합니다. Param으로 postId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> setDiaryVisibility(
-    ){
-        return null;
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostVisibility(
+            @PathVariable Long postId,
+            @RequestBody PostRequestDTO.UpdateVisibilityRequestDTO request
+    ) {
+        Post updatedPost = postCommandService.updateVisibility(postId, request);
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.UpdatePostResultDTO(updatedPost)
+        );
     }
 
-    // 글 커스터마이징 옵션 변경
-    @PatchMapping("/customize/{postId}")
-    @Operation(
-            summary = "글 커스터마이징 옵션 변경 API"
-            , description = "글의 커스터마이징 옵션을 변경합니다. Param으로 diaryId를 입력하세요"
-            //, security = @SecurityRequirement(name = "accessToken")
-    )
-    public ApiResponse<PostResponseDTO> customizeDiary(
-    ){
-        return null;
-    }
 
     // 글 공동 저자 설정
     @PatchMapping("/coauthors/{postId}")
@@ -160,6 +155,7 @@ public class PostController {
         return null;
     }
 
+
     // 글의 소속 팀 설정
     @PatchMapping("/team/{postId}")
     @Operation(
@@ -172,6 +168,7 @@ public class PostController {
         return null;
     }
 
+
     // 글의 카테고리 및 키워드 설정
     @PatchMapping("/categories/{postId}")
     @Operation(
@@ -183,6 +180,20 @@ public class PostController {
     ){
         return null;
     }
+
+
+    // 글 커스터마이징 옵션 변경
+    @PatchMapping("/customize/{postId}")
+    @Operation(
+            summary = "글 커스터마이징 옵션 변경 API"
+            , description = "글의 커스터마이징 옵션을 변경합니다. Param으로 diaryId를 입력하세요"
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<PostResponseDTO> customizeDiary(
+    ){
+        return null;
+    }
+
 
     // AI로 코드 실행 미리보기
     @GetMapping("/code-preview/{postId}")

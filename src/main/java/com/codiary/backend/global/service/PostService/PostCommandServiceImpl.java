@@ -61,5 +61,14 @@ public class PostCommandServiceImpl implements PostCommandService{
     }
 
 
+    @Override
+    public Post updateVisibility(Long postId, PostRequestDTO.UpdateVisibilityRequestDTO request) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        post.setPostStatus(request.getPostStatus());
+        return postRepository.save(post);
+    }
+
 
 }

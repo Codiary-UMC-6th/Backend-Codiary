@@ -33,6 +33,13 @@ public class PostRequestDTO {
         private PostAccess postAccess;
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateVisibilityRequestDTO {
+        private Boolean postStatus;  // 공개(true) / 비공개(false) 상태
+    }
 
 
 
