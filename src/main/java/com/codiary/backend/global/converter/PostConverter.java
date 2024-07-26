@@ -28,19 +28,26 @@ public class PostConverter {
                 //.postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .build();
     }
 
-    public static PostResponseDTO.UpdatePostResultDTO UpdatePostResultDTO(Post post) {
+    public static PostResponseDTO.UpdatePostResultDTO toUpdatePostResultDTO(Post post) {
         return PostResponseDTO.UpdatePostResultDTO.builder()
                 .postId(post.getPostId())
                 .postTitle(post.getPostTitle())
                 //.postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .build();
     }
-
 
     public static PostResponseDTO.PostPreviewDTO toPostPreviewDTO(Post post) {
         return PostResponseDTO.PostPreviewDTO.builder()
@@ -49,16 +56,18 @@ public class PostConverter {
                 .postTitle(post.getPostTitle())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
     }
 
-    public static PostResponseDTO.PostPreviewListDTO toPostPreviewListDTO(
-            List<Post> postList
-    ){
+    public static PostResponseDTO.PostPreviewListDTO toPostPreviewListDTO(List<Post> postList) {
         List<PostResponseDTO.PostPreviewDTO> postPreviewDTOList = IntStream.range(0, postList.size())
-                .mapToObj(i-> toPostPreviewDTO(postList.get(i)))
+                .mapToObj(i -> toPostPreviewDTO(postList.get(i)))
                 .collect(Collectors.toList());
         return PostResponseDTO.PostPreviewListDTO.builder()
                 .posts(postPreviewDTOList)
@@ -71,6 +80,10 @@ public class PostConverter {
                 .postTitle(post.getPostTitle())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -78,7 +91,7 @@ public class PostConverter {
 
     public static PostResponseDTO.MemberPostResultListDTO toMemberPostResultListDTO(List<Post> memberPostList) {
         List<PostResponseDTO.MemberPostResultDTO> memberPostResultDTOList = IntStream.range(0, memberPostList.size())
-                .mapToObj(i->toMemberPostResultDTO(memberPostList.get(i)))
+                .mapToObj(i -> toMemberPostResultDTO(memberPostList.get(i)))
                 .collect(Collectors.toList());
         return PostResponseDTO.MemberPostResultListDTO.builder()
                 .posts(memberPostResultDTOList)

@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Set;
+
 public class PostRequestDTO {
 
     @Getter
@@ -33,7 +36,29 @@ public class PostRequestDTO {
         private PostAccess postAccess;
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateVisibilityRequestDTO {
+        private Boolean postStatus;  // 공개(true) / 비공개(false) 상태
+    }
 
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateCoauthorRequestDTO {
+        private List<Long> memberIds;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SetTeamRequestDTO {
+        private Long teamId;
+    }
 
 }

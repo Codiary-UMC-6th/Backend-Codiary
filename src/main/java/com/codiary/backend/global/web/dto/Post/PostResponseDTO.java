@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class PostResponseDTO {
 
@@ -20,6 +21,8 @@ public class PostResponseDTO {
         //String postBody;
         Boolean postStatus;
         String postCategory;
+        Set<Long> coauthorIds;
+        Long teamId;
     }
 
     @Getter
@@ -32,6 +35,8 @@ public class PostResponseDTO {
         //String postBody;
         Boolean postStatus;
         String postCategory;
+        Set<Long> coauthorIds;
+        Long teamId;
     }
 
     @Getter
@@ -44,8 +49,10 @@ public class PostResponseDTO {
         String postTitle;
         Boolean postStatus;
         String postCategory;
+        Set<Long> coauthorIds;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
+        Long teamId;
     }
 
     @Getter
@@ -65,6 +72,8 @@ public class PostResponseDTO {
         String postTitle;
         Boolean postStatus;
         String postCategory;
+        Set<Long> coauthorIds;
+        Long teamId;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }

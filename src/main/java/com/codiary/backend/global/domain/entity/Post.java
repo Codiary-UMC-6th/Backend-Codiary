@@ -84,5 +84,9 @@ public class Post extends BaseEntity {
     this.postCategory = request.getPostCategory();
   }
 
+  public void setPostStatus(Boolean postStatus) {
+    this.postStatus = postStatus;
+  }
+
 
 }

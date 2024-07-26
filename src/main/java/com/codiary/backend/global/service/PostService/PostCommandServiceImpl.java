@@ -4,6 +4,7 @@ import com.codiary.backend.global.converter.PostConverter;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.domain.entity.Team;
+import com.codiary.backend.global.domain.entity.mapping.Authors;
 import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.repository.PostRepository;
 import com.codiary.backend.global.repository.TeamRepository;
@@ -12,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -61,5 +65,46 @@ public class PostCommandServiceImpl implements PostCommandService{
     }
 
 
+    @Override
+    public Post updateVisibility(Long postId, PostRequestDTO.UpdateVisibilityRequestDTO request) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
+        post.setPostStatus(request.getPostStatus());
+        return postRepository.save(post);
+    }
+
+    @Override
+    public Post updateCoauthors(Long postId, PostRequestDTO.UpdateCoauthorRequestDTO request) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        // 기존 공동 저자 리스트 삭제
+        post.getAuthorsList().clear();
+
+        // 새로운 공동 저자 리스트 추가
+        Set<Authors> coauthors = request.getMemberIds().stream()
+                .map(memberId -> {
+                    Member member = memberRepository.findById(memberId)
+                            .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberId));
+                    return Authors.createAuthors(post, member);
+                }).collect(Collectors.toSet());
+
+        post.getAuthorsList().addAll(coauthors);
+
+        return postRepository.save(post);
+    }
+
+    @Override
+    public Post setPostTeam(Long postId, Long teamId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new IllegalArgumentException("Team not found"));
+
+        post.setTeam(team);
+
+        return postRepository.save(post);
+    }
 }
