@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class PostResponseDTO {
 
@@ -32,6 +33,7 @@ public class PostResponseDTO {
         //String postBody;
         Boolean postStatus;
         String postCategory;
+        Set<Long> coauthorIds;
     }
 
     @Getter

@@ -13,4 +13,6 @@ public interface PostCommandService {
     void deletePost(Long memberId, Long postId);
     // 공개/비공개 설정
     Post updateVisibility(Long postId, PostRequestDTO.UpdateVisibilityRequestDTO request);
+    // 공동 저자 설정
+    Post updateCoauthors(Long postId, PostRequestDTO.UpdateCoauthorRequestDTO request);
 }
