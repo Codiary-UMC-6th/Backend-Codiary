@@ -158,7 +158,7 @@ public class PostController {
     }
 
     // 팀의 다이어리 페이징 조회
-    @PatchMapping("/paging/{teamId}")
+    @GetMapping("/paging/{teamId}")
     @Operation(
             summary = "팀의 다이어리 페이징 조회 API", description = "팀의 다이어리 페이징 조회합니다."
             //, security = @SecurityRequirement(name = "accessToken")
@@ -169,7 +169,7 @@ public class PostController {
     }
 
     // 프로젝트별 저자의 다이어리 페이징 조회
-    @PatchMapping("/paging/{projectId}/{memberId}")
+    @GetMapping("/paging/{projectId}/{memberId}")
     @Operation(
             summary = "프로젝트별 저자의 다이어리 페이징 조회 API", description = "프로젝트별 저자의 다이어리 페이징 조회합니다."
             //, security = @SecurityRequirement(name = "accessToken")
@@ -180,7 +180,7 @@ public class PostController {
     }
 
     // 프로젝트별 팀의 다이어리 페이징 조회
-    @PatchMapping("/paging/{projectId}/{teamId}")
+    @GetMapping("/paging/{projectId}/{teamId}")
     @Operation(
             summary = "프로젝트별 팀의 다이어리 페이징 조회 API", description = "프로젝트별 팀의 다이어리 페이징 조회합니다."
             //, security = @SecurityRequirement(name = "accessToken")
@@ -191,7 +191,7 @@ public class PostController {
     }
 
     // 팀별 저자의 다이어리 페이징 조회
-    @PatchMapping("/paging/{teamId}/{memberId}")
+    @GetMapping("/paging/{teamId}/{memberId}")
     @Operation(
             summary = "팀별 저자의 다이어리 페이징 조회 API"
             , description = "팀별 저자의 다이어리 페이징 조회합니다."
@@ -220,7 +220,7 @@ public class PostController {
     }
 
     // 카테고리명으로 다이어리 페이징 조회
-    @PatchMapping("/paging/category")
+    @GetMapping("/paging/category")
     @Operation(
             summary = "카테고리명으로 다이어리 페이징 조회 API", description = "카테고리명으로 다이어리 페이징 조회합니다."
             //, security = @SecurityRequirement(name = "accessToken")
@@ -231,7 +231,7 @@ public class PostController {
     }
 
     // 인접한 다이어리 조회
-    @PatchMapping("/adjacent")
+    @GetMapping("/adjacent")
     @Operation(
             summary = "인접한 다이어리 조회 API", description = "인접한 다이어리를 조회합니다."
             //, security = @SecurityRequirement(name = "accessToken")
@@ -268,7 +268,7 @@ public class PostController {
 
 
     // AI로 코드 실행 미리보기
-    @GetMapping("/code-preview/{postId}")
+    @PostMapping("/code-preview/{postId}")
     @Operation(
             summary = "AI로 코드 실행 미리보기 API", description = "AI로 특정 글에 포함된 코드를 실행하여 미리보기 결과를 반환합니다."
             //, security = @SecurityRequirement(name = "accessToken")
