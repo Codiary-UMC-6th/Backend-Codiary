@@ -30,6 +30,10 @@ public class Post extends BaseEntity {
   @JoinColumn(name = "team_id")
   private Team team;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "project_id")
+  private Project project;
+
   @Column(name = "post_category",  columnDefinition = "varchar(500)")
   private String postCategory;
 
@@ -39,6 +43,7 @@ public class Post extends BaseEntity {
   @Column(name = "post_body", nullable = false, columnDefinition = "varchar(500)")
   private String postBody;
 
+  @Builder.Default
   @Enumerated(EnumType.STRING)
   @Column(name = "post_access", nullable = false, columnDefinition = "varchar(500)")
   private PostAccess postAccess = PostAccess.MEMBER;
@@ -46,15 +51,19 @@ public class Post extends BaseEntity {
   @Column(name = "post_status", nullable = false, columnDefinition = "tinyint")
   private Boolean postStatus;
 
+  @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<PostPhoto> postPhotoList = new ArrayList<>();
 
+  @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Categories> catecoriesList = new ArrayList<>();
 
+  @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Authors> authorsList = new ArrayList<>();
 
+  @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> commentList = new ArrayList<>();
 

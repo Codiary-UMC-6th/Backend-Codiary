@@ -1,5 +1,7 @@
 package com.codiary.backend.global.service.PostService;
 
+import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
+import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.repository.MemberRepository;
@@ -10,8 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,5 +44,25 @@ public class PostQueryServiceImpl implements PostQueryService {
         List<Post> MemberPostList = postRepository.findAllByMember(getMember);
 
         return MemberPostList;
+    }
+
+    @Override
+    public Map<String, List<String>> getPostsByMonth(Long memberId, YearMonth yearMonth) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        LocalDateTime startDate = yearMonth.atDay(1).atStartOfDay();
+        LocalDateTime endDate = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+        List<Post> posts = postRepository.findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(member, startDate, endDate);
+
+        Map<String, List<String>> projectActivities = new HashMap<>();
+
+        posts.forEach(post -> {
+            String date = post.getCreatedAt().toLocalDate().toString();
+            String projectName = post.getProject().getProjectName();
+            projectActivities.computeIfAbsent(date, k -> new ArrayList<>()).add(projectName);
+        });
+
+        return projectActivities;
     }
 }
