@@ -32,8 +32,7 @@ public class PostController {
     // TODO: 현재 teamId=1로 되어 있는 부분 수정 구현 필요
     @PostMapping()
     @Operation(
-            summary = "글 생성 API"
-            , description = "글을 생성합니다."
+            summary = "글 생성 API", description = "글을 생성합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(
@@ -49,48 +48,10 @@ public class PostController {
     }
 
 
-    // 멤버가 작성한 모든 글 조회
-    // TODO: 멤버별 작성한 글 조회시 공동 저자로 등록된 멤버도 조회가능하도록 기능 수정 필요
-    @GetMapping("/lists/{memberId}")
-    @Operation(
-            summary = "멤버가 작성한 모든 글 조회 API"
-            , description = "로그인된 멤버가 작성한 모든 글을 조회할 수 있습니다."
-            //, security = @SecurityRequirement(name = "accessToken")
-    )
-    public ApiResponse<PostResponseDTO.MemberPostResultListDTO> findUserDiary(
-            @PathVariable Long memberId
-    ) {
-        // 토큰 유효성 검사 (memberId)
-        //jwtTokenProvider.isValidToken(memberId);
-        List<Post> memberPostList = postQueryService.getMemberPost(memberId);
-        return ApiResponse.onSuccess(
-                SuccessStatus.POST_OK,
-                PostConverter.toMemberPostResultListDTO(memberPostList)
-        );
-    }
-
-    // 제목의 키워드에 해당하는 모든 글 리스트 조회
-    @GetMapping("/lists/keyword")
-    @Operation(
-            summary = "제목의 키워드에 해당하는 모든 글 리스트 조회 API"
-            , description = "키워드 검색을 통해 모든 글의 리스트를 조회합니다. Param으로 키워드를 입력하세요"
-            //, security = @SecurityRequirement(name = "accessToken")
-    )
-    public ApiResponse<?> findPostList(
-            @RequestParam Optional<String> search
-    ){
-        List<Post> Posts = postQueryService.findAllBySearch(search);
-        return ApiResponse.onSuccess(
-                SuccessStatus.POST_OK,
-                PostConverter.toPostPreviewListDTO(Posts)
-        );
-    }
-
     // 글 수정하기
     @PatchMapping("/{postId}")
     @Operation(
-            summary = "글 수정 API"
-            , description = "글을 수정합니다. Param으로 memberId를 입력하세요"
+            summary = "글 수정 API", description = "글을 수정합니다. Param으로 memberId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(
@@ -109,8 +70,7 @@ public class PostController {
     // 글 삭제하기
     @DeleteMapping("/{postId}")
     @Operation(
-            summary = "글 삭제 API"
-            , description = "글을 삭제합니다. Param으로 memberId를 입력하세요"
+            summary = "글 삭제 API", description = "글을 삭제합니다. Param으로 memberId를 입력하세요"
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<?> deletePost(
@@ -128,8 +88,7 @@ public class PostController {
     // 글 공개/비공개 설정
     @PatchMapping("/visibility/{postId}")
     @Operation(
-            summary = "글 공개/비공개 API",
-            description = "글의 공개/비공개 유무를 설정합니다."
+            summary = "글 공개/비공개 API", description = "글의 공개/비공개 유무를 설정합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostVisibility(
@@ -147,8 +106,7 @@ public class PostController {
     // 글 공동 저자 설정
     @PatchMapping("/coauthors/{postId}")
     @Operation(
-            summary = "글 공동 저자 설정 API",
-            description = "글의 공동 저자를 설정합니다."
+            summary = "글 공동 저자 설정 API", description = "글의 공동 저자를 설정합니다."
     )
     public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCoauthor(
             @PathVariable Long postId,
@@ -165,10 +123,9 @@ public class PostController {
     // 글의 소속 팀 설정
     @PatchMapping("/team/{postId}")
     @Operation(
-            summary = "글의 소속 팀 설정 API",
-            description = "글의 소속 팀을 설정합니다."
+            summary = "글의 소속 팀 설정 API", description = "글의 소속 팀을 설정합니다."
     )
-    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setDiaryTeam(
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostTeam(
             @PathVariable Long postId,
             @RequestBody PostRequestDTO.SetTeamRequestDTO request
     ) {
@@ -180,12 +137,116 @@ public class PostController {
     }
 
 
+    // 저자의 다이어리 페이징 조회
+    // TODO: 페이징 조회로 수정 필요
+    // TODO: 멤버별 작성한 글 조회시 공동 저자로 등록된 멤버도 조회가능하도록 기능 수정 필요
+    @GetMapping("/paging/{memberId}")
+    @Operation(
+            summary = "저자의 다이어리 전체 리스트 조회 API", description = "로그인된 멤버가 작성한 모든 글을 조회할 수 있습니다."
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<PostResponseDTO.MemberPostResultListDTO> findMemberPost(
+            @PathVariable Long memberId
+    ) {
+        // 토큰 유효성 검사 (memberId)
+        //jwtTokenProvider.isValidToken(memberId);
+        List<Post> memberPostList = postQueryService.getMemberPost(memberId);
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toMemberPostResultListDTO(memberPostList)
+        );
+    }
+
+    // 팀의 다이어리 페이징 조회
+    @PatchMapping("/paging/{teamId}")
+    @Operation(
+            summary = "팀의 다이어리 페이징 조회 API", description = "팀의 다이어리 페이징 조회합니다."
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<PostResponseDTO> findPostByTeam(
+    ){
+        return null;
+    }
+
+    // 프로젝트별 저자의 다이어리 페이징 조회
+    @PatchMapping("/paging/{projectId}/{memberId}")
+    @Operation(
+            summary = "프로젝트별 저자의 다이어리 페이징 조회 API", description = "프로젝트별 저자의 다이어리 페이징 조회합니다."
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<PostResponseDTO> findPostByMemberInProject(
+    ){
+        return null;
+    }
+
+    // 프로젝트별 팀의 다이어리 페이징 조회
+    @PatchMapping("/paging/{projectId}/{teamId}")
+    @Operation(
+            summary = "프로젝트별 팀의 다이어리 페이징 조회 API", description = "프로젝트별 팀의 다이어리 페이징 조회합니다."
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<PostResponseDTO> findPostByTeamInProject(
+    ){
+        return null;
+    }
+
+    // 팀별 저자의 다이어리 페이징 조회
+    @PatchMapping("/paging/{teamId}/{memberId}")
+    @Operation(
+            summary = "팀별 저자의 다이어리 페이징 조회 API"
+            , description = "팀별 저자의 다이어리 페이징 조회합니다."
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<PostResponseDTO> findPostByMemberInTeam(
+    ){
+        return null;
+    }
+
+    // 제목으로 다이어리 페이징 조회
+    // TODO: 페이징 조회로 수정 필요
+    @GetMapping("/paging/title")
+    @Operation(
+            summary = "제목으로 다이어리 전체 리스트 조회 API", description = "제목으로 다이어리 전체 리스트 조회합니다. Param으로 제목을 입력하세요"
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<?> findPostsByTitle(
+            @RequestParam Optional<String> search
+    ){
+        List<Post> Posts = postQueryService.findAllBySearch(search);
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toPostPreviewListDTO(Posts)
+        );
+    }
+
+    // 카테고리명으로 다이어리 페이징 조회
+    @PatchMapping("/paging/category")
+    @Operation(
+            summary = "카테고리명으로 다이어리 페이징 조회 API", description = "카테고리명으로 다이어리 페이징 조회합니다."
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<PostResponseDTO> findPostByCategory(
+    ){
+        return null;
+    }
+
+    // 인접한 다이어리 조회
+    @PatchMapping("/adjacent")
+    @Operation(
+            summary = "인접한 다이어리 조회 API", description = "인접한 다이어리를 조회합니다."
+            //, security = @SecurityRequirement(name = "accessToken")
+    )
+    public ApiResponse<PostResponseDTO> findAdjacentPost(
+    ){
+        return null;
+    }
+
+
 
     // 글의 카테고리 설정
     @PatchMapping("/categories/{postId}")
     @Operation(
-            summary = "글의 카테고리 설정 API"
-            , description = "글의 카테고리를 설정합니다."
+            summary = "글의 카테고리 설정 API", description = "글의 카테고리를 설정합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO> setDiaryCategory(
@@ -197,8 +258,7 @@ public class PostController {
     // 글 커스터마이징 옵션 변경
     @PatchMapping("/customize/{postId}")
     @Operation(
-            summary = "글 커스터마이징 옵션 변경 API"
-            , description = "글의 커스터마이징 옵션을 변경합니다."
+            summary = "글 커스터마이징 옵션 변경 API", description = "글의 커스터마이징 옵션을 변경합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO> customizeDiary(
@@ -210,8 +270,7 @@ public class PostController {
     // AI로 코드 실행 미리보기
     @GetMapping("/code-preview/{postId}")
     @Operation(
-            summary = "AI로 코드 실행 미리보기 API"
-            , description = "AI로 특정 글에 포함된 코드를 실행하여 미리보기 결과를 반환합니다."
+            summary = "AI로 코드 실행 미리보기 API", description = "AI로 특정 글에 포함된 코드를 실행하여 미리보기 결과를 반환합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO> showDiaryCodePreview(
