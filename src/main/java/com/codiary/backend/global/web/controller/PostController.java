@@ -9,9 +9,11 @@ import com.codiary.backend.global.service.PostService.PostQueryService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -138,89 +140,126 @@ public class PostController {
 
 
     // 저자의 다이어리 페이징 조회
-    // TODO: 페이징 조회로 수정 필요
     // TODO: 멤버별 작성한 글 조회시 공동 저자로 등록된 멤버도 조회가능하도록 기능 수정 필요
-    @GetMapping("/paging/{memberId}")
+    @GetMapping("/member/{memberId}/paging")
     @Operation(
-            summary = "저자의 다이어리 전체 리스트 조회 API", description = "로그인된 멤버가 작성한 모든 글을 조회할 수 있습니다."
+            summary = "저자의 다이어리 페이징 조회 API", description = "저자의 다이어리를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.MemberPostResultListDTO> findMemberPost(
-            @PathVariable Long memberId
+    public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> findPostByMember(
+            @PathVariable Long memberId,
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) @Max(5) Integer size
     ) {
         // 토큰 유효성 검사 (memberId)
         //jwtTokenProvider.isValidToken(memberId);
-        List<Post> memberPostList = postQueryService.getMemberPost(memberId);
+        //List<Post> memberPostList = postQueryService.getMemberPost(memberId);
+        Page<Post> posts = postQueryService.getPostsByMember(memberId, page, size);
         return ApiResponse.onSuccess(
                 SuccessStatus.POST_OK,
-                PostConverter.toMemberPostResultListDTO(memberPostList)
+                PostConverter.toMemberPostPreviewListDTO(posts)
         );
     }
 
     // 팀의 다이어리 페이징 조회
-    @GetMapping("/paging/{teamId}")
+    @GetMapping("/team/{teamId}/paging")
     @Operation(
-            summary = "팀의 다이어리 페이징 조회 API", description = "팀의 다이어리 페이징 조회합니다."
+            summary = "팀의 다이어리 페이징 조회 API", description = "팀의 다이어리를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> findPostByTeam(
+    public ApiResponse<PostResponseDTO.TeamPostPreviewListDTO> findPostByTeam(
+            @PathVariable Long teamId,
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) @Max(5) Integer size
     ){
-        return null;
+        Page<Post> posts = postQueryService.getPostsByTeam(teamId, page, size);
+
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toTeamPostPreviewListDTO(posts)
+        );
     }
 
     // 프로젝트별 저자의 다이어리 페이징 조회
-    @GetMapping("/paging/{projectId}/{memberId}")
+    @GetMapping("/project/{projectId}/member/{memberId}/paging")
     @Operation(
-            summary = "프로젝트별 저자의 다이어리 페이징 조회 API", description = "프로젝트별 저자의 다이어리 페이징 조회합니다."
+            summary = "프로젝트별 저자의 다이어리 페이징 조회 API", description = "프로젝트별 저자의 다이어리를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> findPostByMemberInProject(
+    public ApiResponse<PostResponseDTO.MemberPostInProjectPreviewListDTO> findPostByMemberInProject(
+            @PathVariable Long projectId,
+            @PathVariable Long memberId,
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) @Max(5) Integer size
     ){
-        return null;
+        Page<Post> posts = postQueryService.getPostsByMemberInProject(projectId, memberId, page, size);
+
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toMemberPostInProjectPreviewListDTO(posts)
+        );
     }
 
     // 프로젝트별 팀의 다이어리 페이징 조회
-    @GetMapping("/paging/{projectId}/{teamId}")
+    @GetMapping("/project/{projectId}/team/{teamId}/paging")
     @Operation(
-            summary = "프로젝트별 팀의 다이어리 페이징 조회 API", description = "프로젝트별 팀의 다이어리 페이징 조회합니다."
+            summary = "프로젝트별 팀의 다이어리 페이징 조회 API", description = "프로젝트별 팀의 다이어리를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'와 팀의 'teamId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> findPostByTeamInProject(
+    public ApiResponse<PostResponseDTO.TeamPostInProjectPreviewListDTO> findPostByTeamInProject(
+            @PathVariable Long projectId,
+            @PathVariable Long teamId,
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) @Max(5) Integer size
     ){
-        return null;
+        Page<Post> posts = postQueryService.getPostsByTeamInProject(projectId, teamId, page, size);
+
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toTeamPostInProjectPreviewListDTO(posts)
+        );
     }
 
     // 팀별 저자의 다이어리 페이징 조회
-    @GetMapping("/paging/{teamId}/{memberId}")
+    @GetMapping("/team/{teamId}/member/{memberId}/paging")
     @Operation(
-            summary = "팀별 저자의 다이어리 페이징 조회 API"
-            , description = "팀별 저자의 다이어리 페이징 조회합니다."
+            summary = "팀별 저자의 다이어리 페이징 조회 API", description = "팀별 저자의 다이어리를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> findPostByMemberInTeam(
+    public ApiResponse<PostResponseDTO.MemberPostInTeamPreviewListDTO> findPostByMemberInTeam(
+            @PathVariable Long teamId,
+            @PathVariable Long memberId,
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) @Max(5) Integer size
     ){
-        return null;
+        Page<Post> posts = postQueryService.getPostsByMemberInTeam(teamId, memberId, page, size);
+
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toMemberPostInTeamPreviewListDTO(posts)
+        );
     }
 
     // 제목으로 다이어리 페이징 조회
-    // TODO: 페이징 조회로 수정 필요
-    @GetMapping("/paging/title")
+    @GetMapping("/title/paging")
     @Operation(
-            summary = "제목으로 다이어리 전체 리스트 조회 API", description = "제목으로 다이어리 전체 리스트 조회합니다. Param으로 제목을 입력하세요"
+            summary = "제목으로 다이어리 페이징 조회 API", description = "제목으로 다이어리를 페이징으로 조회합니다. Param으로 제목을 입력하세요."
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<?> findPostsByTitle(
-            @RequestParam Optional<String> search
-    ){
-        List<Post> Posts = postQueryService.findAllBySearch(search);
+    public ApiResponse<PostResponseDTO.PostPreviewListDTO> findPostsByTitle(
+            @RequestParam Optional<String> search,
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) @Max(5) Integer size
+    ) {
+        Page<Post> posts = postQueryService.getPostsByTitle(Optional.of(search.orElse("")), page, size);
         return ApiResponse.onSuccess(
                 SuccessStatus.POST_OK,
-                PostConverter.toPostPreviewListDTO(Posts)
+                PostConverter.toPostPreviewListDTO(posts)
         );
     }
 
     // 카테고리명으로 다이어리 페이징 조회
-    @GetMapping("/paging/category")
+    @GetMapping("/category/paging")
     @Operation(
             summary = "카테고리명으로 다이어리 페이징 조회 API", description = "카테고리명으로 다이어리 페이징 조회합니다."
             //, security = @SecurityRequirement(name = "accessToken")
