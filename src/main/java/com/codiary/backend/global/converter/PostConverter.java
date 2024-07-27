@@ -33,6 +33,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .postAccess(post.getPostAccess())
                 .build();
     }
 
@@ -47,6 +48,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .postAccess(post.getPostAccess())
                 .build();
     }
 
@@ -62,6 +64,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .postAccess(post.getPostAccess())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -89,6 +92,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .postAccess(post.getPostAccess())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -114,6 +118,7 @@ public class PostConverter {
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -136,7 +141,7 @@ public class PostConverter {
     }
 
 
-    //
+    // 프로젝트별 저자의 Post 조회
     public static PostResponseDTO.MemberPostInProjectPreviewDTO toMemberPostInProjectPreviewDTO(Post post) {
         return PostResponseDTO.MemberPostInProjectPreviewDTO.builder()
                 .projectId(post.getProject().getProjectId())
@@ -149,12 +154,13 @@ public class PostConverter {
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
     }
 
-    //
+    // 프로젝트별 저자의 Post 페이징 조회
     public static PostResponseDTO.MemberPostInProjectPreviewListDTO toMemberPostInProjectPreviewListDTO(Page<Post> posts) {
         List<PostResponseDTO.MemberPostInProjectPreviewDTO> memberPostInProjectPreviewListDTO = posts.getContent().stream()
                 .map(PostConverter::toMemberPostInProjectPreviewDTO)
@@ -162,6 +168,41 @@ public class PostConverter {
 
         return PostResponseDTO.MemberPostInProjectPreviewListDTO.builder()
                 .posts(memberPostInProjectPreviewListDTO)
+                .listSize(posts.getNumberOfElements())
+                .totalPage(posts.getTotalPages())
+                .totalElements(posts.getTotalElements())
+                .isFirst(posts.isFirst())
+                .isLast(posts.isLast())
+                .build();
+    }
+
+    // 프로젝트별 팀의 Post 조회
+    public static PostResponseDTO.TeamPostInProjectPreviewDTO toTeamPostInProjectPreviewDTO(Post post) {
+        return PostResponseDTO.TeamPostInProjectPreviewDTO.builder()
+                .projectId(post.getProject().getProjectId())
+                .teamId(post.getTeam().getTeamId())
+                .postId(post.getPostId())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .postTitle(post.getPostTitle())
+                .postStatus(post.getPostStatus())
+                .postCategory(post.getPostCategory())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
+
+    // 프로젝트별 팀의 Post 페이징 조회
+    public static PostResponseDTO.TeamPostInProjectPreviewListDTO toTeamPostInProjectPreviewListDTO(Page<Post> posts) {
+        List<PostResponseDTO.TeamPostInProjectPreviewDTO> teamPostInProjectPreviewListDTO = posts.getContent().stream()
+                .map(PostConverter::toTeamPostInProjectPreviewDTO)
+                .collect(Collectors.toList());
+
+        return PostResponseDTO.TeamPostInProjectPreviewListDTO.builder()
+                .posts(teamPostInProjectPreviewListDTO)
                 .listSize(posts.getNumberOfElements())
                 .totalPage(posts.getTotalPages())
                 .totalElements(posts.getTotalElements())

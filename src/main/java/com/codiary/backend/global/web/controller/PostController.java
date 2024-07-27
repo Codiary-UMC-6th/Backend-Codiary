@@ -201,12 +201,21 @@ public class PostController {
     // 프로젝트별 팀의 다이어리 페이징 조회
     @GetMapping("/project/{projectId}/team/{teamId}/paging")
     @Operation(
-            summary = "프로젝트별 팀의 다이어리 페이징 조회 API", description = "프로젝트별 팀의 다이어리 페이징 조회합니다."
+            summary = "프로젝트별 팀의 다이어리 페이징 조회 API", description = "프로젝트별 팀의 다이어리를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'와 팀의 'teamId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> findPostByTeamInProject(
+    public ApiResponse<PostResponseDTO.TeamPostInProjectPreviewListDTO> findPostByTeamInProject(
+            @PathVariable Long projectId,
+            @PathVariable Long teamId,
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) @Max(5) Integer size
     ){
-        return null;
+        Page<Post> posts = postQueryService.getPostsByTeamInProject(projectId, teamId, page, size);
+
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toTeamPostInProjectPreviewListDTO(posts)
+        );
     }
 
     // 팀별 저자의 다이어리 페이징 조회

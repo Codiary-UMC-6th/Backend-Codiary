@@ -1,5 +1,6 @@
 package com.codiary.backend.global.web.dto.Post;
 
+import com.codiary.backend.global.domain.enums.PostAccess;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,12 +18,14 @@ public class PostResponseDTO {
     @NoArgsConstructor
     public static class CreatePostResultDTO {
         Long postId;
+        Long teamId;
         String postTitle;
         //String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
-        Long teamId;
+        PostAccess postAccess;
+
     }
 
     @Getter
@@ -31,12 +34,13 @@ public class PostResponseDTO {
     @AllArgsConstructor
     public static class UpdatePostResultDTO {
         Long postId;
+        Long teamId;
         String postTitle;
         //String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
-        Long teamId;
+        PostAccess postAccess;
     }
 
     @Getter
@@ -46,13 +50,14 @@ public class PostResponseDTO {
     public static class PostPreviewDTO { // Post 조회
         Long postId;
         Long memberId;
+        Long teamId;
         String postTitle;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
-        Long teamId;
+        PostAccess postAccess;
     }
 
     @Getter
@@ -75,11 +80,12 @@ public class PostResponseDTO {
     public static class MemberPostResultDTO { // 저자별 Post 조회
         Long memberId;
         Long postId;
+        Long teamId;
         String postTitle;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
-        Long teamId;
+        PostAccess postAccess;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }
@@ -105,6 +111,7 @@ public class PostResponseDTO {
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
+        PostAccess postAccess;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }
@@ -135,6 +142,7 @@ public class PostResponseDTO {
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
+        PostAccess postAccess;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }
@@ -145,6 +153,37 @@ public class PostResponseDTO {
     @AllArgsConstructor
     public static class MemberPostInProjectPreviewListDTO { // 프로젝트별 저자의 Post 리스트 조회
         List<MemberPostInProjectPreviewDTO> posts;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        boolean isFirst;
+        boolean isLast;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TeamPostInProjectPreviewDTO { // 프로젝트별 팀의 Post 조회
+        Long projectId;
+        Long teamId;
+        Long postId;
+        Long memberId;
+        String postTitle;
+        Boolean postStatus;
+        String postCategory;
+        Set<Long> coauthorIds;
+        PostAccess postAccess;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TeamPostInProjectPreviewListDTO { // 프로젝트별 팀의 Post 리스트 조회
+        List<TeamPostInProjectPreviewDTO> posts;
         Integer listSize;
         Integer totalPage;
         Long totalElements;

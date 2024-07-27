@@ -66,7 +66,6 @@ public class PostQueryServiceImpl implements PostQueryService {
         return postRepository.findByTeamOrderByCreatedAtDescPostIdDesc(team, request);
     }
 
-
     @Override
     public Page<Post> getPostsByMemberInProject(Long projectId, Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
@@ -81,6 +80,22 @@ public class PostQueryServiceImpl implements PostQueryService {
         }
         return postRepository.findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(project, member, request);
     }
+
+    @Override
+    public Page<Post> getPostsByTeamInProject(Long projectId, Long teamId, int page, int size) {
+        PageRequest request = PageRequest.of(page, size);
+        Project project = projectRepository.findById(projectId).get();
+        Team team = teamRepository.findById(teamId).get();
+
+        if (!postRepository.existsByProject(project)){
+            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_PROJECT);
+        }
+        if (!postRepository.existsByTeam(team)){
+            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);
+        }
+        return postRepository.findByProjectAndTeamOrderByCreatedAtDescPostIdDesc(project, team, request);
+    }
+
 
     @Override
     public Map<String, List<String>> getPostsByMonth(Long memberId, YearMonth yearMonth) {
