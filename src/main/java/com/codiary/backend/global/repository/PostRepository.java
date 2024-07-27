@@ -13,8 +13,8 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    List<Post> findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(String postTitle);
-    List<Post> findAllByOrderByCreatedAtDesc();
+    Page<Post> findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(String postTitle, Pageable pageable);
+    Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
     //List<Post> findAllByMember(Member member);
     Page<Post> findByMemberOrderByCreatedAtDescPostIdDesc(Member member, Pageable pageable);
     Page<Post> findByTeamOrderByCreatedAtDescPostIdDesc(Team team, Pageable pageable);

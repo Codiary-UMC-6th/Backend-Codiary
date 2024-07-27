@@ -76,12 +76,18 @@ public class PostConverter {
     }
 
     // Post 전체 리스트 조회
-    public static PostResponseDTO.PostPreviewListDTO toPostPreviewListDTO(List<Post> postList) {
-        List<PostResponseDTO.PostPreviewDTO> postPreviewDTOList = IntStream.range(0, postList.size())
-                .mapToObj(i -> toPostPreviewDTO(postList.get(i)))
+    public static PostResponseDTO.PostPreviewListDTO toPostPreviewListDTO(Page<Post> posts) {
+        List<PostResponseDTO.PostPreviewDTO> PostPreviewDTOList = posts.getContent().stream()
+                .map(PostConverter::toPostPreviewDTO)
                 .collect(Collectors.toList());
+
         return PostResponseDTO.PostPreviewListDTO.builder()
-                .posts(postPreviewDTOList)
+                .posts(PostPreviewDTOList)
+                .listSize(posts.getNumberOfElements())
+                .totalPage(posts.getTotalPages())
+                .totalElements(posts.getTotalElements())
+                .isFirst(posts.isFirst())
+                .isLast(posts.isLast())
                 .build();
     }
 

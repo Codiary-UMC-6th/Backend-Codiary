@@ -11,8 +11,9 @@ import java.util.Optional;
 
 public interface PostQueryService {
 
-    List<Post> findAllBySearch(Optional<String> optSearch);
+    //List<Post> findAllBySearch(Optional<String> optSearch);
     //List<Post> getMemberPost(Long memberId);
+    Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size);
     Page<Post> getPostsByMember(Long memberId, int page, int size);
     Page<Post> getPostsByTeam(Long teamId, int page, int size);
     Page<Post> getPostsByMemberInProject(Long projectId, Long memberId, int page, int size);

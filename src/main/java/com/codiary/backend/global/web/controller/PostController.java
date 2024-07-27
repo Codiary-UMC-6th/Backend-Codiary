@@ -241,19 +241,20 @@ public class PostController {
     }
 
     // 제목으로 다이어리 페이징 조회
-    // TODO: 페이징 조회로 수정 필요
     @GetMapping("/title/paging")
     @Operation(
-            summary = "제목으로 다이어리 전체 리스트 조회 API", description = "제목으로 다이어리 전체 리스트 조회합니다. Param으로 제목을 입력하세요"
+            summary = "제목으로 다이어리 페이징 조회 API", description = "제목으로 다이어리를 페이징으로 조회합니다. Param으로 제목을 입력하세요."
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<?> findPostsByTitle(
-            @RequestParam Optional<String> search
-    ){
-        List<Post> Posts = postQueryService.findAllBySearch(search);
+    public ApiResponse<PostResponseDTO.PostPreviewListDTO> findPostsByTitle(
+            @RequestParam Optional<String> search,
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) @Max(5) Integer size
+    ) {
+        Page<Post> posts = postQueryService.getPostsByTitle(Optional.of(search.orElse("")), page, size);
         return ApiResponse.onSuccess(
                 SuccessStatus.POST_OK,
-                PostConverter.toPostPreviewListDTO(Posts)
+                PostConverter.toPostPreviewListDTO(posts)
         );
     }
 

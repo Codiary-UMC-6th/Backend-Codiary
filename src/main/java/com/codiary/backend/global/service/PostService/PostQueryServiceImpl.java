@@ -36,15 +36,16 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final ProjectRepository projectRepository;
 
     @Override
-    public List<Post> findAllBySearch(Optional<String> optSearch) {
+    public Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size) {
+        PageRequest request = PageRequest.of(page, size);
         // 만약 검색어가 존재한다면
         if (optSearch.isPresent()) {
             String search = optSearch.get();
 
-            return postRepository.findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(search);
+            return postRepository.findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(search, request);
         }
         // 검색어 존재 X
-        return postRepository.findAllByOrderByCreatedAtDesc();
+        return postRepository.findAllByOrderByCreatedAtDesc(request);
     }
 
     @Override
