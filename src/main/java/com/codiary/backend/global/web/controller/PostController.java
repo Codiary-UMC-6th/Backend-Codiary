@@ -140,22 +140,24 @@ public class PostController {
 
 
     // 저자의 다이어리 페이징 조회
-    // TODO: 페이징 조회로 수정 필요
     // TODO: 멤버별 작성한 글 조회시 공동 저자로 등록된 멤버도 조회가능하도록 기능 수정 필요
     @GetMapping("/member/{memberId}/paging")
     @Operation(
-            summary = "저자의 다이어리 전체 리스트 조회 API", description = "로그인된 멤버가 작성한 모든 글을 조회할 수 있습니다."
+            summary = "저자의 다이어리 페이징 조회 API", description = "저자의 다이어리를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.MemberPostResultListDTO> findMemberPost(
-            @PathVariable Long memberId
+    public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> findPostByMember(
+            @PathVariable Long memberId,
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) @Max(5) Integer size
     ) {
         // 토큰 유효성 검사 (memberId)
         //jwtTokenProvider.isValidToken(memberId);
-        List<Post> memberPostList = postQueryService.getMemberPost(memberId);
+        //List<Post> memberPostList = postQueryService.getMemberPost(memberId);
+        Page<Post> posts = postQueryService.getPostsByMember(memberId, page, size);
         return ApiResponse.onSuccess(
                 SuccessStatus.POST_OK,
-                PostConverter.toMemberPostResultListDTO(memberPostList)
+                PostConverter.toMemberPostPreviewListDTO(posts)
         );
     }
 

@@ -15,8 +15,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(String postTitle);
     List<Post> findAllByOrderByCreatedAtDesc();
-    List<Post> findAllByMember(Member member);
-
+    //List<Post> findAllByMember(Member member);
+    Page<Post> findByMemberOrderByCreatedAtDescPostIdDesc(Member member, Pageable pageable);
     Page<Post> findByTeamOrderByCreatedAtDescPostIdDesc(Team team, Pageable pageable);
     Page<Post> findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(Project project, Member member, Pageable pageable);
     Page<Post> findByProjectAndTeamOrderByCreatedAtDescPostIdDesc(Project project, Team team, Pageable pageable);

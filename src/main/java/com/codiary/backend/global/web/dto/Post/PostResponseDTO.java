@@ -18,7 +18,9 @@ public class PostResponseDTO {
     @NoArgsConstructor
     public static class CreatePostResultDTO {
         Long postId;
+        Long memberId;
         Long teamId;
+        Long projectId;
         String postTitle;
         //String postBody;
         Boolean postStatus;
@@ -34,7 +36,9 @@ public class PostResponseDTO {
     @AllArgsConstructor
     public static class UpdatePostResultDTO {
         Long postId;
+        Long memberId;
         Long teamId;
+        Long projectId;
         String postTitle;
         //String postBody;
         Boolean postStatus;
@@ -51,6 +55,7 @@ public class PostResponseDTO {
         Long postId;
         Long memberId;
         Long teamId;
+        Long projectId;
         String postTitle;
         Boolean postStatus;
         String postCategory;
@@ -66,21 +71,22 @@ public class PostResponseDTO {
     @AllArgsConstructor
     public static class PostPreviewListDTO { // 전체 Post 리스트 조회
         List<PostPreviewDTO> posts;
-        //Integer listSize;
-        //Integer totalPage;
-        //Long totalElements;
-        //boolean isFirst;
-        //boolean isLast;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        boolean isFirst;
+        boolean isLast;
     }
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MemberPostResultDTO { // 저자별 Post 조회
+    public static class MemberPostPreviewDTO { // 저자별 Post 조회
         Long memberId;
         Long postId;
         Long teamId;
+        Long projectId;
         String postTitle;
         Boolean postStatus;
         String postCategory;
@@ -94,8 +100,13 @@ public class PostResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MemberPostResultListDTO { // 저자별 Post 리스트 조회
-        List<MemberPostResultDTO> posts;
+    public static class MemberPostPreviewListDTO { // 저자별 Post 리스트 조회
+        List<MemberPostPreviewDTO> posts;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        boolean isFirst;
+        boolean isLast;
     }
 
 
@@ -107,6 +118,7 @@ public class PostResponseDTO {
         Long teamId;
         Long postId;
         Long memberId;
+        Long projectId;
         String postTitle;
         Boolean postStatus;
         String postCategory;
@@ -199,6 +211,7 @@ public class PostResponseDTO {
         Long teamId;
         Long memberId;
         Long postId;
+        Long projectId;
         String postTitle;
         Boolean postStatus;
         String postCategory;

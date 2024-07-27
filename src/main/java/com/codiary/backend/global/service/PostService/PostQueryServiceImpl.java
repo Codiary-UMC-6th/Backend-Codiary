@@ -48,11 +48,14 @@ public class PostQueryServiceImpl implements PostQueryService {
     }
 
     @Override
-    public List<Post> getMemberPost(Long memberId) {
-        Member getMember = memberRepository.findById(memberId).get();
-        List<Post> MemberPostList = postRepository.findAllByMember(getMember);
+    public Page<Post> getPostsByMember(Long memberId, int page, int size) {
+        PageRequest request = PageRequest.of(page, size);
+        Member member = memberRepository.findById(memberId).get();
 
-        return MemberPostList;
+        if (!postRepository.existsByMember(member)){
+            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
+        }
+        return postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, request);
     }
 
     @Override
