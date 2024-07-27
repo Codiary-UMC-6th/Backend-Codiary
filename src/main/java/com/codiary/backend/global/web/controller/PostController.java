@@ -9,7 +9,6 @@ import com.codiary.backend.global.service.PostService.PostQueryService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +29,7 @@ public class PostController {
 
     // 글 생성하기
     // TODO: 현재 teamId=1로 되어 있는 부분 수정 구현 필요
-    @PostMapping()
+    @PostMapping(consumes = "multipart/form-data")
     @Operation(
             summary = "글 생성 API"
             , description = "글을 생성합니다."
@@ -38,8 +37,8 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(
             @RequestParam Long memberId,
-            @RequestBody PostRequestDTO.CreatePostRequestDTO request
-            ){
+            @ModelAttribute PostRequestDTO.CreatePostRequestDTO request
+    ) {
         Long teamId = 1L;
         Post newPost = postCommandService.createPost(memberId, teamId, request);
         return ApiResponse.onSuccess(

@@ -1,4 +1,14 @@
 package com.codiary.backend.global.converter;
 
-public class PostPhotoConverter {
+import com.codiary.backend.global.domain.entity.Post;
+import com.codiary.backend.global.domain.entity.PostFile;
+
+public class PostFileConverter {
+
+    public static PostFile toPostFile(String fileUrl, Post post) {
+        return PostFile.builder()
+                .fileUrl(fileUrl)
+                .post(post)
+                .build();
+    }
 }

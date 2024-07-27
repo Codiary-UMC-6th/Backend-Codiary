@@ -1,17 +1,15 @@
 package com.codiary.backend.global.web.dto.Post;
 
 import com.codiary.backend.global.domain.enums.PostAccess;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Set;
 
 public class PostRequestDTO {
 
     @Getter
+    @Setter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
@@ -22,6 +20,7 @@ public class PostRequestDTO {
         private Boolean postStatus;
         private String postCategory;
         private PostAccess postAccess;
+        private List<MultipartFile> postFiles;
     }
 
     @Getter

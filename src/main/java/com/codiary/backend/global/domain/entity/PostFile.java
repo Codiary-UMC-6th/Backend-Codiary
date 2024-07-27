@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Builder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class PostFile {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +18,7 @@ public class PostFile {
   @JoinColumn(name = "post_id")
   private Post post;
 
-  @Column(name = "photo_url", nullable = false, columnDefinition = "varchar(500)")
-  private String photoUrl;
+  @Column(name = "file_url", nullable = false, columnDefinition = "varchar(500)")
+  private String fileUrl;
 
 }
