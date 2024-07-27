@@ -14,6 +14,7 @@ public interface PostQueryService {
     List<Post> findAllBySearch(Optional<String> optSearch);
     List<Post> getMemberPost(Long memberId);
     Page<Post> getPostsByTeam(Long teamId, int page, int size);
+    Page<Post> getPostsByMemberInProject(Long projectId, Long memberId, int page, int size);
 
 
     Map<String, List<String>> getPostsByMonth(Long memberId, YearMonth yearMonth);

@@ -122,4 +122,34 @@ public class PostResponseDTO {
         boolean isLast;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberPostInProjectPreviewDTO { // 프로젝트별 저자의 Post 조회
+        Long projectId;
+        Long memberId;
+        Long postId;
+        Long teamId;
+        String postTitle;
+        Boolean postStatus;
+        String postCategory;
+        Set<Long> coauthorIds;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberPostInProjectPreviewListDTO { // 프로젝트별 저자의 Post 리스트 조회
+        List<MemberPostInProjectPreviewDTO> posts;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        boolean isFirst;
+        boolean isLast;
+    }
+
 }

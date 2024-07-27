@@ -9,8 +9,6 @@ import com.codiary.backend.global.service.PostService.PostQueryService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -172,25 +170,32 @@ public class PostController {
             @RequestParam @Min(0) Integer page,
             @RequestParam @Min(1) @Max(5) Integer size
     ){
-        log.info("Finding posts by team with ID: {}, Page: {}, Size: {}", teamId, page, size);
         Page<Post> posts = postQueryService.getPostsByTeam(teamId, page, size);
-        log.info("Number of posts found: {}", posts.getTotalElements());
 
         return ApiResponse.onSuccess(
                 SuccessStatus.POST_OK,
-                PostConverter.toTeamPostPreviewDTOList(posts)
+                PostConverter.toTeamPostPreviewListDTO(posts)
         );
     }
 
     // 프로젝트별 저자의 다이어리 페이징 조회
     @GetMapping("/project/{projectId}/member/{memberId}/paging")
     @Operation(
-            summary = "프로젝트별 저자의 다이어리 페이징 조회 API", description = "프로젝트별 저자의 다이어리 페이징 조회합니다."
+            summary = "프로젝트별 저자의 다이어리 페이징 조회 API", description = "프로젝트별 저자의 다이어리를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> findPostByMemberInProject(
+    public ApiResponse<PostResponseDTO.MemberPostInProjectPreviewListDTO> findPostByMemberInProject(
+            @PathVariable Long projectId,
+            @PathVariable Long memberId,
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) @Max(5) Integer size
     ){
-        return null;
+        Page<Post> posts = postQueryService.getPostsByMemberInProject(projectId, memberId, page, size);
+
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toMemberPostInProjectPreviewListDTO(posts)
+        );
     }
 
     // 프로젝트별 팀의 다이어리 페이징 조회

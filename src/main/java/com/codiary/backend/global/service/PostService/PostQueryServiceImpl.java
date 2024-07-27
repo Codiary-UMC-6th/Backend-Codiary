@@ -5,9 +5,11 @@ import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.PostHandler;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
+import com.codiary.backend.global.domain.entity.Project;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.repository.PostRepository;
+import com.codiary.backend.global.repository.ProjectRepository;
 import com.codiary.backend.global.repository.TeamRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final PostRepository postRepository;
+    private final ProjectRepository projectRepository;
 
     @Override
     public List<Post> findAllBySearch(Optional<String> optSearch) {
@@ -63,6 +66,21 @@ public class PostQueryServiceImpl implements PostQueryService {
         return postRepository.findByTeamOrderByCreatedAtDescPostIdDesc(team, request);
     }
 
+
+    @Override
+    public Page<Post> getPostsByMemberInProject(Long projectId, Long memberId, int page, int size) {
+        PageRequest request = PageRequest.of(page, size);
+        Project project = projectRepository.findById(projectId).get();
+        Member member = memberRepository.findById(memberId).get();
+
+        if (!postRepository.existsByProject(project)){
+            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_PROJECT);
+        }
+        if (!postRepository.existsByMember(member)){
+            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
+        }
+        return postRepository.findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(project, member, request);
+    }
 
     @Override
     public Map<String, List<String>> getPostsByMonth(Long memberId, YearMonth yearMonth) {

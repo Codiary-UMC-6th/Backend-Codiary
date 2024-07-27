@@ -95,11 +95,11 @@ public class PostConverter {
     }
     // 저자별 Post 리스트 조회
     public static PostResponseDTO.MemberPostResultListDTO toMemberPostResultListDTO(List<Post> memberPostList) {
-        List<PostResponseDTO.MemberPostResultDTO> memberPostResultDTOList = IntStream.range(0, memberPostList.size())
+        List<PostResponseDTO.MemberPostResultDTO> memberPostResultListDTO = IntStream.range(0, memberPostList.size())
                 .mapToObj(i -> toMemberPostResultDTO(memberPostList.get(i)))
                 .collect(Collectors.toList());
         return PostResponseDTO.MemberPostResultListDTO.builder()
-                .posts(memberPostResultDTOList)
+                .posts(memberPostResultListDTO)
                 .build();
     }
 
@@ -120,13 +120,13 @@ public class PostConverter {
     }
 
     // 팀별 Post 페이징 조회
-    public static PostResponseDTO.TeamPostPreviewListDTO toTeamPostPreviewDTOList(Page<Post> posts) {
-        List<PostResponseDTO.TeamPostPreviewDTO> teamPostResultDTOList = posts.getContent().stream()
+    public static PostResponseDTO.TeamPostPreviewListDTO toTeamPostPreviewListDTO(Page<Post> posts) {
+        List<PostResponseDTO.TeamPostPreviewDTO> teamPostPreviewDTOList = posts.getContent().stream()
                 .map(PostConverter::toTeamPostPreviewDTO)
                 .collect(Collectors.toList());
 
         return PostResponseDTO.TeamPostPreviewListDTO.builder()
-                .posts(teamPostResultDTOList)
+                .posts(teamPostPreviewDTOList)
                 .listSize(posts.getNumberOfElements())
                 .totalPage(posts.getTotalPages())
                 .totalElements(posts.getTotalElements())
@@ -136,5 +136,38 @@ public class PostConverter {
     }
 
 
+    //
+    public static PostResponseDTO.MemberPostInProjectPreviewDTO toMemberPostInProjectPreviewDTO(Post post) {
+        return PostResponseDTO.MemberPostInProjectPreviewDTO.builder()
+                .projectId(post.getProject().getProjectId())
+                .memberId(post.getMember().getMemberId())
+                .postId(post.getPostId())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .postTitle(post.getPostTitle())
+                .postStatus(post.getPostStatus())
+                .postCategory(post.getPostCategory())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
+
+    //
+    public static PostResponseDTO.MemberPostInProjectPreviewListDTO toMemberPostInProjectPreviewListDTO(Page<Post> posts) {
+        List<PostResponseDTO.MemberPostInProjectPreviewDTO> memberPostInProjectPreviewListDTO = posts.getContent().stream()
+                .map(PostConverter::toMemberPostInProjectPreviewDTO)
+                .collect(Collectors.toList());
+
+        return PostResponseDTO.MemberPostInProjectPreviewListDTO.builder()
+                .posts(memberPostInProjectPreviewListDTO)
+                .listSize(posts.getNumberOfElements())
+                .totalPage(posts.getTotalPages())
+                .totalElements(posts.getTotalElements())
+                .isFirst(posts.isFirst())
+                .isLast(posts.isLast())
+                .build();
+    }
 
 }
