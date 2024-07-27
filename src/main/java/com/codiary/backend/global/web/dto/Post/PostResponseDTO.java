@@ -43,7 +43,7 @@ public class PostResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PostPreviewDTO {
+    public static class PostPreviewDTO { // Post 조회
         Long postId;
         Long memberId;
         String postTitle;
@@ -59,15 +59,21 @@ public class PostResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PostPreviewListDTO {
+    public static class PostPreviewListDTO { // 전체 Post 리스트 조회
         List<PostPreviewDTO> posts;
+        //Integer listSize;
+        //Integer totalPage;
+        //Long totalElements;
+        //boolean isFirst;
+        //boolean isLast;
     }
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MemberPostResultDTO {
+    public static class MemberPostResultDTO { // 저자별 Post 조회
+        Long memberId;
         Long postId;
         String postTitle;
         Boolean postStatus;
@@ -82,8 +88,38 @@ public class PostResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MemberPostResultListDTO {
+    public static class MemberPostResultListDTO { // 저자별 Post 리스트 조회
         List<MemberPostResultDTO> posts;
+    }
+
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TeamPostPreviewDTO { // 팀별 Post 조회
+        Long teamId;
+        Long postId;
+        Long memberId;
+        String postTitle;
+        Boolean postStatus;
+        String postCategory;
+        Set<Long> coauthorIds;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TeamPostPreviewListDTO { // 팀별 Post 리스트 조회
+        List<TeamPostPreviewDTO> posts;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        boolean isFirst;
+        boolean isLast;
     }
 
 }

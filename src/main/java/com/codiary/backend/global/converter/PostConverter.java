@@ -4,6 +4,7 @@ import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import lombok.Builder;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,6 +50,7 @@ public class PostConverter {
                 .build();
     }
 
+    // Post 조회
     public static PostResponseDTO.PostPreviewDTO toPostPreviewDTO(Post post) {
         return PostResponseDTO.PostPreviewDTO.builder()
                 .postId(post.getPostId())
@@ -65,6 +67,7 @@ public class PostConverter {
                 .build();
     }
 
+    // Post 전체 리스트 조회
     public static PostResponseDTO.PostPreviewListDTO toPostPreviewListDTO(List<Post> postList) {
         List<PostResponseDTO.PostPreviewDTO> postPreviewDTOList = IntStream.range(0, postList.size())
                 .mapToObj(i -> toPostPreviewDTO(postList.get(i)))
@@ -74,8 +77,10 @@ public class PostConverter {
                 .build();
     }
 
+    // 저자별 Post 조회
     public static PostResponseDTO.MemberPostResultDTO toMemberPostResultDTO(Post post) {
         return PostResponseDTO.MemberPostResultDTO.builder()
+                .memberId(post.getMember().getMemberId())
                 .postId(post.getPostId())
                 .postTitle(post.getPostTitle())
                 .postStatus(post.getPostStatus())
@@ -88,7 +93,7 @@ public class PostConverter {
                 .updatedAt(post.getUpdatedAt())
                 .build();
     }
-
+    // 저자별 Post 리스트 조회
     public static PostResponseDTO.MemberPostResultListDTO toMemberPostResultListDTO(List<Post> memberPostList) {
         List<PostResponseDTO.MemberPostResultDTO> memberPostResultDTOList = IntStream.range(0, memberPostList.size())
                 .mapToObj(i -> toMemberPostResultDTO(memberPostList.get(i)))
@@ -97,4 +102,39 @@ public class PostConverter {
                 .posts(memberPostResultDTOList)
                 .build();
     }
+
+    // 팀별 Post 조회
+    public static PostResponseDTO.TeamPostPreviewDTO toTeamPostPreviewDTO(Post post) {
+        return PostResponseDTO.TeamPostPreviewDTO.builder()
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .postId(post.getPostId())
+                .postTitle(post.getPostTitle())
+                .postStatus(post.getPostStatus())
+                .postCategory(post.getPostCategory())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
+
+    // 팀별 Post 페이징 조회
+    public static PostResponseDTO.TeamPostPreviewListDTO toTeamPostPreviewDTOList(Page<Post> posts) {
+        List<PostResponseDTO.TeamPostPreviewDTO> teamPostResultDTOList = posts.getContent().stream()
+                .map(PostConverter::toTeamPostPreviewDTO)
+                .collect(Collectors.toList());
+
+        return PostResponseDTO.TeamPostPreviewListDTO.builder()
+                .posts(teamPostResultDTOList)
+                .listSize(posts.getNumberOfElements())
+                .totalPage(posts.getTotalPages())
+                .totalElements(posts.getTotalElements())
+                .isFirst(posts.isFirst())
+                .isLast(posts.isLast())
+                .build();
+    }
+
+
+
 }
