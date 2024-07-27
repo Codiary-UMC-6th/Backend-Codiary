@@ -221,13 +221,21 @@ public class PostController {
     // 팀별 저자의 다이어리 페이징 조회
     @GetMapping("/team/{teamId}/member/{memberId}/paging")
     @Operation(
-            summary = "팀별 저자의 다이어리 페이징 조회 API"
-            , description = "팀별 저자의 다이어리 페이징 조회합니다."
+            summary = "팀별 저자의 다이어리 페이징 조회 API", description = "팀별 저자의 다이어리를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> findPostByMemberInTeam(
+    public ApiResponse<PostResponseDTO.MemberPostInTeamPreviewListDTO> findPostByMemberInTeam(
+            @PathVariable Long teamId,
+            @PathVariable Long memberId,
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) @Max(5) Integer size
     ){
-        return null;
+        Page<Post> posts = postQueryService.getPostsByMemberInTeam(teamId, memberId, page, size);
+
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toMemberPostInTeamPreviewListDTO(posts)
+        );
     }
 
     // 제목으로 다이어리 페이징 조회

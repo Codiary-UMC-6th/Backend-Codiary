@@ -191,4 +191,35 @@ public class PostResponseDTO {
         boolean isLast;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberPostInTeamPreviewDTO { // 팀별 멤버의 Post 조회
+        Long teamId;
+        Long memberId;
+        Long postId;
+        String postTitle;
+        Boolean postStatus;
+        String postCategory;
+        Set<Long> coauthorIds;
+        PostAccess postAccess;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberPostInTeamPreviewListDTO { // 팀별 멤버의 Post 리스트 조회
+        List<MemberPostInTeamPreviewDTO> posts;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        boolean isFirst;
+        boolean isLast;
+    }
+
 }
+

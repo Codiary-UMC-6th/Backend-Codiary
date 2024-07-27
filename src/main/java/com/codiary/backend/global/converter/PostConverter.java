@@ -211,4 +211,39 @@ public class PostConverter {
                 .build();
     }
 
+    // 팀별 멤버의 Post 조회
+    public static PostResponseDTO.MemberPostInTeamPreviewDTO toMemberPostInTeamPreviewDTO(Post post) {
+        return PostResponseDTO.MemberPostInTeamPreviewDTO.builder()
+                .teamId(post.getTeam().getTeamId())
+                .memberId(post.getMember().getMemberId())
+                .postId(post.getPostId())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .postTitle(post.getPostTitle())
+                .postStatus(post.getPostStatus())
+                .postCategory(post.getPostCategory())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
+
+    // 팀별 멤버의 Post 페이징 조회
+    public static PostResponseDTO.MemberPostInTeamPreviewListDTO toMemberPostInTeamPreviewListDTO(Page<Post> posts) {
+        List<PostResponseDTO.MemberPostInTeamPreviewDTO> memberPostInTeamPreviewListDTO = posts.getContent().stream()
+                .map(PostConverter::toMemberPostInTeamPreviewDTO)
+                .collect(Collectors.toList());
+
+        return PostResponseDTO.MemberPostInTeamPreviewListDTO.builder()
+                .posts(memberPostInTeamPreviewListDTO)
+                .listSize(posts.getNumberOfElements())
+                .totalPage(posts.getTotalPages())
+                .totalElements(posts.getTotalElements())
+                .isFirst(posts.isFirst())
+                .isLast(posts.isLast())
+                .build();
+    }
+
 }

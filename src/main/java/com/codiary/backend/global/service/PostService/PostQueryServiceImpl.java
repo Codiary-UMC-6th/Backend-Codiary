@@ -96,6 +96,21 @@ public class PostQueryServiceImpl implements PostQueryService {
         return postRepository.findByProjectAndTeamOrderByCreatedAtDescPostIdDesc(project, team, request);
     }
 
+    @Override
+    public Page<Post> getPostsByMemberInTeam(Long teamId, Long memberId, int page, int size) {
+        PageRequest request = PageRequest.of(page, size);
+        Team team = teamRepository.findById(teamId).get();
+        Member member = memberRepository.findById(memberId).get();
+
+        if (!postRepository.existsByTeam(team)){
+            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);
+        }
+        if (!postRepository.existsByMember(member)){
+            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
+        }
+        return postRepository.findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(team, member, request);
+    }
+
 
     @Override
     public Map<String, List<String>> getPostsByMonth(Long memberId, YearMonth yearMonth) {
