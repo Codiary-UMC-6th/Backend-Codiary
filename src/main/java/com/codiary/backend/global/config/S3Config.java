@@ -29,8 +29,8 @@ public class S3Config {
     @Value("${cloud.aws.region.static}")
     private String region;
 
-    @Value("${cloud.aws.s3.path.post}")
-    private String postPath;
+    @Value("${cloud.aws.s3.path.file}")
+    private String filesPath;
 
     @PostConstruct
     public void init() {
