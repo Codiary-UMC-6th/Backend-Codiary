@@ -8,10 +8,21 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.Map;
 
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class CalendarDTO {
-    private Map<String, List<String[]>> projectActivities;
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ToCalendarDTO {
+        private Map<String, List<String[]>> projectAndTitlesByDate;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ToProjectDTO {
+        private Map<String, List<String>> titlesByProject;
+    }
 }

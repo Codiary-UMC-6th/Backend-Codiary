@@ -55,6 +55,8 @@ public class PostQueryServiceImpl implements PostQueryService {
         LocalDateTime endDate = yearMonth.atEndOfMonth().atTime(23, 59, 59);
         List<Post> posts = postRepository.findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(member, startDate, endDate);
 
+        posts.forEach(post -> post.getProject());
+
         return posts;
     }
 }

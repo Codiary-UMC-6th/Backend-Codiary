@@ -9,19 +9,35 @@ import java.util.List;
 import java.util.Map;
 
 public class CalendarConverter {
-    public static CalendarDTO toCalendarDTO(List<Post> postList) {
-        Map<String, List<String[]>> projectActivities = new HashMap<>();
+
+    public static CalendarDTO.ToCalendarDTO toCalendarDTO(List<Post> postList) {
+        Map<String, List<String[]>> activities = new HashMap<>();
 
         postList.forEach(post -> {
             String date = post.getCreatedAt().toLocalDate().toString();
             String projectName = post.getProject().getProjectName();
             String postTitle = post.getPostTitle();
             String[] activityDetail = {projectName, postTitle};
-            projectActivities.computeIfAbsent(date, k -> new ArrayList<>()).add(activityDetail);
+            activities.computeIfAbsent(date, k -> new ArrayList<>()).add(activityDetail);
         });
 
-        return CalendarDTO.builder()
-                .projectActivities(projectActivities)
+        return CalendarDTO.ToCalendarDTO.builder()
+                .projectAndTitlesByDate(activities)
+                .build();
+    }
+
+    public static CalendarDTO.ToProjectDTO toProjectsDTO(List<Post> postList) {
+        Map<String, List<String>> activities = new HashMap<>();
+
+        postList.forEach(post -> {
+            String projectName = post.getProject().getProjectName();
+            String postTitle = post.getPostTitle();
+            activities.computeIfAbsent(projectName, k -> new ArrayList<>()).add(postTitle);
+        });
+
+        return CalendarDTO.ToProjectDTO.builder()
+                .titlesByProject(activities)
                 .build();
     }
 }
+
