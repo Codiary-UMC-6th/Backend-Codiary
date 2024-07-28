@@ -76,12 +76,18 @@ public class Post extends BaseEntity {
     this.team = team;
   }
 
+  public void setProject(Project project) { this.project = project;}
+
   public void update(PostRequestDTO.UpdatePostDTO request) {
     this.postTitle = request.getPostTitle();
     this.postBody = request.getPostBody();
     this.postAccess = request.getPostAccess();
     this.postStatus = request.getPostStatus();
     this.postCategory = request.getPostCategory();
+  }
+
+  public void setPostStatus(Boolean postStatus) {
+    this.postStatus = postStatus;
   }
 
 
