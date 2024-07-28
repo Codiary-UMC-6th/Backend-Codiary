@@ -15,6 +15,7 @@ public class PostRequestDTO {
     @NoArgsConstructor
     public static class CreatePostRequestDTO {
         private Long teamId;
+        private Long projectId;
         private String postTitle;
         private String postBody;
         private Boolean postStatus;

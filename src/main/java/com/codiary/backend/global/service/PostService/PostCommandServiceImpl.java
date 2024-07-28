@@ -6,6 +6,15 @@ import com.codiary.backend.global.domain.entity.*;
 import com.codiary.backend.global.domain.entity.mapping.Authors;
 import com.codiary.backend.global.repository.*;
 import com.codiary.backend.global.s3.AmazonS3Manager;
+import com.codiary.backend.global.domain.entity.Member;
+import com.codiary.backend.global.domain.entity.Post;
+import com.codiary.backend.global.domain.entity.Project;
+import com.codiary.backend.global.domain.entity.Team;
+import com.codiary.backend.global.domain.entity.mapping.Authors;
+import com.codiary.backend.global.repository.MemberRepository;
+import com.codiary.backend.global.repository.PostRepository;
+import com.codiary.backend.global.repository.ProjectRepository;
+import com.codiary.backend.global.repository.TeamRepository;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,13 +35,14 @@ public class PostCommandServiceImpl implements PostCommandService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final TeamRepository teamRepository; // 추가
+    private final TeamRepository teamRepository;
+    private final ProjectRepository projectRepository;
     private final AmazonS3Manager s3Manager; // 추가
     private final UuidRepository uuidRepository; // 추가
     private final PostFileRepository postFileRepository; // 추가
 
     @Override
-    public Post createPost(Long memberId, Long teamId, PostRequestDTO.CreatePostRequestDTO request) {
+    public Post createPost(Long memberId, Long teamId, Long projectId, PostRequestDTO.CreatePostRequestDTO request) {
 
         Post newPost = PostConverter.toPost(request);
 
@@ -42,8 +52,12 @@ public class PostCommandServiceImpl implements PostCommandService {
         Team getTeam = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("Team not found"));
 
+        Project getProject = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+
         newPost.setMember(getMember);
         newPost.setTeam(getTeam);
+        newPost.setProject(getProject);
 
         Post tempPost = postRepository.save(newPost);
         tempPost.setPostFileList(new ArrayList<>());
