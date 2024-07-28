@@ -3,10 +3,12 @@ package com.codiary.backend.global.service.PostService;
 import com.codiary.backend.global.converter.PostConverter;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
+import com.codiary.backend.global.domain.entity.Project;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.domain.entity.mapping.Authors;
 import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.repository.PostRepository;
+import com.codiary.backend.global.repository.ProjectRepository;
 import com.codiary.backend.global.repository.TeamRepository;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +27,11 @@ public class PostCommandServiceImpl implements PostCommandService{
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final TeamRepository teamRepository; // 추가
+    private final TeamRepository teamRepository;
+    private final ProjectRepository projectRepository;
 
     @Override
-    public Post createPost(Long memberId, Long teamId, PostRequestDTO.CreatePostRequestDTO request) {
+    public Post createPost(Long memberId, Long teamId, Long projectId, PostRequestDTO.CreatePostRequestDTO request) {
 
         Post newPost = PostConverter.toPost(request);
 
@@ -38,8 +41,12 @@ public class PostCommandServiceImpl implements PostCommandService{
         Team getTeam = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("Team not found"));
 
+        Project getProject = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+
         newPost.setMember(getMember);
         newPost.setTeam(getTeam);
+        newPost.setProject(getProject);
 
         Post savedPost = postRepository.save(newPost);
 
