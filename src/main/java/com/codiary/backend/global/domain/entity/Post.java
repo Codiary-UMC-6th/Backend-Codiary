@@ -76,6 +76,8 @@ public class Post extends BaseEntity {
     this.team = team;
   }
 
+  public void setProject(Project project) { this.project = project;}
+
   public void update(PostRequestDTO.UpdatePostDTO request) {
     this.postTitle = request.getPostTitle();
     this.postBody = request.getPostBody();

@@ -42,7 +42,8 @@ public class PostController {
             @RequestBody PostRequestDTO.CreatePostRequestDTO request
             ){
         Long teamId = 1L;
-        Post newPost = postCommandService.createPost(memberId, teamId, request);
+        Long projectId = 1L;
+        Post newPost = postCommandService.createPost(memberId, teamId, projectId, request);
         return ApiResponse.onSuccess(
                 SuccessStatus.POST_OK,
                 PostConverter.toCreateResultDTO(newPost)
