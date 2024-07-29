@@ -19,6 +19,7 @@ public interface PostQueryService {
     Page<Post> getPostsByTeamInProject(Long projectId, Long teamId, int page, int size);
     Page<Post> getPostsByMemberInTeam(Long teamId, Long memberId, int page, int size);
 
+    Post.PostAdjacent findAdjacentPosts(Long postId);
 
     List<Post> getPostsByMonth(Long memberId, YearMonth yearMonth);
 }
