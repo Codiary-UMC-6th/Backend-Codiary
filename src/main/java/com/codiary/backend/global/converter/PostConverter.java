@@ -274,4 +274,35 @@ public class PostConverter {
                 .build();
     }
 
+    // 특정 Post의 인접한 Post 조회 (이전, 다음 Post 조회)
+    public static PostResponseDTO.PostAdjacentDTO.PostAdjacentPreviewDTO toPostAdjacentPreviewDTO(Post post) {
+        if (post == null) return null;
+
+        return PostResponseDTO.PostAdjacentDTO.PostAdjacentPreviewDTO.builder()
+                .postId(post.getPostId())
+                .memberId(post.getMember().getMemberId())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .projectId(post.getProject().getProjectId())
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .postCategory(post.getPostCategory())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
+
+    public static PostResponseDTO.PostAdjacentDTO toPostAdjacentDTO(Post.PostAdjacent adjacent) {
+        return PostResponseDTO.PostAdjacentDTO.builder()
+                .hadOlder(adjacent.getOlderPost() != null)
+                .hasLater(adjacent.getLaterPost() != null)
+                .olderPost(toPostAdjacentPreviewDTO(adjacent.getOlderPost()))
+                .laterPost(toPostAdjacentPreviewDTO(adjacent.getLaterPost()))
+                .build();
+    }
+
 }

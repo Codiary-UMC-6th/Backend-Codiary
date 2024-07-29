@@ -90,5 +90,13 @@ public class Post extends BaseEntity {
     this.postStatus = postStatus;
   }
 
+  @Builder
+  @Getter
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class PostAdjacent{
+    Post laterPost;
+    Post olderPost;
+  }
 
 }

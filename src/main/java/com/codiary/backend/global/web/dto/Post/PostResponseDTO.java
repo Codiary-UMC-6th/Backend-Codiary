@@ -240,5 +240,36 @@ public class PostResponseDTO {
         boolean isLast;
     }
 
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostAdjacentDTO {
+        Boolean hasLater;
+        Boolean hadOlder;
+        PostAdjacentPreviewDTO laterPost;
+        PostAdjacentPreviewDTO olderPost;
+
+        @Builder
+        @Getter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class PostAdjacentPreviewDTO {
+            Long postId;
+            Long memberId;
+            Long teamId;
+            Long projectId;
+            String postTitle;
+            String postBody;
+            Boolean postStatus;
+            String postCategory;
+            Set<Long> coauthorIds;
+            LocalDateTime createdAt;
+            LocalDateTime updatedAt;
+            PostAccess postAccess;
+        }
+    }
+
 }
 
