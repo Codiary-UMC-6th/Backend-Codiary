@@ -1,6 +1,11 @@
 package com.codiary.backend.global.service.PostService;
 
 import com.codiary.backend.global.converter.PostConverter;
+import com.codiary.backend.global.converter.PostFileConverter;
+import com.codiary.backend.global.domain.entity.*;
+import com.codiary.backend.global.domain.entity.mapping.Authors;
+import com.codiary.backend.global.repository.*;
+import com.codiary.backend.global.s3.AmazonS3Manager;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.domain.entity.Project;
@@ -17,22 +22,28 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class PostCommandServiceImpl implements PostCommandService{
+public class PostCommandServiceImpl implements PostCommandService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
     private final CategoryCommandService categoryCommandService;
-
+    private final AmazonS3Manager s3Manager; // 추가
+    private final UuidRepository uuidRepository; // 추가
+    private final PostFileRepository postFileRepository; // 추가
+  
     @Override
     public Post createPost(Long memberId, Long teamId, Long projectId, PostRequestDTO.CreatePostRequestDTO request) {
 
@@ -51,8 +62,27 @@ public class PostCommandServiceImpl implements PostCommandService{
         newPost.setTeam(getTeam);
         newPost.setProject(getProject);
 
-        Post savedPost = postRepository.save(newPost);
+        Post tempPost = postRepository.save(newPost);
+        tempPost.setPostFileList(new ArrayList<>());
 
+        if (request.getPostFiles() != null) {
+            for (MultipartFile file : request.getPostFiles()) {
+                if (file.isEmpty()) {
+                    continue;
+                }
+
+                String uuid = UUID.randomUUID().toString();
+                Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
+                String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), file);
+
+                PostFile newPostFile = PostFileConverter.toPostFile(fileUrl, newPost, file.getOriginalFilename());
+                postFileRepository.save(newPostFile);
+
+                tempPost.getPostFileList().add(newPostFile);
+            }
+        }
+
+        Post savedPost = postRepository.save(tempPost);
         return savedPost;
     }
 
