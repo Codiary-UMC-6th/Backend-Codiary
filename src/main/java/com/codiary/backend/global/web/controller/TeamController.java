@@ -6,6 +6,7 @@ import com.codiary.backend.global.converter.TeamConverter;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.service.PostService.PostCommandService;
 import com.codiary.backend.global.service.TeamService.TeamCommandService;
+import com.codiary.backend.global.web.dto.Team.TeamRequestDTO;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -24,15 +25,13 @@ public class TeamController {
       summary = "팀 생성"
   )
   public ApiResponse<TeamResponseDTO.CreateTeamResponseDTO> createTeam(
-      @RequestBody TeamResponseDTO.CreateTeamResponseDTO request
+      @RequestBody TeamRequestDTO.CreateTeamRequestDTO request
       ){
-    Long teamId = 1L;
-    Long projectId = 1L;
-    Team newTeam = teamCommandService.createTeam(teamId, projectId, request);
+    Team newTeam = teamCommandService.createTeam(request);
     return ApiResponse.onSuccess(
         SuccessStatus.TEAM_OK,
         TeamConverter.toCreateMemberDTO(newTeam)
-    )
+    );
   }
 
 }

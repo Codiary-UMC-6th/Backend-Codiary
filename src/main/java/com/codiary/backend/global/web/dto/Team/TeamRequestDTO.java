@@ -21,6 +21,5 @@ public class TeamRequestDTO {
     private String linkedIn;
     private String discord;
     private String instagram;
-    private List<Long> memberIds;
   }
 }
