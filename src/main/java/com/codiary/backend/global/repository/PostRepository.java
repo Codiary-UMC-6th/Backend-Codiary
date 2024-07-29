@@ -31,7 +31,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(Long postId);
     Optional<Post> findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Long postId);
 
-    List<Post> findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(Member member, LocalDateTime startDate, LocalDateTime endDate);
+    //List<Post> findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(Member member, LocalDateTime startDate, LocalDateTime endDate);
 
     @EntityGraph(attributePaths = {"project"})
     List<Post> findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(@Param("member") Member member, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);

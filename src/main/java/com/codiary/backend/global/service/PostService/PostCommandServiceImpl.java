@@ -6,10 +6,12 @@ import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.domain.entity.Project;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.domain.entity.mapping.Authors;
+import com.codiary.backend.global.domain.entity.mapping.Categories;
 import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.repository.PostRepository;
 import com.codiary.backend.global.repository.ProjectRepository;
 import com.codiary.backend.global.repository.TeamRepository;
+import com.codiary.backend.global.service.CategoryService.CategoryCommandService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,7 @@ public class PostCommandServiceImpl implements PostCommandService{
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
+    private final CategoryCommandService categoryCommandService;
 
     @Override
     public Post createPost(Long memberId, Long teamId, Long projectId, PostRequestDTO.CreatePostRequestDTO request) {
@@ -111,6 +114,26 @@ public class PostCommandServiceImpl implements PostCommandService{
                 .orElseThrow(() -> new IllegalArgumentException("Team not found"));
 
         post.setTeam(team);
+
+        return postRepository.save(post);
+    }
+
+
+    @Override
+    public Post setPostCategories(Long postId, Set<String> categoryNames) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        // 카테고리 이름으로 Categories 엔티티를 생성하거나 조회
+        Set<Categories> categories = categoryNames.stream()
+                .map(name -> {
+                    // 카테고리 이름으로 Categories 엔티티를 조회하거나 새로 생성
+                    return categoryCommandService.addCategory(post, name);
+                })
+                .collect(Collectors.toSet());
+
+        // 포스트에 카테고리를 설정
+        post.setCategories(categories);
 
         return postRepository.save(post);
     }
