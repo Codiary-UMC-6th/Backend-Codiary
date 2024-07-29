@@ -31,8 +31,8 @@ public class PostFileConverter {
     public static PostFileResponseDTO.postFileDTO toPostFileDTO(PostFile postFile) {
         PostFileResponseDTO.postFileDTO postFileDTO = new PostFileResponseDTO.postFileDTO();
 
-        postFileDTO.setName(postFileDTO.getName());
-        postFileDTO.setUrl(postFileDTO.getUrl());
+        postFileDTO.setName(postFile.getFileName());
+        postFileDTO.setUrl(postFile.getFileUrl());
 
         return postFileDTO;
     }

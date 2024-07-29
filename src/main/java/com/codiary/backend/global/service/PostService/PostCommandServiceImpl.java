@@ -56,8 +56,8 @@ public class PostCommandServiceImpl implements PostCommandService {
                 .orElseThrow(() -> new IllegalArgumentException("Project not found"));
 
         newPost.setMember(getMember);
-//        newPost.setTeam(getTeam);
-//        newPost.setProject(getProject);
+        newPost.setTeam(getTeam);
+        newPost.setProject(getProject);
 
         Post tempPost = postRepository.save(newPost);
         tempPost.setPostFileList(new ArrayList<>());
@@ -68,7 +68,7 @@ public class PostCommandServiceImpl implements PostCommandService {
                 Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
                 String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), file);
 
-                PostFile newPostFile = PostFileConverter.toPostFile(fileUrl, newPost, file.getName());
+                PostFile newPostFile = PostFileConverter.toPostFile(fileUrl, newPost, file.getOriginalFilename());
                 postFileRepository.save(newPostFile);
 
                 tempPost.getPostFileList().add(newPostFile);
