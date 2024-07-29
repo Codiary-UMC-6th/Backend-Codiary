@@ -14,6 +14,9 @@ public class PostFile {
   @Column(name = "post_file_id", nullable = false, columnDefinition = "bigint")
   private Long postFileId;
 
+  @JoinColumn(name = "file_name")
+  private String fileName;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id")
   private Post post;

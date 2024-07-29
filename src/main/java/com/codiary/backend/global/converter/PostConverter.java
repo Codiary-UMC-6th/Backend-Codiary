@@ -29,13 +29,14 @@ public class PostConverter {
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .projectId(post.getProject().getProjectId())
                 .postTitle(post.getPostTitle())
-                //.postBody(post.getPostBody())
+                .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .postAccess(post.getPostAccess())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .build();
     }
 
@@ -46,7 +47,7 @@ public class PostConverter {
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .projectId(post.getProject().getProjectId())
                 .postTitle(post.getPostTitle())
-                //.postBody(post.getPostBody())
+                .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
                 .postCategory(post.getPostCategory())
                 .coauthorIds(post.getAuthorsList().stream()

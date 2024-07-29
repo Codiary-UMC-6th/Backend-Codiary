@@ -1,6 +1,8 @@
 package com.codiary.backend.global.web.dto.Post;
 
 import com.codiary.backend.global.domain.enums.PostAccess;
+import com.codiary.backend.global.web.dto.PostFile.PostFileRequestDTO;
+import com.codiary.backend.global.web.dto.PostFile.PostFileResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,12 +24,12 @@ public class PostResponseDTO {
         Long teamId;
         Long projectId;
         String postTitle;
-        //String postBody;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
         PostAccess postAccess;
-
+        PostFileResponseDTO.PostFileListDTO postFileList;
     }
 
     @Getter
@@ -40,11 +42,12 @@ public class PostResponseDTO {
         Long teamId;
         Long projectId;
         String postTitle;
-        //String postBody;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
         PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
     }
 
     @Getter
