@@ -22,7 +22,7 @@ public class PostResponseDTO {
         Long teamId;
         Long projectId;
         String postTitle;
-        //String postBody;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -40,7 +40,7 @@ public class PostResponseDTO {
         Long teamId;
         Long projectId;
         String postTitle;
-        //String postBody;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -57,6 +57,7 @@ public class PostResponseDTO {
         Long teamId;
         Long projectId;
         String postTitle;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -88,6 +89,7 @@ public class PostResponseDTO {
         Long teamId;
         Long projectId;
         String postTitle;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -120,6 +122,7 @@ public class PostResponseDTO {
         Long memberId;
         Long projectId;
         String postTitle;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -151,6 +154,7 @@ public class PostResponseDTO {
         Long postId;
         Long teamId;
         String postTitle;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -182,6 +186,7 @@ public class PostResponseDTO {
         Long postId;
         Long memberId;
         String postTitle;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -213,6 +218,7 @@ public class PostResponseDTO {
         Long postId;
         Long projectId;
         String postTitle;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
