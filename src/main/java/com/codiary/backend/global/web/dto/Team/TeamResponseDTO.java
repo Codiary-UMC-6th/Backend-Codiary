@@ -24,7 +24,10 @@ public class TeamResponseDTO {
     Long teamId;
     String name;
     String intro;
-    String photoUrl;
+    String profilePhoto;
+    String github;
+    String email;
+    String linkedIn;
   }
 
 }
