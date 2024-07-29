@@ -36,6 +36,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .postAccess(post.getPostAccess())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .build();
     }
 

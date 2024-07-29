@@ -32,15 +32,15 @@ public class PostController {
 
     // 글 생성하기
     // TODO: 현재 teamId=1로 되어 있는 부분 수정 구현 필요
-    @PostMapping()
+    @PostMapping(consumes = "multipart/form-data")
     @Operation(
             summary = "글 생성 API", description = "글을 생성합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(
             @RequestParam Long memberId,
-            @RequestBody PostRequestDTO.CreatePostRequestDTO request
-            ){
+            @ModelAttribute PostRequestDTO.CreatePostRequestDTO request
+    ) {
         Long teamId = 1L;
         Long projectId = 1L;
         Post newPost = postCommandService.createPost(memberId, teamId, projectId, request);
