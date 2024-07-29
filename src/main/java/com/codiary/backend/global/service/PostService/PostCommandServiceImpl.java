@@ -64,6 +64,10 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         if (request.getPostFiles() != null) {
             for (MultipartFile file : request.getPostFiles()) {
+                if (file.isEmpty()) {
+                    continue;
+                }
+
                 String uuid = UUID.randomUUID().toString();
                 Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
                 String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), file);
