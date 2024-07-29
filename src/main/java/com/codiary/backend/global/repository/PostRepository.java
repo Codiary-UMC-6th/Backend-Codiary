@@ -39,4 +39,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p JOIN FETCH p.project WHERE p.member = :member AND p.createdAt BETWEEN :startDate AND :endDate ORDER BY p.createdAt ASC")
     List<Post> findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(@Param("member") Member member, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT p FROM Post p JOIN FETCH p.authorsList WHERE p.member = :member ORDER BY p.createdAt DESC")
+    Page<Post> findByMemberOrderByCreatedAtDesc(@Param("member") Member member, Pageable pageable);
 }

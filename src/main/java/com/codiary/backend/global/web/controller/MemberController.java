@@ -1,12 +1,24 @@
 package com.codiary.backend.global.web.controller;
 
 import com.codiary.backend.global.apiPayload.ApiResponse;
+import com.codiary.backend.global.converter.PostConverter;
+import com.codiary.backend.global.domain.entity.Member;
+import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.service.MemberService.MemberCommandServiceImpl;
+import com.codiary.backend.global.service.MemberService.MemberQueryService;
 import com.codiary.backend.global.web.dto.Member.MemberRequestDTO;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
+import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,9 +27,10 @@ import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.service.MemberService.FollowService;
 import com.codiary.backend.global.web.dto.Member.FollowResponseDto;
 import com.codiary.backend.global.web.dto.Member.MemberSumResponseDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.security.Security;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,6 +40,8 @@ public class MemberController {
 
     private final MemberCommandServiceImpl memberCommandService;
     private final FollowService followService;
+    private final MemberQueryService memberQueryService;
+    private final MemberCommandServiceImpl memberCommandServiceImpl;
 
     @PostMapping("/sign-up")
     @Operation(
@@ -72,4 +87,13 @@ public class MemberController {
         Long id = 3L;
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.getFollowers(id));
     }
+
+    //TODO: 로그인 구현 완료 시 principal 추가(follow 주체) 필요
+    @GetMapping("/posts")
+    public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> getMyDiaries(@PageableDefault(size=6) Pageable pageable){
+        Member member = memberCommandServiceImpl.getRequester();
+        Page<Post> posts = memberQueryService.getMyPosts(member, pageable);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, PostConverter.toMemberPostPreviewListDTO(posts));
+    }
+
 }
