@@ -1,11 +1,11 @@
 package com.codiary.backend.global.web.dto.Post;
 
-import com.codiary.backend.global.domain.enums.CategoryType;
 import com.codiary.backend.global.domain.enums.PostAccess;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 public class PostRequestDTO {
 
