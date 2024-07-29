@@ -10,6 +10,8 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -35,8 +37,12 @@ public class Post extends BaseEntity {
   @JoinColumn(name = "project_id")
   private Project project;
 
-  @Column(name = "post_category",  columnDefinition = "varchar(500)")
-  private String postCategory;
+  @ElementCollection
+  @CollectionTable(name = "post_category", joinColumns = @JoinColumn(name = "post_id"))
+  @Column(name = "category_name")
+  private List<String> postCategory = new ArrayList<>();
+  //@Column(name = "post_category",  columnDefinition = "varchar(500)")
+  //private String postCategory;
 
   @Column(name = "post_title", nullable = false, columnDefinition = "varchar(500)")
   private String postTitle;
@@ -58,7 +64,7 @@ public class Post extends BaseEntity {
 
   @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Categories> catecoriesList = new ArrayList<>();
+  private List<Categories> categoriesList = new ArrayList<>();
 
   @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -83,12 +89,25 @@ public class Post extends BaseEntity {
     this.postTitle = request.getPostTitle();
     this.postBody = request.getPostBody();
     this.postAccess = request.getPostAccess();
+    Set<Categories> categorySet = request.getPostCategory().stream()
+            .map(categoryName -> Categories.createCategory(this, categoryName, this.member))
+            .collect(Collectors.toSet());
+    setCategories(categorySet);
     this.postStatus = request.getPostStatus();
-    this.postCategory = request.getPostCategory();
   }
 
   public void setPostStatus(Boolean postStatus) {
     this.postStatus = postStatus;
+  }
+
+  public void setCategories(Set<Categories> categories) {
+    // Convert Set<Categories> to List<String>
+    List<String> categoryNames = categories.stream()
+            .map(Categories::getName)  // Extract category name from Categories
+            .collect(Collectors.toList());
+
+    // Set the categories list
+    this.postCategory = categoryNames; // Assuming postCategory is a List<String>
   }
 
   @Builder

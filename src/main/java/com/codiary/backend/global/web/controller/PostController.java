@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -295,9 +296,18 @@ public class PostController {
             summary = "글의 카테고리 설정 API", description = "글의 카테고리를 설정합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> setDiaryCategory(
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setDiaryCategory(
+            @PathVariable Long postId,
+            @RequestBody Set<String> categoryNames // 카테고리 이름을 Set<String>으로 받습니다.
     ){
-        return null;
+        // 게시글의 카테고리 설정
+        Post updatedPost = postCommandService.setPostCategories(postId, categoryNames);
+
+        // 결과를 DTO로 변환하여 응답
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toUpdatePostResultDTO(updatedPost)
+        );
     }
 
 

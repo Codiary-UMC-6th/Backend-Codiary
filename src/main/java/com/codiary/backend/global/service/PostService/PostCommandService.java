@@ -3,6 +3,8 @@ package com.codiary.backend.global.service.PostService;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 
+import java.util.Set;
+
 public interface PostCommandService {
 
     // 포스트 생성
@@ -17,5 +19,7 @@ public interface PostCommandService {
     Post updateCoauthors(Long postId, PostRequestDTO.UpdateCoauthorRequestDTO request);
     // 글 소속 팀 설정
     Post setPostTeam(Long postId, Long teamId);
+
+    Post setPostCategories(Long postId, Set<String> categories);
 
 }

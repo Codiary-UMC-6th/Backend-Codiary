@@ -1,5 +1,6 @@
 package com.codiary.backend.global.web.dto.Post;
 
+import com.codiary.backend.global.domain.enums.CategoryType;
 import com.codiary.backend.global.domain.enums.PostAccess;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +20,7 @@ public class PostRequestDTO {
         private String postTitle;
         private String postBody;
         private Boolean postStatus;
-        private String postCategory;
+        private Set<String> postCategory;
         private PostAccess postAccess;
         private List<MultipartFile> postFiles;
     }
@@ -32,7 +33,7 @@ public class PostRequestDTO {
         private String postTitle;
         private String postBody;
         private Boolean postStatus;
-        private String postCategory;
+        private Set<String> postCategory;
         private PostAccess postAccess;
     }
 
