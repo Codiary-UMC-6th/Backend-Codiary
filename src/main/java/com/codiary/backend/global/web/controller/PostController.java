@@ -270,15 +270,21 @@ public class PostController {
         return null;
     }
 
-    // 인접한 다이어리 조회
-    @GetMapping("/adjacent")
+    // 인접한 다이어리 조회 (특정 다이어리의 이전, 다음 다이어리 조회)
+    @GetMapping("/{postId}/adjacent")
     @Operation(
-            summary = "인접한 다이어리 조회 API", description = "인접한 다이어리를 조회합니다."
+            summary = "인접한 다이어리 조회 API", description = "특정 다이어리의 인접한 다이어리를 조회합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> findAdjacentPost(
+    public ApiResponse<PostResponseDTO.PostAdjacentDTO> findAdjacentPosts(
+            @PathVariable Long postId
     ){
-        return null;
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toPostAdjacentDTO(
+                        postQueryService.findAdjacentPosts(postId)
+                )
+        );
     }
 
 
