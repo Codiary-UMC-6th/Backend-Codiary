@@ -42,8 +42,21 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_MEMBER_DELETE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3005", "포스트 참여자 삭제 권한이 없습니다."),
     POST_NOT_EXIST_BY_TEAM(HttpStatus.BAD_REQUEST, "POST_3006", "해당 팀의 다이어리 목록이 없습니다."),
     POST_NOT_EXIST_BY_PROJECT(HttpStatus.BAD_REQUEST, "POST_3007", "해당 프로젝트의 다이어리 목록이 없습니다."),
-    POST_NOT_EXIST_BY_MEMBER(HttpStatus.BAD_REQUEST, "POST_3008", "해당 멤버의 다이어리 목록이 없습니다.");
+    POST_NOT_EXIST_BY_MEMBER(HttpStatus.BAD_REQUEST, "POST_3008", "해당 멤버의 다이어리 목록이 없습니다."),
+    POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST_3009", "포스트가 없습니다."),
+
     // 코멘트 관련 에러 4000
+
+
+
+    // 북마크 관련 에러 7000
+//    BOOKMARK_CREATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "BOOKMARK_7001", "북마크 추가 권한이 없습니다."),
+//    BOOKMARK_VIEW_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "BOOKMARK_7002", "북마크 게시글 리스트 조회 권한이 없습니다."),
+//    BOOKMARK_COUNT_ERROR(HttpStatus.BAD_REQUEST, "BOOKMARK_7003", "북마크 개수 계산에 에러가 있습니다."),
+//    BOOKMARK_DELETE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "BOOKMARK_7004", "북마크 삭제 권한이 없습니다."),
+    BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOOKMARK_7005", "북마크가 없습니다."),
+    ;
+
 
 
     private final HttpStatus httpStatus;
