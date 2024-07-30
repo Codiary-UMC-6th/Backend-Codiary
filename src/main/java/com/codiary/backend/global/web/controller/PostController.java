@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,15 +33,15 @@ public class PostController {
 
     // 글 생성하기
     // TODO: 현재 teamId=1로 되어 있는 부분 수정 구현 필요
-    @PostMapping()
+    @PostMapping(consumes = "multipart/form-data")
     @Operation(
             summary = "글 생성 API", description = "글을 생성합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(
             @RequestParam Long memberId,
-            @RequestBody PostRequestDTO.CreatePostRequestDTO request
-            ){
+            @ModelAttribute PostRequestDTO.CreatePostRequestDTO request
+    ) {
         Long teamId = 1L;
         Long projectId = 1L;
         Post newPost = postCommandService.createPost(memberId, teamId, projectId, request);
@@ -270,15 +271,21 @@ public class PostController {
         return null;
     }
 
-    // 인접한 다이어리 조회
-    @GetMapping("/adjacent")
+    // 인접한 다이어리 조회 (특정 다이어리의 이전, 다음 다이어리 조회)
+    @GetMapping("/{postId}/adjacent")
     @Operation(
-            summary = "인접한 다이어리 조회 API", description = "인접한 다이어리를 조회합니다."
+            summary = "인접한 다이어리 조회 API", description = "특정 다이어리의 인접한 다이어리를 조회합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> findAdjacentPost(
+    public ApiResponse<PostResponseDTO.PostAdjacentDTO> findAdjacentPosts(
+            @PathVariable Long postId
     ){
-        return null;
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toPostAdjacentDTO(
+                        postQueryService.findAdjacentPosts(postId)
+                )
+        );
     }
 
 
@@ -289,9 +296,18 @@ public class PostController {
             summary = "글의 카테고리 설정 API", description = "글의 카테고리를 설정합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> setDiaryCategory(
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setDiaryCategory(
+            @PathVariable Long postId,
+            @RequestBody Set<String> categoryNames // 카테고리 이름을 Set<String>으로 받습니다.
     ){
-        return null;
+        // 게시글의 카테고리 설정
+        Post updatedPost = postCommandService.setPostCategories(postId, categoryNames);
+
+        // 결과를 DTO로 변환하여 응답
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toUpdatePostResultDTO(updatedPost)
+        );
     }
 
 

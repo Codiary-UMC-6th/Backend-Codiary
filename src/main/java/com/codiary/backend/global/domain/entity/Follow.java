@@ -28,19 +28,14 @@ public class Follow extends BaseEntity{
     @Column(name="follow_status", columnDefinition = "tinyint")
     private Boolean followStatus;
 
-
     @Builder
-    public Follow(Long followId, Member fromMember, Member toMember, Boolean followStatus) {
-        this.followId = followId;
+    public Follow(Member fromMember, Member toMember, Boolean followStatus) {
         this.fromMember = fromMember;
         this.toMember = toMember;
         this.followStatus = followStatus;
     }
 
-    @Builder
-    public Follow(Member fromMember, Member toMember, Boolean followStatus) {
-        this.fromMember = fromMember;
-        this.toMember = toMember;
+    public void update(Boolean followStatus) {
         this.followStatus = followStatus;
     }
 }

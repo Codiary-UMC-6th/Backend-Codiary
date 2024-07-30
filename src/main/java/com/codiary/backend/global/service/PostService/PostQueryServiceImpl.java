@@ -115,24 +115,23 @@ public class PostQueryServiceImpl implements PostQueryService {
         return postRepository.findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(team, member, request);
     }
 
+    @Override
+    public Post.PostAdjacent findAdjacentPosts(Long postId) {
+        return Post.PostAdjacent.builder()
+                .olderPost(postRepository.findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(postId).orElse(null))
+                .laterPost(postRepository.findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(postId).orElse(null))
+                .build();
+    }
+
 
     @Override
-    public Map<String, List<String>> getPostsByMonth(Long memberId, YearMonth yearMonth) {
+    public List<Post> getPostsByMonth(Long memberId, YearMonth yearMonth) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         LocalDateTime startDate = yearMonth.atDay(1).atStartOfDay();
         LocalDateTime endDate = yearMonth.atEndOfMonth().atTime(23, 59, 59);
         List<Post> posts = postRepository.findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(member, startDate, endDate);
-
-        Map<String, List<String>> projectActivities = new HashMap<>();
-
-        posts.forEach(post -> {
-            String date = post.getCreatedAt().toLocalDate().toString();
-            String projectName = post.getProject().getProjectName();
-            projectActivities.computeIfAbsent(date, k -> new ArrayList<>()).add(projectName);
-        });
-
-        return projectActivities;
+        return posts;
     }
 }

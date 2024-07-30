@@ -24,14 +24,17 @@ public class FollowService {
     private final MemberConverter memberConverter;
 
     @Transactional
-    public FollowResponseDto follow(Long toId, Long fromId) {
-        if (toId.equals(fromId)) {
+    public FollowResponseDto follow(Long toId, Member fromMember) {
+        if (fromMember == null) {
+            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+        if (toId.equals(fromMember.getMemberId())) {
             throw new GeneralException(ErrorStatus.MEMBER_SELF_FOLLOW);
         }
 
-        Member fromMember = memberRepository.findById(fromId)
+        fromMember = memberRepository.findByToIdWithFollowings(fromMember.getMemberId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-        Member toMember = memberRepository.findById(toId)
+        Member toMember = memberRepository.findByToIdWithFollowers(toId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         Follow follow = followRepository.findByFromMemberAndToMember(fromMember, toMember)
@@ -46,35 +49,29 @@ public class FollowService {
             fromMember.getFollowings().add(follow);
             toMember.getFollowers().add(follow);
         } else {
-            follow = Follow.builder()
-                    .followId(follow.getFollowId())
-                    .fromMember(follow.getFromMember())
-                    .toMember(follow.getToMember())
-                    .followStatus(!follow.getFollowStatus())
-                    .build();
-            if (!follow.getFollowStatus()) {
-                fromMember.getFollowings().add(follow);
-                toMember.getFollowers().add(follow);
-            } else {
+            if (follow.getFollowStatus()) {
+                follow.update(false);
                 fromMember.getFollowings().remove(follow);
                 toMember.getFollowers().remove(follow);
+            } else {
+                follow.update(true);
+                fromMember.getFollowings().add(follow);
+                toMember.getFollowers().add(follow);
             }
         }
         followRepository.save(follow);
-        memberRepository.save(fromMember);
-        memberRepository.save(toMember);
 
         return memberConverter.toManageFollowDto(follow);
     }
 
     @Transactional
-    public Boolean isFollowing(Long toId, Long fromId) {
-        if (toId.equals(fromId)) {
+    public Boolean isFollowing(Long toId, Member fromMember) {
+        if(fromMember == null){
+            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+        if (toId.equals(fromMember.getMemberId())) {
             throw new GeneralException(ErrorStatus.MEMBER_SELF_FOLLOW);
         }
-
-        Member fromMember = memberRepository.findById(fromId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         Member toMember = memberRepository.findById(toId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -83,9 +80,14 @@ public class FollowService {
                 .orElse(false);
     }
 
+
     @Transactional
-    public List<MemberSumResponseDto> getFollowings(Long memberId) {
-        Member member = memberRepository.findById(memberId)
+    public List<MemberSumResponseDto> getFollowings(Member member) {
+        if (member == null) {
+            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+
+        member = memberRepository.findByToIdWithFollowings(member.getMemberId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         List<Follow> followings = followRepository.findByFromMemberAndFollowStatusTrueOrderByUpdatedAt(member);
@@ -96,13 +98,17 @@ public class FollowService {
     }
 
     @Transactional
-    public List<MemberSumResponseDto> getFollowers(Long memberId) {
-        Member member = memberRepository.findById(memberId)
+    public List<MemberSumResponseDto> getFollowers(Member member) {
+        if (member == null) {
+            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+
+        member = memberRepository.findByToIdWithFollowers(member.getMemberId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<Follow> followings = followRepository.findByToMemberAndFollowStatusTrueOrderByUpdatedAt(member);
+        List<Follow> followers = followRepository.findByToMemberAndFollowStatusTrueOrderByUpdatedAt(member);
 
-        return followings.stream()
+        return followers.stream()
                 .map(follow -> memberConverter.toFollowResponseDto(follow.getFromMember()))
                 .collect(Collectors.toList());
     }
