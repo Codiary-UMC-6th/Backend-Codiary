@@ -10,15 +10,11 @@ import com.codiary.backend.global.web.dto.Member.MemberRequestDTO;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,9 +24,6 @@ import com.codiary.backend.global.service.MemberService.FollowService;
 import com.codiary.backend.global.web.dto.Member.FollowResponseDto;
 import com.codiary.backend.global.web.dto.Member.MemberSumResponseDto;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
-import java.security.Security;
 import java.util.List;
 
 @RequiredArgsConstructor

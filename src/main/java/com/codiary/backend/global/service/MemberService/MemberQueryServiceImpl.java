@@ -8,12 +8,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +24,13 @@ public class MemberQueryServiceImpl implements MemberQueryService{
 
     @Override
     public Page<Post> getMyPosts(Member member, Pageable pageable) {
-        Pageable page = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
-        return postRepository.findByMemberOrderByCreatedAtDesc(member, page);
+        Page<Post> posts = postRepository.findPostsByMemberOrAuthor(member, pageable);
+
+        posts.getContent().forEach(post -> { //proxy 초기화
+            post.getAuthorsList().size();
+        });
+
+        return posts;
     }
 
 }
