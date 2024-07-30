@@ -16,7 +16,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     int countByPost(Post post);
 
     // 회원별 북마크 리스트 조회
-    @Query("SELECT b FROM Bookmark b JOIN FETCH b.post p LEFT JOIN FETCH p.postPhotoList LEFT JOIN FETCH p.member WHERE b.member = :member")
+    @Query("SELECT b FROM Bookmark b JOIN FETCH b.post p LEFT JOIN FETCH p.postFileList LEFT JOIN FETCH p.member WHERE b.member = :member")
     Page<Bookmark> findAllByMember(Member member, Pageable pageable);
 
 }

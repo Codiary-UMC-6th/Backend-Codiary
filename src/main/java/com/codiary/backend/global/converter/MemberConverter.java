@@ -44,12 +44,22 @@ public class MemberConverter {
                 .bookmarkId(bookmark.getId())
                 .postId(bookmark.getPost().getPostId())
                 // Post의 첫 번째 사진을 가져온다
-                .photoUrl(bookmark.getPost().getPostPhotoList().get(0).getPhotoUrl())
+                // 나중에 postFile이 존재하지 않을 경우 나오는 기본 사진 처리를 해줘야 한다
+                .photoUrl(bookmark.getPost().getPostFileList().get(0).getFileUrl())
                 .postTitle(bookmark.getPost().getPostTitle())
                 .nickname(bookmark.getPost().getMember().getNickname())
                 .postBody(bookmark.getPost().getPostBody())
                 .createdAt(bookmark.getPost().getCreatedAt())
                 .build();
+
+
+
+//        final String DEFAULT_PHOTO_URL = "default_photo_url"; // 기본값 설정
+//        // Optional을 사용하여 photoUrl을 안전하게 추출
+//        String photoUrl = Optional.ofNullable(bookmark.getPost().getPostFileList())
+//                .filter(list -> !list.isEmpty())
+//                .map(list -> list.get(0).getFileUrl())
+//                .orElse("default_photo_url"); // 기본값을 설정합니다.
     }
 
     public static MemberResponseDTO.BookmarkListDTO toBookmarkListDTO(Page<Bookmark> bookmarkList) {
