@@ -24,6 +24,7 @@ import com.codiary.backend.global.service.MemberService.FollowService;
 import com.codiary.backend.global.web.dto.Member.FollowResponseDto;
 import com.codiary.backend.global.web.dto.Member.MemberSumResponseDto;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -33,8 +34,8 @@ public class MemberController {
 
     private final MemberCommandServiceImpl memberCommandService;
     private final FollowService followService;
-    private final MemberQueryService memberQueryService;
     private final MemberCommandServiceImpl memberCommandServiceImpl;
+    private final MemberQueryService memberQueryService;
 
     @PostMapping("/sign-up")
     @Operation(
@@ -52,36 +53,36 @@ public class MemberController {
         return memberCommandService.login(request);
     }
 
-    
+
     //TODO: 로그인 구현 완료 시 principal 추가(follow 주체) 필요
     @PostMapping("/follow/{id}")
     public ApiResponse<FollowResponseDto> follow(@PathVariable("id") Long toId) {
-        Long fromId = 1L;
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.follow(toId, fromId));
+        Member member = memberCommandServiceImpl.getRequester();
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.follow(toId, member));
     }
 
     //TODO: 로그인 구현 완료 시 principal 추가(follow 주체) 필요
     @GetMapping("/follow/{id}")
     public ApiResponse<Boolean> isFollowing(@PathVariable("id") Long toId) {
-        Long fromId = 1L;
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.isFollowing(toId, fromId));
+        Member member = memberCommandServiceImpl.getRequester();
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.isFollowing(toId, member));
     }
 
     //TODO: 로그인 구현 완료 시 principal 추가(follow 주체) 필요
     @GetMapping("/following")
     public ApiResponse<List<MemberSumResponseDto>> getFollowings() {
-        Long id = 1L;
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.getFollowings(id));
+        Member member = memberCommandServiceImpl.getRequester();
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.getFollowings(member));
     }
 
     //TODO: 로그인 구현 완료 시 principal 추가(follow 주체) 필요
     @GetMapping("/follower")
     public ApiResponse<List<MemberSumResponseDto>> getFollowers() {
-        Long id = 3L;
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.getFollowers(id));
+        Member member = memberCommandServiceImpl.getRequester();
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.getFollowers(member));
     }
 
-    //TODO: 로그인 구현 완료 시 principal 추가(follow 주체) 필요
+
     @GetMapping("/posts")
     public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> getMyDiaries(@PageableDefault(size=6) Pageable pageable){
         Member member = memberCommandServiceImpl.getRequester();

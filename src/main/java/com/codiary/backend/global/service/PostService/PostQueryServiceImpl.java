@@ -115,6 +115,14 @@ public class PostQueryServiceImpl implements PostQueryService {
         return postRepository.findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(team, member, request);
     }
 
+    @Override
+    public Post.PostAdjacent findAdjacentPosts(Long postId) {
+        return Post.PostAdjacent.builder()
+                .olderPost(postRepository.findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(postId).orElse(null))
+                .laterPost(postRepository.findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(postId).orElse(null))
+                .build();
+    }
+
 
     @Override
     public List<Post> getPostsByMonth(Long memberId, YearMonth yearMonth) {

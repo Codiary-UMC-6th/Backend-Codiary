@@ -1,6 +1,8 @@
 package com.codiary.backend.global.web.dto.Post;
 
 import com.codiary.backend.global.domain.enums.PostAccess;
+import com.codiary.backend.global.web.dto.PostFile.PostFileRequestDTO;
+import com.codiary.backend.global.web.dto.PostFile.PostFileResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,12 +24,12 @@ public class PostResponseDTO {
         Long teamId;
         Long projectId;
         String postTitle;
-        //String postBody;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
         PostAccess postAccess;
-
+        PostFileResponseDTO.PostFileListDTO postFileList;
     }
 
     @Getter
@@ -40,11 +42,12 @@ public class PostResponseDTO {
         Long teamId;
         Long projectId;
         String postTitle;
-        //String postBody;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
         PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
     }
 
     @Getter
@@ -57,6 +60,7 @@ public class PostResponseDTO {
         Long teamId;
         Long projectId;
         String postTitle;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -88,6 +92,7 @@ public class PostResponseDTO {
         Long teamId;
         Long projectId;
         String postTitle;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -120,6 +125,7 @@ public class PostResponseDTO {
         Long memberId;
         Long projectId;
         String postTitle;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -151,6 +157,7 @@ public class PostResponseDTO {
         Long postId;
         Long teamId;
         String postTitle;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -182,6 +189,7 @@ public class PostResponseDTO {
         Long postId;
         Long memberId;
         String postTitle;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -213,6 +221,7 @@ public class PostResponseDTO {
         Long postId;
         Long projectId;
         String postTitle;
+        String postBody;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -232,6 +241,37 @@ public class PostResponseDTO {
         Long totalElements;
         boolean isFirst;
         boolean isLast;
+    }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostAdjacentDTO {
+        Boolean hasLater;
+        Boolean hadOlder;
+        PostAdjacentPreviewDTO laterPost;
+        PostAdjacentPreviewDTO olderPost;
+
+        @Builder
+        @Getter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class PostAdjacentPreviewDTO {
+            Long postId;
+            Long memberId;
+            Long teamId;
+            Long projectId;
+            String postTitle;
+            String postBody;
+            Boolean postStatus;
+            String postCategory;
+            Set<Long> coauthorIds;
+            LocalDateTime createdAt;
+            LocalDateTime updatedAt;
+            PostAccess postAccess;
+        }
     }
 
 }
