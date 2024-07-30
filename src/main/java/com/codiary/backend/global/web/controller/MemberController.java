@@ -1,12 +1,21 @@
 package com.codiary.backend.global.web.controller;
 
 import com.codiary.backend.global.apiPayload.ApiResponse;
+import com.codiary.backend.global.converter.BookmarkConverter;
+import com.codiary.backend.global.converter.MemberConverter;
+import com.codiary.backend.global.domain.entity.Bookmark;
 import com.codiary.backend.global.service.MemberService.MemberCommandServiceImpl;
+import com.codiary.backend.global.service.MemberService.MemberQueryService;
+import com.codiary.backend.global.web.dto.Bookmark.BookmarkResponseDTO;
 import com.codiary.backend.global.web.dto.Member.MemberRequestDTO;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +34,12 @@ import java.util.List;
 @RequestMapping("/members")
 public class MemberController {
 
+    //private final MemberCommandService memberCommandService;
+    // Impl에 직접 연결하지 말고
+    // MemberCommandServiceImpl에 MemberCommandService를
+    // 상속시켜서 위 코드처럼 되도록 수정
     private final MemberCommandServiceImpl memberCommandService;
+    private final MemberQueryService memberQueryService;
     private final FollowService followService;
 
     @PostMapping("/sign-up")
@@ -71,5 +85,33 @@ public class MemberController {
     public ApiResponse<List<MemberSumResponseDto>> getFollowers() {
         Long id = 3L;
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.getFollowers(id));
+    }
+
+
+
+    // 회원별 북마크 리스트 조회
+    @GetMapping("/bookmarks/list/{memberId}")
+    @Operation(
+            summary = "회원별 북마크 리스트 조회 API",
+            description = "bookmarks, memberId"
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "BOOKMARK7000", description = "OK, 성공"),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameters({
+            @Parameter(name = "memberId", description = "회원 고유번호, path variable 입니다!")
+    })
+    public ApiResponse<MemberResponseDTO.BookmarkListDTO> getBookmarkList(
+            @PathVariable(name = "memberId") Long memberId,
+            @RequestParam(name = "page") Integer page
+    ) {
+
+        Page<Bookmark> bookmarkList = memberQueryService.getBookmarkList(memberId, page);
+
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toBookmarkListDTO(bookmarkList));
+
     }
 }

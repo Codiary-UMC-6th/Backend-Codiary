@@ -68,6 +68,12 @@ public class Post extends BaseEntity {
   private List<Comment> commentList = new ArrayList<>();
 
 
+
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Bookmark> bookmarkList = new ArrayList<>();
+
+
+
   public void setMember(Member member) {
     this.member = member;
   }
