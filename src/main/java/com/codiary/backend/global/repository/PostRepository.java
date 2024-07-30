@@ -18,26 +18,35 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(String postTitle, Pageable pageable);
+
     Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
     //List<Post> findAllByMember(Member member);
     Page<Post> findByMemberOrderByCreatedAtDescPostIdDesc(Member member, Pageable pageable);
+
     Page<Post> findByTeamOrderByCreatedAtDescPostIdDesc(Team team, Pageable pageable);
+
     Page<Post> findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(Project project, Member member, Pageable pageable);
+
     Page<Post> findByProjectAndTeamOrderByCreatedAtDescPostIdDesc(Project project, Team team, Pageable pageable);
+
     Page<Post> findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(Team team, Member member, Pageable pageable);
+
     boolean existsByTeam(Team team);
+
     boolean existsByProject(Project project);
+
     boolean existsByMember(Member member);
 
     Optional<Post> findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(Long postId);
+
     Optional<Post> findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Long postId);
 
-    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.project " +
-            "WHERE p.member = :member " +
-            "AND p.createdAt BETWEEN :startDate AND :endDate " +
-            "ORDER BY p.createdAt ASC")
-    List<Post> findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(
-            @Param("member") Member member,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT p FROM Post p JOIN FETCH p.project WHERE p.member = :member AND p.createdAt BETWEEN :startDate AND :endDate ORDER BY p.createdAt ASC")
+    List<Post> findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(@Param("member") Member member, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT p FROM Post p LEFT JOIN p.authorsList a WHERE p.member = :member OR a.member = :member ORDER BY p.createdAt DESC")
+    Page<Post> findPostsByMemberOrAuthor(@Param("member") Member member, Pageable pageable);
+
 }
