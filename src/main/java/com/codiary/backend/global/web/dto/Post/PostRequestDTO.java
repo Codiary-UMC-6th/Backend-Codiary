@@ -20,7 +20,7 @@ public class PostRequestDTO {
         private String postTitle;
         private String postBody;
         private Boolean postStatus;
-        private Set<String> postCategory;
+        //private Set<String> postCategory;
         private PostAccess postAccess;
         private List<MultipartFile> postFiles;
     }
@@ -33,7 +33,7 @@ public class PostRequestDTO {
         private String postTitle;
         private String postBody;
         private Boolean postStatus;
-        private Set<String> postCategory;
+        //private Set<String> postCategory;
         private PostAccess postAccess;
     }
 

@@ -35,7 +35,7 @@ public class PostController {
     // TODO: 현재 teamId=1로 되어 있는 부분 수정 구현 필요
     @PostMapping(consumes = "multipart/form-data")
     @Operation(
-            summary = "다이어리 생성 API", description = "다이어리를 생성합니다. 카테고리 설정은 다이어리 생성과는 별도로 설정해야 됩니다."
+            summary = "다이어리 생성 API", description = "다이어리를 생성합니다. **카테고리 설정은 다이어리 생성과는 별도로 설정해야 됩니다.**"
             //, security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(
@@ -305,14 +305,14 @@ public class PostController {
             summary = "다이어리의 카테고리 설정 및 변경 API", description = "다이어리의 카테고리를 설정 및 변경합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setDiaryCategory(
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCategory(
             @PathVariable Long postId,
             @RequestBody Set<String> categoryNames
     ){
         Post updatedPost = postCommandService.setPostCategories(postId, categoryNames);
         return ApiResponse.onSuccess(
                 SuccessStatus.POST_OK,
-                PostConverter.toUpdatePostResultDTO(updatedPost)
+                PostConverter.toSetPostCategoriesResultDTO(updatedPost)
         );
     }
 
@@ -335,7 +335,7 @@ public class PostController {
             summary = "AI로 코드 실행 미리보기 API", description = "AI로 특정 글에 포함된 코드를 실행하여 미리보기 결과를 반환합니다."
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> showDiaryCodePreview(
+    public ApiResponse<PostResponseDTO> showPostCodePreview(
     ){
         return null;
     }
