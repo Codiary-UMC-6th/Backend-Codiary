@@ -1,49 +1,34 @@
 package com.codiary.backend.global.converter;
 
-import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.domain.entity.mapping.Categories;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import org.springframework.data.domain.Page;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PostConverter {
 
-//    private static List<String> convertCategoriesToCategoryNames(List<String> categories) {
-//        return categories.stream()
-//                .map(Categories::getName)
-//                .collect(Collectors.toList());
-//    }
-//
-//    private static Set<Categories> convertCategoryNamesToCategories(Set<String> categoryNames) {
-//        return categoryNames.stream()
-//                .map(Categories::new) // String을 받는 생성자를 사용
-//                .collect(Collectors.toSet());
-//    }
-
     public static Post toPost(PostRequestDTO.CreatePostRequestDTO request) {
-        List<Categories> categories = request.getPostCategory().stream()
-                .map(Categories::new) // Assuming Categories has a constructor that accepts String
-                .collect(Collectors.toList());
+//        List<Categories> categories = request.getPostCategory().stream()
+//                .map(Categories::new) // Assuming Categories has a constructor that accepts String
+//                .collect(Collectors.toList());
 
         return Post.builder()
                 .postTitle(request.getPostTitle())
                 .postBody(request.getPostBody())
                 .postStatus(request.getPostStatus())
-                .categoriesList(categories)
+                //.categoriesList(categories)
                 .postAccess(request.getPostAccess())
                 .build();
     }
 
     public static PostResponseDTO.CreatePostResultDTO toCreateResultDTO(Post post) {
-        List<String> postCategories = post.getCategoriesList().stream()
-                .map(Categories::getName)
-                .collect(Collectors.toList());
+//        List<String> postCategories = post.getCategoriesList().stream()
+//                .map(Categories::getName)
+//                .collect(Collectors.toList());
 
         return PostResponseDTO.CreatePostResultDTO.builder()
                 .postId(post.getPostId())
@@ -53,7 +38,7 @@ public class PostConverter {
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", postCategories))
+                //.postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
@@ -63,9 +48,9 @@ public class PostConverter {
     }
 
     public static PostResponseDTO.UpdatePostResultDTO toUpdatePostResultDTO(Post post) {
-        List<String> postCategories = post.getCategoriesList().stream()
-                .map(Categories::getName)
-                .collect(Collectors.toList());
+//        List<String> postCategories = post.getCategoriesList().stream()
+//                .map(Categories::getName)
+//                .collect(Collectors.toList());
 
         return PostResponseDTO.UpdatePostResultDTO.builder()
                 .postId(post.getPostId())
@@ -75,7 +60,7 @@ public class PostConverter {
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", postCategories))
+                //.postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
@@ -356,6 +341,28 @@ public class PostConverter {
                 .hasLater(adjacent.getLaterPost() != null)
                 .olderPost(toPostAdjacentPreviewDTO(adjacent.getOlderPost()))
                 .laterPost(toPostAdjacentPreviewDTO(adjacent.getLaterPost()))
+                .build();
+    }
+
+
+    public static PostResponseDTO.UpdatePostResultDTO toSetPostCategoriesResultDTO(Post post) {
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
+        return PostResponseDTO.UpdatePostResultDTO.builder()
+                .postId(post.getPostId())
+                .memberId(post.getMember().getMemberId())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .postCategory(String.join(", ", postCategories))
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
                 .build();
     }
 
