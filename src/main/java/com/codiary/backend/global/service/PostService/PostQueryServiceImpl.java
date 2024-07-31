@@ -14,8 +14,10 @@ import com.codiary.backend.global.repository.TeamRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,10 +43,26 @@ public class PostQueryServiceImpl implements PostQueryService {
         // 만약 검색어가 존재한다면
         if (optSearch.isPresent()) {
             String search = optSearch.get();
-
             return postRepository.findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(search, request);
         }
         // 검색어 존재 X
+        return postRepository.findAllByOrderByCreatedAtDesc(request);
+    }
+
+    public Page<Post> getPostsByCategories(Optional<String> optSearch, int page, int size) {
+        Pageable request = PageRequest.of(page, size);
+
+        if (optSearch.isPresent()) {
+            String search = optSearch.get();
+            log.info("Searching posts by category with keyword: {}", search);
+            List<Long> postIds = postRepository.findPostIdsByCategoryName(search);
+            if (postIds.isEmpty()) {
+                return Page.empty(request);
+            }
+            return postRepository.findByPostIdIn(postIds, request);
+        }
+
+        // 검색어가 없는 경우 전체 게시글을 날짜 기준으로 페이지네이션
         return postRepository.findAllByOrderByCreatedAtDesc(request);
     }
 

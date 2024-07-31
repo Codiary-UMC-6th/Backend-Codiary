@@ -21,7 +21,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
-    //List<Post> findAllByMember(Member member);
     Page<Post> findByMemberOrderByCreatedAtDescPostIdDesc(Member member, Pageable pageable);
 
     Page<Post> findByTeamOrderByCreatedAtDescPostIdDesc(Team team, Pageable pageable);
@@ -45,6 +44,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p JOIN FETCH p.project WHERE p.member = :member AND p.createdAt BETWEEN :startDate AND :endDate ORDER BY p.createdAt ASC")
     List<Post> findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(@Param("member") Member member, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+    
+    @Query("SELECT p.postId FROM Post p JOIN p.categoriesList c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
+    List<Long> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
+
+    Page<Post> findByPostIdIn(List<Long> postIds, Pageable pageable);
 
     @Query("SELECT p FROM Post p LEFT JOIN p.authorsList a WHERE p.member = :member OR a.member = :member ORDER BY p.createdAt DESC")
     Page<Post> findPostsByMemberOrAuthor(@Param("member") Member member, Pageable pageable);

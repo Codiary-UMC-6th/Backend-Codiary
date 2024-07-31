@@ -5,6 +5,9 @@ import com.codiary.backend.global.domain.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -14,38 +17,27 @@ public class Categories {
   @Column(name = "category_id", nullable = false, columnDefinition = "bigint")
   private Long categoryId;
 
-  //우선 String으로 설정, Category 나오면 enum으로 변경 필요
   //@Enumerated(EnumType.STRING)
   @Column(name = "name", nullable = false, columnDefinition = "varchar(100)")
   private String name;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "member_id")
-  private Member member;
+//  @ManyToOne(fetch = FetchType.LAZY)
+//  @JoinColumn(name = "member_id")
+//  private Member member;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "post_id")
-  private Post post;
+//  @ManyToOne(fetch = FetchType.LAZY)
+//  @JoinColumn(name = "post_id")
+//  private Post post;
+  @ManyToMany(mappedBy = "categoriesList")
+  private List<Post> posts = new ArrayList<>();
 
   @Builder
-  public Categories(Post post, String name, Member member) {
-    this.post = post;
-    this.name = name;
-    this.member = member;
-  }
-  public Categories(String name) {
-    this.name = name;
-  }
-
-  public String getName() {
-    return name;
-  }
+  public Categories(String name) { this.name = name;}
   public static Categories createCategory(Post post, String name, Member member) {
-    return Categories.builder()
-            .post(post)
-            .name(name)
-            .member(member)
-            .build();
+    Categories category = new Categories(name);
+    category.getPosts().add(post);
+    post.getCategoriesList().add(category);
+    return category;
   }
 
 }

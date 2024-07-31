@@ -261,14 +261,23 @@ public class PostController {
     }
 
     // 카테고리명으로 다이어리 페이징 조회
-    @GetMapping("/category/paging")
+    @GetMapping("/categories/paging")
     @Operation(
-            summary = "카테고리명으로 다이어리 페이징 조회 API", description = "카테고리명으로 다이어리 페이징 조회합니다."
+            summary = "카테고리명으로 다이어리 페이징 조회 API", description = "카테고리명으로 다이어리를 페이징 조회합니다. Param으로 카테고리를 입력하세요."
             //, security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO> findPostByCategory(
+    public ApiResponse<PostResponseDTO.PostPreviewListDTO> findPostsByCategoryName(
+            @RequestParam Optional<String> search,
+            @RequestParam @Min(0) Integer page,
+            @RequestParam @Min(1) @Max(5) Integer size
     ){
-        return null;
+        log.info("Request to find posts by category with search keyword: {}", search.orElse("None"));
+        Page<Post> posts = postQueryService.getPostsByCategories(search, page, size);
+        log.info("Number of posts found: {}", posts.getTotalElements());
+        return ApiResponse.onSuccess(
+                SuccessStatus.POST_OK,
+                PostConverter.toPostPreviewListDTO(posts)
+        );
     }
 
     // 인접한 다이어리 조회 (특정 다이어리의 이전, 다음 다이어리 조회)

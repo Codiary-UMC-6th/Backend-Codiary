@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -155,12 +156,12 @@ public class PostCommandServiceImpl implements PostCommandService {
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
         // 카테고리 이름으로 Categories 엔티티를 생성하거나 조회
-        Set<Categories> categories = categoryNames.stream()
+        List<Categories> categories = categoryNames.stream()
                 .map(name -> {
                     // 카테고리 이름으로 Categories 엔티티를 조회하거나 새로 생성
                     return categoryCommandService.addCategory(post, name);
                 })
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
         // 포스트에 카테고리를 설정
         post.setCategories(categories);

@@ -37,13 +37,6 @@ public class Post extends BaseEntity {
   @JoinColumn(name = "project_id")
   private Project project;
 
-  @ElementCollection
-  @CollectionTable(name = "post_category", joinColumns = @JoinColumn(name = "post_id"))
-  @Column(name = "category_name")
-  private List<String> postCategory = new ArrayList<>();
-  //@Column(name = "post_category",  columnDefinition = "varchar(500)")
-  //private String postCategory;
-
   @Column(name = "post_title", nullable = false, columnDefinition = "varchar(500)")
   private String postTitle;
 
@@ -59,12 +52,17 @@ public class Post extends BaseEntity {
   private Boolean postStatus;
 
   @Builder.Default
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<PostFile> postFileList = new ArrayList<>();
+  @ManyToMany
+  @JoinTable(
+          name = "post_category",
+          joinColumns = @JoinColumn(name = "post_id"),
+          inverseJoinColumns = @JoinColumn(name = "category_id")
+  )
+  private List<Categories> categoriesList = new ArrayList<>();
 
   @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Categories> categoriesList = new ArrayList<>();
+  private List<PostFile> postFileList = new ArrayList<>();
 
   @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -74,20 +72,9 @@ public class Post extends BaseEntity {
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> commentList = new ArrayList<>();
 
-
-
+ 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Bookmark> bookmarkList = new ArrayList<>();
-
-
-
-  public void setMember(Member member) {
-    this.member = member;
-  }
-
-  public void setTeam(Team team) {
-    this.team = team;
-  }
 
   public void setProject(Project project) { this.project = project;}
 
@@ -95,25 +82,20 @@ public class Post extends BaseEntity {
     this.postTitle = request.getPostTitle();
     this.postBody = request.getPostBody();
     this.postAccess = request.getPostAccess();
-    Set<Categories> categorySet = request.getPostCategory().stream()
+    List<Categories> categoryList = request.getPostCategory().stream()
             .map(categoryName -> Categories.createCategory(this, categoryName, this.member))
-            .collect(Collectors.toSet());
-    setCategories(categorySet);
+            .collect(Collectors.toList());
+    setCategories(categoryList);
     this.postStatus = request.getPostStatus();
   }
 
-  public void setPostStatus(Boolean postStatus) {
-    this.postStatus = postStatus;
-  }
+  public void setMember(Member member) { this.member = member;}
+  public void setTeam(Team team) { this.team = team;}
+  public void setPostStatus(Boolean postStatus) { this.postStatus = postStatus;}
 
-  public void setCategories(Set<Categories> categories) {
-    // Convert Set<Categories> to List<String>
-    List<String> categoryNames = categories.stream()
-            .map(Categories::getName)  // Extract category name from Categories
-            .collect(Collectors.toList());
-
-    // Set the categories list
-    this.postCategory = categoryNames; // Assuming postCategory is a List<String>
+  public void setCategories(List<Categories> categories) {
+    this.categoriesList.clear();
+    this.categoriesList.addAll(categories);
   }
 
   @Builder
