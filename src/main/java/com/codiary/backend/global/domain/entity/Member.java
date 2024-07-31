@@ -72,8 +72,8 @@ public class Member extends BaseEntity {
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<MemberProjectMap> memberProjectMapList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Categories> catecoriesList = new ArrayList<>();
+//  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+//  private List<Categories> catecoriesList = new ArrayList<>();
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> commentList = new ArrayList<>();

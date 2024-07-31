@@ -27,27 +27,33 @@ public class PostConverter {
 //    }
 
     public static Post toPost(PostRequestDTO.CreatePostRequestDTO request) {
-        //List<String> postCategories = new ArrayList<>(request.getPostCategory());
+        List<Categories> categories = request.getPostCategory().stream()
+                .map(Categories::new) // Assuming Categories has a constructor that accepts String
+                .collect(Collectors.toList());
+
         return Post.builder()
                 .postTitle(request.getPostTitle())
                 .postBody(request.getPostBody())
                 .postStatus(request.getPostStatus())
-                .postCategory(new ArrayList<>(request.getPostCategory()))
+                .categoriesList(categories)
                 .postAccess(request.getPostAccess())
                 .build();
     }
 
     public static PostResponseDTO.CreatePostResultDTO toCreateResultDTO(Post post) {
-        //List<String> postCategories = convertCategoriesToCategoryNames(post.getPostCategory());
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.CreatePostResultDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
-                .projectId(post.getProject().getProjectId())
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", post.getPostCategory()))
+                .postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
@@ -57,16 +63,19 @@ public class PostConverter {
     }
 
     public static PostResponseDTO.UpdatePostResultDTO toUpdatePostResultDTO(Post post) {
-        //List<String> postCategories = convertCategoriesToCategoryNames(post.getPostCategory());
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.UpdatePostResultDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
-                .projectId(post.getProject().getProjectId())
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", post.getPostCategory()))
+                .postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
@@ -76,16 +85,19 @@ public class PostConverter {
 
     // Post 조회
     public static PostResponseDTO.PostPreviewDTO toPostPreviewDTO(Post post) {
-        //List<String> postCategories = convertCategoriesToCategoryNames(post.getPostCategory());
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.PostPreviewDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
-                .projectId(post.getProject().getProjectId())
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", post.getPostCategory()))
+                .postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
@@ -113,16 +125,19 @@ public class PostConverter {
 
     // 저자별 Post 조회
     public static PostResponseDTO.MemberPostPreviewDTO toMemberPostPreviewDTO(Post post) {
-        //List<String> postCategories = convertCategoriesToCategoryNames(post.getPostCategory());
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.MemberPostPreviewDTO.builder()
                 .memberId(post.getMember().getMemberId())
                 .postId(post.getPostId())
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
-                .projectId(post.getProject().getProjectId())
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", post.getPostCategory()))
+                .postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
@@ -131,6 +146,7 @@ public class PostConverter {
                 .updatedAt(post.getUpdatedAt())
                 .build();
     }
+
     // 저자별 Post 페이징 조회
     public static PostResponseDTO.MemberPostPreviewListDTO toMemberPostPreviewListDTO(Page<Post> posts) {
         List<PostResponseDTO.MemberPostPreviewDTO> memberPostPreviewDTOList = posts.getContent().stream()
@@ -149,16 +165,19 @@ public class PostConverter {
 
     // 팀별 Post 조회
     public static PostResponseDTO.TeamPostPreviewDTO toTeamPostPreviewDTO(Post post) {
-        //List<String> postCategories = convertCategoriesToCategoryNames(post.getPostCategory());
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.TeamPostPreviewDTO.builder()
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
-                .projectId(post.getProject().getProjectId())
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", post.getPostCategory()))
+                .postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
@@ -187,7 +206,10 @@ public class PostConverter {
 
     // 프로젝트별 저자의 Post 조회
     public static PostResponseDTO.MemberPostInProjectPreviewDTO toMemberPostInProjectPreviewDTO(Post post) {
-        //List<String> postCategories = convertCategoriesToCategoryNames(post.getPostCategory());
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.MemberPostInProjectPreviewDTO.builder()
                 .projectId(post.getProject().getProjectId())
                 .memberId(post.getMember().getMemberId())
@@ -196,7 +218,7 @@ public class PostConverter {
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", post.getPostCategory()))
+                .postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
@@ -224,7 +246,10 @@ public class PostConverter {
 
     // 프로젝트별 팀의 Post 조회
     public static PostResponseDTO.TeamPostInProjectPreviewDTO toTeamPostInProjectPreviewDTO(Post post) {
-        //List<String> postCategories = convertCategoriesToCategoryNames(post.getPostCategory());
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.TeamPostInProjectPreviewDTO.builder()
                 .projectId(post.getProject().getProjectId())
                 .teamId(post.getTeam().getTeamId())
@@ -233,7 +258,7 @@ public class PostConverter {
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", post.getPostCategory()))
+                .postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
@@ -261,7 +286,10 @@ public class PostConverter {
 
     // 팀별 멤버의 Post 조회
     public static PostResponseDTO.MemberPostInTeamPreviewDTO toMemberPostInTeamPreviewDTO(Post post) {
-        //List<String> postCategories = convertCategoriesToCategoryNames(post.getPostCategory());
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.MemberPostInTeamPreviewDTO.builder()
                 .teamId(post.getTeam().getTeamId())
                 .memberId(post.getMember().getMemberId())
@@ -270,7 +298,7 @@ public class PostConverter {
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", post.getPostCategory()))
+                .postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
@@ -300,16 +328,19 @@ public class PostConverter {
     public static PostResponseDTO.PostAdjacentDTO.PostAdjacentPreviewDTO toPostAdjacentPreviewDTO(Post post) {
         if (post == null) return null;
 
-        //List<String> postCategories = convertCategoriesToCategoryNames(post.getPostCategory());
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.PostAdjacentDTO.PostAdjacentPreviewDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
-                .projectId(post.getProject().getProjectId())
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", post.getPostCategory()))
+                .postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
