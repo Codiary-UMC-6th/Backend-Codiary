@@ -51,15 +51,6 @@ public class Post extends BaseEntity {
   @Column(name = "post_status", nullable = false, columnDefinition = "tinyint")
   private Boolean postStatus;
 
-
-//  @ElementCollection
-//  @CollectionTable(name = "post_category", joinColumns = @JoinColumn(name = "post_id"))
-//  @Column(name = "category_name")
-//  private List<String> postCategory = new ArrayList<>();
-//
-//  @Builder.Default
-//  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-//  private List<Categories> categoriesList = new ArrayList<>();
   @Builder.Default
   @ManyToMany
   @JoinTable(
@@ -81,9 +72,10 @@ public class Post extends BaseEntity {
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> commentList = new ArrayList<>();
 
+ 
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Bookmark> bookmarkList = new ArrayList<>();
 
-  public void setMember(Member member) { this.member = member;}
-  public void setTeam(Team team) { this.team = team;}
   public void setProject(Project project) { this.project = project;}
 
   public void update(PostRequestDTO.UpdatePostDTO request) {
@@ -97,9 +89,9 @@ public class Post extends BaseEntity {
     this.postStatus = request.getPostStatus();
   }
 
-  public void setPostStatus(Boolean postStatus) {
-    this.postStatus = postStatus;
-  }
+  public void setMember(Member member) { this.member = member;}
+  public void setTeam(Team team) { this.team = team;}
+  public void setPostStatus(Boolean postStatus) { this.postStatus = postStatus;}
 
   public void setCategories(List<Categories> categories) {
     this.categoriesList.clear();
