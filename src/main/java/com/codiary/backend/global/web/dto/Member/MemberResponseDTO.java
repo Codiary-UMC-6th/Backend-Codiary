@@ -51,4 +51,26 @@ public class MemberResponseDTO {
         LocalDateTime createdAt;
     }
 
+    // 회원별 관심 카테고리탭 리스트 조회
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberCategoryListDTO {
+        List<MemberResponseDTO.MemberCategoryDTO> memberCategoryList;
+        Integer listSize;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberCategoryDTO {
+        Long memberId;
+        Long memberCategoryId;
+        Long categoryId;
+        String categoryName;
+        LocalDateTime createdAt;
+    }
+
 }

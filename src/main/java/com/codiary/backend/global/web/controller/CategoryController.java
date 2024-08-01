@@ -4,10 +4,16 @@ package com.codiary.backend.global.web.controller;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.converter.CategoryConverter;
+import com.codiary.backend.global.converter.MemberCategoryConverter;
 import com.codiary.backend.global.domain.entity.mapping.Categories;
+import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
+import com.codiary.backend.global.service.CategoryService.CategoryCommandService;
 import com.codiary.backend.global.service.CategoryService.CategoryQueryService;
 import com.codiary.backend.global.web.dto.Category.CategoryResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +29,7 @@ import java.util.Optional;
 @RequestMapping("/categories")
 @Slf4j
 public class CategoryController {
+
     private final CategoryQueryService categoryQueryService;
 
     // 키워드 입력을 통해 관련 카테고리 리스트 조회

@@ -3,11 +3,14 @@ package com.codiary.backend.global.service.MemberService;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
+import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.domain.entity.Member;
+import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
 import com.codiary.backend.global.jwt.SecurityUtil;
 import com.codiary.backend.global.jwt.TokenInfo;
+import com.codiary.backend.global.repository.MemberCategoryRepository;
 import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.web.dto.Member.MemberRequestDTO;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
@@ -19,6 +22,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MemberCommandServiceImpl implements MemberCommandService {
@@ -27,6 +32,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final MemberCategoryRepository memberCategoryRepository;
+
+
 
     @Override
     public ApiResponse<String> signUp(MemberRequestDTO.MemberSignUpRequestDTO signUpRequest) {
@@ -83,4 +91,20 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         Member member = memberRepository.findByEmail(userEmail).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         return member;
     }
+
+
+
+    // 회원별 관심 카테고리탭 리스트 조회
+    @Override
+    public List<MemberCategory> getMemberCategoryList(Long memberId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<MemberCategory> memberCategoryList = memberCategoryRepository.findAllByMember(member);
+
+        return memberCategoryList;
+
+    }
+
 }

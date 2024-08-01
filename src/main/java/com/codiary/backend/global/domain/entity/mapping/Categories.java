@@ -24,6 +24,9 @@ public class Categories {
   @ManyToMany(mappedBy = "categoriesList")
   private List<Post> posts = new ArrayList<>();
 
+  @OneToMany(mappedBy = "categories", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<MemberCategory> memberCategoryList = new ArrayList<>();
+
   @Builder
   public Categories(String name) { this.name = name;}
 
