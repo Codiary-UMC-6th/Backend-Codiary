@@ -5,7 +5,9 @@ import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.domain.entity.Bookmark;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
+import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
 import com.codiary.backend.global.repository.BookmarkRepository;
+import com.codiary.backend.global.repository.MemberCategoryRepository;
 import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +59,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
         Page<Bookmark> memberPage = bookmarkRepository.findAllByMember(member, PageRequest.of(page - 1, 9));
 
         return memberPage;
+
     }
 
 }

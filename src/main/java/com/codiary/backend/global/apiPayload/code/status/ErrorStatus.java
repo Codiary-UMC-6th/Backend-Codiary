@@ -49,12 +49,17 @@ public enum ErrorStatus implements BaseErrorCode {
 
 
 
-    // 북마크 관련 에러 7000
-//    BOOKMARK_CREATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "BOOKMARK_7001", "북마크 추가 권한이 없습니다."),
-//    BOOKMARK_VIEW_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "BOOKMARK_7002", "북마크 게시글 리스트 조회 권한이 없습니다."),
-//    BOOKMARK_COUNT_ERROR(HttpStatus.BAD_REQUEST, "BOOKMARK_7003", "북마크 개수 계산에 에러가 있습니다."),
-//    BOOKMARK_DELETE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "BOOKMARK_7004", "북마크 삭제 권한이 없습니다."),
-    BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOOKMARK_7005", "북마크가 없습니다."),
+    // 북마크 관련 에러 6000
+//    BOOKMARK_CREATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "BOOKMARK_6001", "북마크 추가 권한이 없습니다."),
+//    BOOKMARK_VIEW_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "BOOKMARK_6002", "북마크 게시글 리스트 조회 권한이 없습니다."),
+//    BOOKMARK_COUNT_ERROR(HttpStatus.BAD_REQUEST, "BOOKMARK_6003", "북마크 개수 계산에 에러가 있습니다."),
+//    BOOKMARK_DELETE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "BOOKMARK_6004", "북마크 삭제 권한이 없습니다."),
+    BOOKMARK_NOT_FOUND(HttpStatus.BAD_REQUEST, "BOOKMARK_6005", "북마크가 없습니다."),
+
+    // 카테고리 관련 에러 7000
+    CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_7001", "카테고리가 없습니다."),
+    // 회원별 관심 카테고리 관련 에러 8000
+    MEMBERCATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBERCATEGORY_8001", "회원별 관심 카테고리가 없습니다.")
     ;
 
 

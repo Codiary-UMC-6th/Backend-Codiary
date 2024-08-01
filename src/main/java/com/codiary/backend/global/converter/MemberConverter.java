@@ -3,6 +3,7 @@ package com.codiary.backend.global.converter;
 import com.codiary.backend.global.domain.entity.Bookmark;
 import com.codiary.backend.global.domain.entity.Follow;
 import com.codiary.backend.global.domain.entity.Member;
+import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
 import com.codiary.backend.global.web.dto.Bookmark.BookmarkResponseDTO;
 import com.codiary.backend.global.web.dto.Member.FollowResponseDto;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
@@ -73,6 +74,27 @@ public class MemberConverter {
                 .totalElements(bookmarkList.getTotalElements())
                 .listSize(bookmarkDTOList.size())
                 .bookmarkList(bookmarkDTOList)
+                .build();
+    }
+
+    // 회원별 관심 카테고리탭 리스트 조회
+    public static MemberResponseDTO.MemberCategoryDTO toMemberCategoryDTO(MemberCategory memberCategory) {
+        return MemberResponseDTO.MemberCategoryDTO.builder()
+                .memberId(memberCategory.getMember().getMemberId())
+                .memberCategoryId(memberCategory.getMemberCategoryId())
+                .categoryId(memberCategory.getCategories().getCategoryId())
+                .categoryName(memberCategory.getCategories().getName())
+                .createdAt(memberCategory.getCreatedAt())
+                .build();
+    }
+
+    public static MemberResponseDTO.MemberCategoryListDTO toMemberCategoryListDTO(List<MemberCategory> memberCategoryList) {
+        List<MemberResponseDTO.MemberCategoryDTO> memberCategoryDTOList = memberCategoryList.stream()
+                .map(MemberConverter::toMemberCategoryDTO).collect(Collectors.toList());
+
+        return MemberResponseDTO.MemberCategoryListDTO.builder()
+                .listSize(memberCategoryDTOList.size())
+                .memberCategoryList(memberCategoryDTOList)
                 .build();
     }
 
