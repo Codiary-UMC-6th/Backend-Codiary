@@ -1,5 +1,6 @@
 package com.codiary.backend.global.web.dto.Team;
 
+import com.codiary.backend.global.domain.enums.PostAccess;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,19 @@ public class TeamRequestDTO {
   public static class CreateTeamRequestDTO {  // 팀 생성
     private String name;
     private String profilePhoto;
+    private String intro;
+    private String github;
+    private String linkedIn;
+    private String discord;
+    private String instagram;
+  }
+
+  @Getter
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class UpdateTeamDTO {
+    private String name;
     private String intro;
     private String github;
     private String linkedIn;
