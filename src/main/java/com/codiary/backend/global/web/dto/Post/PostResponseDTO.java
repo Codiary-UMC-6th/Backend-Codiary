@@ -64,9 +64,10 @@ public class PostResponseDTO {
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
+        PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
-        PostAccess postAccess;
     }
 
     @Getter
@@ -97,6 +98,7 @@ public class PostResponseDTO {
         String postCategory;
         Set<Long> coauthorIds;
         PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }
@@ -130,6 +132,7 @@ public class PostResponseDTO {
         String postCategory;
         Set<Long> coauthorIds;
         PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }
@@ -162,6 +165,7 @@ public class PostResponseDTO {
         String postCategory;
         Set<Long> coauthorIds;
         PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }
@@ -194,6 +198,7 @@ public class PostResponseDTO {
         String postCategory;
         Set<Long> coauthorIds;
         PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }
@@ -226,6 +231,7 @@ public class PostResponseDTO {
         String postCategory;
         Set<Long> coauthorIds;
         PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }
@@ -268,9 +274,10 @@ public class PostResponseDTO {
             Boolean postStatus;
             String postCategory;
             Set<Long> coauthorIds;
+            PostAccess postAccess;
+            PostFileResponseDTO.PostFileListDTO postFileList;
             LocalDateTime createdAt;
             LocalDateTime updatedAt;
-            PostAccess postAccess;
         }
     }
 

@@ -41,12 +41,7 @@ import java.util.List;
 @RequestMapping("/members")
 public class MemberController {
 
-    //private final MemberCommandService memberCommandService;
-    // Impl에 직접 연결하지 말고
-    // MemberCommandServiceImpl에 MemberCommandService를
-    // 상속시켜서 위 코드처럼 되도록 수정해주세요
     private final MemberCommandService memberCommandService;
-    private final MemberCommandServiceImpl memberCommandServiceImpl;
     private final FollowService followService;
     private final MemberQueryService memberQueryService;
 
@@ -73,7 +68,7 @@ public class MemberController {
     )
     @PostMapping("/follow/{id}")
     public ApiResponse<FollowResponseDto> follow(@PathVariable("id") Long toId) {
-        Member member = memberCommandServiceImpl.getRequester();
+        Member member = memberCommandService.getRequester();
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.follow(toId, member));
     }
 
@@ -83,7 +78,7 @@ public class MemberController {
     )
     @GetMapping("/follow/{id}")
     public ApiResponse<Boolean> isFollowing(@PathVariable("id") Long toId) {
-        Member member = memberCommandServiceImpl.getRequester();
+        Member member = memberCommandService.getRequester();
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.isFollowing(toId, member));
     }
 
@@ -93,7 +88,7 @@ public class MemberController {
     )
     @GetMapping("/following")
     public ApiResponse<List<MemberSumResponseDto>> getFollowings() {
-        Member member = memberCommandServiceImpl.getRequester();
+        Member member = memberCommandService.getRequester();
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.getFollowings(member));
     }
 
@@ -103,14 +98,14 @@ public class MemberController {
     )
     @GetMapping("/follower")
     public ApiResponse<List<MemberSumResponseDto>> getFollowers() {
-        Member member = memberCommandServiceImpl.getRequester();
+        Member member = memberCommandService.getRequester();
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.getFollowers(member));
     }
 
 
     @GetMapping("/posts")
     public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> getMyDiaries(@PageableDefault(size=6) Pageable pageable){
-        Member member = memberCommandServiceImpl.getRequester();
+        Member member = memberCommandService.getRequester();
         Page<Post> posts = memberQueryService.getMyPosts(member, pageable);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, PostConverter.toMemberPostPreviewListDTO(posts));
     }
@@ -168,4 +163,13 @@ public class MemberController {
 
     }
 
+    @PatchMapping(path = "/profile-image", consumes = "multipart/form-data")
+    @Operation(
+            summary = "프로필 사진 설정"
+    )
+    public ApiResponse<MemberResponseDTO.MemberImageDTO> setProfileImage(@ModelAttribute MemberRequestDTO.MemberProfileImageRequestDTO request) {
+        Member member = memberCommandService.getRequester();
+
+        return memberCommandService.setProfileImage(member, request);
+    }
 }

@@ -5,13 +5,20 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
+import com.codiary.backend.global.converter.PostFileConverter;
 import com.codiary.backend.global.domain.entity.Member;
+import com.codiary.backend.global.domain.entity.MemberImage;
+import com.codiary.backend.global.domain.entity.PostFile;
+import com.codiary.backend.global.domain.entity.Uuid;
 import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
 import com.codiary.backend.global.jwt.SecurityUtil;
 import com.codiary.backend.global.jwt.TokenInfo;
 import com.codiary.backend.global.repository.MemberCategoryRepository;
+import com.codiary.backend.global.repository.MemberImageRepository;
 import com.codiary.backend.global.repository.MemberRepository;
+import com.codiary.backend.global.repository.UuidRepository;
+import com.codiary.backend.global.s3.AmazonS3Manager;
 import com.codiary.backend.global.web.dto.Member.MemberRequestDTO;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +41,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberCategoryRepository memberCategoryRepository;
-
+    private final UuidRepository uuidRepository;
+    private final AmazonS3Manager s3Manager;
+    private final MemberImageRepository memberImageRepository;
 
 
     @Override
@@ -84,6 +94,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         }
     }
 
+    @Override
     public Member getRequester() {
         String userEmail = SecurityUtil.getCurrentMemberEmail();
         System.out.println(userEmail);
@@ -105,6 +116,22 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         return memberCategoryList;
 
+    }
+
+    @Override
+    public ApiResponse<MemberResponseDTO.MemberImageDTO> setProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request) {
+        String uuid = UUID.randomUUID().toString();
+        Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
+        String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
+
+        MemberImage memberImage = MemberImage.builder()
+                .imageUrl(fileUrl)
+                .member(member)
+                .build();
+
+        MemberImage savedImage = memberImageRepository.save(memberImage);
+        MemberResponseDTO.MemberImageDTO response = new MemberResponseDTO.MemberImageDTO(savedImage.getImageUrl());
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
     }
 
 }
