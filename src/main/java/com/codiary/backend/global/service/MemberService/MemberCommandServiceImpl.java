@@ -84,6 +84,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         }
     }
 
+    @Override
     public Member getRequester() {
         String userEmail = SecurityUtil.getCurrentMemberEmail();
         System.out.println(userEmail);
