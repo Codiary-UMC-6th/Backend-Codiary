@@ -15,7 +15,6 @@ public class PostConverter {
 //        List<Categories> categories = request.getPostCategory().stream()
 //                .map(Categories::new) // Assuming Categories has a constructor that accepts String
 //                .collect(Collectors.toList());
-
         return Post.builder()
                 .postTitle(request.getPostTitle())
                 .postBody(request.getPostBody())
@@ -29,7 +28,6 @@ public class PostConverter {
 //        List<String> postCategories = post.getCategoriesList().stream()
 //                .map(Categories::getName)
 //                .collect(Collectors.toList());
-
         return PostResponseDTO.CreatePostResultDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
@@ -65,6 +63,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .postAccess(post.getPostAccess())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .build();
     }
 
@@ -87,6 +86,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .postAccess(post.getPostAccess())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -127,6 +127,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .postAccess(post.getPostAccess())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -167,6 +168,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .postAccess(post.getPostAccess())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -208,6 +210,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .postAccess(post.getPostAccess())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -248,6 +251,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .postAccess(post.getPostAccess())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -288,6 +292,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .postAccess(post.getPostAccess())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -330,6 +335,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .postAccess(post.getPostAccess())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
@@ -363,6 +369,7 @@ public class PostConverter {
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
                 .postAccess(post.getPostAccess())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .build();
     }
 
