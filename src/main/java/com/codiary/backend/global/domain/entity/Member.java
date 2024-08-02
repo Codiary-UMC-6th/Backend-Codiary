@@ -90,4 +90,6 @@ public class Member extends BaseEntity {
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<MemberCategory> memberCategoryList = new ArrayList<>();
 
+  @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+  private MemberImage image;
 }

@@ -40,7 +40,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/members")
 public class MemberController {
-    
+
     private final MemberCommandService memberCommandService;
     private final FollowService followService;
     private final MemberQueryService memberQueryService;
@@ -151,4 +151,14 @@ public class MemberController {
 
     }
 
+    @PatchMapping(path = "/profile-image", consumes = "multipart/form-data")
+    @Operation(
+            summary = "프로필 사진 설정"
+    )
+    public ApiResponse<String> setProfileImage(@ModelAttribute MemberRequestDTO.MemberProfileImageRequestDTO request) {
+        Member member = memberCommandService.getRequester();
+
+        String result = memberCommandService.setProfileImage(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, result);
+    }
 }

@@ -19,4 +19,6 @@ public interface MemberCommandService {
 
     public Member getRequester();
 
+    public String setProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request);
+
 }
