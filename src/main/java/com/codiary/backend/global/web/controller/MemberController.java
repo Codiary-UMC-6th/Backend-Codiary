@@ -155,10 +155,9 @@ public class MemberController {
     @Operation(
             summary = "프로필 사진 설정"
     )
-    public ApiResponse<String> setProfileImage(@ModelAttribute MemberRequestDTO.MemberProfileImageRequestDTO request) {
+    public ApiResponse<MemberResponseDTO.MemberImageDTO> setProfileImage(@ModelAttribute MemberRequestDTO.MemberProfileImageRequestDTO request) {
         Member member = memberCommandService.getRequester();
 
-        String result = memberCommandService.setProfileImage(member, request);
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, result);
+        return memberCommandService.setProfileImage(member, request);
     }
 }

@@ -3,6 +3,7 @@ package com.codiary.backend.global.web.dto.Member;
 import com.codiary.backend.global.jwt.TokenInfo;
 import com.codiary.backend.global.web.dto.Bookmark.BookmarkResponseDTO;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -71,6 +72,15 @@ public class MemberResponseDTO {
         Long categoryId;
         String categoryName;
         LocalDateTime createdAt;
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberImageDTO {
+        String url;
     }
 
 }

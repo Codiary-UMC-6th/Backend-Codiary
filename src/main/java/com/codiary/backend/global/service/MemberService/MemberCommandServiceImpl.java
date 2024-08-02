@@ -119,7 +119,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public String setProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request) {
+    public ApiResponse<MemberResponseDTO.MemberImageDTO> setProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request) {
         String uuid = UUID.randomUUID().toString();
         Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
         String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
@@ -130,8 +130,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .build();
 
         MemberImage savedImage = memberImageRepository.save(memberImage);
-
-        return "성공적으로 설정되었습니다!";
+        MemberResponseDTO.MemberImageDTO response = new MemberResponseDTO.MemberImageDTO(savedImage.getImageUrl());
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
     }
 
 }

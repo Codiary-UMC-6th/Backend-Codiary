@@ -19,6 +19,6 @@ public interface MemberCommandService {
 
     public Member getRequester();
 
-    public String setProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request);
+    public ApiResponse<MemberResponseDTO.MemberImageDTO> setProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request);
 
 }
