@@ -1,6 +1,7 @@
 package com.codiary.backend.global.service.MemberService;
 
 import com.codiary.backend.global.apiPayload.ApiResponse;
+import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
 import com.codiary.backend.global.web.dto.Member.MemberRequestDTO;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
@@ -15,5 +16,7 @@ public interface MemberCommandService {
 
     // 회원별 관심 카테고리탭 리스트 조회
     List<MemberCategory> getMemberCategoryList(Long memberId);
+
+    public Member getRequester();
 
 }
