@@ -62,28 +62,40 @@ public class MemberController {
     }
 
 
-    //TODO: 로그인 구현 완료 시 principal 추가(follow 주체) 필요
+    @Operation(
+            summary = "팔로우 및 취소 기능",
+            description = "id를 가진 유저에 대해 팔로우하거나 취소할 수 있습니다."
+    )
     @PostMapping("/follow/{id}")
     public ApiResponse<FollowResponseDto> follow(@PathVariable("id") Long toId) {
         Member member = memberCommandService.getRequester();
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.follow(toId, member));
     }
 
-    //TODO: 로그인 구현 완료 시 principal 추가(follow 주체) 필요
+    @Operation(
+            summary = "팔로우 여부 조회 기능",
+            description = "id를 가진 유저에 대해 팔로우 했는지 여부를 확인할 수 있습니다. true-팔로우O / false-팔로우X"
+    )
     @GetMapping("/follow/{id}")
     public ApiResponse<Boolean> isFollowing(@PathVariable("id") Long toId) {
         Member member = memberCommandService.getRequester();
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.isFollowing(toId, member));
     }
 
-    //TODO: 로그인 구현 완료 시 principal 추가(follow 주체) 필요
+    @Operation(
+            summary = "유저가 팔로우한 팔로잉 목록 조회",
+            description = "로그인한 유저가 팔로우한 팔로잉 목록 조회"
+    )
     @GetMapping("/following")
     public ApiResponse<List<MemberSumResponseDto>> getFollowings() {
         Member member = memberCommandService.getRequester();
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.getFollowings(member));
     }
 
-    //TODO: 로그인 구현 완료 시 principal 추가(follow 주체) 필요
+    @Operation(
+            summary = "유저를 팔로우한 팔로워 목록 조회",
+            description = "로그인한 유저를 팔로우한 팔로워 목록 조회"
+    )
     @GetMapping("/follower")
     public ApiResponse<List<MemberSumResponseDto>> getFollowers() {
         Member member = memberCommandService.getRequester();
