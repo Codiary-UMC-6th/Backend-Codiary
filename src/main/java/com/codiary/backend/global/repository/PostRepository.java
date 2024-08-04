@@ -6,7 +6,6 @@ import com.codiary.backend.global.domain.entity.Project;
 import com.codiary.backend.global.domain.entity.Team;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -50,7 +49,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByPostIdIn(List<Long> postIds, Pageable pageable);
 
-    @Query("SELECT p FROM Post p LEFT JOIN p.authorsList a WHERE p.member = :member OR a.member = :member ORDER BY p.createdAt DESC")
-    Page<Post> findPostsByMemberOrAuthor(@Param("member") Member member, Pageable pageable);
-
+    @Query("SELECT p FROM Post p LEFT JOIN p.authorsList a LEFT JOIN p.categoriesList c WHERE (p.member = :member OR a.member = :member) AND LOWER(c.name) LIKE LOWER(:categoryName) ORDER BY p.createdAt DESC")
+    Page<Post> findPostsByMemberOrAuthorAndCategoryName(@Param("member") Member member, @Param("categoryName") String categoryName, Pageable pageable);
 }

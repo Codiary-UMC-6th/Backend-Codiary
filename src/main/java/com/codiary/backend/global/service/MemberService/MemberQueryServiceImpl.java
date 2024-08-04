@@ -5,14 +5,11 @@ import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.domain.entity.Bookmark;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
-import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
 import com.codiary.backend.global.repository.BookmarkRepository;
-import com.codiary.backend.global.repository.MemberCategoryRepository;
 import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,11 +34,13 @@ public class MemberQueryServiceImpl implements MemberQueryService {
 
 
     @Override
-    public Page<Post> getMyPosts(Member member, Pageable pageable) {
-        Page<Post> posts = postRepository.findPostsByMemberOrAuthor(member, pageable);
+    public Page<Post> getMyPosts(Member member, String category, Pageable pageable) {
+        Page<Post> posts = postRepository.findPostsByMemberOrAuthorAndCategoryName(member, category, pageable);
 
         posts.getContent().forEach(post -> { //proxy 초기화
             post.getAuthorsList().size();
+            post.getCategoriesList().size();
+            post.getPostFileList().size();
         });
 
         return posts;
