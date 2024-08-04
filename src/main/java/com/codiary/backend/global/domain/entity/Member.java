@@ -11,6 +11,9 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
 
@@ -67,15 +70,24 @@ public class Member extends BaseEntity {
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<MemberProjectMap> memberProjectMapList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Categories> catecoriesList = new ArrayList<>();
+//  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+//  private List<Categories> catecoriesList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Comment> commentList = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "from_user", fetch = FetchType.LAZY)
-  private List<Follow> followings;
+    @OneToMany(mappedBy = "fromMember", fetch = FetchType.LAZY)
+    private List<Follow> followings = new ArrayList<>();
 
-  @OneToMany(mappedBy = "to_user", fetch = FetchType.LAZY)
-  private List<Follow> followers;
+    @OneToMany(mappedBy = "toMember", fetch = FetchType.LAZY)
+    private List<Follow> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bookmark> bookmarkList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberCategory> memberCategoryList = new ArrayList<>();
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private MemberImage image;
 }

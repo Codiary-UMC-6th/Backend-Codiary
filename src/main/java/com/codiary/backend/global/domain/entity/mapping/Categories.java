@@ -1,27 +1,34 @@
 package com.codiary.backend.global.domain.entity.mapping;
 
+import com.codiary.backend.global.domain.common.BaseEntity;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.domain.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Categories {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "category_id", nullable = false, columnDefinition = "bigint")
   private Long categoryId;
 
-  //우선 String으로 설정, Category 나오면 enum으로 변경 필요
-  @Column(name = "name", nullable = false, columnDefinition = "varchar(500)")
+  @Column(name = "name", nullable = false, columnDefinition = "varchar(100)")
   private String name;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "member_id")
-  private Member member;
+  @ManyToMany(mappedBy = "categoriesList")
+  private List<Post> posts = new ArrayList<>();
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "post_id")
-  private Post post;
+  @OneToMany(mappedBy = "categories", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<MemberCategory> memberCategoryList = new ArrayList<>();
+
+  @Builder
+  public Categories(String name) { this.name = name;}
+
+
 }

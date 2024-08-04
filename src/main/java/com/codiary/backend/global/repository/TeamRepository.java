@@ -1,4 +1,7 @@
 package com.codiary.backend.global.repository;
 
-public interface TeamRepository {
+import com.codiary.backend.global.domain.entity.Team;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TeamRepository extends JpaRepository<Team, Long > {
 }
