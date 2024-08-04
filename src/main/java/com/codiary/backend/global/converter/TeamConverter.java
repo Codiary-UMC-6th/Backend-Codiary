@@ -17,7 +17,18 @@ public class TeamConverter {
   //팀 조회
   public static TeamResponseDTO.TeamCheckResponseDTO toTeamCheckDTO(Team team) {
     return TeamResponseDTO.TeamCheckResponseDTO.builder()
-        .teamId(team.getTeamId())
+        .name(team.getName())
+        .intro(team.getIntro())
+        .profilePhoto(team.getProfilePhoto())
+        .github(team.getGithub())
+        .email(team.getEmail())
+        .linkedIn(team.getLinkedin())
+        .build();
+  }
+
+  //팀 프로필 수정
+  public static TeamResponseDTO.UpdateTeamDTO toUpdateTeamDTO(Team team) {
+    return TeamResponseDTO.UpdateTeamDTO.builder()
         .name(team.getName())
         .intro(team.getIntro())
         .profilePhoto(team.getProfilePhoto())

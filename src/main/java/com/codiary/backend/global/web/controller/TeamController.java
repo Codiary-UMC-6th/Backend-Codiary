@@ -51,15 +51,14 @@ public class TeamController {
   @Operation(
       summary = "팀 프로필 수정"
   )
-  public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updateTeam(
-      @RequestParam Long memberId,
-      @RequestBody PostRequestDTO.UpdatePostDTO request,
-      @PathVariable Long postId
+  public ApiResponse<TeamResponseDTO.UpdateTeamDTO> updateTeam(
+      @RequestBody TeamRequestDTO.UpdateTeamDTO request,
+      @PathVariable Long teamId
   ){
     return ApiResponse.onSuccess(
-        SuccessStatus.POST_OK,
-        PostConverter.toUpdatePostResultDTO(
-            postCommandService.updatePost(memberId, postId, request)
+        SuccessStatus.TEAM_OK,
+        TeamConverter.toUpdateTeamDTO(
+            teamCommandService.updateTeam(teamId)
         )
     );
   }
