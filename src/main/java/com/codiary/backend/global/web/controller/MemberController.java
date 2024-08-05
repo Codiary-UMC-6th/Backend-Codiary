@@ -176,4 +176,11 @@ public class MemberController {
 
         return memberCommandService.setProfileImage(member, request);
     }
+
+    @GetMapping(path = "/profile/{userId}")
+    @Operation(summary = "사용자 정보 조회", description = "마이페이지 사용자 정보 조회 기능")
+    public ApiResponse<MemberResponseDTO.UserProfileDTO> getUserProfile(@PathVariable(value = "userId") Long userId){
+        Member member = memberCommandService.getRequester();
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberQueryService.getUserProfile(userId, member));
+    }
 }

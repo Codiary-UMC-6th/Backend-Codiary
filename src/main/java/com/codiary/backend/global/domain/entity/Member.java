@@ -57,6 +57,12 @@ public class Member extends BaseEntity {
   @Column(name = "linkedin", columnDefinition = "varchar(500)")
   private String linkedin;
 
+  @Column(name = "discord", columnDefinition = "varchar(500)")
+  private String discord;
+
+  @Column(name="introduction", columnDefinition = "varchar(500)")
+  private String introduction;
+
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<TechStacks> techStackList = new ArrayList<>();
 
