@@ -69,8 +69,6 @@ public class MemberConverter {
                 .build();
     }
 
-
-
     // 회원별 북마크 리스트 조회
     public static MemberResponseDTO.BookmarkDTO toBookmarkDTO(Bookmark bookmark) {
         return MemberResponseDTO.BookmarkDTO.builder()

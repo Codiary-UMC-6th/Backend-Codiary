@@ -23,4 +23,6 @@ public interface MemberCommandService {
     public ApiResponse<MemberResponseDTO.MemberImageDTO> setProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request);
 
     public Member setTechStacks(Long memberId, TechStack techstack);
+
+    public MemberResponseDTO.ProjectsDTO setProjects(Long memberId, String projects);
 }

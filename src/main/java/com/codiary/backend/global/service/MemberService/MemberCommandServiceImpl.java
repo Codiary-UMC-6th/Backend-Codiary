@@ -7,17 +7,16 @@ import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.MemberImage;
+import com.codiary.backend.global.domain.entity.Project;
 import com.codiary.backend.global.domain.entity.Uuid;
 import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
+import com.codiary.backend.global.domain.entity.mapping.MemberProjectMap;
 import com.codiary.backend.global.domain.entity.mapping.TechStacks;
 import com.codiary.backend.global.domain.enums.TechStack;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
 import com.codiary.backend.global.jwt.SecurityUtil;
 import com.codiary.backend.global.jwt.TokenInfo;
-import com.codiary.backend.global.repository.MemberCategoryRepository;
-import com.codiary.backend.global.repository.MemberImageRepository;
-import com.codiary.backend.global.repository.MemberRepository;
-import com.codiary.backend.global.repository.UuidRepository;
+import com.codiary.backend.global.repository.*;
 import com.codiary.backend.global.s3.AmazonS3Manager;
 import com.codiary.backend.global.web.dto.Member.MemberRequestDTO;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
@@ -32,6 +31,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +45,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final UuidRepository uuidRepository;
     private final AmazonS3Manager s3Manager;
     private final MemberImageRepository memberImageRepository;
+    private final ProjectRepository projectRepository;
+    private final MemberProjectMapRepository memberProjectMapRepository;
 
 
     @Override
@@ -155,5 +157,35 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         memberRepository.save(member);
 
         return member;
+    }
+
+    @Override
+    public MemberResponseDTO.ProjectsDTO setProjects(Long memberId, String projectName){
+        Member member = memberRepository.findMemberWithProjects(memberId);
+        if (member == null) {
+            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+
+        Project project = Project.builder()
+                .projectName(projectName)
+                .build();
+
+        projectRepository.save(project);
+
+        MemberProjectMap memberProjectMap = MemberProjectMap.builder()
+                .member(member)
+                .project(project)
+                .build();
+        memberProjectMapRepository.save(memberProjectMap);
+
+        List<String> projectList = member.getMemberProjectMapList()
+                .stream()
+                .map(map -> map.getProject().getProjectName())
+                .collect(Collectors.toList());
+
+        return MemberResponseDTO.ProjectsDTO.builder()
+                .memberId(member.getMemberId())
+                .projectList(projectList)
+                .build();
     }
 }

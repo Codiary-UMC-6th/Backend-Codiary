@@ -3,10 +3,7 @@ package com.codiary.backend.global.web.controller;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.converter.MemberConverter;
 import com.codiary.backend.global.converter.PostConverter;
-import com.codiary.backend.global.domain.entity.Follow;
-import com.codiary.backend.global.domain.entity.Member;
-import com.codiary.backend.global.domain.entity.Post;
-import com.codiary.backend.global.domain.entity.Bookmark;
+import com.codiary.backend.global.domain.entity.*;
 import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
 import com.codiary.backend.global.domain.enums.TechStack;
 import com.codiary.backend.global.service.MemberService.MemberCommandService;
@@ -188,11 +185,19 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toProfileResponseDto(member, user));
     }
 
-    @PostMapping(path = "/techstacks")
+    @PostMapping(path = "/techstack")
     @Operation(summary = "기술 스택 추가하기", description = "기술 스택 하나씩 추가")
     public ApiResponse<MemberResponseDTO.TechStacksDTO> setTechStacks(@RequestParam(value = "techstack") TechStack techstack) {
         Member member = memberCommandService.getRequester();
         member = memberCommandService.setTechStacks(member.getMemberId(), techstack);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberConverter.toTechStacksResponseDto(member));
+    }
+
+    @PostMapping(path = "/project")
+    @Operation(summary = "프로젝트 추가하기", description = "프로젝트 하나씩 추가")
+    public ApiResponse<?> setProjects(@RequestParam(value = "project") String projectName) {
+        Member member = memberCommandService.getRequester();
+        memberCommandService.setProjects(member.getMemberId(), projectName);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberCommandService.setProjects(member.getMemberId(), projectName));
     }
 }
