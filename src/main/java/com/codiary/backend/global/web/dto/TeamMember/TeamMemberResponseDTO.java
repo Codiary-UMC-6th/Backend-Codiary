@@ -21,7 +21,7 @@ public class TeamMemberResponseDTO {
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
-  public static class TeamMemberDTO { 
+  public static class TeamMemberDTO {
     private Long teamMemberId;
     private Long teamId;
     private Long memberId;
