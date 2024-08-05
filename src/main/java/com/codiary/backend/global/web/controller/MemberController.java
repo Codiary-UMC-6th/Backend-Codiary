@@ -185,8 +185,15 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toProfileResponseDto(member, user));
     }
 
-    @PutMapping(path = "/profile")
-    @Operation(summary = "사용자 정보 수정", description = "마이페이지에서 생년월일/내 소개/소셜계정 수정")
+    @GetMapping(path = "/info")
+    @Operation(summary = "사용자 정보 조회", description = "마이페이지에서 생년월일/내 소개/소셜계정 수정 시 조회")
+    public ApiResponse<MemberResponseDTO.UserInfoDTO> updateUserInfo(){
+        Member member = memberCommandService.getRequester();
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberInfoResponseDto(member));
+    }
+
+    @PutMapping(path = "/info")
+    @Operation(summary = "사용자 정보 수정", description = "마이페이지에서 생년월일/내 소개/소셜계정 수정 적용")
     public ApiResponse<MemberResponseDTO.UserInfoDTO> updateUserInfo(@RequestBody MemberRequestDTO.MemberInfoRequestDTO request){
         Member member = memberCommandService.getRequester();
         member = memberCommandService.updateMemberInfo(member, request);
