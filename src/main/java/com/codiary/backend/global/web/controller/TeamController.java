@@ -36,17 +36,7 @@ public class TeamController {
     );
   }
 
-  //팀 조회
-  @GetMapping("/{teamId}")
-  @Operation(
-      summary = "팀 조회"
-  )
-  public ApiResponse<TeamResponseDTO.TeamCheckResponseDTO> checkTeam(
-      @RequestParam Long teamId
-  ){
-    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamCheckDTO());
-  }
-
+  //팀 프로필 수정
   @PatchMapping("/profile/{teamId}")
   @Operation(
       summary = "팀 프로필 수정"
@@ -62,4 +52,6 @@ public class TeamController {
         )
     );
   }
+
+  //팀 팔로우
 }
