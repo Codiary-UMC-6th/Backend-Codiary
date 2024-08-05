@@ -1,17 +1,15 @@
 package com.codiary.backend.global.web.controller;
 
 import com.codiary.backend.global.apiPayload.ApiResponse;
-import com.codiary.backend.global.converter.BookmarkConverter;
 import com.codiary.backend.global.converter.MemberConverter;
 import com.codiary.backend.global.converter.PostConverter;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.domain.entity.Bookmark;
 import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
+import com.codiary.backend.global.domain.enums.TechStack;
 import com.codiary.backend.global.service.MemberService.MemberCommandService;
-import com.codiary.backend.global.service.MemberService.MemberCommandServiceImpl;
 import com.codiary.backend.global.service.MemberService.MemberQueryService;
-import com.codiary.backend.global.web.dto.Bookmark.BookmarkResponseDTO;
 import com.codiary.backend.global.web.dto.Member.MemberRequestDTO;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
@@ -44,6 +42,7 @@ public class MemberController {
     private final MemberCommandService memberCommandService;
     private final FollowService followService;
     private final MemberQueryService memberQueryService;
+    private final MemberConverter memberConverter;
 
     @PostMapping("/sign-up")
     @Operation(
@@ -182,5 +181,13 @@ public class MemberController {
     public ApiResponse<MemberResponseDTO.UserProfileDTO> getUserProfile(@PathVariable(value = "userId") Long userId){
         Member member = memberCommandService.getRequester();
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberQueryService.getUserProfile(userId, member));
+    }
+
+    @PostMapping(path = "/techstacks")
+    @Operation(summary = "기술 스택 추가하기", description = "기술 스택 하나씩 추가")
+    public ApiResponse<MemberResponseDTO.TechStacksDTO> setTechStacks(@RequestParam(value = "techstack") TechStack techstack) {
+        Member member = memberCommandService.getRequester();
+        member = memberCommandService.setTechStacks(member.getMemberId(), techstack);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberConverter.toTechStacksResponseDto(member));
     }
 }

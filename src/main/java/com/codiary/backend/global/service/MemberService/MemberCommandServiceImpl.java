@@ -5,12 +5,12 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
-import com.codiary.backend.global.converter.PostFileConverter;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.MemberImage;
-import com.codiary.backend.global.domain.entity.PostFile;
 import com.codiary.backend.global.domain.entity.Uuid;
 import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
+import com.codiary.backend.global.domain.entity.mapping.TechStacks;
+import com.codiary.backend.global.domain.enums.TechStack;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
 import com.codiary.backend.global.jwt.SecurityUtil;
 import com.codiary.backend.global.jwt.TokenInfo;
@@ -29,6 +29,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -134,4 +135,22 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
     }
 
+    @Override
+    public Member setTechStacks(Long memberId, TechStack techstack) {
+        Member member = memberRepository.findMemberWithTechStacks(memberId);
+
+        List<TechStacks> techStackList = member.getTechStackList();
+        if (techStackList == null) {
+            techStackList = new ArrayList<>();
+        }
+
+        TechStacks newTechStack = new TechStacks(techstack, member);
+        techStackList.add(newTechStack);
+
+        member.setTechStackList(techStackList);
+
+        memberRepository.save(member);
+
+        return member;
+    }
 }

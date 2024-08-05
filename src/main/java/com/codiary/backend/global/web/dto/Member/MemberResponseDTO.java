@@ -1,5 +1,6 @@
 package com.codiary.backend.global.web.dto.Member;
 
+import com.codiary.backend.global.domain.enums.TechStack;
 import com.codiary.backend.global.jwt.TokenInfo;
 import lombok.*;
 
@@ -18,7 +19,6 @@ public class MemberResponseDTO {
         String email;
         String nickname;
     }
-
 
 
     // 회원별 북마크 리스트 조회
@@ -94,9 +94,18 @@ public class MemberResponseDTO {
         String linkedinUrl;
         String discordUrl;
         String introduction;
-        List<String> techStacksList;
+        List<TechStack> techStacksList;
         List<String> teamList;
         Boolean myPage;
     }
 
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor // 기본 생성자 추가
+    @Getter
+    @Setter
+    public static class TechStacksDTO {
+        private Long memberId;
+        private List<TechStack> techStackList;
+    }
 }
