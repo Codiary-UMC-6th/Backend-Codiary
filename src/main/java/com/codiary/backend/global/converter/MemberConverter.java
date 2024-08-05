@@ -69,6 +69,19 @@ public class MemberConverter {
                 .build();
     }
 
+    public static MemberResponseDTO.UserInfoDTO toMemberInfoResponseDto(Member member) {
+        return MemberResponseDTO.UserInfoDTO.builder()
+                .memberId(member.getMemberId())
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .birth(member.getBirth())
+                .introduction(member.getIntroduction())
+                .githubUrl(member.getGithub())
+                .linkedinUrl(member.getLinkedin())
+                .discordUrl(member.getDiscord())
+                .build();
+    }
+
     // 회원별 북마크 리스트 조회
     public static MemberResponseDTO.BookmarkDTO toBookmarkDTO(Bookmark bookmark) {
         return MemberResponseDTO.BookmarkDTO.builder()

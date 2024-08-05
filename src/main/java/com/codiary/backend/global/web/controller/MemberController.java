@@ -185,6 +185,14 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toProfileResponseDto(member, user));
     }
 
+    @PutMapping(path = "/profile")
+    @Operation(summary = "사용자 정보 수정", description = "마이페이지에서 생년월일/내 소개/소셜계정 수정")
+    public ApiResponse<MemberResponseDTO.UserInfoDTO> updateUserInfo(@RequestBody MemberRequestDTO.MemberInfoRequestDTO request){
+        Member member = memberCommandService.getRequester();
+        member = memberCommandService.updateMemberInfo(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberInfoResponseDto(member));
+    }
+
     @PostMapping(path = "/techstack")
     @Operation(summary = "기술 스택 추가하기", description = "기술 스택 하나씩 추가")
     public ApiResponse<MemberResponseDTO.TechStacksDTO> setTechStacks(@RequestParam(value = "techstack") TechStack techstack) {
