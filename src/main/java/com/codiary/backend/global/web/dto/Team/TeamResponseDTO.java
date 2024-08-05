@@ -47,9 +47,9 @@ public class TeamResponseDTO {
     String linkedIn;
   }
 
-  //팀 팔로우 기능
+
   @Builder
-  public record TeamFollowResponseDto(
+  public record TeamFollowResponseDto( //팀 팔로우 기능
       Long followId,
       Long followerId,
       String followerName,
