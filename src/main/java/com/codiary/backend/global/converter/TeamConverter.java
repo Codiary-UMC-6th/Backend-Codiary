@@ -26,15 +26,16 @@ public class TeamConverter {
         .build();
   }
 
-  //팀 프로필 수정
+  // 팀 프로필 수정
   public static TeamResponseDTO.UpdateTeamDTO toUpdateTeamDTO(Team team) {
     return TeamResponseDTO.UpdateTeamDTO.builder()
         .name(team.getName())
         .intro(team.getIntro())
         .profilePhoto(team.getProfilePhoto())
         .github(team.getGithub())
-        .email(team.getEmail())
         .linkedIn(team.getLinkedin())
+        .discord(team.getDiscord())
+        .instagram(team.getInstagram())
         .build();
   }
 }

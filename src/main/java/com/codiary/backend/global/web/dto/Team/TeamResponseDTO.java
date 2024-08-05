@@ -45,6 +45,8 @@ public class TeamResponseDTO {
     String github;
     String email;
     String linkedIn;
+    String discord;
+    String instagram;
   }
 
 

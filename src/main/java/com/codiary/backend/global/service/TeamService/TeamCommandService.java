@@ -11,8 +11,8 @@ public interface TeamCommandService {
   //팀 생성
   Team createTeam(TeamRequestDTO.CreateTeamRequestDTO request);
 
-//  //팀 프로필 수정
-//  Team updateTeam(Long teamId);
+  // 팀 프로필 수정
+  Team updateTeam(Long teamId, TeamRequestDTO.UpdateTeamDTO request);
 
 
 }

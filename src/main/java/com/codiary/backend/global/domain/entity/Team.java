@@ -37,6 +37,9 @@ public class Team {
   @Column(name = "linkedin", columnDefinition = "varchar(256)")
   private String linkedin;
 
+  @Column(name = "discord", columnDefinition = "varchar(256)")
+  private String discord;
+
   @Column(name = "instagram", columnDefinition = "varchar(256)")
   private String instagram;
 

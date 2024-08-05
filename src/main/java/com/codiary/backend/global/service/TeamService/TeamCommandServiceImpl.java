@@ -27,4 +27,20 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     return teamRepository.save(team);
   }
+
+  @Override
+  @Transactional
+  public Team updateTeam(Long teamId, TeamRequestDTO.UpdateTeamDTO request) {
+    Team team = teamRepository.findById(teamId).orElseThrow(() -> new IllegalArgumentException("Invalid team ID"));
+
+    team.setName(request.getName());
+    team.setIntro(request.getIntro());
+    team.setGithub(request.getGithub());
+    team.setLinkedin(request.getLinkedIn());
+    team.setInstagram(request.getInstagram());
+
+    return teamRepository.save(team);
+  }
+
+
 }
