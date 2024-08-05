@@ -23,34 +23,26 @@ public class TeamController {
   private final TeamCommandService teamCommandService;
   //팀 생성
   @PostMapping()
-  @Operation(
-      summary = "팀 생성"
-  )
+  @Operation(summary = "팀 생성")
   public ApiResponse<TeamResponseDTO.CreateTeamResponseDTO> createTeam(
       @RequestBody TeamRequestDTO.CreateTeamRequestDTO request
       ){
     Team newTeam = teamCommandService.createTeam(request);
     return ApiResponse.onSuccess(
         SuccessStatus.TEAM_OK,
-        TeamConverter.toCreateMemberDTO(newTeam)
-    );
+        TeamConverter.toCreateMemberDTO(newTeam));
   }
 
-  //팀 프로필 수정
+  // 팀 프로필 수정
   @PatchMapping("/profile/{teamId}")
-  @Operation(
-      summary = "팀 프로필 수정"
-  )
+  @Operation(summary = "팀 프로필 수정")
   public ApiResponse<TeamResponseDTO.UpdateTeamDTO> updateTeam(
       @RequestBody TeamRequestDTO.UpdateTeamDTO request,
-      @PathVariable Long teamId
-  ){
+      @PathVariable Long teamId) {
+    Team updatedTeam = teamCommandService.updateTeam(teamId, request);
     return ApiResponse.onSuccess(
         SuccessStatus.TEAM_OK,
-        TeamConverter.toUpdateTeamDTO(
-            teamCommandService.updateTeam(teamId)
-        )
-    );
+        TeamConverter.toUpdateTeamDTO(updatedTeam));
   }
 
   //팀 팔로우

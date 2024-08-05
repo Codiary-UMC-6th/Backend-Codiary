@@ -42,5 +42,4 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     return teamRepository.save(team);
   }
 
-
 }

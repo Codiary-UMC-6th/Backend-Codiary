@@ -29,14 +29,6 @@ public class TeamRequestDTO {
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
-  public static class CheckTeam { //팀 조회
-    private Long teamId;
-  }
-
-  @Getter
-  @Builder
-  @AllArgsConstructor
-  @NoArgsConstructor
   public static class UpdateTeamDTO { //팀 프로필 수정
     private String name;
     private String intro;
@@ -44,5 +36,13 @@ public class TeamRequestDTO {
     private String linkedIn;
     private String discord;
     private String instagram;
+  }
+
+  @Getter
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class CheckTeam { //팀 조회
+    private Long teamId;
   }
 }

@@ -19,20 +19,6 @@ public class TeamResponseDTO {
     String profilePhoto;
   }
 
-  @Builder
-  @Getter
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class TeamCheckResponseDTO {  // 팀 조회
-    Long teamId;
-    String name;
-    String intro;
-    String profilePhoto;
-    String github;
-    String email;
-    String linkedIn;
-  }
-
   @Getter
   @Builder
   @NoArgsConstructor
@@ -49,6 +35,19 @@ public class TeamResponseDTO {
     String instagram;
   }
 
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class TeamCheckResponseDTO {  // 팀 조회
+    Long teamId;
+    String name;
+    String intro;
+    String profilePhoto;
+    String github;
+    String email;
+    String linkedIn;
+  }
 
   @Builder
   public record TeamFollowResponseDto( //팀 팔로우 기능
