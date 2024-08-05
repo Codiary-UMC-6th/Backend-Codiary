@@ -4,7 +4,7 @@ import com.codiary.backend.global.domain.entity.Bookmark;
 import com.codiary.backend.global.domain.entity.Follow;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
-import com.codiary.backend.global.web.dto.Bookmark.BookmarkResponseDTO;
+import com.codiary.backend.global.domain.entity.mapping.TechStacks;
 import com.codiary.backend.global.web.dto.Member.FollowResponseDto;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import com.codiary.backend.global.web.dto.Member.MemberSumResponseDto;
@@ -33,6 +33,16 @@ public class MemberConverter {
                 .memberId(member.getMemberId())
                 .nickname(member.getNickname())
                 .photoUrl(member.getPhotoUrl())
+                .build();
+    }
+
+    public MemberResponseDTO.TechStacksDTO toTechStacksResponseDto(Member member) {
+        return MemberResponseDTO.TechStacksDTO.builder()
+                .memberId(member.getMemberId())
+                .techStackList(member.getTechStackList()
+                        .stream()
+                        .map(TechStacks::getName)
+                        .collect(Collectors.toList()))
                 .build();
     }
 
