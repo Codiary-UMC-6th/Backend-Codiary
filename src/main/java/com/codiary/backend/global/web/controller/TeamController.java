@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/teams")
 public class TeamController {
-  /*
-  private final TeamCommandService teamCommandService;
-  //팀 생성
 
+  private final TeamCommandService teamCommandService;
+
+  //팀 생성
   @PostMapping()
   @Operation(summary = "팀 생성")
   public ApiResponse<TeamResponseDTO.CreateTeamResponseDTO> createTeam(
@@ -46,7 +46,6 @@ public class TeamController {
         SuccessStatus.TEAM_OK,
         TeamConverter.toUpdateTeamDTO(updatedTeam));
   }
-  */
-
+  
   //팀 팔로우
 }
