@@ -1,4 +1,12 @@
 package com.codiary.backend.global.repository;
 
-public interface TeamMemberRepository {
+import com.codiary.backend.global.domain.entity.Member;
+import com.codiary.backend.global.domain.entity.Team;
+import com.codiary.backend.global.domain.entity.mapping.TeamMember;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
+  Optional<TeamMember> findByTeamAndMember(Team team, Member member);
 }
