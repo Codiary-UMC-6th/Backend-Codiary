@@ -2,13 +2,11 @@ package com.codiary.backend.global.service.MemberService;
 
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
-import com.codiary.backend.global.converter.MemberConverter;
 import com.codiary.backend.global.domain.entity.Follow;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.repository.FollowRepository;
 import com.codiary.backend.global.repository.MemberRepository;
-import com.codiary.backend.global.web.dto.Member.FollowResponseDto;
-import com.codiary.backend.global.web.dto.Member.MemberSumResponseDto;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,10 +19,9 @@ import java.util.stream.Collectors;
 public class FollowService {
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
-    private final MemberConverter memberConverter;
 
     @Transactional
-    public FollowResponseDto follow(Long toId, Member fromMember) {
+    public Follow follow(Long toId, Member fromMember) {
         if (fromMember == null) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
@@ -61,7 +58,7 @@ public class FollowService {
         }
         followRepository.save(follow);
 
-        return memberConverter.toManageFollowDto(follow);
+        return follow;
     }
 
     @Transactional
@@ -82,7 +79,7 @@ public class FollowService {
 
 
     @Transactional
-    public List<MemberSumResponseDto> getFollowings(Member member) {
+    public List<Member> getFollowings(Member member) {
         if (member == null) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
@@ -93,12 +90,12 @@ public class FollowService {
         List<Follow> followings = followRepository.findByFromMemberAndFollowStatusTrueOrderByUpdatedAt(member);
 
         return followings.stream()
-                .map(follow -> memberConverter.toFollowResponseDto(follow.getToMember()))
+                .map(Follow::getToMember)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public List<MemberSumResponseDto> getFollowers(Member member) {
+    public List<Member> getFollowers(Member member) {
         if (member == null) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
@@ -109,7 +106,7 @@ public class FollowService {
         List<Follow> followers = followRepository.findByToMemberAndFollowStatusTrueOrderByUpdatedAt(member);
 
         return followers.stream()
-                .map(follow -> memberConverter.toFollowResponseDto(follow.getFromMember()))
+                .map(Follow::getFromMember)
                 .collect(Collectors.toList());
     }
 }

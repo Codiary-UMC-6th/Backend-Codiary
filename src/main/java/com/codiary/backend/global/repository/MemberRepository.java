@@ -24,5 +24,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m LEFT JOIN FETCH m.techStackList WHERE m.memberId = :memberId")
     Member findMemberWithTechStacks(@Param("memberId") Long memberId);
 
-
+    @Query("SELECT m FROM Member m LEFT JOIN FETCH m.memberProjectMapList mp LEFT JOIN FETCH mp.project WHERE m.memberId = :memberId")
+    Member findMemberWithProjects(@Param("memberId") Long memberId);
 }

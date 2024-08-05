@@ -108,4 +108,14 @@ public class MemberResponseDTO {
         private Long memberId;
         private List<TechStack> techStackList;
     }
+
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor // 기본 생성자 추가
+    @Getter
+    @Setter
+    public static class ProjectsDTO {
+        private Long memberId;
+        private List<String> projectList;
+    }
 }
