@@ -47,4 +47,16 @@ public class TeamResponseDTO {
     String linkedIn;
   }
 
+
+  @Builder
+  public record TeamFollowResponseDto( //팀 팔로우 기능
+      Long followId,
+      Long followerId,
+      String followerName,
+      Long followingId,
+      String followingName,
+      Boolean followStatus
+  ) {
+  }
+
 }
