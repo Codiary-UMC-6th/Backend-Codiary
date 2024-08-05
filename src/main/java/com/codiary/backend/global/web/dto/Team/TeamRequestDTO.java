@@ -19,17 +19,10 @@ public class TeamRequestDTO {
     private String profilePhoto;
     private String intro;
     private String github;
+    private String email;
     private String linkedIn;
     private String discord;
     private String instagram;
-  }
-
-  @Getter
-  @Builder
-  @AllArgsConstructor
-  @NoArgsConstructor
-  public static class CheckTeam { //팀 조회
-    private Long teamId;
   }
 
   @Getter
@@ -43,5 +36,13 @@ public class TeamRequestDTO {
     private String linkedIn;
     private String discord;
     private String instagram;
+  }
+
+  @Getter
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class CheckTeam { //팀 조회
+    private Long teamId;
   }
 }

@@ -10,7 +10,10 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Team {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +38,9 @@ public class Team {
   @Column(name = "linkedin", columnDefinition = "varchar(256)")
   private String linkedin;
 
+  @Column(name = "discord", columnDefinition = "varchar(256)")
+  private String discord;
+
   @Column(name = "instagram", columnDefinition = "varchar(256)")
   private String instagram;
 
@@ -46,7 +52,5 @@ public class Team {
 
   @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<TeamMember> teamMemberList = new ArrayList<>();
-
-
 
 }
