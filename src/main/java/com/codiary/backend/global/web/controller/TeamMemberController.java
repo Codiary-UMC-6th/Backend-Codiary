@@ -5,13 +5,11 @@ import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.converter.TeamMemberConverter;
 import com.codiary.backend.global.domain.entity.mapping.TeamMember;
 import com.codiary.backend.global.service.TeamMemberService.TeamMemberCommandService;
+import com.codiary.backend.global.web.dto.TeamMember.TeamMemberRequestDTO;
 import com.codiary.backend.global.web.dto.TeamMember.TeamMemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController

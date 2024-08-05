@@ -11,7 +11,7 @@ public class TeamMemberRequestDTO {
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
-  public static class AddTeamMemberDTO {  //팀원 추가
+  public static class AddMemberDTO {
     private Long teamId;
     private Long memberId;
     private MemberRole memberRole;
@@ -21,7 +21,7 @@ public class TeamMemberRequestDTO {
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
-  public static class RemoveTeamMemberDTO { //팀원 삭제
+  public static class RemoveMemberDTO {
     private Long teamId;
     private Long memberId;
   }

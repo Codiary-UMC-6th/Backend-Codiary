@@ -1,7 +1,7 @@
 package com.codiary.backend.global.repository;
 
-import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Team;
+import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.mapping.TeamMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 
