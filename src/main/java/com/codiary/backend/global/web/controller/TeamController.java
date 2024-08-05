@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/teams")
 public class TeamController {
+  /*
   private final TeamCommandService teamCommandService;
   //팀 생성
+
   @PostMapping()
   @Operation(
       summary = "팀 생성"
@@ -52,6 +54,7 @@ public class TeamController {
         )
     );
   }
+  */
 
   //팀 팔로우
 }
