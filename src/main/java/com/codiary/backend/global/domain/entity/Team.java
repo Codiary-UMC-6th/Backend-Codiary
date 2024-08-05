@@ -11,6 +11,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Team {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,7 +48,5 @@ public class Team {
 
   @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<TeamMember> teamMemberList = new ArrayList<>();
-
-
 
 }

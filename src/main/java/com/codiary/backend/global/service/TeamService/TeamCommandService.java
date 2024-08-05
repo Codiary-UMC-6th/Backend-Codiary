@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface TeamCommandService {
+
   //팀 생성
   Team createTeam(TeamRequestDTO.CreateTeamRequestDTO request);
 
