@@ -3,6 +3,7 @@ package com.codiary.backend.global.web.controller;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.converter.MemberConverter;
 import com.codiary.backend.global.converter.PostConverter;
+import com.codiary.backend.global.domain.entity.Follow;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.domain.entity.Bookmark;
@@ -67,8 +68,9 @@ public class MemberController {
     )
     @PostMapping("/follow/{id}")
     public ApiResponse<FollowResponseDto> follow(@PathVariable("id") Long toId) {
-        Member member = memberCommandService.getRequester();
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.follow(toId, member));
+        Member fromMember = memberCommandService.getRequester();
+        Follow follow = followService.follow(toId, fromMember);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toManageFollowDto(follow));
     }
 
     @Operation(
@@ -88,7 +90,8 @@ public class MemberController {
     @GetMapping("/following")
     public ApiResponse<List<MemberSumResponseDto>> getFollowings() {
         Member member = memberCommandService.getRequester();
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.getFollowings(member));
+        List<Member> followings = followService.getFollowings(member);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toFollowingResponseDto(followings));
     }
 
     @Operation(
@@ -98,7 +101,8 @@ public class MemberController {
     @GetMapping("/follower")
     public ApiResponse<List<MemberSumResponseDto>> getFollowers() {
         Member member = memberCommandService.getRequester();
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.getFollowers(member));
+        List<Member> followers = followService.getFollowers(member);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toFollowerResponseDto(followers));
     }
 
 
@@ -180,7 +184,8 @@ public class MemberController {
     @Operation(summary = "사용자 정보 조회", description = "마이페이지 사용자 정보 조회 기능")
     public ApiResponse<MemberResponseDTO.UserProfileDTO> getUserProfile(@PathVariable(value = "userId") Long userId){
         Member member = memberCommandService.getRequester();
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberQueryService.getUserProfile(userId, member));
+        Member user = memberQueryService.getUserProfile(userId);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toProfileResponseDto(member, user));
     }
 
     @PostMapping(path = "/techstacks")

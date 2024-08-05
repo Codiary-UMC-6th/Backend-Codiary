@@ -138,6 +138,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public Member setTechStacks(Long memberId, TechStack techstack) {
         Member member = memberRepository.findMemberWithTechStacks(memberId);
+        if (member == null) {
+            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
+        }
 
         List<TechStacks> techStackList = member.getTechStackList();
         if (techStackList == null) {
