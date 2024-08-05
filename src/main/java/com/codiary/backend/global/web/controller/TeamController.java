@@ -46,6 +46,6 @@ public class TeamController {
         SuccessStatus.TEAM_OK,
         TeamConverter.toUpdateTeamDTO(updatedTeam));
   }
-  
+
   //팀 팔로우
 }
