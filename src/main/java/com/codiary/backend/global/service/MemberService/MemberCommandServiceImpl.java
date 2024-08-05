@@ -188,4 +188,17 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .projectList(projectList)
                 .build();
     }
+
+    @Override
+    public Member updateMemberInfo(Member member, MemberRequestDTO.MemberInfoRequestDTO request){
+        Member updatedMember = member.toBuilder()
+                .birth(request.getBirth())
+                .introduction(request.getIntroduction())
+                .github(request.getGithub())
+                .linkedin(request.getLinkedin())
+                .discord(request.getDiscord())
+                .build();
+
+        return memberRepository.save(updatedMember);
+    }
 }

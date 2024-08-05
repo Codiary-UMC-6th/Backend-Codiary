@@ -25,4 +25,6 @@ public interface MemberCommandService {
     public Member setTechStacks(Long memberId, TechStack techstack);
 
     public MemberResponseDTO.ProjectsDTO setProjects(Long memberId, String projects);
+
+    public Member updateMemberInfo(Member member, MemberRequestDTO.MemberInfoRequestDTO request);
 }

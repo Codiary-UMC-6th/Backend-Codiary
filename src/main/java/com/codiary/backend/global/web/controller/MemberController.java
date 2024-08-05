@@ -63,8 +63,8 @@ public class MemberController {
             summary = "팔로우 및 취소 기능",
             description = "id를 가진 유저에 대해 팔로우하거나 취소할 수 있습니다."
     )
-    @PostMapping("/follow/{id}")
-    public ApiResponse<FollowResponseDto> follow(@PathVariable("id") Long toId) {
+    @PostMapping("/follow/{memberId}")
+    public ApiResponse<FollowResponseDto> follow(@PathVariable("memberId") Long toId) {
         Member fromMember = memberCommandService.getRequester();
         Follow follow = followService.follow(toId, fromMember);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toManageFollowDto(follow));
@@ -74,8 +74,8 @@ public class MemberController {
             summary = "팔로우 여부 조회 기능",
             description = "id를 가진 유저에 대해 팔로우 했는지 여부를 확인할 수 있습니다. true-팔로우O / false-팔로우X"
     )
-    @GetMapping("/follow/{id}")
-    public ApiResponse<Boolean> isFollowing(@PathVariable("id") Long toId) {
+    @GetMapping("/follow/{memberId}")
+    public ApiResponse<Boolean> isFollowing(@PathVariable("memberId") Long toId) {
         Member member = memberCommandService.getRequester();
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.isFollowing(toId, member));
     }
@@ -177,25 +177,40 @@ public class MemberController {
         return memberCommandService.setProfileImage(member, request);
     }
 
-    @GetMapping(path = "/profile/{userId}")
-    @Operation(summary = "사용자 정보 조회", description = "마이페이지 사용자 정보 조회 기능")
-    public ApiResponse<MemberResponseDTO.UserProfileDTO> getUserProfile(@PathVariable(value = "userId") Long userId){
+    @GetMapping(path = "/profile/{memberId}")
+    @Operation(summary = "사용자 프로필 기본 정보 조회", description = "마이페이지 사용자 정보 조회 기능")
+    public ApiResponse<MemberResponseDTO.UserProfileDTO> getUserProfile(@PathVariable(value = "memberId") Long memberId){
         Member member = memberCommandService.getRequester();
-        Member user = memberQueryService.getUserProfile(userId);
+        Member user = memberQueryService.getUserProfile(memberId);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toProfileResponseDto(member, user));
     }
 
-    @PostMapping(path = "/techstack")
+    @GetMapping(path = "/info")
+    @Operation(summary = "사용자 정보 조회", description = "마이페이지에서 생년월일/내 소개/소셜계정 수정 시 조회")
+    public ApiResponse<MemberResponseDTO.UserInfoDTO> updateUserInfo(){
+        Member member = memberCommandService.getRequester();
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberInfoResponseDto(member));
+    }
+
+    @PutMapping(path = "/info")
+    @Operation(summary = "사용자 정보 수정", description = "마이페이지에서 생년월일/내 소개/소셜계정 수정 적용")
+    public ApiResponse<MemberResponseDTO.UserInfoDTO> updateUserInfo(@Valid @RequestBody MemberRequestDTO.MemberInfoRequestDTO request){
+        Member member = memberCommandService.getRequester();
+        member = memberCommandService.updateMemberInfo(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberInfoResponseDto(member));
+    }
+
+    @PostMapping(path = "/techstack/{techstackName}")
     @Operation(summary = "기술 스택 추가하기", description = "기술 스택 하나씩 추가")
-    public ApiResponse<MemberResponseDTO.TechStacksDTO> setTechStacks(@RequestParam(value = "techstack") TechStack techstack) {
+    public ApiResponse<MemberResponseDTO.TechStacksDTO> setTechStacks(@PathVariable(value = "techstackName") TechStack techstack) {
         Member member = memberCommandService.getRequester();
         member = memberCommandService.setTechStacks(member.getMemberId(), techstack);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberConverter.toTechStacksResponseDto(member));
     }
 
-    @PostMapping(path = "/project")
+    @PostMapping(path = "/project/{projectName}")
     @Operation(summary = "프로젝트 추가하기", description = "프로젝트 하나씩 추가")
-    public ApiResponse<?> setProjects(@RequestParam(value = "project") String projectName) {
+    public ApiResponse<?> setProjects(@PathVariable(value = "projectName") String projectName) {
         Member member = memberCommandService.getRequester();
         memberCommandService.setProjects(member.getMemberId(), projectName);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberCommandService.setProjects(member.getMemberId(), projectName));

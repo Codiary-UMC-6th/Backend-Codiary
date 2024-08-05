@@ -100,6 +100,22 @@ public class MemberResponseDTO {
     }
 
     @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserInfoDTO {
+        Long memberId;
+        String email;
+        String nickname;
+        String birth;
+        String introduction;
+        String githubUrl;
+        String linkedinUrl;
+        String discordUrl;
+    }
+
+    @Builder
     @AllArgsConstructor
     @NoArgsConstructor // 기본 생성자 추가
     @Getter
