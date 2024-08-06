@@ -140,7 +140,7 @@ public class PostController {
     // 저자의 다이어리 리스트 페이징 조회
     @PreAuthorize("hasRole('USER')")
     // TODO: 멤버별 작성한 글 조회시 공동 저자로 등록된 멤버도 조회가능하도록 기능 수정 필요
-    @GetMapping("/member/{memberId}/paging")
+    @GetMapping("/member/paging")
     @Operation(summary = "저자의 다이어리 리스트 페이징 조회 API", description = "저자의 다이어리 리스트를 페이징으로 조회합니다. **첫 페이지는 0부터 입니다.**"
             , security = @SecurityRequirement(name = "accessToken")
     )
@@ -173,7 +173,7 @@ public class PostController {
 
     // 프로젝트별 저자의 다이어리 리스트 페이징 조회
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/project/{projectId}/member/{memberId}/paging")
+    @GetMapping("/project/{projectId}/member/paging")
     @Operation(summary = "프로젝트별 저자의 다이어리 리스트 페이징 조회 API", description = "프로젝트별 저자의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             , security = @SecurityRequirement(name = "accessToken")
     )
@@ -205,7 +205,7 @@ public class PostController {
 
     // 팀별 저자의 다이어리 리스트 페이징 조회
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/team/{teamId}/member/{memberId}/paging")
+    @GetMapping("/team/{teamId}/member/paging")
     @Operation(summary = "팀별 저자의 다이어리 리스트 페이징 조회 API", description = "팀별 저자의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             , security = @SecurityRequirement(name = "accessToken")
     )
