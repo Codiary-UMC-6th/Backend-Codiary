@@ -11,6 +11,7 @@ import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.repository.PostRepository;
 import com.codiary.backend.global.repository.ProjectRepository;
 import com.codiary.backend.global.repository.TeamRepository;
+import com.codiary.backend.global.service.MemberService.MemberCommandService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final TeamRepository teamRepository;
     private final PostRepository postRepository;
     private final ProjectRepository projectRepository;
+    private final MemberCommandService memberCommandService;
 
     @Override
     public Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size) {
@@ -67,21 +69,21 @@ public class PostQueryServiceImpl implements PostQueryService {
     }
 
     @Override
-    public Page<Post> getPostsByMember(Long memberId, int page, int size) {
+    public Page<Post> getPostsByMember(int page, int size) {
         PageRequest request = PageRequest.of(page, size);
-        Member member = memberRepository.findById(memberId).get();
+        Member getMember = memberCommandService.getRequester();
 
-        if (!postRepository.existsByMember(member)){
+        if (!postRepository.existsByMember(getMember)){
             throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
         }
-        return postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, request);
+        return postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(getMember, request);
     }
 
     @Override
-    public Page<Post> getPostsByTeam(Long teamId, Long memberId, int page, int size) {
+    public Page<Post> getPostsByTeam(Long teamId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
         Team team = teamRepository.findById(teamId).get();
-        Member member = memberRepository.findById(memberId).get();
+        Member getMember = memberCommandService.getRequester();
 
         if (!postRepository.existsByTeam(team)){
             throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);
@@ -90,18 +92,18 @@ public class PostQueryServiceImpl implements PostQueryService {
     }
 
     @Override
-    public Page<Post> getPostsByMemberInProject(Long projectId, Long memberId, int page, int size) {
+    public Page<Post> getPostsByMemberInProject(Long projectId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
         Project project = projectRepository.findById(projectId).get();
-        Member member = memberRepository.findById(memberId).get();
+        Member getMember = memberCommandService.getRequester();
 
         if (!postRepository.existsByProject(project)){
             throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_PROJECT);
         }
-        if (!postRepository.existsByMember(member)){
+        if (!postRepository.existsByMember(getMember)){
             throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
         }
-        return postRepository.findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(project, member, request);
+        return postRepository.findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(project, getMember, request);
     }
 
     @Override
@@ -120,18 +122,18 @@ public class PostQueryServiceImpl implements PostQueryService {
     }
 
     @Override
-    public Page<Post> getPostsByMemberInTeam(Long teamId, Long memberId, int page, int size) {
+    public Page<Post> getPostsByMemberInTeam(Long teamId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
         Team team = teamRepository.findById(teamId).get();
-        Member member = memberRepository.findById(memberId).get();
+        Member getMember = memberCommandService.getRequester();
 
         if (!postRepository.existsByTeam(team)){
             throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);
         }
-        if (!postRepository.existsByMember(member)){
+        if (!postRepository.existsByMember(getMember)){
             throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
         }
-        return postRepository.findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(team, member, request);
+        return postRepository.findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(team, getMember, request);
     }
 
     @Override

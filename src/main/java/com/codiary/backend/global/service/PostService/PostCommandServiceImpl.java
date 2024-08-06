@@ -129,10 +129,10 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
     @Override
-    public Post setPostTeam(Long postId, Long memberId, Long teamId) {
+    public Post setPostTeam(Long postId, Long teamId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
-        Member getMember = memberRepository.findById(memberId).get();
+        Member getMember = memberCommandService.getRequester();
 
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("Team not found"));

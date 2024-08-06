@@ -18,7 +18,7 @@ public interface PostCommandService {
     // 공동 저자 설정
     Post updateCoauthors(Long postId, PostRequestDTO.UpdateCoauthorRequestDTO request);
     // 글 소속 팀 설정
-    Post setPostTeam(Long postId, Long memberId, Long teamId);
+    Post setPostTeam(Long postId, Long teamId);
 
     Post setPostCategories(Long postId, Set<String> categories);
 

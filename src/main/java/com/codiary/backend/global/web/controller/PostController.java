@@ -126,11 +126,12 @@ public class PostController {
     @Operation(summary = "다이어리의 소속 팀 설정 API", description = "다이어리의 소속 팀을 설정합니다."
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostTeam(@PathVariable Long postId, Long memberId, @RequestBody PostRequestDTO.SetTeamRequestDTO request) {
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostTeam(@PathVariable Long postId, @RequestBody PostRequestDTO.SetTeamRequestDTO request) {
+        Member member = memberCommandService.getRequester();
         // 토큰 유효설 검사 (memberId)
-        jwtTokenProvider.isValidToken(memberId);
+        jwtTokenProvider.isValidToken(member.getMemberId());
 
-        Post updatedPost = postCommandService.setPostTeam(postId, memberId, request.getTeamId());
+        Post updatedPost = postCommandService.setPostTeam(postId, request.getTeamId());
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(updatedPost)
         );
     }
@@ -143,11 +144,13 @@ public class PostController {
     @Operation(summary = "저자의 다이어리 리스트 페이징 조회 API", description = "저자의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> findPostByMember(@PathVariable Long memberId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size) {
-        // 토큰 유효성 검사 (memberId)
-        jwtTokenProvider.isValidToken(memberId);
+    public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> findPostByMember(@RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size) {
+        Member member = memberCommandService.getRequester();
+        // 토큰 유효설 검사 (memberId)
+        jwtTokenProvider.isValidToken(member.getMemberId());
+
         //List<Post> memberPostList = postQueryService.getMemberPost(memberId);
-        Page<Post> posts = postQueryService.getPostsByMember(memberId, page, size);
+        Page<Post> posts = postQueryService.getPostsByMember(page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toMemberPostPreviewListDTO(posts));
     }
 
@@ -158,10 +161,12 @@ public class PostController {
     @Operation(summary = "팀의 다이어리 리스트 페이징 조회 API", description = "팀의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.TeamPostPreviewListDTO> findPostByTeam(@PathVariable Long teamId, @RequestParam Long memberId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
-        // 토큰 유효성 검사 (memberId)
-        jwtTokenProvider.isValidToken(memberId);
-        Page<Post> posts = postQueryService.getPostsByTeam(teamId, memberId, page, size);
+    public ApiResponse<PostResponseDTO.TeamPostPreviewListDTO> findPostByTeam(@PathVariable Long teamId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
+        Member member = memberCommandService.getRequester();
+        // 토큰 유효설 검사 (memberId)
+        jwtTokenProvider.isValidToken(member.getMemberId());
+
+        Page<Post> posts = postQueryService.getPostsByTeam(teamId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toTeamPostPreviewListDTO(posts));
     }
 
@@ -172,10 +177,12 @@ public class PostController {
     @Operation(summary = "프로젝트별 저자의 다이어리 리스트 페이징 조회 API", description = "프로젝트별 저자의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.MemberPostInProjectPreviewListDTO> findPostByMemberInProject(@PathVariable Long projectId, @PathVariable Long memberId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
-        // 토큰 유효성 검사 (memberId)
-        jwtTokenProvider.isValidToken(memberId);
-        Page<Post> posts = postQueryService.getPostsByMemberInProject(projectId, memberId, page, size);
+    public ApiResponse<PostResponseDTO.MemberPostInProjectPreviewListDTO> findPostByMemberInProject(@PathVariable Long projectId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
+        Member member = memberCommandService.getRequester();
+        // 토큰 유효설 검사 (memberId)
+        jwtTokenProvider.isValidToken(member.getMemberId());
+
+        Page<Post> posts = postQueryService.getPostsByMemberInProject(projectId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toMemberPostInProjectPreviewListDTO(posts));
     }
 
@@ -186,9 +193,11 @@ public class PostController {
     @Operation(summary = "프로젝트별 팀의 다이어리 리스트 페이징 조회 API", description = "프로젝트별 팀의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'와 팀의 'teamId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.TeamPostInProjectPreviewListDTO> findPostByTeamInProject(@PathVariable Long projectId, @PathVariable Long teamId, @RequestParam Long memberId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
-        // 토큰 유효성 검사 (memberId)
-        jwtTokenProvider.isValidToken(memberId);
+    public ApiResponse<PostResponseDTO.TeamPostInProjectPreviewListDTO> findPostByTeamInProject(@PathVariable Long projectId, @PathVariable Long teamId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
+        Member member = memberCommandService.getRequester();
+        // 토큰 유효설 검사 (memberId)
+        jwtTokenProvider.isValidToken(member.getMemberId());
+
         Page<Post> posts = postQueryService.getPostsByTeamInProject(projectId, teamId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toTeamPostInProjectPreviewListDTO(posts));
     }
@@ -200,10 +209,12 @@ public class PostController {
     @Operation(summary = "팀별 저자의 다이어리 리스트 페이징 조회 API", description = "팀별 저자의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.MemberPostInTeamPreviewListDTO> findPostByMemberInTeam(@PathVariable Long teamId, @PathVariable Long memberId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
-        // 토큰 유효성 검사 (memberId)
-        jwtTokenProvider.isValidToken(memberId);
-        Page<Post> posts = postQueryService.getPostsByMemberInTeam(teamId, memberId, page, size);
+    public ApiResponse<PostResponseDTO.MemberPostInTeamPreviewListDTO> findPostByMemberInTeam(@PathVariable Long teamId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
+        Member member = memberCommandService.getRequester();
+        // 토큰 유효설 검사 (memberId)
+        jwtTokenProvider.isValidToken(member.getMemberId());
+
+        Page<Post> posts = postQueryService.getPostsByMemberInTeam(teamId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toMemberPostInTeamPreviewListDTO(posts));
     }
 
@@ -246,9 +257,10 @@ public class PostController {
     @Operation(summary = "다이어리의 카테고리 설정 및 변경 API", description = "다이어리의 카테고리를 설정 및 변경합니다."
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCategory(@PathVariable Long postId, @RequestParam Long memberId, @RequestBody Set<String> categoryNames){
-        // 토큰 유효성 검사 (memberId)
-        jwtTokenProvider.isValidToken(memberId);
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCategory(@PathVariable Long postId, @RequestBody Set<String> categoryNames){
+        Member member = memberCommandService.getRequester();
+        // 토큰 유효설 검사 (memberId)
+        jwtTokenProvider.isValidToken(member.getMemberId());
         Post updatedPost = postCommandService.setPostCategories(postId, categoryNames);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toSetPostCategoriesResultDTO(updatedPost));
     }
