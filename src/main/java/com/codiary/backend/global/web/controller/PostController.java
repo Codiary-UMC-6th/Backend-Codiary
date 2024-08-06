@@ -3,8 +3,10 @@ package com.codiary.backend.global.web.controller;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.converter.PostConverter;
+import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
+import com.codiary.backend.global.service.MemberService.MemberCommandService;
 import com.codiary.backend.global.service.PostService.PostCommandService;
 import com.codiary.backend.global.service.PostService.PostQueryService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
@@ -33,6 +35,7 @@ import java.util.Set;
 public class PostController {
     private final PostCommandService postCommandService;
     private final PostQueryService postQueryService;
+    private final MemberCommandService memberCommandService;
     private final JwtTokenProvider jwtTokenProvider;
 
     // 다이어리 생성하기
@@ -42,13 +45,14 @@ public class PostController {
     @Operation(summary = "다이어리 생성 API", description = "다이어리를 생성합니다. **카테고리 설정은 다이어리 생성과는 별도로 설정해야 됩니다.**"
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(@RequestParam Long memberId, @ModelAttribute PostRequestDTO.CreatePostRequestDTO request) {
+    public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(@ModelAttribute PostRequestDTO.CreatePostRequestDTO request) {
+        Member member = memberCommandService.getRequester();
         // 토큰 유효설 검사 (memberId)
-        jwtTokenProvider.isValidToken(memberId);
+        jwtTokenProvider.isValidToken(member.getMemberId());
 
         Long teamId = 1L;
         Long projectId = 1L;
-        Post newPost = postCommandService.createPost(memberId, teamId, projectId, request);
+        Post newPost = postCommandService.createPost(teamId, projectId, request);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toCreateResultDTO(newPost));
     }
 

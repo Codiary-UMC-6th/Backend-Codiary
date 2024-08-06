@@ -17,6 +17,7 @@ import com.codiary.backend.global.repository.PostRepository;
 import com.codiary.backend.global.repository.ProjectRepository;
 import com.codiary.backend.global.repository.TeamRepository;
 import com.codiary.backend.global.service.CategoryService.CategoryCommandService;
+import com.codiary.backend.global.service.MemberService.MemberCommandService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,17 +42,19 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
     private final CategoryCommandService categoryCommandService;
+    private final MemberCommandService memberCommandService;
     private final AmazonS3Manager s3Manager; // 추가
     private final UuidRepository uuidRepository; // 추가
     private final PostFileRepository postFileRepository; // 추가
 
     @Override
-    public Post createPost(Long memberId, Long teamId, Long projectId, PostRequestDTO.CreatePostRequestDTO request) {
+    public Post createPost(Long teamId, Long projectId, PostRequestDTO.CreatePostRequestDTO request) {
 
         Post newPost = PostConverter.toPost(request);
 
-        Member getMember = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        //Member getMember = memberRepository.findById(memberId)
+        //        .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        Member getMember = memberCommandService.getRequester();
 
         Team getTeam = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("Team not found"));
