@@ -80,7 +80,6 @@ public class PostCommandServiceImpl implements PostCommandService {
 
     @Override
     public Post updatePost(Long postId, PostRequestDTO.UpdatePostDTO request) {
-        //Member getMember = memberRepository.findById(memberId).get();
         Member getMember = memberCommandService.getRequester();
         Post updatePost = postRepository.findById(postId).get();
         updatePost.update(request);
@@ -89,8 +88,8 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
     @Override
-    public void deletePost(Long memberId, Long postId) {
-        Member getMember = memberRepository.findById(memberId).get();
+    public void deletePost(Long postId) {
+        Member getMember = memberCommandService.getRequester();
 
         Post deletePost = postRepository.findById(postId).get();
         postRepository.delete(deletePost);

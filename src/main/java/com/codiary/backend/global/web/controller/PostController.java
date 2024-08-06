@@ -75,14 +75,15 @@ public class PostController {
     // 다이어리 삭제하기
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{postId}")
-    @Operation(summary = "다이어리 삭제 API", description = "다이어리를 삭제합니다. Param으로 memberId를 입력하세요"
+    @Operation(summary = "다이어리 삭제 API", description = "다이어리를 삭제합니다."
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<?> deletePost(@RequestParam Long memberId, @PathVariable Long postId){
+    public ApiResponse<?> deletePost(@PathVariable Long postId){
+        Member member = memberCommandService.getRequester();
         // 토큰 유효설 검사 (memberId)
-        jwtTokenProvider.isValidToken(memberId);
+        jwtTokenProvider.isValidToken(member.getMemberId());
 
-        postCommandService.deletePost(memberId, postId);
+        postCommandService.deletePost(postId);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, null);
     }
 
