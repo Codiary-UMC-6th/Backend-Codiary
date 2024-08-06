@@ -78,9 +78,10 @@ public class PostQueryServiceImpl implements PostQueryService {
     }
 
     @Override
-    public Page<Post> getPostsByTeam(Long teamId, int page, int size) {
+    public Page<Post> getPostsByTeam(Long teamId, Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
         Team team = teamRepository.findById(teamId).get();
+        Member member = memberRepository.findById(memberId).get();
 
         if (!postRepository.existsByTeam(team)){
             throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);

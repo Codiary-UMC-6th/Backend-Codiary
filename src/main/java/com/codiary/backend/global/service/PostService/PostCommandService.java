@@ -14,11 +14,11 @@ public interface PostCommandService {
     //포스트 삭제
     void deletePost(Long memberId, Long postId);
     // 공개/비공개 설정
-    Post updateVisibility(Long postId, PostRequestDTO.UpdateVisibilityRequestDTO request);
+    Post updateVisibility(Long postId, Long memberId, PostRequestDTO.UpdateVisibilityRequestDTO request);
     // 공동 저자 설정
-    Post updateCoauthors(Long postId, PostRequestDTO.UpdateCoauthorRequestDTO request);
+    Post updateCoauthors(Long postId, Long memberId, PostRequestDTO.UpdateCoauthorRequestDTO request);
     // 글 소속 팀 설정
-    Post setPostTeam(Long postId, Long teamId);
+    Post setPostTeam(Long postId, Long memberId, Long teamId);
 
     Post setPostCategories(Long postId, Set<String> categories);
 

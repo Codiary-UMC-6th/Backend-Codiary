@@ -44,7 +44,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final AmazonS3Manager s3Manager; // 추가
     private final UuidRepository uuidRepository; // 추가
     private final PostFileRepository postFileRepository; // 추가
-  
+
     @Override
     public Post createPost(Long memberId, Long teamId, Long projectId, PostRequestDTO.CreatePostRequestDTO request) {
 
@@ -107,28 +107,30 @@ public class PostCommandServiceImpl implements PostCommandService {
 
 
     @Override
-    public Post updateVisibility(Long postId, PostRequestDTO.UpdateVisibilityRequestDTO request) {
+    public Post updateVisibility(Long postId, Long memberId, PostRequestDTO.UpdateVisibilityRequestDTO request) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        Member getMember = memberRepository.findById(memberId).get();
 
         post.setPostStatus(request.getPostStatus());
         return postRepository.save(post);
     }
 
     @Override
-    public Post updateCoauthors(Long postId, PostRequestDTO.UpdateCoauthorRequestDTO request) {
+    public Post updateCoauthors(Long postId, Long memberId, PostRequestDTO.UpdateCoauthorRequestDTO request) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        Member getMember = memberRepository.findById(memberId).get();
 
         // 기존 공동 저자 리스트 삭제
         post.getAuthorsList().clear();
 
         // 새로운 공동 저자 리스트 추가
         Set<Authors> coauthors = request.getMemberIds().stream()
-                .map(memberId -> {
-                    Member member = memberRepository.findById(memberId)
-                            .orElseThrow(() -> new IllegalArgumentException("Member not found: " + memberId));
-                    return Authors.createAuthors(post, member);
+                .map(newCoauthorId -> {
+                    Member newCoauthor = memberRepository.findById(newCoauthorId)
+                            .orElseThrow(() -> new IllegalArgumentException("Member not found: " + newCoauthorId));
+                    return Authors.createAuthors(post, newCoauthor);
                 }).collect(Collectors.toSet());
 
         post.getAuthorsList().addAll(coauthors);
@@ -137,9 +139,10 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
     @Override
-    public Post setPostTeam(Long postId, Long teamId) {
+    public Post setPostTeam(Long postId, Long memberId, Long teamId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        Member getMember = memberRepository.findById(memberId).get();
 
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("Team not found"));

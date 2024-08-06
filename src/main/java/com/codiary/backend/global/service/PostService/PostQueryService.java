@@ -13,7 +13,7 @@ public interface PostQueryService {
     Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size);
     Page<Post> getPostsByCategories(Optional<String> optSearch, int page, int size);
     Page<Post> getPostsByMember(Long memberId, int page, int size);
-    Page<Post> getPostsByTeam(Long teamId, int page, int size);
+    Page<Post> getPostsByTeam(Long teamId, Long memberId, int page, int size);
     Page<Post> getPostsByMemberInProject(Long projectId, Long memberId, int page, int size);
     Page<Post> getPostsByTeamInProject(Long projectId, Long teamId, int page, int size);
     Page<Post> getPostsByMemberInTeam(Long teamId, Long memberId, int page, int size);
