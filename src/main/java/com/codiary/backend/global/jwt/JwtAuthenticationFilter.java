@@ -22,7 +22,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     public static final String BEARER_PREFIX = "Bearer";
 
     private final JwtTokenProvider jwtTokenProvider;
-
 //    @Override
 //    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 //
