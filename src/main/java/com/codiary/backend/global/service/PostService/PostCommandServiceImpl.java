@@ -107,10 +107,10 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
     @Override
-    public Post updateCoauthors(Long postId, Long memberId, PostRequestDTO.UpdateCoauthorRequestDTO request) {
+    public Post updateCoauthors(Long postId, PostRequestDTO.UpdateCoauthorRequestDTO request) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
-        Member getMember = memberRepository.findById(memberId).get();
+        Member getMember = memberCommandService.getRequester();
 
         // 기존 공동 저자 리스트 삭제
         post.getAuthorsList().clear();

@@ -110,11 +110,12 @@ public class PostController {
     @Operation(summary = "다이어리 공동 저자 설정 API", description = "다이어리의 공동 저자를 설정합니다."
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCoauthor(@PathVariable Long postId, @RequestParam Long memberId, @RequestBody PostRequestDTO.UpdateCoauthorRequestDTO request) {
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCoauthor(@PathVariable Long postId, @RequestBody PostRequestDTO.UpdateCoauthorRequestDTO request) {
+        Member member = memberCommandService.getRequester();
         // 토큰 유효설 검사 (memberId)
-        jwtTokenProvider.isValidToken(memberId);
+        jwtTokenProvider.isValidToken(member.getMemberId());
 
-        Post updatedPost = postCommandService.updateCoauthors(postId, memberId, request);
+        Post updatedPost = postCommandService.updateCoauthors(postId, request);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(updatedPost));
     }
 
