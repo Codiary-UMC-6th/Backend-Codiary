@@ -50,9 +50,9 @@ public class PostController {
         // 토큰 유효설 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
-        Long teamId = 1L;
-        Long projectId = 1L;
-        Post newPost = postCommandService.createPost(teamId, projectId, request);
+        //Long teamId = 1L;
+        //Long projectId = 1L;
+        Post newPost = postCommandService.createPost(request);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toCreateResultDTO(newPost));
     }
 

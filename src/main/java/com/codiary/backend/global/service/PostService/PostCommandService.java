@@ -8,7 +8,7 @@ import java.util.Set;
 public interface PostCommandService {
 
     // 포스트 생성
-    Post createPost(Long teamId, Long projectId, PostRequestDTO.CreatePostRequestDTO request);
+    Post createPost(PostRequestDTO.CreatePostRequestDTO request);
     //포스트 수정
     Post updatePost(Long memberId, Long postId, PostRequestDTO.UpdatePostDTO request);
     //포스트 삭제

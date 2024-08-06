@@ -48,7 +48,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final PostFileRepository postFileRepository; // 추가
 
     @Override
-    public Post createPost(Long teamId, Long projectId, PostRequestDTO.CreatePostRequestDTO request) {
+    public Post createPost(PostRequestDTO.CreatePostRequestDTO request) {
 
         Post newPost = PostConverter.toPost(request);
 
@@ -56,15 +56,15 @@ public class PostCommandServiceImpl implements PostCommandService {
         //        .orElseThrow(() -> new IllegalArgumentException("Member not found"));
         Member getMember = memberCommandService.getRequester();
 
-        Team getTeam = teamRepository.findById(teamId)
-                .orElseThrow(() -> new IllegalArgumentException("Team not found"));
-
-        Project getProject = projectRepository.findById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+//        Team getTeam = teamRepository.findById(teamId)
+//                .orElseThrow(() -> new IllegalArgumentException("Team not found"));
+//
+//        Project getProject = projectRepository.findById(projectId)
+//                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
 
         newPost.setMember(getMember);
-        newPost.setTeam(getTeam);
-        newPost.setProject(getProject);
+        //newPost.setTeam(getTeam);
+        //newPost.setProject(getProject);
 
         Post tempPost = postRepository.save(newPost);
         tempPost.setPostFileList(new ArrayList<>());
