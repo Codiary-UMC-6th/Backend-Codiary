@@ -84,12 +84,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                     .authenticate(authenticationToken);
 
             // 3. 인증 정보를 기반으로 JWT 토큰 생성
-            TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-            Member member = memberRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
+            Member getMember = memberRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
+            TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, getMember.getMemberId());
 
             return ApiResponse.of(SuccessStatus.MEMBER_OK, MemberResponseDTO.MemberTokenResponseDTO.builder()
-                    .email(member.getEmail())
-                    .nickname(member.getNickname())
+                    .email(getMember.getEmail())
+                    .nickname(getMember.getNickname())
                     .tokenInfo(tokenInfo)
                     .build());
         } catch (AuthenticationException e) {

@@ -3,6 +3,7 @@ package com.codiary.backend.global.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -35,21 +39,20 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
     }
 
     // token 생성
-    public TokenInfo generateToken(Authentication authentication) {
-
+    public TokenInfo generateToken(Authentication authentication, Long memberId) {
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-
         // 현재 시간
-        Long now = (new Date()).getTime();
+        long now = (new Date()).getTime();
 
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
+                .claim("memberId", memberId)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -86,7 +89,7 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+        } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
@@ -94,6 +97,8 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
             log.info("Unsupported JWT Token", e);
         } catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty.", e);
+        } catch (Exception e){
+            System.out.println("잘못된 토큰 값입니다.");
         }
         return false;
     }
@@ -104,5 +109,31 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    public void isValidToken(Long memberId) {
+        // Jwt 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest();
+        String accessToken = resolveToken(request);
+
+        if (accessToken == null || accessToken.isEmpty()) {
+            throw new RuntimeException("JWT 토큰이 없습니다.");
+        }
+        // Jwt 토큰 복호화
+        Claims claims = parseClaims(accessToken);
+
+        if (!claims.get("memberId", Long.class).equals(memberId)) {
+            throw new RuntimeException("접근 권한이 없는 유저입니다.");
+        }
+    }
+
+    // Request Header에서 토큰 정보 추출
+    private String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }
