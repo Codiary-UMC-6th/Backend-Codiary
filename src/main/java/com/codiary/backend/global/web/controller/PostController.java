@@ -91,14 +91,15 @@ public class PostController {
     // 다이어리 공개/비공개 설정
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/visibility/{postId}")
-    @Operation(summary = "다이어리 공개/비공개 설정 API", description = "다이어리의 공개 범위를 설정합니다. Param으로 memberId를 입력하세요"
+    @Operation(summary = "다이어리 공개/비공개 설정 API", description = "다이어리의 공개 범위를 설정합니다."
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostVisibility(@PathVariable Long postId, @RequestParam Long memberId, @RequestBody PostRequestDTO.UpdateVisibilityRequestDTO request) {
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostVisibility(@PathVariable Long postId, @RequestBody PostRequestDTO.UpdateVisibilityRequestDTO request) {
+        Member member = memberCommandService.getRequester();
         // 토큰 유효설 검사 (memberId)
-        jwtTokenProvider.isValidToken(memberId);
+        jwtTokenProvider.isValidToken(member.getMemberId());
 
-        Post updatedPost = postCommandService.updateVisibility(postId, memberId, request);
+        Post updatedPost = postCommandService.updateVisibility(postId, request);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(updatedPost));
     }
 
