@@ -47,7 +47,7 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(@ModelAttribute PostRequestDTO.CreatePostRequestDTO request) {
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
         //Long teamId = 1L;
@@ -65,7 +65,7 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(@RequestBody PostRequestDTO.UpdatePostDTO request, @PathVariable Long postId){
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(postCommandService.updatePost(postId, request)));
@@ -80,7 +80,7 @@ public class PostController {
     )
     public ApiResponse<?> deletePost(@PathVariable Long postId){
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
         postCommandService.deletePost(postId);
@@ -96,7 +96,7 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostVisibility(@PathVariable Long postId, @RequestBody PostRequestDTO.UpdateVisibilityRequestDTO request) {
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
         Post updatedPost = postCommandService.updateVisibility(postId, request);
@@ -112,7 +112,7 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCoauthor(@PathVariable Long postId, @RequestBody PostRequestDTO.UpdateCoauthorRequestDTO request) {
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
         Post updatedPost = postCommandService.updateCoauthors(postId, request);
@@ -128,7 +128,7 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostTeam(@PathVariable Long postId, @RequestBody PostRequestDTO.SetTeamRequestDTO request) {
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
         Post updatedPost = postCommandService.setPostTeam(postId, request.getTeamId());
@@ -146,7 +146,7 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> findPostByMember(@RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size) {
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
         //List<Post> memberPostList = postQueryService.getMemberPost(memberId);
@@ -163,7 +163,7 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.TeamPostPreviewListDTO> findPostByTeam(@PathVariable Long teamId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
         Page<Post> posts = postQueryService.getPostsByTeam(teamId, page, size);
@@ -179,7 +179,7 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.MemberPostInProjectPreviewListDTO> findPostByMemberInProject(@PathVariable Long projectId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
         Page<Post> posts = postQueryService.getPostsByMemberInProject(projectId, page, size);
@@ -195,7 +195,7 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.TeamPostInProjectPreviewListDTO> findPostByTeamInProject(@PathVariable Long projectId, @PathVariable Long teamId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
         Page<Post> posts = postQueryService.getPostsByTeamInProject(projectId, teamId, page, size);
@@ -211,7 +211,7 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.MemberPostInTeamPreviewListDTO> findPostByMemberInTeam(@PathVariable Long teamId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
         Page<Post> posts = postQueryService.getPostsByMemberInTeam(teamId, page, size);
@@ -238,7 +238,7 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.PostPreviewListDTO> findPostsByCategoryName(@RequestParam Optional<String> search, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
 
         Page<Post> posts = postQueryService.getPostsByCategories(Optional.of(search.orElse("")), page, size);
@@ -264,7 +264,7 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCategory(@PathVariable Long postId, @RequestBody Set<String> categoryNames){
         Member member = memberCommandService.getRequester();
-        // 토큰 유효설 검사 (memberId)
+        // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
         Post updatedPost = postCommandService.setPostCategories(postId, categoryNames);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toSetPostCategoriesResultDTO(updatedPost));
