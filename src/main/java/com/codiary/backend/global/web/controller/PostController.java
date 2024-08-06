@@ -60,14 +60,15 @@ public class PostController {
     // 멤버의 다이어리 수정하기
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/{postId}")
-    @Operation(summary = "다이어리 수정 API", description = "다이어리를 수정합니다. Param으로 memberId를 입력하세요"
+    @Operation(summary = "다이어리 수정 API", description = "다이어리를 수정합니다."
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(@RequestParam Long memberId, @RequestBody PostRequestDTO.UpdatePostDTO request, @PathVariable Long postId){
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(@RequestBody PostRequestDTO.UpdatePostDTO request, @PathVariable Long postId){
+        Member member = memberCommandService.getRequester();
         // 토큰 유효설 검사 (memberId)
-        jwtTokenProvider.isValidToken(memberId);
+        jwtTokenProvider.isValidToken(member.getMemberId());
 
-        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(postCommandService.updatePost(memberId, postId, request)));
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(postCommandService.updatePost(postId, request)));
     }
 
 

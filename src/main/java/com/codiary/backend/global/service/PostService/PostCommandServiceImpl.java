@@ -51,20 +51,9 @@ public class PostCommandServiceImpl implements PostCommandService {
     public Post createPost(PostRequestDTO.CreatePostRequestDTO request) {
 
         Post newPost = PostConverter.toPost(request);
-
-        //Member getMember = memberRepository.findById(memberId)
-        //        .orElseThrow(() -> new IllegalArgumentException("Member not found"));
         Member getMember = memberCommandService.getRequester();
 
-//        Team getTeam = teamRepository.findById(teamId)
-//                .orElseThrow(() -> new IllegalArgumentException("Team not found"));
-//
-//        Project getProject = projectRepository.findById(projectId)
-//                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
-
         newPost.setMember(getMember);
-        //newPost.setTeam(getTeam);
-        //newPost.setProject(getProject);
 
         Post tempPost = postRepository.save(newPost);
         tempPost.setPostFileList(new ArrayList<>());
@@ -74,7 +63,6 @@ public class PostCommandServiceImpl implements PostCommandService {
                 if (file.isEmpty()) {
                     continue;
                 }
-
                 String uuid = UUID.randomUUID().toString();
                 Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
                 String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), file);
@@ -91,9 +79,9 @@ public class PostCommandServiceImpl implements PostCommandService {
     }
 
     @Override
-    public Post updatePost(Long memberId, Long postId, PostRequestDTO.UpdatePostDTO request) {
-        Member getMember = memberRepository.findById(memberId).get();
-
+    public Post updatePost(Long postId, PostRequestDTO.UpdatePostDTO request) {
+        //Member getMember = memberRepository.findById(memberId).get();
+        Member getMember = memberCommandService.getRequester();
         Post updatePost = postRepository.findById(postId).get();
         updatePost.update(request);
 

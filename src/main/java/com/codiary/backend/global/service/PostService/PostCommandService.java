@@ -10,7 +10,7 @@ public interface PostCommandService {
     // 포스트 생성
     Post createPost(PostRequestDTO.CreatePostRequestDTO request);
     //포스트 수정
-    Post updatePost(Long memberId, Long postId, PostRequestDTO.UpdatePostDTO request);
+    Post updatePost(Long postId, PostRequestDTO.UpdatePostDTO request);
     //포스트 삭제
     void deletePost(Long memberId, Long postId);
     // 공개/비공개 설정
