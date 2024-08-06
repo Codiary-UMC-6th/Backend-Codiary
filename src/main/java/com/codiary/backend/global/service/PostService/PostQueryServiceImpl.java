@@ -88,7 +88,18 @@ public class PostQueryServiceImpl implements PostQueryService {
         if (!postRepository.existsByTeam(team)){
             throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);
         }
-        return postRepository.findByTeamOrderByCreatedAtDescPostIdDesc(team, request);
+        if (!postRepository.existsByMember(getMember)){
+            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
+        }
+
+        Page<Post> posts = postRepository.findByTeamOrderByCreatedAtDescPostIdDesc(team, request);
+
+        for (Post post : posts) {
+            if (post.getMember() == null) {
+                throw new IllegalStateException("Post has null member");
+            }
+        }
+        return posts;
     }
 
     @Override

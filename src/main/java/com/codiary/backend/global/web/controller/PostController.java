@@ -141,7 +141,7 @@ public class PostController {
     @PreAuthorize("hasRole('USER')")
     // TODO: 멤버별 작성한 글 조회시 공동 저자로 등록된 멤버도 조회가능하도록 기능 수정 필요
     @GetMapping("/member/{memberId}/paging")
-    @Operation(summary = "저자의 다이어리 리스트 페이징 조회 API", description = "저자의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**"
+    @Operation(summary = "저자의 다이어리 리스트 페이징 조회 API", description = "저자의 다이어리 리스트를 페이징으로 조회합니다. **첫 페이지는 0부터 입니다.**"
             , security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> findPostByMember(@RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size) {
@@ -174,7 +174,7 @@ public class PostController {
     // 프로젝트별 저자의 다이어리 리스트 페이징 조회
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/project/{projectId}/member/{memberId}/paging")
-    @Operation(summary = "프로젝트별 저자의 다이어리 리스트 페이징 조회 API", description = "프로젝트별 저자의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**"
+    @Operation(summary = "프로젝트별 저자의 다이어리 리스트 페이징 조회 API", description = "프로젝트별 저자의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             , security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO.MemberPostInProjectPreviewListDTO> findPostByMemberInProject(@PathVariable Long projectId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
@@ -206,7 +206,7 @@ public class PostController {
     // 팀별 저자의 다이어리 리스트 페이징 조회
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/team/{teamId}/member/{memberId}/paging")
-    @Operation(summary = "팀별 저자의 다이어리 리스트 페이징 조회 API", description = "팀별 저자의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**"
+    @Operation(summary = "팀별 저자의 다이어리 리스트 페이징 조회 API", description = "팀별 저자의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'를 받습니다. **첫 페이지는 0부터 입니다.**"
             , security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO.MemberPostInTeamPreviewListDTO> findPostByMemberInTeam(@PathVariable Long teamId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
@@ -231,12 +231,17 @@ public class PostController {
 
 
     // 카테고리명으로 다이어리 리스트 페이징 조회
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/categories/paging")
     @Operation(summary = "카테고리명으로 다이어리 리스트 페이징 조회 API", description = "카테고리명으로 다이어리 리스트를 페이징 조회합니다. 입력한 카테고리가 포함된 모든 다이어리를 조회할 수 있습니다. Param으로 카테고리를 입력하세요."
-            //, security = @SecurityRequirement(name = "accessToken")
+            , security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO.PostPreviewListDTO> findPostsByCategoryName(@RequestParam Optional<String> search, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
-        Page<Post> posts = postQueryService.getPostsByCategories(search, page, size);
+        Member member = memberCommandService.getRequester();
+        // 토큰 유효설 검사 (memberId)
+        jwtTokenProvider.isValidToken(member.getMemberId());
+
+        Page<Post> posts = postQueryService.getPostsByCategories(Optional.of(search.orElse("")), page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPreviewListDTO(posts));
     }
 
@@ -244,7 +249,7 @@ public class PostController {
     // 인접한 다이어리 조회 (특정 다이어리의 이전, 다음 다이어리 조회)
     @GetMapping("/{postId}/adjacent")
     @Operation(summary = "인접한 다이어리 조회 API", description = "특정 다이어리의 인접한 다이어리를 조회합니다."
-            //, security = @SecurityRequirement(name = "accessToken")
+            , security = @SecurityRequirement(name = "accessToken")
     )
     public ApiResponse<PostResponseDTO.PostAdjacentDTO> findAdjacentPosts(@PathVariable Long postId){
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostAdjacentDTO(postQueryService.findAdjacentPosts(postId)));
