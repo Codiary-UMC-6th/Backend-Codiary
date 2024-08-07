@@ -1,5 +1,6 @@
 package com.codiary.backend.global.service.TeamService;
 
+import com.codiary.backend.global.converter.TeamConverter;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.repository.TeamRepository;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
@@ -17,14 +18,6 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     Team team = teamRepository.findById(teamId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid team ID"));
 
-    return TeamResponseDTO.TeamCheckResponseDTO.builder()
-        .teamId(team.getTeamId())
-        .name(team.getName())
-        .intro(team.getIntro())
-        .profilePhoto(team.getProfilePhoto())
-        .github(team.getGithub())
-        .email(team.getEmail())
-        .linkedIn(team.getLinkedin())
-        .build();
+    return TeamConverter.toTeamCheckResponseDTO(team);
   }
 }

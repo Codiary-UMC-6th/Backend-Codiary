@@ -2,6 +2,10 @@ package com.codiary.backend.global.converter;
 
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
+import com.codiary.backend.global.web.dto.TeamMember.TeamMemberResponseDTO;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TeamConverter {
   //팀생성
@@ -15,14 +19,20 @@ public class TeamConverter {
   }
 
   //팀 조회
-  public static TeamResponseDTO.TeamCheckResponseDTO toTeamCheckDTO(Team team) {
+  public static TeamResponseDTO.TeamCheckResponseDTO toTeamCheckResponseDTO(Team team) {
+    List<TeamMemberResponseDTO.TeamMemberDTO> members = team.getTeamMemberList().stream()
+        .map(TeamMemberConverter::toTeamMemberDTO)
+        .collect(Collectors.toList());
+
     return TeamResponseDTO.TeamCheckResponseDTO.builder()
+        .teamId(team.getTeamId())
         .name(team.getName())
         .intro(team.getIntro())
         .profilePhoto(team.getProfilePhoto())
         .github(team.getGithub())
         .email(team.getEmail())
         .linkedIn(team.getLinkedin())
+        .members(members)
         .build();
   }
 
