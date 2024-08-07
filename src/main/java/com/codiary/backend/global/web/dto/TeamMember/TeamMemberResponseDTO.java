@@ -12,9 +12,14 @@ public class TeamMemberResponseDTO {
   @Getter
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class TeamMemberViewResponseDTO {
-    Long teamMemberId;
-
+  public static class TeamCheckResponseDTO {  //팀 조회
+    private Long teamId;
+    private String name;
+    private String intro;
+    private String profilePhoto;
+    private String github;
+    private String email;
+    private String linkedIn;
   }
 
   @Getter
