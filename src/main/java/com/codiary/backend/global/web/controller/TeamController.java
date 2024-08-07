@@ -48,4 +48,23 @@ public class TeamController {
   }
   
   //팀 팔로우
+
+
+  // 팀 이미지 설정
+  @PatchMapping(path = "/profile/{teamId}/bannerImage", consumes = "multipart/form-data")
+  @Operation(summary = "팀 배너 사진 설정")
+  public ApiResponse<TeamResponseDTO.TeamImageDTO> updateBannerImage(
+          @RequestBody TeamRequestDTO.TeamImageRequestDTO request,
+          @PathVariable Long teamId
+  ) {
+    return teamCommandService.updateTeamBannerImage(teamId, request);
+  }
+
+  @PatchMapping(path = "/profile/{teamId}/profileImage", consumes = "multipart/form-data")
+  @Operation(summary = "팀 프로필 사진 설정")
+  public ApiResponse<TeamResponseDTO.TeamImageDTO> updateProfileImage(
+          @RequestBody TeamRequestDTO.TeamImageRequestDTO request,
+          @PathVariable Long teamId) {
+    return teamCommandService.updateTeamProfileImage(teamId, request);
+  }
 }

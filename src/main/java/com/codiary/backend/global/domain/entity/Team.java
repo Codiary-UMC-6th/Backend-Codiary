@@ -53,4 +53,10 @@ public class Team {
   @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<TeamMember> teamMemberList = new ArrayList<>();
 
+  @OneToOne(mappedBy = "team", cascade = CascadeType.ALL)
+  private TeamBannerImage bannerImage;
+
+  @OneToOne(mappedBy = "team", cascade = CascadeType.ALL)
+  private TeamProfileImage profileImage;
+
 }

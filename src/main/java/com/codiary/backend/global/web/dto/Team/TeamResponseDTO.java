@@ -60,4 +60,13 @@ public class TeamResponseDTO {
   ) {
   }
 
+  @Builder
+  @Getter
+  @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class TeamImageDTO {
+    String url;
+  }
+
 }
