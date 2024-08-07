@@ -1,5 +1,6 @@
 package com.codiary.backend.global.web.dto.TeamMember;
 
+import com.codiary.backend.global.domain.enums.MemberRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,27 +11,18 @@ public class TeamMemberRequestDTO {
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
-  public static class AddTeamMemberRequestDTO {  //팀원 추가
-    private String name;
-    private String profilePhoto;
-    private String intro;
-    private String github;
-    private String linkedIn;
-    private String discord;
-    private String instagram;
+  public static class AddMemberDTO {
+    private Long teamId;
+    private Long memberId;
+    private MemberRole memberRole;
   }
 
   @Getter
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
-  public static class DeleteMemberRequestDTO {  //팀원 삭제
-    private String name;
-    private String profilePhoto;
-    private String intro;
-    private String github;
-    private String linkedIn;
-    private String discord;
-    private String instagram;
+  public static class RemoveMemberDTO {
+    private Long teamId;
+    private Long memberId;
   }
 }
