@@ -59,11 +59,11 @@ public class PostController {
 
     // 멤버의 다이어리 수정하기
     @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/{postId}")
+    @PatchMapping(value = "/{postId}", consumes = "multipart/form-data")
     @Operation(summary = "다이어리 수정 API", description = "다이어리를 수정합니다."
             , security = @SecurityRequirement(name = "accessToken")
     )
-    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(@RequestBody PostRequestDTO.UpdatePostDTO request, @PathVariable Long postId){
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(@ModelAttribute PostRequestDTO.UpdatePostDTO request, @PathVariable Long postId){
         Member member = memberCommandService.getRequester();
         // 토큰 유효성 검사 (memberId)
         jwtTokenProvider.isValidToken(member.getMemberId());
