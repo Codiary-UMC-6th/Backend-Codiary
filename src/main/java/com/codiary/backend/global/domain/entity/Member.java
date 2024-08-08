@@ -39,9 +39,6 @@ public class Member extends BaseEntity {
 
   public enum Gender {Male, Female}
 
-  @Column(name = "photoUrl", columnDefinition = "varchar(500)")
-  private String photoUrl;
-
   //계정상태
   @Column(name = "status", columnDefinition = "varchar(500)")
   @Enumerated(EnumType.STRING)
