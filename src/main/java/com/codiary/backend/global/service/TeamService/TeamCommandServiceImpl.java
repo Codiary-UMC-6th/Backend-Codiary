@@ -83,7 +83,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
   @Override
   public ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamBannerImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request) {
     Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
-    
+
+    s3Manager.deleteFile(team.getBannerImage().getImageUrl());
     teamBannerImageRepository.delete(team.getBannerImage());
 
     String uuid = UUID.randomUUID().toString();
@@ -104,6 +105,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
   public ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamProfileImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request) {
     Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
 
+    s3Manager.deleteFile(team.getProfileImage().getImageUrl());
     teamProfileImageRepository.delete(team.getProfileImage());
 
     String uuid = UUID.randomUUID().toString();
