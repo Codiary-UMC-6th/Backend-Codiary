@@ -123,7 +123,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public ApiResponse<MemberResponseDTO.MemberImageDTO> setProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request) {
+    public ApiResponse<MemberResponseDTO.MemberImageDTO> updateProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request) {
         if (member.getImage() != null) {
             s3Manager.deleteFile(member.getImage().getImageUrl());
             memberImageRepository.delete(member.getImage());
