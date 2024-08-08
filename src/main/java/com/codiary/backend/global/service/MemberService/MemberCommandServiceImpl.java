@@ -65,6 +65,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .gender(Member.Gender.Female)
                 .github(signUpRequest.getGithub())
                 .linkedin(signUpRequest.getLinkedin())
+                .image(null)
                 .build();
         memberRepository.save(member);
 
@@ -123,6 +124,11 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     public ApiResponse<MemberResponseDTO.MemberImageDTO> setProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request) {
+        if (member.getImage() != null) {
+            s3Manager.deleteFile(member.getImage().getImageUrl());
+            memberImageRepository.delete(member.getImage());
+        }
+
         String uuid = UUID.randomUUID().toString();
         Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
         String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
