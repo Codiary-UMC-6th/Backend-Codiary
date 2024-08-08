@@ -26,6 +26,7 @@ public class PostRequestDTO {
     }
 
     @Getter
+    @Setter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
@@ -35,6 +36,7 @@ public class PostRequestDTO {
         private Boolean postStatus;
         //private Set<String> postCategory;
         private PostAccess postAccess;
+        private List<MultipartFile> addedPostFiles;
     }
 
     @Getter
