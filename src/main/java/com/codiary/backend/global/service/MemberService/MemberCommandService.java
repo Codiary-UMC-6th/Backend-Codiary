@@ -22,6 +22,8 @@ public interface MemberCommandService {
 
     public ApiResponse<MemberResponseDTO.MemberImageDTO> updateProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request);
 
+    public ApiResponse<String> deleteProfileImage(Member member);
+
     public Member setTechStacks(Long memberId, TechStack techstack);
 
     public MemberResponseDTO.ProjectsDTO setProjects(Long memberId, String projects);

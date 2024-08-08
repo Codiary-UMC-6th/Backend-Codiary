@@ -144,6 +144,17 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
+    public ApiResponse<String> deleteProfileImage(Member member) {
+        if (member.getImage() != null) {
+            s3Manager.deleteFile(member.getImage().getImageUrl());
+            memberImageRepository.delete(member.getImage());
+            member.setImage(null);
+            memberRepository.save(member);
+        }
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "성공적으로 삭제되었습니다!");
+    }
+
+    @Override
     public Member setTechStacks(Long memberId, TechStack techstack) {
         Member member = memberRepository.findMemberWithTechStacks(memberId);
         if (member == null) {
