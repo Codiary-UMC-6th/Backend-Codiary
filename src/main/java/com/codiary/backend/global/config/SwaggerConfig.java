@@ -21,10 +21,11 @@ public class SwaggerConfig {
         String jwtSchemeName = "JWT TOKEN";
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
         Components components = new Components()
-                .addSecuritySchemes("accessToken", new SecurityScheme()
+                .addSecuritySchemes("JWT TOKEN", new SecurityScheme()
                         .name("Authorization")
-                        .type(SecurityScheme.Type.APIKEY) // HTTP 방식
+                        .type(SecurityScheme.Type.HTTP) // HTTP 방식
                         .in(SecurityScheme.In.HEADER)
+                        .scheme("bearer")
                         .bearerFormat("JWT")
                 );
 
@@ -33,7 +34,7 @@ public class SwaggerConfig {
                 .info(info)
                 .addSecurityItem(securityRequirement)
                 .components(components);
-                //.components(new Components())
-                //.addSecurityItem(securityRequirement)
+            //.components(new Components())
+            //.addSecurityItem(securityRequirement)
     }
 }

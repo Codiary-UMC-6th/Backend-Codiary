@@ -26,9 +26,6 @@ public class Team {
   @Column(name = "intro", columnDefinition = "varchar(256)")
   private String intro;
 
-  @Column(name = "profilePhoto", columnDefinition = "varchar(256)")
-  private String profilePhoto;
-
   @Column(name = "github", columnDefinition = "varchar(256)")
   private String github;
 
@@ -52,5 +49,11 @@ public class Team {
 
   @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<TeamMember> teamMemberList = new ArrayList<>();
+
+  @OneToOne(mappedBy = "team", cascade = CascadeType.ALL)
+  private TeamBannerImage bannerImage;
+
+  @OneToOne(mappedBy = "team", cascade = CascadeType.ALL)
+  private TeamProfileImage profileImage;
 
 }
