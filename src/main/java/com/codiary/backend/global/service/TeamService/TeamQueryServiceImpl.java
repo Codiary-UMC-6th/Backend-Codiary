@@ -5,6 +5,8 @@ import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.repository.TeamBannerImageRepository;
 import com.codiary.backend.global.repository.TeamProfileImageRepository;
+import com.codiary.backend.global.converter.TeamConverter;
+import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.repository.TeamRepository;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -33,4 +35,12 @@ public class TeamQueryServiceImpl implements TeamQueryService {
 
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, response);
     }
+
+    @Override
+    public TeamResponseDTO.TeamCheckResponseDTO getTeamById(Long teamId) {
+      Team team = teamRepository.findById(teamId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid team ID"));
+
+      return TeamConverter.toTeamCheckResponseDTO(team);
+  }
 }

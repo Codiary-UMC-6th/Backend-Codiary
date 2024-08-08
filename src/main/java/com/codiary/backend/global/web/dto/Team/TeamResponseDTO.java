@@ -2,8 +2,10 @@ package com.codiary.backend.global.web.dto.Team;
 
 import com.codiary.backend.global.domain.enums.PostAccess;
 import com.codiary.backend.global.jwt.TokenInfo;
+import com.codiary.backend.global.web.dto.TeamMember.TeamMemberResponseDTO;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 public class TeamResponseDTO {
@@ -53,6 +55,7 @@ public class TeamResponseDTO {
     String github;
     String email;
     String linkedIn;
+    private List<TeamMemberResponseDTO.TeamMemberDTO> members; // 팀원 목록 추가
   }
 
   @Builder
