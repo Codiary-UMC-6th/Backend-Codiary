@@ -1,7 +1,9 @@
 package com.codiary.backend.global.service.TeamService;
 
+import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.web.dto.Team.TeamRequestDTO;
+import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import com.codiary.backend.global.web.dto.TeamMember.TeamMemberRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,5 +16,7 @@ public interface TeamCommandService {
   // 팀 프로필 수정
   Team updateTeam(Long teamId, TeamRequestDTO.UpdateTeamDTO request);
 
+  ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamBannerImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request);
 
+  ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamProfileImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request);
 }

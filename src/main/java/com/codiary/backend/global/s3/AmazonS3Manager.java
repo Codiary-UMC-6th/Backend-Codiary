@@ -1,5 +1,6 @@
 package com.codiary.backend.global.s3;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -34,6 +35,17 @@ public class AmazonS3Manager {
         }
 
         return amazonS3.getUrl(s3Config.getBucket(), keyName).toString();
+    }
+
+    public void deleteFile(String fileUrl) {
+        String[] segments = fileUrl.split("/");
+        String keyName = s3Config.getFilesPath() + '/' + segments[segments.length - 1];
+
+        try {
+            amazonS3.deleteObject(s3Config.getBucket(), keyName);
+        } catch (Exception e) {
+            log.error("error at AmazonS3Manager deleteFile : {}", (Object) e.getStackTrace());
+        }
     }
 
     public String generatePostName(Uuid uuid) {
