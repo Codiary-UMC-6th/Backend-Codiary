@@ -26,9 +26,6 @@ public class Team {
   @Column(name = "intro", columnDefinition = "varchar(256)")
   private String intro;
 
-  @Column(name = "profilePhoto", columnDefinition = "varchar(256)")
-  private String profilePhoto;
-
   @Column(name = "github", columnDefinition = "varchar(256)")
   private String github;
 

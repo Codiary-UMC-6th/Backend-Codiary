@@ -10,24 +10,28 @@ public class TeamResponseDTO {
 
   @Builder
   @Getter
+  @Setter
   @NoArgsConstructor
   @AllArgsConstructor
   public static class CreateTeamResponseDTO {  // 팀 생성
     Long teamId;
     String name;
     String intro;
-    String profilePhoto;
+    String profileImageUrl;
+    String bannerImageUrl;
   }
 
   @Getter
   @Builder
+  @Setter
   @NoArgsConstructor
   @AllArgsConstructor
   public static class UpdateTeamDTO { // 팀 프로필 수정
     Long teamId;
     String name;
     String intro;
-    String profilePhoto;
+    String profileImageUrl;
+    String bannerImageUrl;
     String github;
     String email;
     String linkedIn;
@@ -37,13 +41,15 @@ public class TeamResponseDTO {
 
   @Builder
   @Getter
+  @Setter
   @NoArgsConstructor
   @AllArgsConstructor
   public static class TeamCheckResponseDTO {  // 팀 조회
     Long teamId;
     String name;
     String intro;
-    String profilePhoto;
+    String profileImageUrl;
+    String bannerImageUrl;
     String github;
     String email;
     String linkedIn;

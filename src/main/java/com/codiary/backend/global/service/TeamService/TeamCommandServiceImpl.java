@@ -26,6 +26,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
   private final AmazonS3Manager s3Manager;
   private final TeamBannerImageRepository bannerImageRepository;
   private final TeamProfileImageRepository profileImageRepository;
+  private final TeamProfileImageRepository teamProfileImageRepository;
+  private final TeamBannerImageRepository teamBannerImageRepository;
 
   @Override
   @Transactional
@@ -33,14 +35,35 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     Team team = Team.builder()
         .name(request.getName())
         .intro(request.getIntro())
-        .profilePhoto(request.getProfilePhoto())
         .github(request.getGithub())
         .email(request.getEmail())
         .linkedin(request.getLinkedIn())
         .instagram(request.getInstagram())
         .build();
 
-    return teamRepository.save(team);
+    Team savedTeam = teamRepository.save(team);
+
+    // 배너 이미지 저장
+    String bannerUuid = UUID.randomUUID().toString();
+    Uuid savedBannerUuid = uuidRepository.save(Uuid.builder().uuid(bannerUuid).build());
+    String bannerImageUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedBannerUuid), request.getBannerPhoto());
+    TeamBannerImage bannerImage = TeamBannerImage.builder()
+            .imageUrl(bannerImageUrl)
+            .team(savedTeam)
+            .build();
+    savedTeam.setBannerImage(bannerImageRepository.save(bannerImage));
+
+    // 프로필 이미지 저장
+    String profileUuid = UUID.randomUUID().toString();
+    Uuid savedProfileUuid = uuidRepository.save(Uuid.builder().uuid(profileUuid).build());
+    String profileImageUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedProfileUuid), request.getProfilePhoto());
+    TeamProfileImage profileImage = TeamProfileImage.builder()
+            .imageUrl(profileImageUrl)
+            .team(savedTeam)
+            .build();
+    savedTeam.setProfileImage(profileImageRepository.save(profileImage));
+
+    return teamRepository.save(savedTeam);
   }
 
   @Override
@@ -60,6 +83,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
   @Override
   public ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamBannerImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request) {
     Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
+    
+    teamBannerImageRepository.delete(team.getBannerImage());
 
     String uuid = UUID.randomUUID().toString();
     Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
@@ -78,6 +103,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
   @Override
   public ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamProfileImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request) {
     Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
+
+    teamProfileImageRepository.delete(team.getProfileImage());
 
     String uuid = UUID.randomUUID().toString();
     Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());

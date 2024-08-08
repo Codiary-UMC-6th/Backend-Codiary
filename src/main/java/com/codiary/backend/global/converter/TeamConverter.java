@@ -10,7 +10,8 @@ public class TeamConverter {
         .teamId(team.getTeamId())
         .name(team.getName())
         .intro(team.getIntro())
-        .profilePhoto(team.getProfilePhoto())
+        .bannerImageUrl(team.getBannerImage().getImageUrl())
+        .profileImageUrl(team.getProfileImage().getImageUrl())
         .build();
   }
 
@@ -19,7 +20,8 @@ public class TeamConverter {
     return TeamResponseDTO.TeamCheckResponseDTO.builder()
         .name(team.getName())
         .intro(team.getIntro())
-        .profilePhoto(team.getProfilePhoto())
+        .bannerImageUrl(team.getBannerImage().getImageUrl())
+        .profileImageUrl(team.getProfileImage().getImageUrl())
         .github(team.getGithub())
         .email(team.getEmail())
         .linkedIn(team.getLinkedin())
@@ -31,7 +33,8 @@ public class TeamConverter {
     return TeamResponseDTO.UpdateTeamDTO.builder()
         .name(team.getName())
         .intro(team.getIntro())
-        .profilePhoto(team.getProfilePhoto())
+        .bannerImageUrl(team.getBannerImage().getImageUrl())
+        .profileImageUrl(team.getProfileImage().getImageUrl())
         .github(team.getGithub())
         .linkedIn(team.getLinkedin())
         .discord(team.getDiscord())

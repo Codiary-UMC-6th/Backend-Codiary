@@ -9,12 +9,14 @@ import java.util.List;
 
 public class TeamRequestDTO {
   @Getter
+  @Setter
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
   public static class CreateTeamRequestDTO {  //팀 생성
     private String name;
-    private String profilePhoto;
+    private MultipartFile profilePhoto;
+    private MultipartFile bannerPhoto;
     private String intro;
     private String github;
     private String email;
@@ -37,6 +39,7 @@ public class TeamRequestDTO {
   }
 
   @Getter
+  @Setter
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
