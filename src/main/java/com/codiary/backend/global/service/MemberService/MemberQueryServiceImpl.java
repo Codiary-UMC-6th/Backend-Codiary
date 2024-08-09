@@ -66,7 +66,7 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     @Override
     public Member getUserProfile(Long userId) {
         Member user = memberRepository.findMemberWithTechStacks(userId);
-        user.getTeamMemberList().size();
+        user = memberRepository.findMemberWithTeam(userId);
         if (user == null) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
