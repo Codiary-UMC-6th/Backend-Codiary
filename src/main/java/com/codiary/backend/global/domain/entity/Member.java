@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
@@ -38,9 +38,6 @@ public class Member extends BaseEntity {
 
   public enum Gender {Male, Female}
 
-  @Column(name = "photoUrl", columnDefinition = "varchar(500)")
-  private String photoUrl;
-
   //계정상태
   @Column(name = "status", columnDefinition = "varchar(500)")
   @Enumerated(EnumType.STRING)
@@ -54,6 +51,12 @@ public class Member extends BaseEntity {
 
   @Column(name = "linkedin", columnDefinition = "varchar(500)")
   private String linkedin;
+
+  @Column(name = "discord", columnDefinition = "varchar(500)")
+  private String discord;
+
+  @Column(name="introduction", columnDefinition = "varchar(500)")
+  private String introduction;
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<TechStacks> techStackList = new ArrayList<>();

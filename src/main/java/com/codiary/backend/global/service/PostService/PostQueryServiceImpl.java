@@ -11,6 +11,7 @@ import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.repository.PostRepository;
 import com.codiary.backend.global.repository.ProjectRepository;
 import com.codiary.backend.global.repository.TeamRepository;
+import com.codiary.backend.global.service.MemberService.MemberCommandService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final TeamRepository teamRepository;
     private final PostRepository postRepository;
     private final ProjectRepository projectRepository;
+    private final MemberCommandService memberCommandService;
 
     @Override
     public Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size) {

@@ -21,4 +21,9 @@ public class Project {
 
   @Column(name="project_name", nullable = false, columnDefinition = "varchar(256)")
   private String projectName;
+
+  @Builder
+  public Project(String projectName) {
+    this.projectName = projectName;
+  }
 }

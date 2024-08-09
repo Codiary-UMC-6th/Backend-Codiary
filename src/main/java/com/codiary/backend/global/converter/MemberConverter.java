@@ -3,8 +3,10 @@ package com.codiary.backend.global.converter;
 import com.codiary.backend.global.domain.entity.Bookmark;
 import com.codiary.backend.global.domain.entity.Follow;
 import com.codiary.backend.global.domain.entity.Member;
+import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
-import com.codiary.backend.global.web.dto.Bookmark.BookmarkResponseDTO;
+import com.codiary.backend.global.domain.entity.mapping.TeamMember;
+import com.codiary.backend.global.domain.entity.mapping.TechStacks;
 import com.codiary.backend.global.web.dto.Member.FollowResponseDto;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import com.codiary.backend.global.web.dto.Member.MemberSumResponseDto;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 @Component
 public class MemberConverter {
 
-    public FollowResponseDto toManageFollowDto(Follow follow) {
+    public static FollowResponseDto toManageFollowDto(Follow follow) {
         return FollowResponseDto.builder()
                 .followId(follow.getFollowId())
                 .followerId(follow.getFromMember().getMemberId())
@@ -32,11 +34,59 @@ public class MemberConverter {
         return MemberSumResponseDto.builder()
                 .memberId(member.getMemberId())
                 .nickname(member.getNickname())
-                .photoUrl(member.getPhotoUrl())
+                .photoUrl((member.getImage() != null)
+                        ? member.getImage().getImageUrl()
+                        : "")
                 .build();
     }
 
+    public static List<MemberSumResponseDto> toFollowingResponseDto(List<Member> members) {
+        return members.stream()
+                .map(member -> MemberSumResponseDto.builder()
+                        .memberId(member.getMemberId())
+                        .nickname(member.getNickname())
+                        .photoUrl((member.getImage() != null)
+                                ? member.getImage().getImageUrl()
+                                : "")
+                        .build())
+                .collect(Collectors.toList());
+    }
 
+    public static List<MemberSumResponseDto> toFollowerResponseDto(List<Member> members) {
+        return members.stream()
+                .map(member -> MemberSumResponseDto.builder()
+                        .memberId(member.getMemberId())
+                        .nickname(member.getNickname())
+                        .photoUrl((member.getImage() != null)
+                                ? member.getImage().getImageUrl()
+                                : "")
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+
+    public MemberResponseDTO.TechStacksDTO toTechStacksResponseDto(Member member) {
+        return MemberResponseDTO.TechStacksDTO.builder()
+                .memberId(member.getMemberId())
+                .techStackList(member.getTechStackList()
+                        .stream()
+                        .map(TechStacks::getName)
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    public static MemberResponseDTO.UserInfoDTO toMemberInfoResponseDto(Member member) {
+        return MemberResponseDTO.UserInfoDTO.builder()
+                .memberId(member.getMemberId())
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .birth(member.getBirth())
+                .introduction(member.getIntroduction())
+                .githubUrl(member.getGithub())
+                .linkedinUrl(member.getLinkedin())
+                .discordUrl(member.getDiscord())
+                .build();
+    }
 
     // 회원별 북마크 리스트 조회
     public static MemberResponseDTO.BookmarkDTO toBookmarkDTO(Bookmark bookmark) {
@@ -95,6 +145,28 @@ public class MemberConverter {
         return MemberResponseDTO.MemberCategoryListDTO.builder()
                 .listSize(memberCategoryDTOList.size())
                 .memberCategoryList(memberCategoryDTOList)
+                .build();
+    }
+
+    public static MemberResponseDTO.UserProfileDTO toProfileResponseDto(Member member, Member user) {
+        return MemberResponseDTO.UserProfileDTO.builder()
+                .currentMemberId(member.getMemberId())
+                .userId(user.getMemberId())
+                .photoUrl((member.getImage() != null)
+                        ? member.getImage().getImageUrl()
+                        : "")
+                .githubUrl(user.getGithub())
+                .linkedinUrl(user.getLinkedin())
+                .discordUrl(user.getDiscord())
+                .introduction(user.getIntroduction())
+                .techStacksList(user.getTechStackList().stream()
+                        .map(TechStacks::getName)
+                        .collect(Collectors.toList()))
+                .teamList(user.getTeamMemberList().stream()
+                        .map(TeamMember::getTeam)
+                        .map(Team::getName)
+                        .collect(Collectors.toList()))
+                .myPage(user.getMemberId().equals(member.getMemberId()))
                 .build();
     }
 

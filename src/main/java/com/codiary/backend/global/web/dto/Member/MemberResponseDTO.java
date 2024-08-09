@@ -1,9 +1,8 @@
 package com.codiary.backend.global.web.dto.Member;
 
+import com.codiary.backend.global.domain.enums.TechStack;
 import com.codiary.backend.global.jwt.TokenInfo;
-import com.codiary.backend.global.web.dto.Bookmark.BookmarkResponseDTO;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +19,6 @@ public class MemberResponseDTO {
         String email;
         String nickname;
     }
-
 
 
     // 회원별 북마크 리스트 조회
@@ -83,4 +81,57 @@ public class MemberResponseDTO {
         String url;
     }
 
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserProfileDTO {
+        Long currentMemberId;
+        Long userId;
+        String photoUrl;
+        String githubUrl;
+        String linkedinUrl;
+        String discordUrl;
+        String introduction;
+        List<TechStack> techStacksList;
+        List<String> teamList;
+        Boolean myPage;
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserInfoDTO {
+        Long memberId;
+        String email;
+        String nickname;
+        String birth;
+        String introduction;
+        String githubUrl;
+        String linkedinUrl;
+        String discordUrl;
+    }
+
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor // 기본 생성자 추가
+    @Getter
+    @Setter
+    public static class TechStacksDTO {
+        private Long memberId;
+        private List<TechStack> techStackList;
+    }
+
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor // 기본 생성자 추가
+    @Getter
+    @Setter
+    public static class ProjectsDTO {
+        private Long memberId;
+        private List<String> projectList;
+    }
 }

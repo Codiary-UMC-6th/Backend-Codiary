@@ -5,19 +5,18 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
-import com.codiary.backend.global.converter.PostFileConverter;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.MemberImage;
-import com.codiary.backend.global.domain.entity.PostFile;
+import com.codiary.backend.global.domain.entity.Project;
 import com.codiary.backend.global.domain.entity.Uuid;
 import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
+import com.codiary.backend.global.domain.entity.mapping.MemberProjectMap;
+import com.codiary.backend.global.domain.entity.mapping.TechStacks;
+import com.codiary.backend.global.domain.enums.TechStack;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
 import com.codiary.backend.global.jwt.SecurityUtil;
 import com.codiary.backend.global.jwt.TokenInfo;
-import com.codiary.backend.global.repository.MemberCategoryRepository;
-import com.codiary.backend.global.repository.MemberImageRepository;
-import com.codiary.backend.global.repository.MemberRepository;
-import com.codiary.backend.global.repository.UuidRepository;
+import com.codiary.backend.global.repository.*;
 import com.codiary.backend.global.s3.AmazonS3Manager;
 import com.codiary.backend.global.web.dto.Member.MemberRequestDTO;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
@@ -29,8 +28,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +45,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final UuidRepository uuidRepository;
     private final AmazonS3Manager s3Manager;
     private final MemberImageRepository memberImageRepository;
+    private final ProjectRepository projectRepository;
+    private final MemberProjectMapRepository memberProjectMapRepository;
 
 
     @Override
@@ -62,6 +65,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .gender(Member.Gender.Female)
                 .github(signUpRequest.getGithub())
                 .linkedin(signUpRequest.getLinkedin())
+                .image(null)
                 .build();
         memberRepository.save(member);
 
@@ -81,12 +85,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                     .authenticate(authenticationToken);
 
             // 3. 인증 정보를 기반으로 JWT 토큰 생성
-            TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-            Member member = memberRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
+            Member getMember = memberRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
+            TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, getMember.getMemberId());
 
             return ApiResponse.of(SuccessStatus.MEMBER_OK, MemberResponseDTO.MemberTokenResponseDTO.builder()
-                    .email(member.getEmail())
-                    .nickname(member.getNickname())
+                    .email(getMember.getEmail())
+                    .nickname(getMember.getNickname())
                     .tokenInfo(tokenInfo)
                     .build());
         } catch (AuthenticationException e) {
@@ -119,7 +123,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public ApiResponse<MemberResponseDTO.MemberImageDTO> setProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request) {
+    public ApiResponse<MemberResponseDTO.MemberImageDTO> updateProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request) {
+        if (member.getImage() != null) {
+            s3Manager.deleteFile(member.getImage().getImageUrl());
+            memberImageRepository.delete(member.getImage());
+        }
+
         String uuid = UUID.randomUUID().toString();
         Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
         String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
@@ -134,4 +143,79 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
     }
 
+    @Override
+    public ApiResponse<String> deleteProfileImage(Member member) {
+        if (member.getImage() != null) {
+            s3Manager.deleteFile(member.getImage().getImageUrl());
+            memberImageRepository.delete(member.getImage());
+            member.setImage(null);
+            memberRepository.save(member);
+        }
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "성공적으로 삭제되었습니다!");
+    }
+
+    @Override
+    public Member setTechStacks(Long memberId, TechStack techstack) {
+        Member member = memberRepository.findMemberWithTechStacks(memberId);
+        if (member == null) {
+            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+
+        List<TechStacks> techStackList = member.getTechStackList();
+        if (techStackList == null) {
+            techStackList = new ArrayList<>();
+        }
+
+        TechStacks newTechStack = new TechStacks(techstack, member);
+        techStackList.add(newTechStack);
+
+        member.setTechStackList(techStackList);
+
+        memberRepository.save(member);
+
+        return member;
+    }
+
+    @Override
+    public MemberResponseDTO.ProjectsDTO setProjects(Long memberId, String projectName){
+        Member member = memberRepository.findMemberWithProjects(memberId);
+        if (member == null) {
+            throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+
+        Project project = Project.builder()
+                .projectName(projectName)
+                .build();
+
+        projectRepository.save(project);
+
+        MemberProjectMap memberProjectMap = MemberProjectMap.builder()
+                .member(member)
+                .project(project)
+                .build();
+        memberProjectMapRepository.save(memberProjectMap);
+
+        List<String> projectList = member.getMemberProjectMapList()
+                .stream()
+                .map(map -> map.getProject().getProjectName())
+                .collect(Collectors.toList());
+
+        return MemberResponseDTO.ProjectsDTO.builder()
+                .memberId(member.getMemberId())
+                .projectList(projectList)
+                .build();
+    }
+
+    @Override
+    public Member updateMemberInfo(Member member, MemberRequestDTO.MemberInfoRequestDTO request){
+        Member updatedMember = member.toBuilder()
+                .birth(request.getBirth())
+                .introduction(request.getIntroduction())
+                .github(request.getGithub())
+                .linkedin(request.getLinkedin())
+                .discord(request.getDiscord())
+                .build();
+
+        return memberRepository.save(updatedMember);
+    }
 }

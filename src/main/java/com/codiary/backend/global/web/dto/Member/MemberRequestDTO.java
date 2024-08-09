@@ -64,4 +64,16 @@ public class MemberRequestDTO {
         private MultipartFile image;
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MemberInfoRequestDTO {
+        private String birth;
+        private String introduction;
+        private String github;
+        private String linkedin;
+        private String discord;
+    }
+
 }
