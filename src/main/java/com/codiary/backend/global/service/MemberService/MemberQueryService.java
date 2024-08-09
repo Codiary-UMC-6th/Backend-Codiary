@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface MemberQueryService {
 
-    Page<Post> getMyPosts(Member member, String category, Pageable pageable);
+    Page<Post> getMyPosts(Long memberId, Long projectId, Pageable pageable);
 
     // 회원별 북마크 리스트 조회
     Page<Bookmark> getBookmarkList(Long memberId, Integer page);

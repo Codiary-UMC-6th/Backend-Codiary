@@ -104,13 +104,12 @@ public class MemberController {
 
 
     @Operation(
-            summary = "유저가 작성한 다이어리 목록 카테고리별 조회(페이지네이션)",
-            description = "category와 page를 입력해주세요."
+            summary = "유저가 작성한 다이어리 목록 프로젝트별 조회(페이지네이션)",
+            description = "projectName과 page를 입력해주세요."
     )
     @GetMapping("/posts")
-    public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> getMyDiaries(@RequestParam(value = "category", required = false) String category, @PageableDefault(size=6) Pageable pageable){
-        Member member = memberCommandService.getRequester();
-        Page<Post> posts = memberQueryService.getMyPosts(member, category, pageable);
+    public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> getMyDiaries(@RequestParam(value = "memberId", required = true) Long memberId, @RequestParam(value = "projectId", required = false) Long projectId, @PageableDefault(size=6) Pageable pageable){
+        Page<Post> posts = memberQueryService.getMyPosts(memberId, projectId, pageable);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, PostConverter.toMemberPostPreviewListDTO(posts));
     }
 
