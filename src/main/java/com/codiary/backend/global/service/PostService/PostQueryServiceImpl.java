@@ -80,7 +80,7 @@ public class PostQueryServiceImpl implements PostQueryService {
 //        return postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, request);
 //    }
 
-
+    @Transactional
     @Override
     public Page<Post> getPostsByMember(Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
