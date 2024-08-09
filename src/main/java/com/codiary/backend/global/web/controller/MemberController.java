@@ -50,6 +50,18 @@ public class MemberController {
         return memberCommandService.signUp(request);
     }
 
+    @GetMapping("/sign-up/check-email")
+    @Operation(summary = "이메일 중복 확인")
+    public ApiResponse<String> checkEmailDuplication(@RequestParam String email) {
+        return memberCommandService.checkEmailDuplication(email);
+    }
+
+    @GetMapping("/sign-up/check-nickname")
+    @Operation(summary = "닉네임 중복 확인")
+    public ApiResponse<String> checkNicknameDuplication(@RequestParam String nickname) {
+        return memberCommandService.checkNicknameDuplication(nickname);
+    }
+
     @PostMapping("/login")
     @Operation(
             summary = "로그인"

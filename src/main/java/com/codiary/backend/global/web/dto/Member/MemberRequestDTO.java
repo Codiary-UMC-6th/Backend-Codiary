@@ -28,6 +28,7 @@ public class MemberRequestDTO {
         private Member.Gender gender;
         private String github;
         private String linkedin;
+        private String discord;
 
         @JsonIgnore
         public Boolean isCorrect() {

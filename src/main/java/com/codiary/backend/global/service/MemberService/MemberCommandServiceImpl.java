@@ -53,7 +53,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     public ApiResponse<String> signUp(MemberRequestDTO.MemberSignUpRequestDTO signUpRequest) {
         signUpRequest.isCorrect();
 
-        if (memberRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (memberRepository.existsByEmail(signUpRequest.getEmail())
+                || memberRepository.existsByNickname(signUpRequest.getNickname())) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXISTS);
         }
 
@@ -65,12 +66,35 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .gender(Member.Gender.Female)
                 .github(signUpRequest.getGithub())
                 .linkedin(signUpRequest.getLinkedin())
+                .discord(signUpRequest.getDiscord())
                 .image(null)
                 .build();
         memberRepository.save(member);
 
         return ApiResponse.of(SuccessStatus.MEMBER_OK, "정상적으로 가입되었습니다.");
     }
+
+    @Override
+    public ApiResponse<String> checkEmailDuplication(String email) {
+        if (memberRepository.existsByEmail(email)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_ALREADY_EXISTS);
+        }
+
+        if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            throw new MemberHandler(ErrorStatus.MEMBER_WRONG_EMAIL);
+        }
+
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "사용가능한 이메일입니다!");
+    }
+
+    @Override
+    public ApiResponse<String> checkNicknameDuplication(String nickname) {
+        if (memberRepository.existsByNickname(nickname)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_ALREADY_EXISTS);
+        }
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "사용가능한 닉네임입니다!");
+    }
+
 
     @Override
     public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> login(MemberRequestDTO.MemberLoginRequestDTO loginRequest) {

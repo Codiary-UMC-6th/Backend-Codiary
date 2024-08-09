@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 // Member 관련 접근
-                                .requestMatchers("/members/sign-up").permitAll()
+                                .requestMatchers("/members/sign-up", "/members/sign-up/check-email", "/members/sign-up/check-nickname").permitAll()
                                 .requestMatchers("/members/login", "members/posts").permitAll()
                                 // Post 관련 접근
                                 .requestMatchers("/posts","/posts/{postId}", "/posts/visibility/{postId}", "/posts/coauthors/{postId}", "/posts/categories/{postId}").permitAll() //.hasRole("USER")

@@ -22,6 +22,7 @@ public class PostRequestDTO {
         private Boolean postStatus;
         //private Set<String> postCategory;
         private PostAccess postAccess;
+        private String thumbnailImageName;
         private List<MultipartFile> postFiles;
     }
 
@@ -36,6 +37,7 @@ public class PostRequestDTO {
         private Boolean postStatus;
         //private Set<String> postCategory;
         private PostAccess postAccess;
+        private String thumbnailImageName;
         private List<MultipartFile> addedPostFiles;
     }
 
