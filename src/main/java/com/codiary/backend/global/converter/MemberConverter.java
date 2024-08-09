@@ -94,9 +94,9 @@ public class MemberConverter {
                 .memberId(bookmark.getMember().getMemberId())
                 .bookmarkId(bookmark.getId())
                 .postId(bookmark.getPost().getPostId())
-                // Post의 첫 번째 사진을 가져온다
-                // 나중에 postFile이 존재하지 않을 경우 나오는 기본 사진 처리를 해줘야 한다
-                .photoUrl(bookmark.getPost().getPostFileList().get(0).getFileUrl())
+                .thumbnailImageUrl((bookmark.getPost().getThumbnailImage() != null)
+                        ? bookmark.getPost().getThumbnailImage().getFileUrl()
+                        : "")
                 .postTitle(bookmark.getPost().getPostTitle())
                 .nickname(bookmark.getPost().getMember().getNickname())
                 .postBody(bookmark.getPost().getPostBody())

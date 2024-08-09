@@ -43,6 +43,10 @@ public class Post extends BaseEntity {
   @Column(name = "post_body", nullable = false, columnDefinition = "varchar(500)")
   private String postBody;
 
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "thumbnail_image_id")
+  private PostFile thumbnailImage;
+
   @Builder.Default
   @Enumerated(EnumType.STRING)
   @Column(name = "post_access", nullable = false, columnDefinition = "varchar(500)")

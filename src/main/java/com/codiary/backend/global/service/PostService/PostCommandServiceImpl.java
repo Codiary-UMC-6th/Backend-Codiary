@@ -74,6 +74,17 @@ public class PostCommandServiceImpl implements PostCommandService {
             }
         }
 
+        // 대표 사진 설정
+        String thumbnailImageName = request.getThumbnailImageName();
+        for (PostFile postFile : tempPost.getPostFileList()) {
+            if (postFile.getFileName() == thumbnailImageName) {
+                tempPost.setThumbnailImage(postFile);
+            }
+        }
+        if (tempPost.getPostFileList().size() != 0 && tempPost.getThumbnailImage() == null) {
+            tempPost.setThumbnailImage(tempPost.getPostFileList().get(0));
+        }
+
         Post savedPost = postRepository.save(tempPost);
         return savedPost;
     }
@@ -99,6 +110,17 @@ public class PostCommandServiceImpl implements PostCommandService {
 
                 updatePost.getPostFileList().add(newPostFile);
             }
+        }
+
+        // 대표 사진 설정
+        String thumbnailImageName = request.getThumbnailImageName();
+        for (PostFile postFile : updatePost.getPostFileList()) {
+            if (postFile.getFileName() == thumbnailImageName) {
+                updatePost.setThumbnailImage(postFile);
+            }
+        }
+        if (updatePost.getPostFileList().size() != 0 && updatePost.getThumbnailImage() == null) {
+            updatePost.setThumbnailImage(updatePost.getPostFileList().get(0));
         }
 
         return postRepository.save(updatePost);

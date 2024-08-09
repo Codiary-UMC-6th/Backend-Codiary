@@ -25,6 +25,7 @@ public class PostResponseDTO {
         Long projectId;
         String postTitle;
         String postBody;
+        String thumbnailImageUrl;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -43,6 +44,7 @@ public class PostResponseDTO {
         Long projectId;
         String postTitle;
         String postBody;
+        String thumbnailImageUrl;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -61,6 +63,7 @@ public class PostResponseDTO {
         Long projectId;
         String postTitle;
         String postBody;
+        String thumbnailImageUrl;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -94,6 +97,7 @@ public class PostResponseDTO {
         Long projectId;
         String postTitle;
         String postBody;
+        String thumbnailImageUrl;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -128,6 +132,7 @@ public class PostResponseDTO {
         Long projectId;
         String postTitle;
         String postBody;
+        String thumbnailImageUrl;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -161,6 +166,7 @@ public class PostResponseDTO {
         Long teamId;
         String postTitle;
         String postBody;
+        String thumbnailImageUrl;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -194,6 +200,7 @@ public class PostResponseDTO {
         Long memberId;
         String postTitle;
         String postBody;
+        String thumbnailImageUrl;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -227,6 +234,7 @@ public class PostResponseDTO {
         Long projectId;
         String postTitle;
         String postBody;
+        String thumbnailImageUrl;
         Boolean postStatus;
         String postCategory;
         Set<Long> coauthorIds;
@@ -271,6 +279,7 @@ public class PostResponseDTO {
             Long projectId;
             String postTitle;
             String postBody;
+            String thumbnailImageUrl;
             Boolean postStatus;
             String postCategory;
             Set<Long> coauthorIds;
