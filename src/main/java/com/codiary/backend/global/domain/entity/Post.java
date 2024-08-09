@@ -65,7 +65,7 @@ public class Post extends BaseEntity {
   private List<PostFile> postFileList = new ArrayList<>();
 
   @Builder.Default
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   private List<Authors> authorsList = new ArrayList<>();
 
   @Builder.Default
