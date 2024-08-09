@@ -77,7 +77,7 @@ public class PostCommandServiceImpl implements PostCommandService {
         // 대표 사진 설정
         String thumbnailImageName = request.getThumbnailImageName();
         for (PostFile postFile : tempPost.getPostFileList()) {
-            if (postFile.getFileName() == thumbnailImageName) {
+            if (postFile.getFileName().equals(thumbnailImageName)) {
                 tempPost.setThumbnailImage(postFile);
             }
         }
