@@ -1,7 +1,11 @@
 package com.codiary.backend.global.converter;
 
 import com.codiary.backend.global.domain.entity.Post;
+import com.codiary.backend.global.domain.entity.Project;
+import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.domain.entity.mapping.Categories;
+import com.codiary.backend.global.repository.ProjectRepository;
+import com.codiary.backend.global.repository.TeamRepository;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import org.springframework.data.domain.Page;
@@ -11,18 +15,37 @@ import java.util.stream.Collectors;
 
 public class PostConverter {
 
-    public static Post toPost(PostRequestDTO.CreatePostRequestDTO request) {
-//        List<Categories> categories = request.getPostCategory().stream()
-//                .map(Categories::new) // Assuming Categories has a constructor that accepts String
-//                .collect(Collectors.toList());
-        return Post.builder()
-                .postTitle(request.getPostTitle())
-                .postBody(request.getPostBody())
-                .postStatus(request.getPostStatus())
-                //.categoriesList(categories)
-                .postAccess(request.getPostAccess())
-                .build();
+//    public static Post toPost(PostRequestDTO.CreatePostRequestDTO request) {
+//        return Post.builder()
+//                .postTitle(request.getPostTitle())
+//                .postBody(request.getPostBody())
+//                .postStatus(request.getPostStatus())
+//                .postAccess(request.getPostAccess())
+//                .build();
+//    }
+public static Post toPost(PostRequestDTO.CreatePostRequestDTO request, TeamRepository teamRepository, ProjectRepository projectRepository) {
+    Team team = null;
+    Project project = null;
+    // teamId가 제공된 경우에만 Team 객체를 조회
+    if (request.getTeamId() != null) {
+        team = teamRepository.findById(request.getTeamId())
+                .orElseThrow(() -> new IllegalArgumentException("Team not found with id: " + request.getTeamId()));
     }
+    // projectId가 제공된 경우에만 Project 객체를 조회
+    if (request.getProjectId() != null) {
+        project = projectRepository.findById(request.getProjectId())
+                .orElseThrow(() -> new IllegalArgumentException("Project not found with id: " + request.getProjectId()));
+    }
+    return Post.builder()
+            .postTitle(request.getPostTitle())
+            .postBody(request.getPostBody())
+            .team(team)
+            .project(project)
+            .postStatus(request.getPostStatus())
+            .postAccess(request.getPostAccess())
+            .build();
+}
+
 
     public static PostResponseDTO.CreatePostResultDTO toCreateResultDTO(Post post) {
 //        List<String> postCategories = post.getCategoriesList().stream()
