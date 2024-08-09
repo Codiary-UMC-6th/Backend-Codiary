@@ -61,7 +61,7 @@ public class Post extends BaseEntity {
   private List<Categories> categoriesList = new ArrayList<>();
 
   @Builder.Default
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   private List<PostFile> postFileList = new ArrayList<>();
 
   @Builder.Default
@@ -69,11 +69,11 @@ public class Post extends BaseEntity {
   private List<Authors> authorsList = new ArrayList<>();
 
   @Builder.Default
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true,  fetch = FetchType.EAGER)
   private List<Comment> commentList = new ArrayList<>();
 
  
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true,  fetch = FetchType.EAGER)
   private List<Bookmark> bookmarkList = new ArrayList<>();
 
   public void setProject(Project project) { this.project = project;}
