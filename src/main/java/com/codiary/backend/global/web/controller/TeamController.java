@@ -26,10 +26,10 @@ public class TeamController {
   private final TeamQueryService teamQueryService;
 
   //팀 생성
-  @PostMapping(consumes = "multipart/form-data")
+  @PostMapping()
   @Operation(summary = "팀 생성")
   public ApiResponse<TeamResponseDTO.CreateTeamResponseDTO> createTeam(
-          @ModelAttribute TeamRequestDTO.CreateTeamRequestDTO request
+          @RequestBody TeamRequestDTO.CreateTeamRequestDTO request
       ){
     Team newTeam = teamCommandService.createTeam(request);
     return ApiResponse.onSuccess(
@@ -95,5 +95,21 @@ public class TeamController {
     return teamQueryService.getProfileImage(teamId);
   }
 
+  // 이미지 삭제 요청
+  @DeleteMapping("/{teamId}/bannerImage")
+  @Operation(summary = "팀 배너 사진 삭제 요청")
+  public ApiResponse<String> deleteBannerImage(
+          @PathVariable Long teamId
+  ) {
+    return teamCommandService.deleteTeamBannerImage(teamId);
+  }
+
+  @DeleteMapping("/{teamId}/profileImage")
+  @Operation(summary = "팀 프로필 사진 삭제 요청")
+  public ApiResponse<String> deleteProfileImage(
+          @PathVariable Long teamId
+  ) {
+    return teamCommandService.deleteTeamProfileImage(teamId);
+  }
 
 }
