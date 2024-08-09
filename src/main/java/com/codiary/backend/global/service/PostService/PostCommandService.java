@@ -1,6 +1,8 @@
 package com.codiary.backend.global.service.PostService;
 
 import com.codiary.backend.global.domain.entity.Post;
+import com.codiary.backend.global.repository.ProjectRepository;
+import com.codiary.backend.global.repository.TeamRepository;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 
 import java.util.Set;

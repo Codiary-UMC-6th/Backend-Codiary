@@ -6,6 +6,8 @@ import com.codiary.backend.global.converter.PostConverter;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
+import com.codiary.backend.global.repository.ProjectRepository;
+import com.codiary.backend.global.repository.TeamRepository;
 import com.codiary.backend.global.service.MemberService.MemberCommandService;
 import com.codiary.backend.global.service.PostService.PostCommandService;
 import com.codiary.backend.global.service.PostService.PostQueryService;
@@ -45,6 +47,7 @@ public class PostController {
         Member member = memberCommandService.getRequester();
         jwtTokenProvider.isValidToken(member.getMemberId());
 
+        //Post newPost = postCommandService.createPost(request);
         Post newPost = postCommandService.createPost(request);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toCreateResultDTO(newPost));
     }

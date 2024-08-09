@@ -50,7 +50,7 @@ public class PostCommandServiceImpl implements PostCommandService {
     @Override
     public Post createPost(PostRequestDTO.CreatePostRequestDTO request) {
 
-        Post newPost = PostConverter.toPost(request);
+        Post newPost = PostConverter.toPost(request, teamRepository, projectRepository);
         Member getMember = memberCommandService.getRequester();
 
         newPost.setMember(getMember);
