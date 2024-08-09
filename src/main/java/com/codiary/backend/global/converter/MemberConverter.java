@@ -152,6 +152,7 @@ public class MemberConverter {
         return MemberResponseDTO.UserProfileDTO.builder()
                 .currentMemberId(member.getMemberId())
                 .userId(user.getMemberId())
+                .userName(user.getNickname())
                 .photoUrl((member.getImage() != null)
                         ? member.getImage().getImageUrl()
                         : "")

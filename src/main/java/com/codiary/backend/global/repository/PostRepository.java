@@ -30,6 +30,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(Team team, Member member, Pageable pageable);
 
+    Page<Post> findByAuthorsList_MemberOrderByCreatedAtDescPostIdDesc(Member member, Pageable pageable);
     boolean existsByTeam(Team team);
 
     boolean existsByProject(Project project);

@@ -89,6 +89,7 @@ public class MemberResponseDTO {
     public static class UserProfileDTO {
         Long currentMemberId;
         Long userId;
+        String userName;
         String photoUrl;
         String githubUrl;
         String linkedinUrl;
