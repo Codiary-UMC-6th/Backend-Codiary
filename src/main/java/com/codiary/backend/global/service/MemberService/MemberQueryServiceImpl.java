@@ -33,22 +33,19 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     private final BookmarkRepository bookmarkRepository;
     private final PostRepository postRepository;
 
-
-
     @Override
-    public Page<Post> getMyPosts(Member member, String category, Pageable pageable) {
-        Page<Post> posts = postRepository.findPostsByMemberOrAuthorAndCategoryName(member, category, pageable);
+    public Page<Post> getMyPosts(Long memberId, Long projectId, Pageable pageable) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        Page<Post> posts = postRepository.findPostsByMemberOrAuthorAndProjectId(member, projectId, pageable);
 
         posts.getContent().forEach(post -> { //proxy 초기화
             post.getAuthorsList().size();
-            post.getCategoriesList().size();
+            post.getProject();
             post.getPostFileList().size();
         });
 
         return posts;
     }
-
-  
   
     // 회원별 북마크 리스트 조회
     @Override
