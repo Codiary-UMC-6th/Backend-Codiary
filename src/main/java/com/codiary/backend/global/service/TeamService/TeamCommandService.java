@@ -19,4 +19,8 @@ public interface TeamCommandService {
   ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamBannerImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request);
 
   ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamProfileImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request);
+
+  ApiResponse<String> deleteTeamBannerImage(Long teamId);
+
+  ApiResponse<String> deleteTeamProfileImage(Long teamId);
 }

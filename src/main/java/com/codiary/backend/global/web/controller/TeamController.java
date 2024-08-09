@@ -95,5 +95,21 @@ public class TeamController {
     return teamQueryService.getProfileImage(teamId);
   }
 
+  // 이미지 삭제 요청
+  @DeleteMapping("/{teamId}/bannerImage")
+  @Operation(summary = "팀 배너 사진 삭제 요청")
+  public ApiResponse<String> deleteBannerImage(
+          @PathVariable Long teamId
+  ) {
+    return teamCommandService.deleteTeamBannerImage(teamId);
+  }
+
+  @DeleteMapping("/{teamId}/profileImage")
+  @Operation(summary = "팀 프로필 사진 삭제 요청")
+  public ApiResponse<String> deleteProfileImage(
+          @PathVariable Long teamId
+  ) {
+    return teamCommandService.deleteTeamProfileImage(teamId);
+  }
 
 }

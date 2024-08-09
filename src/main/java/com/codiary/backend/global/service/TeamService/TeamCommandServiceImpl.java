@@ -107,5 +107,32 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, response);
   }
 
+  @Override
+  public ApiResponse<String> deleteTeamBannerImage(Long teamId) {
+    Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
+
+    if (team.getBannerImage() != null) {
+      s3Manager.deleteFile(team.getBannerImage().getImageUrl());
+      teamBannerImageRepository.delete(team.getBannerImage());
+      team.setBannerImage(null);
+      teamRepository.save(team);
+    }
+
+    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, "성공적으로 삭제되었습니다!");
+  }
+
+  @Override
+  public ApiResponse<String> deleteTeamProfileImage(Long teamId) {
+    Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
+
+    if (team.getProfileImage() != null) {
+      s3Manager.deleteFile(team.getProfileImage().getImageUrl());
+      teamProfileImageRepository.delete(team.getProfileImage());
+      team.setProfileImage(null);
+      teamRepository.save(team);
+    }
+
+    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, "성공적으로 삭제되었습니다!");
+  }
 
 }
