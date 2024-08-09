@@ -102,7 +102,7 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toFollowerResponseDto(followers));
     }
 
-
+/*
     @Operation(
             summary = "유저가 작성한 다이어리 목록 프로젝트별 조회(페이지네이션)",
             description = "projectName과 page를 입력해주세요."
@@ -113,7 +113,7 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, PostConverter.toMemberPostPreviewListDTO(posts));
     }
 
-
+*/
 
     // 회원별 북마크 리스트 조회
     @GetMapping("/bookmarks/list/{memberId}")
