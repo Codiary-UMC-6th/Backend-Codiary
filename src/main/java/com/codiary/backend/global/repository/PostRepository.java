@@ -49,6 +49,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByPostIdIn(List<Long> postIds, Pageable pageable);
 
-    @Query("SELECT p FROM Post p LEFT JOIN p.authorsList a LEFT JOIN p.categoriesList c WHERE (p.member = :member OR a.member = :member) AND LOWER(c.name) LIKE LOWER(:categoryName) ORDER BY p.createdAt DESC")
-    Page<Post> findPostsByMemberOrAuthorAndCategoryName(@Param("member") Member member, @Param("categoryName") String categoryName, Pageable pageable);
+    @Query("SELECT p FROM Post p LEFT JOIN p.authorsList a LEFT JOIN p.project j WHERE (p.member = :member OR a.member = :member) AND j.projectId = :projectId ORDER BY p.createdAt DESC")
+    Page<Post> findPostsByMemberOrAuthorAndProjectId(@Param("member") Member member, @Param("projectId") Long projectId, Pageable pageable);
 }

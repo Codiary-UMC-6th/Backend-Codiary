@@ -54,7 +54,7 @@ public class SecurityConfig {
                         authorize -> authorize
                                 // Member 관련 접근
                                 .requestMatchers("/members/sign-up").permitAll()
-                                .requestMatchers("/members/login").permitAll()
+                                .requestMatchers("/members/login", "members/posts").permitAll()
                                 // Post 관련 접근
                                 .requestMatchers("/posts","/posts/{postId}", "/posts/visibility/{postId}", "/posts/coauthors/{postId}", "/posts/categories/{postId}").permitAll() //.hasRole("USER")
                                 .requestMatchers("/posts/title/paging", "/posts/team/{teamId}/{postId}", "/posts/team/{teamId}/member/{memberId}/paging", "/posts/project/{projectId}/team/{teamId}/paging", "/posts/project/{projectId}/member/{memberId}/paging", "/posts/member/{memberId}/paging", "/posts/categories/paging", "/posts/{postId}/adjacent").permitAll()
