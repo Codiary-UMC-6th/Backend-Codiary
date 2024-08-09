@@ -281,5 +281,32 @@ public class PostResponseDTO {
         }
     }
 
+    // 인기글(북마크+댓글) 전체 리스트 조회
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PopularPostListDTO {
+        List<PostResponseDTO.PopularPostDTO> popularPostList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PopularPostDTO {
+        Long postId;
+        Long postUrl;
+        String postTitle;
+        String nickname;
+        String postBody;
+        LocalDateTime createdAt;
+    }
+
 }
 

@@ -51,4 +51,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p LEFT JOIN p.authorsList a LEFT JOIN p.categoriesList c WHERE (p.member = :member OR a.member = :member) AND LOWER(c.name) LIKE LOWER(:categoryName) ORDER BY p.createdAt DESC")
     Page<Post> findPostsByMemberOrAuthorAndCategoryName(@Param("member") Member member, @Param("categoryName") String categoryName, Pageable pageable);
+
+    // 인기글(북마크+댓글) 전체 리스트 조회
+    //Page<Post>
 }

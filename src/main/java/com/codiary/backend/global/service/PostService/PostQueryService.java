@@ -20,4 +20,8 @@ public interface PostQueryService {
     Post.PostAdjacent findAdjacentPosts(Long postId);
 
     List<Post> getPostsByMonth(Long memberId, YearMonth yearMonth);
+
+    // 인기글(북마크+댓글) 전체 리스트 조회
+    //Page<Post> getPopularPostList(Integer page);
+
 }

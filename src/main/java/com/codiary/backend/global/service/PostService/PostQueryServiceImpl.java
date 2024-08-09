@@ -166,4 +166,13 @@ public class PostQueryServiceImpl implements PostQueryService {
         List<Post> posts = postRepository.findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(member, startDate, endDate);
         return posts;
     }
+
+//    // 인기글(북마크+댓글) 전체 리스트 조회
+//    @Override
+//    public Page<Post> getPopularPostList(Integer page) {
+//
+//        Page<Post> popularPostPage = postRepository.
+//
+//    }
+
 }

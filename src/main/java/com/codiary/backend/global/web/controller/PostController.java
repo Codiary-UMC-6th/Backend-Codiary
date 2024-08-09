@@ -12,6 +12,11 @@ import com.codiary.backend.global.service.PostService.PostQueryService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -287,5 +292,30 @@ public class PostController {
     )
     public ApiResponse<PostResponseDTO> showPostCodePreview(
     ){ return null; }
+
+
+
+//    // 인기글(북마크+댓글) 전체 리스트 조회
+//    @GetMapping("/main/popular")
+//    @Operation(
+//            summary = "인기글(북마크+댓글) 목록 API",
+//            description = "인기글(북마크+댓글) 목록을 조회하는 API이며, 페이징을 포함합니다. query String으로 page 번호를 주세요"
+//    )
+//    @ApiResponses({
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST3000", description = "OK, 성공"),
+////            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+////            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+////            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+//    })
+//    @Parameters({
+//            @Parameter(name = "page", description = "페이지 번호, 1번이 1 페이지 입니다.")
+//    })
+//    public ApiResponse<PostResponseDTO.PopularPostListDTO> getPoplarPostList(
+//            @RequestParam(name = "page") Integer page
+//    ) {
+//
+//        Page<Post> popularPostList = postQueryService.getPopularPostList(page);
+//
+//    }
 
 }
