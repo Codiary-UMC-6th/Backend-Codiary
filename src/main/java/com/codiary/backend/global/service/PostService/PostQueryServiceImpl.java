@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -68,16 +69,39 @@ public class PostQueryServiceImpl implements PostQueryService {
         return postRepository.findAllByOrderByCreatedAtDesc(request);
     }
 
+//    @Override
+//    public Page<Post> getPostsByMember(Long memberId, int page, int size) {
+//        PageRequest request = PageRequest.of(page, size);
+//        Member member = memberRepository.findById(memberId).get();
+//
+//        if (!postRepository.existsByMember(member)){
+//            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
+//        }
+//        return postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, request);
+//    }
+
+
     @Override
     public Page<Post> getPostsByMember(Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
-        Member member = memberRepository.findById(memberId).get();
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        // 멤버가 작성한 다이어리 조회
+        Page<Post> postsByMember = postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, request);
+        // 멤버가 공동 저자인 다이어리 조회
+        Page<Post> postsByCoauthor = postRepository.findByAuthorsList_MemberOrderByCreatedAtDescPostIdDesc(member, request);
 
-        if (!postRepository.existsByMember(member)){
+        if (postsByMember.isEmpty() && postsByCoauthor.isEmpty()) {
             throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
         }
-        return postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, request);
+        // 두 개의 결과를 하나의 리스트로 병합
+        List<Post> combinedPosts = new ArrayList<>();
+        combinedPosts.addAll(postsByMember.getContent());
+        combinedPosts.addAll(postsByCoauthor.getContent());
+        // 병합된 리스트를 페이지로 반환
+        return new PageImpl<>(combinedPosts, request, combinedPosts.size());
     }
+
 
     @Override
     public Page<Post> getPostsByTeam(Long teamId, int page, int size) {
