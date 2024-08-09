@@ -65,6 +65,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .gender(Member.Gender.Female)
                 .github(signUpRequest.getGithub())
                 .linkedin(signUpRequest.getLinkedin())
+                .discord(signUpRequest.getDiscord())
                 .image(null)
                 .build();
         memberRepository.save(member);
