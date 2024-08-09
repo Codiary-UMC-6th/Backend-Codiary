@@ -39,31 +39,12 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         .email(request.getEmail())
         .linkedin(request.getLinkedIn())
         .instagram(request.getInstagram())
+        .bannerImage(null)
+        .profileImage(null)
         .build();
 
     Team savedTeam = teamRepository.save(team);
-
-    // 배너 이미지 저장
-    String bannerUuid = UUID.randomUUID().toString();
-    Uuid savedBannerUuid = uuidRepository.save(Uuid.builder().uuid(bannerUuid).build());
-    String bannerImageUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedBannerUuid), request.getBannerPhoto());
-    TeamBannerImage bannerImage = TeamBannerImage.builder()
-            .imageUrl(bannerImageUrl)
-            .team(savedTeam)
-            .build();
-    savedTeam.setBannerImage(bannerImageRepository.save(bannerImage));
-
-    // 프로필 이미지 저장
-    String profileUuid = UUID.randomUUID().toString();
-    Uuid savedProfileUuid = uuidRepository.save(Uuid.builder().uuid(profileUuid).build());
-    String profileImageUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedProfileUuid), request.getProfilePhoto());
-    TeamProfileImage profileImage = TeamProfileImage.builder()
-            .imageUrl(profileImageUrl)
-            .team(savedTeam)
-            .build();
-    savedTeam.setProfileImage(profileImageRepository.save(profileImage));
-
-    return teamRepository.save(savedTeam);
+    return savedTeam;
   }
 
   @Override
@@ -84,8 +65,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
   public ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamBannerImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request) {
     Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
 
-    s3Manager.deleteFile(team.getBannerImage().getImageUrl());
-    teamBannerImageRepository.delete(team.getBannerImage());
+    if (team.getBannerImage() != null) {
+      s3Manager.deleteFile(team.getBannerImage().getImageUrl());
+      teamBannerImageRepository.delete(team.getBannerImage());
+    }
 
     String uuid = UUID.randomUUID().toString();
     Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
@@ -105,8 +88,10 @@ public class TeamCommandServiceImpl implements TeamCommandService {
   public ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamProfileImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request) {
     Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
 
-    s3Manager.deleteFile(team.getProfileImage().getImageUrl());
-    teamProfileImageRepository.delete(team.getProfileImage());
+    if (team.getProfileImage() != null) {
+      s3Manager.deleteFile(team.getProfileImage().getImageUrl());
+      teamProfileImageRepository.delete(team.getProfileImage());
+    }
 
     String uuid = UUID.randomUUID().toString();
     Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());

@@ -26,10 +26,10 @@ public class TeamController {
   private final TeamQueryService teamQueryService;
 
   //팀 생성
-  @PostMapping(consumes = "multipart/form-data")
+  @PostMapping()
   @Operation(summary = "팀 생성")
   public ApiResponse<TeamResponseDTO.CreateTeamResponseDTO> createTeam(
-          @ModelAttribute TeamRequestDTO.CreateTeamRequestDTO request
+          @RequestBody TeamRequestDTO.CreateTeamRequestDTO request
       ){
     Team newTeam = teamCommandService.createTeam(request);
     return ApiResponse.onSuccess(

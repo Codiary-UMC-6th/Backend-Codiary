@@ -15,8 +15,6 @@ public class TeamRequestDTO {
   @NoArgsConstructor
   public static class CreateTeamRequestDTO {  //팀 생성
     private String name;
-    private MultipartFile profilePhoto;
-    private MultipartFile bannerPhoto;
     private String intro;
     private String github;
     private String email;
