@@ -22,7 +22,10 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     public ApiResponse<TeamResponseDTO.TeamImageDTO> getBannerImage(Long teamId) {
         Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
 
-        TeamResponseDTO.TeamImageDTO response = new TeamResponseDTO.TeamImageDTO(team.getBannerImage().getImageUrl());
+        TeamResponseDTO.TeamImageDTO response = new TeamResponseDTO.TeamImageDTO(
+                (team.getBannerImage() != null)
+                ? team.getBannerImage().getImageUrl()
+                : "");
 
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, response);
     }
@@ -31,7 +34,10 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     public ApiResponse<TeamResponseDTO.TeamImageDTO> getProfileImage(Long teamId) {
         Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
 
-        TeamResponseDTO.TeamImageDTO response = new TeamResponseDTO.TeamImageDTO(team.getProfileImage().getImageUrl());
+        TeamResponseDTO.TeamImageDTO response = new TeamResponseDTO.TeamImageDTO(
+                (team.getProfileImage() != null)
+                ? team.getProfileImage().getImageUrl()
+                : "");
 
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, response);
     }

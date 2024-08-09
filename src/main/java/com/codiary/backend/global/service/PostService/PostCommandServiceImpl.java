@@ -84,7 +84,24 @@ public class PostCommandServiceImpl implements PostCommandService {
         Post updatePost = postRepository.findById(postId).get();
         updatePost.update(request);
 
-        return updatePost;
+        // 새로운 이미지 추가
+        if (request.getAddedPostFiles() != null) {
+            for (MultipartFile file : request.getAddedPostFiles()) {
+                if (file.isEmpty()) {
+                    continue;
+                }
+                String uuid = UUID.randomUUID().toString();
+                Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
+                String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), file);
+
+                PostFile newPostFile = PostFileConverter.toPostFile(fileUrl, updatePost, file.getOriginalFilename());
+                postFileRepository.save(newPostFile);
+
+                updatePost.getPostFileList().add(newPostFile);
+            }
+        }
+
+        return postRepository.save(updatePost);
     }
 
     @Override

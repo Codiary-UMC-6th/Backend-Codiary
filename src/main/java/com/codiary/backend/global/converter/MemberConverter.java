@@ -34,7 +34,9 @@ public class MemberConverter {
         return MemberSumResponseDto.builder()
                 .memberId(member.getMemberId())
                 .nickname(member.getNickname())
-                .photoUrl(member.getPhotoUrl())
+                .photoUrl((member.getImage() != null)
+                        ? member.getImage().getImageUrl()
+                        : "")
                 .build();
     }
 
@@ -43,7 +45,9 @@ public class MemberConverter {
                 .map(member -> MemberSumResponseDto.builder()
                         .memberId(member.getMemberId())
                         .nickname(member.getNickname())
-                        .photoUrl(member.getPhotoUrl())
+                        .photoUrl((member.getImage() != null)
+                                ? member.getImage().getImageUrl()
+                                : "")
                         .build())
                 .collect(Collectors.toList());
     }
@@ -53,7 +57,9 @@ public class MemberConverter {
                 .map(member -> MemberSumResponseDto.builder()
                         .memberId(member.getMemberId())
                         .nickname(member.getNickname())
-                        .photoUrl(member.getPhotoUrl())
+                        .photoUrl((member.getImage() != null)
+                                ? member.getImage().getImageUrl()
+                                : "")
                         .build())
                 .collect(Collectors.toList());
     }
@@ -146,7 +152,9 @@ public class MemberConverter {
         return MemberResponseDTO.UserProfileDTO.builder()
                 .currentMemberId(member.getMemberId())
                 .userId(user.getMemberId())
-                .photoUrl(user.getPhotoUrl())
+                .photoUrl((member.getImage() != null)
+                        ? member.getImage().getImageUrl()
+                        : "")
                 .githubUrl(user.getGithub())
                 .linkedinUrl(user.getLinkedin())
                 .discordUrl(user.getDiscord())

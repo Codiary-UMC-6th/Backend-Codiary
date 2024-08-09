@@ -1,13 +1,17 @@
 package com.codiary.backend.global.service.MemberService;
 
+import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
+import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
+import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.domain.entity.Bookmark;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.repository.BookmarkRepository;
 import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.repository.PostRepository;
+import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -62,12 +66,20 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     @Override
     public Member getUserProfile(Long userId) {
         Member user = memberRepository.findMemberWithTechStacks(userId);
-        user.getTeamMemberList().size();
+        user = memberRepository.findMemberWithTeam(userId);
         if (user == null) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
 
         return user;
+    }
+
+    @Override
+    public ApiResponse<MemberResponseDTO.MemberImageDTO> getProfileImage(Long memberId) {
+        Member user = memberRepository.findById(memberId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        String url = (user.getImage() != null) ? user.getImage().getImageUrl() : "";
+        MemberResponseDTO.MemberImageDTO response = new MemberResponseDTO.MemberImageDTO(url);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
     }
 
 }

@@ -171,10 +171,23 @@ public class MemberController {
     @Operation(
             summary = "프로필 사진 설정"
     )
-    public ApiResponse<MemberResponseDTO.MemberImageDTO> setProfileImage(@ModelAttribute MemberRequestDTO.MemberProfileImageRequestDTO request) {
+    public ApiResponse<MemberResponseDTO.MemberImageDTO> updateProfileImage(@ModelAttribute MemberRequestDTO.MemberProfileImageRequestDTO request) {
         Member member = memberCommandService.getRequester();
 
-        return memberCommandService.setProfileImage(member, request);
+        return memberCommandService.updateProfileImage(member, request);
+    }
+
+    @DeleteMapping("/profile-image")
+    @Operation(summary = "프로필 사진 삭제")
+    public ApiResponse<String> deleteProflieImage() {
+        Member member = memberCommandService.getRequester();
+        return memberCommandService.deleteProfileImage(member);
+    }
+
+    @GetMapping("/{memberId}/profile-image")
+    @Operation(summary = "사용자 프로필 사진 조회")
+    public ApiResponse<MemberResponseDTO.MemberImageDTO> getProfileImage(@PathVariable Long memberId) {
+        return memberQueryService.getProfileImage(memberId);
     }
 
     @GetMapping(path = "/profile/{memberId}")

@@ -65,6 +65,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .gender(Member.Gender.Female)
                 .github(signUpRequest.getGithub())
                 .linkedin(signUpRequest.getLinkedin())
+                .image(null)
                 .build();
         memberRepository.save(member);
 
@@ -122,7 +123,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public ApiResponse<MemberResponseDTO.MemberImageDTO> setProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request) {
+    public ApiResponse<MemberResponseDTO.MemberImageDTO> updateProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request) {
+        if (member.getImage() != null) {
+            s3Manager.deleteFile(member.getImage().getImageUrl());
+            memberImageRepository.delete(member.getImage());
+        }
+
         String uuid = UUID.randomUUID().toString();
         Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
         String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
@@ -135,6 +141,17 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         MemberImage savedImage = memberImageRepository.save(memberImage);
         MemberResponseDTO.MemberImageDTO response = new MemberResponseDTO.MemberImageDTO(savedImage.getImageUrl());
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
+    }
+
+    @Override
+    public ApiResponse<String> deleteProfileImage(Member member) {
+        if (member.getImage() != null) {
+            s3Manager.deleteFile(member.getImage().getImageUrl());
+            memberImageRepository.delete(member.getImage());
+            member.setImage(null);
+            memberRepository.save(member);
+        }
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "성공적으로 삭제되었습니다!");
     }
 
     @Override
