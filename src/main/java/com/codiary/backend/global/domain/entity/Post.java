@@ -56,7 +56,7 @@ public class Post extends BaseEntity {
   private Boolean postStatus;
 
   @Builder.Default
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name = "post_category",
           joinColumns = @JoinColumn(name = "post_id"),
