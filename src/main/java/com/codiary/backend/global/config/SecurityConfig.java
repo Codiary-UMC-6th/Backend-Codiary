@@ -56,8 +56,8 @@ public class SecurityConfig {
                                 .requestMatchers("/members/sign-up").permitAll()
                                 .requestMatchers("/members/login").permitAll()
                                 // Post 관련 접근
-                                .requestMatchers("/posts","/posts/{postId}", "/posts/visibility/{postId}", "/posts/team/{postId}", "/posts/coauthors/{postId}", "/posts/categories/{postId}", "/posts/team/{teamId}/member/{memberId}/paging", "/posts/project/{projectId}/team/{teamId}/paging", "/posts/project/{projectId}/member/{memberId}/paging", "/posts/member/{memberId}/paging").hasRole("USER")
-                                .requestMatchers("/posts/title/paging", "/posts/categories/paging", "/posts/{postId}/adjacent").permitAll()
+                                .requestMatchers("/posts","/posts/{postId}", "/posts/visibility/{postId}", "/posts/coauthors/{postId}", "/posts/categories/{postId}").permitAll() //.hasRole("USER")
+                                .requestMatchers("/posts/title/paging", "/posts/team/{teamId}/{postId}", "/posts/team/{teamId}/member/{memberId}/paging", "/posts/project/{projectId}/team/{teamId}/paging", "/posts/project/{projectId}/member/{memberId}/paging", "/posts/member/{memberId}/paging", "/posts/categories/paging", "/posts/{postId}/adjacent").permitAll()
                                 // 기타 관련 접근
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
