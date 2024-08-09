@@ -85,9 +85,7 @@ public class PostQueryServiceImpl implements PostQueryService {
         PageRequest request = PageRequest.of(page, size);
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
-        // 멤버가 작성한 다이어리 조회
         Page<Post> postsByMember = postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, request);
-        // 멤버가 공동 저자인 다이어리 조회
         Page<Post> postsByCoauthor = postRepository.findByAuthorsList_MemberOrderByCreatedAtDescPostIdDesc(member, request);
 
         if (postsByMember.isEmpty() && postsByCoauthor.isEmpty()) {
@@ -97,7 +95,6 @@ public class PostQueryServiceImpl implements PostQueryService {
         List<Post> combinedPosts = new ArrayList<>();
         combinedPosts.addAll(postsByMember.getContent());
         combinedPosts.addAll(postsByCoauthor.getContent());
-        // 병합된 리스트를 페이지로 반환
         return new PageImpl<>(combinedPosts, request, combinedPosts.size());
     }
 
@@ -143,20 +140,37 @@ public class PostQueryServiceImpl implements PostQueryService {
         return postRepository.findByProjectAndTeamOrderByCreatedAtDescPostIdDesc(project, team, request);
     }
 
+//    @Override
+//    public Page<Post> getPostsByMemberInTeam(Long teamId, Long memberId, int page, int size) {
+//        PageRequest request = PageRequest.of(page, size);
+//        Team team = teamRepository.findById(teamId).get();
+//        Member member = memberRepository.findById(memberId).get();
+//
+//        if (!postRepository.existsByTeam(team)){
+//            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);
+//        }
+//        if (!postRepository.existsByMember(member)){
+//            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
+//        }
+//        return postRepository.findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(team, member, request);
+//    }
+
     @Override
     public Page<Post> getPostsByMemberInTeam(Long teamId, Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
-        Team team = teamRepository.findById(teamId).get();
-        Member member = memberRepository.findById(memberId).get();
-
-        if (!postRepository.existsByTeam(team)){
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new PostHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new PostHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (!postRepository.existsByTeam(team)) {
             throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);
         }
-        if (!postRepository.existsByMember(member)){
+        if (!postRepository.existsByMember(member)) {
             throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
         }
         return postRepository.findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(team, member, request);
     }
+
 
     @Override
     public Post.PostAdjacent findAdjacentPosts(Long postId) {

@@ -198,7 +198,7 @@ public class PostConverter {
                 .collect(Collectors.toList());
 
         return PostResponseDTO.MemberPostInProjectPreviewDTO.builder()
-                .projectId(post.getProject().getProjectId())
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
                 .memberId(post.getMember().getMemberId())
                 .postId(post.getPostId())
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
@@ -239,8 +239,8 @@ public class PostConverter {
                 .collect(Collectors.toList());
 
         return PostResponseDTO.TeamPostInProjectPreviewDTO.builder()
-                .projectId(post.getProject().getProjectId())
-                .teamId(post.getTeam().getTeamId())
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .memberId(post.getMember().getMemberId())
                 .postId(post.getPostId())
                 .postTitle(post.getPostTitle())
@@ -280,10 +280,10 @@ public class PostConverter {
                 .collect(Collectors.toList());
 
         return PostResponseDTO.MemberPostInTeamPreviewDTO.builder()
-                .teamId(post.getTeam().getTeamId())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .memberId(post.getMember().getMemberId())
                 .postId(post.getPostId())
-                .projectId(post.getProject().getProjectId())
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
