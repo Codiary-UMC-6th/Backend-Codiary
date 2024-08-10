@@ -12,5 +12,5 @@ public interface TeamQueryService {
 
     ApiResponse<TeamResponseDTO.TeamImageDTO> getProfileImage(Long teamId);
 
-    TeamResponseDTO.TeamCheckResponseDTO getTeamById(Long teamId);
+    TeamResponseDTO.TeamCheckResponseDTO getTeamById(Long teamId, Long memberId);
 }

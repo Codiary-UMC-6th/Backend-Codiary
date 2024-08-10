@@ -38,23 +38,31 @@ public class TeamController {
   }
 
   //팀 조회
-  @GetMapping("/{teamId}")
+  @GetMapping("/{teamId}/members/{memberId}")
   @Operation(summary = "팀 정보 조회")
-  public ApiResponse<TeamResponseDTO.TeamCheckResponseDTO> getTeamById(@PathVariable Long teamId) {
-    TeamResponseDTO.TeamCheckResponseDTO teamInfo = teamQueryService.getTeamById(teamId);
+  public ApiResponse<TeamResponseDTO.TeamCheckResponseDTO> getTeamById(
+      @PathVariable Long teamId,
+      @PathVariable Long memberId) {
+    TeamResponseDTO.TeamCheckResponseDTO teamInfo = teamQueryService.getTeamById(teamId, memberId);
     return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, teamInfo);
   }
 
   // 팀 프로필 수정
   @PatchMapping("/profile/{teamId}")
   @Operation(summary = "팀 프로필 수정")
-  public ApiResponse<TeamResponseDTO.UpdateTeamDTO> updateTeam(
+  public ApiResponse<Void> updateTeamProfile(
+      @PathVariable Long teamId,
       @RequestBody TeamRequestDTO.UpdateTeamDTO request,
-      @PathVariable Long teamId) {
-    Team updatedTeam = teamCommandService.updateTeam(teamId, request);
-    return ApiResponse.onSuccess(
-        SuccessStatus.TEAM_OK,
-        TeamConverter.toUpdateTeamDTO(updatedTeam));
+      @RequestParam Long memberId) {
+
+    TeamResponseDTO.TeamCheckResponseDTO teamInfo = teamQueryService.getTeamById(teamId, memberId);
+
+    if (!teamInfo.isAdmin()) {
+      return ApiResponse.onFailure("UNAUTHORIZED", "권한이 없습니다.", null);
+    }
+
+    teamCommandService.updateTeam(teamId, request);
+    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, null);
   }
 
   //팀 팔로우

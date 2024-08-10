@@ -45,11 +45,11 @@ public class TeamQueryServiceImpl implements TeamQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public TeamResponseDTO.TeamCheckResponseDTO getTeamById(Long teamId) {
+    public TeamResponseDTO.TeamCheckResponseDTO getTeamById(Long teamId, Long memberId) {
       Team team = teamRepository.findById(teamId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid team ID"));
 
       team.getTeamMemberList().size();
-      return TeamConverter.toTeamCheckResponseDTO(team);
+      return TeamConverter.toTeamCheckDTO(team, memberId);
   }
 }
