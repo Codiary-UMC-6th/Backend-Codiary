@@ -1,5 +1,6 @@
 package com.codiary.backend.global.web.dto.Post;
 
+import com.codiary.backend.global.domain.entity.Comment;
 import com.codiary.backend.global.domain.enums.PostAccess;
 import com.codiary.backend.global.web.dto.PostFile.PostFileRequestDTO;
 import com.codiary.backend.global.web.dto.PostFile.PostFileResponseDTO;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PostResponseDTO {
 
@@ -278,6 +280,71 @@ public class PostResponseDTO {
             PostFileResponseDTO.PostFileListDTO postFileList;
             LocalDateTime createdAt;
             LocalDateTime updatedAt;
+        }
+    }
+
+    // 게시글에 댓글 작성하기
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreateCommentResultDTO {
+        Long commentId;
+        Long memberId;
+        Long postId;
+        String nickname;
+        String commentBody;
+        LocalDateTime createdAt;
+    }
+
+    // 게시글에 대댓글 작성하기
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreateCommentReplyResultDTO {
+        Long commentId;
+        Long memberId;
+        Long postId;
+        Long parentId;
+        String nickname;
+        String commentBody;
+        LocalDateTime createdAt;
+    }
+
+    // 게시글별 댓글 조회
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CommentListDTO {
+        List<PostResponseDTO.CommentDTO> commentList;
+        Integer listSize;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CommentDTO {
+        Long commentId;
+        Long postId;
+        Long memberId;
+        String nickname;
+        String commentBody;
+        LocalDateTime createdAt;
+        List<CommentDTO> childCommentList;
+
+        public CommentDTO(Comment comment) {
+            this.commentId = comment.getCommentId();
+            this.postId = comment.getPost().getPostId();
+            this.memberId = comment.getMember().getMemberId();
+            this.nickname = comment.getMember().getNickname();
+            this.commentBody = comment.getCommentBody();
+            this.createdAt = comment.getCreatedAt();
+            this.childCommentList = comment.getChildComments().stream()
+                    .map(CommentDTO::new)
+                    .collect(Collectors.toList());
         }
     }
 

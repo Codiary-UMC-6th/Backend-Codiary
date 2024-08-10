@@ -1,8 +1,11 @@
 package com.codiary.backend.global.service.PostService;
 
+import com.codiary.backend.global.domain.entity.Comment;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
+import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 
+import java.util.List;
 import java.util.Set;
 
 public interface PostCommandService {
@@ -21,5 +24,15 @@ public interface PostCommandService {
     Post setPostTeam(Long postId, Long teamId);
 
     Post setPostCategories(Long postId, Set<String> categories);
+
+    // 게시글에 댓글 작성하기
+    Comment createComment(Long memberId, Long postId, PostRequestDTO.CommentDTO request);
+
+    // 게시글에 대댓글 작성하기
+    Comment createCommentReply(Long memberId, Long postId, Long parentId, PostRequestDTO.CommentReplyDTO request);
+
+    // 게시글별 댓글 조회
+//    List<Comment> getCommentList(Long postId);
+    List<PostResponseDTO.CommentDTO> getCommentList(Long postId);
 
 }

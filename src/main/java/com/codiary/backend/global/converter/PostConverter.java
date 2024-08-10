@@ -1,11 +1,13 @@
 package com.codiary.backend.global.converter;
 
+import com.codiary.backend.global.domain.entity.Comment;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.domain.entity.mapping.Categories;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -371,6 +373,62 @@ public class PostConverter {
                 .postAccess(post.getPostAccess())
                 .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .build();
+    }
+
+    // 게시글에 댓글 작성하기
+    public static Comment toComment(PostRequestDTO.CommentDTO request) {
+        return Comment.builder()
+                .commentBody(request.getCommentBody())
+                .build();
+    }
+
+    public static PostResponseDTO.CreateCommentResultDTO toCreateCommentResultDTO(Comment comment) {
+        return PostResponseDTO.CreateCommentResultDTO.builder()
+                .commentId(comment.getCommentId())
+                .memberId(comment.getMember().getMemberId())
+                .postId(comment.getPost().getPostId())
+                .nickname(comment.getMember().getNickname())
+                .commentBody(comment.getCommentBody())
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    // 게시글에 대댓글 작성하기
+    public static Comment toCommentReply(PostRequestDTO.CommentReplyDTO request) {
+        return Comment.builder()
+                .commentBody(request.getCommentReplyBody())
+                .build();
+    }
+
+    public static PostResponseDTO.CreateCommentReplyResultDTO toCreateCommentReplyResultDTO(Comment comment) {
+        return PostResponseDTO.CreateCommentReplyResultDTO.builder()
+                .commentId(comment.getCommentId())
+                .memberId(comment.getMember().getMemberId())
+                .postId(comment.getPost().getPostId())
+                .parentId(comment.getParentId().getCommentId())
+                .nickname(comment.getMember().getNickname())
+                .commentBody(comment.getCommentBody())
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    // 게시글별 댓글 조회
+    public static PostResponseDTO.CommentDTO toCommentDTO(Comment comment) {
+        return PostResponseDTO.CommentDTO.builder()
+                .commentId(comment.getCommentId())
+                .postId(comment.getPost().getPostId())
+                .memberId(comment.getMember().getMemberId())
+                .nickname(comment.getMember().getNickname())
+                .commentBody(comment.getCommentBody())
+                .createdAt(comment.getCreatedAt())
+                .childCommentList(toCommentListDTO(comment.getChildComments()))
+                .build();
+    }
+
+    public static List<PostResponseDTO.CommentDTO> toCommentListDTO(List<Comment> commentList) {
+        return commentList.stream()
+                .map(PostConverter::toCommentDTO)
+                .collect(Collectors.toList());
     }
 
 }

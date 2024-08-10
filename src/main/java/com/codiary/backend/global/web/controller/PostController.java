@@ -3,6 +3,7 @@ package com.codiary.backend.global.web.controller;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.converter.PostConverter;
+import com.codiary.backend.global.domain.entity.Comment;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
@@ -12,6 +13,9 @@ import com.codiary.backend.global.service.PostService.PostQueryService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -207,5 +211,93 @@ public class PostController {
 //    )
 //    public ApiResponse<PostResponseDTO> showPostCodePreview(
 //    ){ return null; }
+
+
+
+    // 게시글에 댓글 작성하기
+    @PostMapping("/add/comment/{memberId}/{postId}")
+    @Operation(
+            summary = "댓글 작성 API",
+            description = "comment, memberId, postId"
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4000", description = "OK, 성공")
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameters({
+            @Parameter(name = "memberId", description = "회원의 아이디, path variable 입니다!"),
+            @Parameter(name = "postId", description = "게시글의 아이디, path variable 입니다!")
+    })
+    public ApiResponse<PostResponseDTO.CreateCommentResultDTO> createComment(
+            @RequestBody PostRequestDTO.CommentDTO request,
+            @PathVariable(name = "memberId") Long memberId,
+            @PathVariable(name = "postId") Long postId
+    ) {
+
+        Comment comment = postCommandService.createComment(memberId, postId, request);
+
+        return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, PostConverter.toCreateCommentResultDTO(comment));
+
+    }
+
+    // 게시글에 대댓글 작성하기
+    @PostMapping("/add/comment/reply/{memberId}/{postId}/{parentId}")
+    @Operation(
+            summary = "대댓글 작성 API",
+            description = "comment, memberId, postId, parentId"
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4000", description = "OK, 성공")
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameters({
+            @Parameter(name = "memberId", description = "회원의 아이디, path variable 입니다!"),
+            @Parameter(name = "postId", description = "게시글의 아이디, path variable 입니다!"),
+            @Parameter(name = "parentId", description = "댓글의 아이디, path variable 입니다!")
+    })
+    public ApiResponse<PostResponseDTO.CreateCommentReplyResultDTO> createCommentReply(
+            @RequestBody PostRequestDTO.CommentReplyDTO request,
+            @PathVariable(name = "memberId") Long memberId,
+            @PathVariable(name = "postId") Long postId,
+            @PathVariable(name = "parentId") Long parentId
+    ) {
+
+        Comment commentReply = postCommandService.createCommentReply(memberId, postId, parentId, request);
+
+        return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, PostConverter.toCreateCommentReplyResultDTO(commentReply));
+
+    }
+
+    // 게시글별 댓글 조회
+    @GetMapping("/comments/list/{postId}")
+    @Operation(
+            summary = "게시글별 댓글 조회 API",
+            description = "comments, postId"
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4000", description = "OK, 성공"),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameters({
+            @Parameter(name = "postId", description = "게시글 고유번호, path variable 입니다!")
+    })
+//    public ApiResponse<PostResponseDTO.CommentListDTO> getCommentList(
+    public ApiResponse<List<PostResponseDTO.CommentDTO>> getCommentList(
+            @PathVariable(name = "postId") Long postId
+    ) {
+
+//        List<Comment> commentList = postCommandService.getCommentList(postId);
+        List<PostResponseDTO.CommentDTO> commentList = postCommandService.getCommentList(postId);
+
+//        return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, PostConverter.toCommentListDTO(commentList));
+        return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, commentList);
+
+    }
 
 }
