@@ -5,10 +5,7 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
-import com.codiary.backend.global.domain.entity.Member;
-import com.codiary.backend.global.domain.entity.MemberImage;
-import com.codiary.backend.global.domain.entity.Project;
-import com.codiary.backend.global.domain.entity.Uuid;
+import com.codiary.backend.global.domain.entity.*;
 import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
 import com.codiary.backend.global.domain.entity.mapping.MemberProjectMap;
 import com.codiary.backend.global.domain.entity.mapping.TechStacks;
@@ -29,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -47,6 +45,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final MemberImageRepository memberImageRepository;
     private final ProjectRepository projectRepository;
     private final MemberProjectMapRepository memberProjectMapRepository;
+    private final TokenRepository tokenRepository;
 
 
     @Override
@@ -120,6 +119,19 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         } catch (AuthenticationException e) {
             throw new MemberHandler(ErrorStatus.MEMBER_LOGIN_FAIL);
         }
+    }
+
+    @Override
+    public String logout(String token, Member member) {
+        if (!tokenRepository.existsByNotAvailableToken(token)) {
+            Date expiryTime = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
+            Token tokenEntity = Token.builder()
+                    .expiryTime(expiryTime)
+                    .notAvailableToken(token)
+                    .build();
+            tokenRepository.save(tokenEntity);
+        }
+        return "로그아웃되었습니다.";
     }
 
     @Override

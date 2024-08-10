@@ -70,6 +70,15 @@ public class MemberController {
         return memberCommandService.login(request);
     }
 
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃")
+    public ApiResponse<String> logout(@RequestHeader("Authorization") String token) {
+        Member member = memberCommandService.getRequester();
+        String jwtToken = token.substring(7);
+        String response = memberCommandService.logout(jwtToken, member);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
+    }
+
 
     @Operation(
             summary = "팔로우 및 취소 기능",
