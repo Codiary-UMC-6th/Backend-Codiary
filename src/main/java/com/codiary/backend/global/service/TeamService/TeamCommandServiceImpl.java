@@ -4,6 +4,7 @@ import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.converter.TeamConverter;
 import com.codiary.backend.global.domain.entity.*;
+import com.codiary.backend.global.domain.entity.mapping.TeamMember;
 import com.codiary.backend.global.domain.entity.mapping.TeamProjectMap;
 import com.codiary.backend.global.domain.enums.MemberRole;
 import com.codiary.backend.global.repository.*;
@@ -22,6 +23,8 @@ import java.util.UUID;
 public class TeamCommandServiceImpl implements TeamCommandService {
 
   private final TeamRepository teamRepository;
+  private final MemberRepository memberRepository;
+  private final TeamMemberRepository teamMemberRepository;
   private final ProjectRepository projectRepository;
   private final TeamProjectMapRepository teamProjectMapRepository;
   private final UuidRepository uuidRepository;
@@ -45,21 +48,28 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         .profileImage(null)
         .build();
 
-    Team savedTeam = teamRepository.save(team);
-    return savedTeam;
+    teamRepository.save(team);
+
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
+
+    // 팀 생성자에게 관리자 역할 부여
+    TeamMember teamMember = TeamMember.builder()
+        .team(team)
+        .member(member)
+        .teamMemberRole(MemberRole.ADMIN)
+        .build();
+
+    teamMemberRepository.save(teamMember);
+
+    return TeamConverter.toCreateTeamResponseDTO(team);
   }
 
   @Override
   @Transactional
   public Team updateTeam(Long teamId, Long memberId, TeamRequestDTO.UpdateTeamDTO request) {
-    Team team = teamRepository.findById(teamId).orElseThrow(() -> new IllegalArgumentException("Invalid team ID"));
-
-    team.setName(request.getName());
-    team.setIntro(request.getIntro());
-    team.setGithub(request.getGithub());
-    team.setLinkedin(request.getLinkedIn());
-    team.setDiscord(request.getDiscord());
-    team.setInstagram(request.getInstagram());
+    Team team = teamRepository.findById(teamId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid team ID"));
 
     // 관리자 여부 확인
     boolean isAdmin = team.getTeamMemberList().stream()
@@ -70,8 +80,16 @@ public class TeamCommandServiceImpl implements TeamCommandService {
       throw new IllegalStateException("권한이 없습니다.");
     }
 
+    team.setName(request.getName());
+    team.setIntro(request.getIntro());
+    team.setGithub(request.getGithub());
+    team.setLinkedin(request.getLinkedIn());
+    team.setDiscord(request.getDiscord());
+    team.setInstagram(request.getInstagram());
+
     return teamRepository.save(team);
   }
+
 
   @Override
   @Transactional

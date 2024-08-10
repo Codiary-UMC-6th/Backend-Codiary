@@ -1,8 +1,6 @@
 package com.codiary.backend.global.converter;
 
-import com.codiary.backend.global.domain.entity.Project;
 import com.codiary.backend.global.domain.entity.Team;
-import com.codiary.backend.global.domain.enums.MemberRole;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import com.codiary.backend.global.web.dto.TeamMember.TeamMemberResponseDTO;
 
@@ -26,15 +24,10 @@ public class TeamConverter {
   }
 
   //팀 조회
-  public static TeamResponseDTO.TeamCheckResponseDTO toTeamCheckDTO(Team team, Long currentMemberId) {
+  public static TeamResponseDTO.TeamCheckResponseDTO toTeamCheckResponseDTO(Team team) {
     List<TeamMemberResponseDTO.TeamMemberDTO> members = team.getTeamMemberList().stream()
         .map(TeamMemberConverter::toTeamMemberDTO)
         .collect(Collectors.toList());
-
-    // 현재 사용자가 관리자인지 확인
-    boolean isAdmin = team.getTeamMemberList().stream()
-        .anyMatch(member -> member.getMember().getMemberId().equals(currentMemberId) &&
-            member.getTeamMemberRole() == MemberRole.ADMIN);
 
     return TeamResponseDTO.TeamCheckResponseDTO.builder()
         .teamId(team.getTeamId())
@@ -50,7 +43,6 @@ public class TeamConverter {
         .email(team.getEmail())
         .linkedIn(team.getLinkedin())
         .members(members)
-        .isAdmin(isAdmin)
         .build();
   }
 
@@ -69,14 +61,6 @@ public class TeamConverter {
         .linkedIn(team.getLinkedin())
         .discord(team.getDiscord())
         .instagram(team.getInstagram())
-        .build();
-  }
-
-  //프로젝트 생성
-  public static TeamResponseDTO.ProjectDTO toProjectDTO(Project project) {
-    return TeamResponseDTO.ProjectDTO.builder()
-        .projectId(project.getProjectId())
-        .projectName(project.getProjectName())
         .build();
   }
 }

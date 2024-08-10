@@ -29,12 +29,10 @@ public class TeamController {
   @PostMapping()
   @Operation(summary = "팀 생성")
   public ApiResponse<TeamResponseDTO.CreateTeamResponseDTO> createTeam(
-          @RequestBody TeamRequestDTO.CreateTeamRequestDTO request
-      ){
-    Team newTeam = teamCommandService.createTeam(request);
-    return ApiResponse.onSuccess(
-        SuccessStatus.TEAM_OK,
-        TeamConverter.toCreateMemberDTO(newTeam));
+      @RequestParam Long memberId, // 팀 생성자의 ID
+      @RequestBody TeamRequestDTO.CreateTeamRequestDTO request) {
+    TeamResponseDTO.CreateTeamResponseDTO team = teamCommandService.createTeam(memberId, request);
+    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, team);
   }
 
   //팀 조회
@@ -50,7 +48,7 @@ public class TeamController {
   // 팀 프로필 수정
   @PatchMapping("/profile/{teamId}")
   @Operation(summary = "팀 프로필 수정")
-  public ApiResponse<Void> updateTeamProfile(
+  public ApiResponse<TeamResponseDTO.UpdateTeamDTO> updateTeamProfile(
       @PathVariable Long teamId,
       @RequestBody TeamRequestDTO.UpdateTeamDTO request,
       @RequestParam Long memberId) {
@@ -61,8 +59,10 @@ public class TeamController {
       return ApiResponse.onFailure("UNAUTHORIZED", "권한이 없습니다.", null);
     }
 
-    teamCommandService.updateTeam(teamId, memberId, request);
-    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, null);
+    Team updatedTeam = teamCommandService.updateTeam(teamId, memberId, request);
+    TeamResponseDTO.UpdateTeamDTO updatedTeamDTO = TeamConverter.toUpdateTeamDTO(updatedTeam);
+
+    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, updatedTeamDTO);
   }
 
   //팀 프로젝트 생성
