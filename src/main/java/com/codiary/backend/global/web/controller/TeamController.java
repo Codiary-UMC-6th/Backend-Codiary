@@ -38,11 +38,11 @@ public class TeamController {
   }
 
   //팀 조회
-  @GetMapping("/{teamId}/members/{memberId}")
+  @GetMapping("/{teamId}")
   @Operation(summary = "팀 정보 조회")
   public ApiResponse<TeamResponseDTO.TeamCheckResponseDTO> getTeamById(
       @PathVariable Long teamId,
-      @PathVariable Long memberId) {
+      @RequestParam Long memberId) {
     TeamResponseDTO.TeamCheckResponseDTO teamInfo = teamQueryService.getTeamById(teamId, memberId);
     return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, teamInfo);
   }
@@ -61,7 +61,7 @@ public class TeamController {
       return ApiResponse.onFailure("UNAUTHORIZED", "권한이 없습니다.", null);
     }
 
-    teamCommandService.updateTeam(teamId, request);
+    teamCommandService.updateTeam(teamId, memberId, request);
     return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, null);
   }
 

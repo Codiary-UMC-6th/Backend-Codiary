@@ -51,7 +51,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
   @Override
   @Transactional
-  public Team updateTeam(Long teamId, TeamRequestDTO.UpdateTeamDTO request) {
+  public Team updateTeam(Long teamId, Long memberId, TeamRequestDTO.UpdateTeamDTO request) {
     Team team = teamRepository.findById(teamId).orElseThrow(() -> new IllegalArgumentException("Invalid team ID"));
 
     team.setName(request.getName());
@@ -60,6 +60,15 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     team.setLinkedin(request.getLinkedIn());
     team.setDiscord(request.getDiscord());
     team.setInstagram(request.getInstagram());
+
+    // 관리자 여부 확인
+    boolean isAdmin = team.getTeamMemberList().stream()
+        .anyMatch(member -> member.getMember().getMemberId().equals(memberId) &&
+            member.getTeamMemberRole() == MemberRole.ADMIN);
+
+    if (!isAdmin) {
+      throw new IllegalStateException("권한이 없습니다.");
+    }
 
     return teamRepository.save(team);
   }
