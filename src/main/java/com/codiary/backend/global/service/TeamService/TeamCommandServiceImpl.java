@@ -2,9 +2,8 @@ package com.codiary.backend.global.service.TeamService;
 
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
-import com.codiary.backend.global.converter.TeamConverter;
 import com.codiary.backend.global.domain.entity.*;
-import com.codiary.backend.global.domain.entity.mapping.TeamProjectMap;
+import com.codiary.backend.global.domain.entity.mapping.TeamMember;
 import com.codiary.backend.global.domain.enums.MemberRole;
 import com.codiary.backend.global.repository.*;
 import com.codiary.backend.global.s3.AmazonS3Manager;
@@ -22,8 +21,8 @@ import java.util.UUID;
 public class TeamCommandServiceImpl implements TeamCommandService {
 
   private final TeamRepository teamRepository;
-  private final ProjectRepository projectRepository;
-  private final TeamProjectMapRepository teamProjectMapRepository;
+  private final MemberRepository memberRepository;
+  private final TeamMemberRepository teamMemberRepository;
   private final UuidRepository uuidRepository;
   private final AmazonS3Manager s3Manager;
   private final TeamBannerImageRepository bannerImageRepository;
@@ -33,7 +32,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
   @Override
   @Transactional
-  public Team createTeam(TeamRequestDTO.CreateTeamRequestDTO request) {
+  public Team createTeam(TeamRequestDTO.CreateTeamRequestDTO request, Long userId) {
+    // 팀 생성
     Team team = Team.builder()
         .name(request.getName())
         .intro(request.getIntro())
@@ -46,6 +46,18 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         .build();
 
     Team savedTeam = teamRepository.save(team);
+
+    // 팀 생성자는 관리자(Admin)로 설정
+    Member creator = memberRepository.findById(userId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
+
+    TeamMember teamMember = TeamMember.builder()
+        .team(savedTeam)
+        .member(creator)
+        .teamMemberRole(MemberRole.ADMIN)
+        .build();
+
+    teamMemberRepository.save(teamMember);
     return savedTeam;
   }
 
@@ -58,41 +70,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     team.setIntro(request.getIntro());
     team.setGithub(request.getGithub());
     team.setLinkedin(request.getLinkedIn());
-    team.setDiscord(request.getDiscord());
     team.setInstagram(request.getInstagram());
 
     return teamRepository.save(team);
-  }
-
-  @Override
-  @Transactional
-  public TeamResponseDTO.ProjectDTO createProject(Long teamId, Long memberId, TeamRequestDTO.CreateProjectDTO request) {
-    Team team = teamRepository.findById(teamId)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid team ID"));
-
-    // 관리자 여부 확인
-    boolean isAdmin = team.getTeamMemberList().stream()
-        .anyMatch(member -> member.getMember().getMemberId().equals(memberId) &&
-            member.getTeamMemberRole() == MemberRole.ADMIN);
-
-    if (!isAdmin) {
-      throw new IllegalStateException("권한이 없습니다.");
-    }
-
-    Project project = Project.builder()
-        .projectName(request.getProjectName())
-        .build();
-
-    projectRepository.save(project);
-
-    TeamProjectMap teamProjectMap = TeamProjectMap.builder()
-        .team(team)
-        .project(project)
-        .build();
-
-    teamProjectMapRepository.save(teamProjectMap);
-
-    return TeamConverter.toProjectDTO(project);
   }
 
   @Override
@@ -109,9 +89,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
 
     TeamBannerImage bannerImage = TeamBannerImage.builder()
-            .imageUrl(fileUrl)
-            .team(team)
-            .build();
+        .imageUrl(fileUrl)
+        .team(team)
+        .build();
 
     TeamBannerImage savedImage = bannerImageRepository.save(bannerImage);
     TeamResponseDTO.TeamImageDTO response = new TeamResponseDTO.TeamImageDTO(savedImage.getImageUrl());
@@ -132,9 +112,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
 
     TeamProfileImage profileImage = TeamProfileImage.builder()
-            .imageUrl(fileUrl)
-            .team(team)
-            .build();
+        .imageUrl(fileUrl)
+        .team(team)
+        .build();
 
     TeamProfileImage savedImage = profileImageRepository.save(profileImage);
     TeamResponseDTO.TeamImageDTO response = new TeamResponseDTO.TeamImageDTO(savedImage.getImageUrl());

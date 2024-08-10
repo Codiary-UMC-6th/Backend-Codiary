@@ -20,15 +20,21 @@ public class TeamMemberController {
 
   @PostMapping("/add")
   @Operation(summary = "팀원 추가")
-  public ApiResponse<TeamMemberResponseDTO.TeamMemberDTO> addMember(@RequestBody TeamMemberRequestDTO.AddMemberDTO request) {
-    TeamMember newMember = teamMemberCommandService.addMember(request);
+  public ApiResponse<TeamMemberResponseDTO.TeamMemberDTO> addMember(
+      @RequestBody TeamMemberRequestDTO.AddMemberDTO request,
+      @RequestParam Long adminId // 관리자의 ID를 함께 받아 검증
+  ) {
+    TeamMember newMember = teamMemberCommandService.addMember(request, adminId);
     return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamMemberConverter.toTeamMemberDTO(newMember));
   }
 
   @DeleteMapping("/delete")
   @Operation(summary = "팀원 삭제")
-  public ApiResponse<Void> removeMember(@RequestBody TeamMemberRequestDTO.RemoveMemberDTO request) {
-    teamMemberCommandService.removeMember(request);
+  public ApiResponse<Void> removeMember(
+      @RequestBody TeamMemberRequestDTO.RemoveMemberDTO request,
+      @RequestParam Long adminId // 관리자의 ID를 함께 받아 검증
+  ) {
+    teamMemberCommandService.removeMember(request, adminId);
     return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, null);
   }
 }
