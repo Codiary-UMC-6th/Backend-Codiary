@@ -3,15 +3,12 @@ package com.codiary.backend.global.service.PostService;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.PostHandler;
-import com.codiary.backend.global.domain.entity.Member;
-import com.codiary.backend.global.domain.entity.Post;
-import com.codiary.backend.global.domain.entity.Project;
-import com.codiary.backend.global.domain.entity.Team;
-import com.codiary.backend.global.repository.MemberRepository;
-import com.codiary.backend.global.repository.PostRepository;
-import com.codiary.backend.global.repository.ProjectRepository;
-import com.codiary.backend.global.repository.TeamRepository;
+import com.codiary.backend.global.converter.PostConverter;
+import com.codiary.backend.global.domain.entity.*;
+import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
+import com.codiary.backend.global.repository.*;
 import com.codiary.backend.global.service.MemberService.MemberCommandService;
+import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +36,8 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final TeamRepository teamRepository;
     private final PostRepository postRepository;
     private final ProjectRepository projectRepository;
-    private final MemberCommandService memberCommandService;
+    private final MemberCategoryRepository memberCategoryRepository;
+    private final FollowRepository followRepository;
 
     @Override
     public Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size) {
@@ -180,4 +179,62 @@ public class PostQueryServiceImpl implements PostQueryService {
         List<Post> posts = postRepository.findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(member, startDate, endDate);
         return posts;
     }
+
+    // 메인페이지 인기글 전체 리스트 조회
+    @Override
+    public Page<Post> getPostPopularList(Integer page) {
+
+        Page<Post> postPopularPage = postRepository.findAllByBookmarkAndCommentCount(PageRequest.of(page - 1, 9));
+
+        PostConverter.toPostPopularListDTO(postPopularPage);
+
+        return postPopularPage;
+
+    }
+
+    // 메인페이지 인기글 멤버 관심 카테고리별 리스트 조회
+    @Override
+    public Page<Post> getPostPopularMemberCategoryList(Long memberCategoryId, Integer page) {
+
+        MemberCategory memberCategory = memberCategoryRepository.findById(memberCategoryId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBERCATEGORY_NOT_FOUND));
+
+        Page<Post> postPopularMemberCategoryPage = postRepository.findPostsByMemberCategorySorted(memberCategory, PageRequest.of(page - 1, 9));
+
+        PostConverter.toPostPopularMemberCategoryListDTO(postPopularMemberCategoryPage);
+
+        return postPopularMemberCategoryPage;
+
+    }
+
+    // 메인페이지 최신글 리스트 조회
+    @Override
+    public Page<Post> getPostLatestList(Integer page) {
+
+        Page<Post> postLatestPage = postRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page - 1, 9));
+
+        PostConverter.toPostLatestListDTO(postLatestPage);
+
+        return postLatestPage;
+
+    }
+
+    // 메인페이지 팔로잉 게시글 리스트 조회
+    @Override
+    public Page<Post> getPostFollowingList(Long followId, Integer page) {
+
+        Follow follow = followRepository.findById(followId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Member toMember = follow.getToMember();
+
+        Page<Post> postFollowingPage = postRepository.findAllByMemberOrderByCreatedAtDesc(toMember, PageRequest.of(page - 1, 9));
+
+
+        PostConverter.toPostPopularMemberCategoryListDTO(postFollowingPage);
+
+        return postFollowingPage;
+
+    }
+
 }

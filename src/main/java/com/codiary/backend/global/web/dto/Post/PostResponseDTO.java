@@ -1,6 +1,7 @@
 package com.codiary.backend.global.web.dto.Post;
 
 import com.codiary.backend.global.domain.entity.Comment;
+import com.codiary.backend.global.domain.entity.PostFile;
 import com.codiary.backend.global.domain.enums.PostAccess;
 import com.codiary.backend.global.web.dto.PostFile.PostFileRequestDTO;
 import com.codiary.backend.global.web.dto.PostFile.PostFileResponseDTO;
@@ -355,6 +356,118 @@ public class PostResponseDTO {
                     .map(CommentDTO::new)
                     .collect(Collectors.toList());
         }
+    }
+
+    // 메인페이지 인기글 전체 리스트 조회
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostPopularListDTO {
+        List<PostResponseDTO.PostPopularDTO> postPopularList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostPopularDTO {
+        Long postId;
+        Long memberId;
+        String fileUrl;
+        String postTitle;
+        String nickname;
+        String postBody;
+        LocalDateTime createdAt;
+    }
+
+    // 메인페이지 인기글 멤버 관심 카테고리별 리스트 조회
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostPopularMemberCategoryListDTO {
+        List<PostResponseDTO.PostPopularMemberCategoryDTO> postPopularMemberCategoryList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostPopularMemberCategoryDTO {
+        Long postId;
+        Long memberId;
+        String fileUrl;
+        String postTitle;
+        String nickname;
+        String postBody;
+        LocalDateTime createdAt;
+    }
+
+    // 메인페이지 최신글 리스트 조회
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostLatestListDTO {
+        List<PostResponseDTO.PostLatestDTO> postLatestList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostLatestDTO {
+        Long postId;
+        Long memberId;
+        String fileUrl;
+        String postTitle;
+        String nickname;
+        String postBody;
+        LocalDateTime createdAt;
+    }
+
+    // 메인페이지 팔로잉 게시글 리스트 조회
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostFollowingListDTO {
+        List<PostResponseDTO.PostFollowingDTO> postFollowingList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostFollowingDTO {
+        Long postId;
+        Long memberId;
+        String fileUrl;
+        String postTitle;
+        String nickname;
+        String postBody;
+        LocalDateTime createdAt;
     }
 
 }

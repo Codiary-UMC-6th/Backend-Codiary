@@ -45,11 +45,9 @@ public class CommentController {
             @RequestBody CommentRequestDTO.PatchCommentDTO request
     ) {
 
-//        Comment comment = commentCommandService.patchComment(commentId, request);
-        CommentResponseDTO.PatchCommentResultDTO comment = commentCommandService.patchComment(commentId, request);
+        Comment comment = commentCommandService.patchComment(commentId, request);
 
-//        return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toPatchCommentResultDTO(comment));
-        return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, comment);
+        return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toPatchCommentResultDTO(comment));
 
     }
 
