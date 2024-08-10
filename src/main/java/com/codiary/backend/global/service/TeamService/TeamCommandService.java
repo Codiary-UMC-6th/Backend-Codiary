@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface TeamCommandService {
   //팀 생성
-  Team createTeam(TeamRequestDTO.CreateTeamRequestDTO request);
+  Team createTeam(TeamRequestDTO.CreateTeamRequestDTO request, Long userId);
 
   // 팀 프로필 수정
   Team updateTeam(Long teamId, TeamRequestDTO.UpdateTeamDTO request);

@@ -6,8 +6,8 @@ import com.codiary.backend.global.web.dto.TeamMember.TeamMemberRequestDTO;
 public interface TeamMemberCommandService {
 
   // 팀원 추가
-  TeamMember addMember(TeamMemberRequestDTO.AddMemberDTO request);
+  TeamMember addMember(TeamMemberRequestDTO.AddMemberDTO request, Long adminId);
 
   // 팀원 삭제
-  void removeMember(TeamMemberRequestDTO.RemoveMemberDTO request);
+  void removeMember(TeamMemberRequestDTO.RemoveMemberDTO request, Long adminId);
 }

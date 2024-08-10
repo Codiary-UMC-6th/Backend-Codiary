@@ -3,10 +3,9 @@ package com.codiary.backend.global.service.TeamService;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.domain.entity.*;
-import com.codiary.backend.global.repository.TeamBannerImageRepository;
-import com.codiary.backend.global.repository.TeamProfileImageRepository;
-import com.codiary.backend.global.repository.TeamRepository;
-import com.codiary.backend.global.repository.UuidRepository;
+import com.codiary.backend.global.domain.entity.mapping.TeamMember;
+import com.codiary.backend.global.domain.enums.MemberRole;
+import com.codiary.backend.global.repository.*;
 import com.codiary.backend.global.s3.AmazonS3Manager;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import com.codiary.backend.global.web.dto.Team.TeamRequestDTO;
@@ -22,6 +21,8 @@ import java.util.UUID;
 public class TeamCommandServiceImpl implements TeamCommandService {
 
   private final TeamRepository teamRepository;
+  private final MemberRepository memberRepository;
+  private final TeamMemberRepository teamMemberRepository;
   private final UuidRepository uuidRepository;
   private final AmazonS3Manager s3Manager;
   private final TeamBannerImageRepository bannerImageRepository;
@@ -31,7 +32,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
   @Override
   @Transactional
-  public Team createTeam(TeamRequestDTO.CreateTeamRequestDTO request) {
+  public Team createTeam(TeamRequestDTO.CreateTeamRequestDTO request, Long userId) {
+    // 팀 생성
     Team team = Team.builder()
         .name(request.getName())
         .intro(request.getIntro())
@@ -44,6 +46,18 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         .build();
 
     Team savedTeam = teamRepository.save(team);
+
+    // 팀 생성자는 관리자(Admin)로 설정
+    Member creator = memberRepository.findById(userId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
+
+    TeamMember teamMember = TeamMember.builder()
+        .team(savedTeam)
+        .member(creator)
+        .teamMemberRole(MemberRole.ADMIN)
+        .build();
+
+    teamMemberRepository.save(teamMember);
     return savedTeam;
   }
 

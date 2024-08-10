@@ -29,12 +29,11 @@ public class TeamController {
   @PostMapping()
   @Operation(summary = "팀 생성")
   public ApiResponse<TeamResponseDTO.CreateTeamResponseDTO> createTeam(
-      @RequestBody TeamRequestDTO.CreateTeamRequestDTO request
-  ){
-    Team newTeam = teamCommandService.createTeam(request);
-    return ApiResponse.onSuccess(
-        SuccessStatus.TEAM_OK,
-        TeamConverter.toCreateMemberDTO(newTeam));
+      @RequestBody TeamRequestDTO.CreateTeamRequestDTO request,
+      @RequestHeader("X-USER-ID") Long userId)
+  {
+    Team newTeam = teamCommandService.createTeam(request, userId);
+    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toCreateMemberDTO(newTeam));
   }
 
   //팀 조회
