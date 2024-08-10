@@ -13,11 +13,8 @@ public interface TeamCommandService {
   //팀 생성
   Team createTeam(TeamRequestDTO.CreateTeamRequestDTO request);
 
-  //팀 프로필 수정
-  Team updateTeam(Long teamId, Long memberId, TeamRequestDTO.UpdateTeamDTO request);
-
-  //팀 프로젝트 생성
-  TeamResponseDTO.ProjectDTO createProject(Long teamId, Long memberId, TeamRequestDTO.CreateProjectDTO request);
+  // 팀 프로필 수정
+  Team updateTeam(Long teamId, TeamRequestDTO.UpdateTeamDTO request);
 
   ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamBannerImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request);
 
