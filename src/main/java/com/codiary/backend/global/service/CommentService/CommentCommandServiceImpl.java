@@ -2,6 +2,7 @@ package com.codiary.backend.global.service.CommentService;
 
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
+import com.codiary.backend.global.converter.CommentConverter;
 import com.codiary.backend.global.domain.entity.Comment;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.repository.CommentRepository;
@@ -24,8 +25,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
 
     // 댓글 수정하기
     @Override
-//    public Comment patchComment(Long commentId, CommentRequestDTO.PatchCommentDTO request) {
-    public CommentResponseDTO.PatchCommentResultDTO patchComment(Long commentId, CommentRequestDTO.PatchCommentDTO request) {
+    public Comment patchComment(Long commentId, CommentRequestDTO.PatchCommentDTO request) {
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
@@ -34,8 +34,9 @@ public class CommentCommandServiceImpl implements CommentCommandService {
             comment.patchComment(request.getCommentBody());
         }
 
-//        return commentRepository.save(comment);
-        return new CommentResponseDTO.PatchCommentResultDTO(comment);
+        CommentConverter.toPatchCommentResultDTO(comment);
+
+        return commentRepository.save(comment);
 
     }
 

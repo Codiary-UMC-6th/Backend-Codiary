@@ -1,9 +1,8 @@
 package com.codiary.backend.global.repository;
 
-import com.codiary.backend.global.domain.entity.Member;
-import com.codiary.backend.global.domain.entity.Post;
-import com.codiary.backend.global.domain.entity.Project;
-import com.codiary.backend.global.domain.entity.Team;
+import com.codiary.backend.global.domain.entity.*;
+import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
+import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -44,4 +43,28 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p LEFT JOIN p.authorsList a LEFT JOIN p.project j WHERE (p.member = :member OR a.member = :member) AND j.projectId = :projectId ORDER BY p.createdAt DESC")
     Page<Post> findPostsByMemberOrAuthorAndProjectId(@Param("member") Member member, @Param("projectId") Long projectId, Pageable pageable);
+
+    // 메인페이지 인기글 전체 리스트 조회
+    @Query("SELECT p FROM Post p " +
+            "LEFT JOIN p.bookmarkList b " +
+            "LEFT JOIN p.commentList c " +
+            "GROUP BY p " +
+            "ORDER BY (COUNT(b) + COUNT(c)) DESC")
+    Page<Post> findAllByBookmarkAndCommentCount(Pageable pageable);
+
+    // 메인페이지 인기글 멤버 관심 카테고리별 리스트 조회
+    @Query("SELECT p FROM Post p " +
+            "JOIN p.categoriesList c " +
+            "JOIN c.memberCategoryList mc " +
+            "WHERE mc = :memberCategory " +
+            "GROUP BY p " +
+            "ORDER BY (SIZE(p.bookmarkList) + SIZE(p.commentList)) DESC")
+    Page<Post> findPostsByMemberCategorySorted(MemberCategory memberCategory, Pageable pageable);
+
+    // 메인페이지 최신글 리스트 조회
+//    Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    // 메인페이지 팔로잉 게시글 리스트 조회
+    Page<Post> findAllByMemberOrderByCreatedAtDesc(Member toMember, Pageable pageable);
+
 }

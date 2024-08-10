@@ -7,8 +7,6 @@ public class CommentConverter {
 
     // 댓글 수정하기
     // nickname 관련 could not initialize proxy - no Session 에러
-    // 위 에러로 인해 DTO 변환을 Controller가 아닌 Service에서 했기 때문에
-    // 해당 메소드는 이후 수정사항이 없으면 쓰지 않을 듯
     public static CommentResponseDTO.PatchCommentResultDTO toPatchCommentResultDTO(Comment comment) {
         return CommentResponseDTO.PatchCommentResultDTO.builder()
                 .commentId(comment.getCommentId())
@@ -28,7 +26,7 @@ public class CommentConverter {
                 .build();
     }
 
-    // 게시글별 댓글 조회
+    // 게시글별 댓글 개수 조회
     public static CommentResponseDTO.CountCommentsResultDTO toCountCommentsResultDTO(Long postId, int countComments) {
         return CommentResponseDTO.CountCommentsResultDTO.builder()
                 .postId(postId)
