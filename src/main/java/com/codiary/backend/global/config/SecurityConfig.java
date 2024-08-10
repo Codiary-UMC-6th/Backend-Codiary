@@ -3,6 +3,7 @@ package com.codiary.backend.global.config;
 import com.codiary.backend.global.jwt.EmailPasswordAuthenticationFilter;
 import com.codiary.backend.global.jwt.JwtAuthenticationFilter;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
+import com.codiary.backend.global.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
+    private final TokenRepository tokenRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -54,7 +56,8 @@ public class SecurityConfig {
                         authorize -> authorize
                                 // Member 관련 접근
                                 .requestMatchers("/members/sign-up", "/members/sign-up/check-email", "/members/sign-up/check-nickname").permitAll()
-                                .requestMatchers("/members/login", "members/posts").permitAll()
+                                .requestMatchers("/members/login", "members/logout", "members/posts").permitAll()
+                                .requestMatchers("/members/**").permitAll()
                                 // Post 관련 접근
                                 .requestMatchers("/posts","/posts/{postId}", "/posts/visibility/{postId}", "/posts/coauthors/{postId}", "/posts/categories/{postId}").permitAll() //.hasRole("USER")
                                 .requestMatchers("/posts/title/paging", "/posts/team/{teamId}/{postId}", "/posts/team/{teamId}/member/{memberId}/paging", "/posts/project/{projectId}/team/{teamId}/paging", "/posts/project/{projectId}/member/{memberId}/paging", "/posts/member/{memberId}/paging", "/posts/categories/paging", "/posts/{postId}/adjacent").permitAll()
@@ -62,7 +65,7 @@ public class SecurityConfig {
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), EmailPasswordAuthenticationFilter.class).build();
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, tokenRepository), EmailPasswordAuthenticationFilter.class).build();
     }
 
     @Bean
