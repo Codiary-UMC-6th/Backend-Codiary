@@ -54,9 +54,9 @@ public class PostController {
 
 
     // 멤버의 다이어리 수정하기
-    @PatchMapping("/{postId}")
+    @PatchMapping(path = "/{postId}", consumes = "multipart/form-data")
     @Operation(summary = "다이어리 수정 API", description = "다이어리를 수정합니다.")
-    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(@RequestBody PostRequestDTO.UpdatePostDTO request, @PathVariable Long postId){
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(@ModelAttribute PostRequestDTO.UpdatePostDTO request, @PathVariable Long postId){
         Member member = memberCommandService.getRequester();
         jwtTokenProvider.isValidToken(member.getMemberId());
 
