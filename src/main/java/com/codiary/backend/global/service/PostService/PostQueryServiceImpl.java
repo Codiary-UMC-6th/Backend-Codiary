@@ -80,23 +80,32 @@ public class PostQueryServiceImpl implements PostQueryService {
 //        return postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, request);
 //    }
 
+
     @Override
     public Page<Post> getPostsByMember(Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
-        Page<Post> postsByMember = postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, request);
-        Page<Post> postsByCoauthor = postRepository.findByAuthorsList_MemberOrderByCreatedAtDescPostIdDesc(member, request);
+        List<Post> postsByMember = postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        List<Post> postsByCoauthor = postRepository.findByAuthorsList_MemberOrderByCreatedAtDescPostIdDesc(member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
 
-        if (postsByMember.isEmpty() && postsByCoauthor.isEmpty()) {
+        List<Post> combinedPosts = new ArrayList<>();
+        combinedPosts.addAll(postsByMember);
+        combinedPosts.addAll(postsByCoauthor);
+
+        if (combinedPosts.isEmpty()) {
             throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
         }
-        // 두 개의 결과를 하나의 리스트로 병합
-        List<Post> combinedPosts = new ArrayList<>();
-        combinedPosts.addAll(postsByMember.getContent());
-        combinedPosts.addAll(postsByCoauthor.getContent());
-        return new PageImpl<>(combinedPosts, request, combinedPosts.size());
+        combinedPosts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+
+        int start = Math.min(page * size, combinedPosts.size());
+        int end = Math.min((page + 1) * size, combinedPosts.size());
+
+        return new PageImpl<>(combinedPosts.subList(start, end), request, combinedPosts.size());
     }
+
+
+
 
 
     @Override
@@ -140,20 +149,6 @@ public class PostQueryServiceImpl implements PostQueryService {
         return postRepository.findByProjectAndTeamOrderByCreatedAtDescPostIdDesc(project, team, request);
     }
 
-//    @Override
-//    public Page<Post> getPostsByMemberInTeam(Long teamId, Long memberId, int page, int size) {
-//        PageRequest request = PageRequest.of(page, size);
-//        Team team = teamRepository.findById(teamId).get();
-//        Member member = memberRepository.findById(memberId).get();
-//
-//        if (!postRepository.existsByTeam(team)){
-//            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);
-//        }
-//        if (!postRepository.existsByMember(member)){
-//            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
-//        }
-//        return postRepository.findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(team, member, request);
-//    }
 
     @Override
     public Page<Post> getPostsByMemberInTeam(Long teamId, Long memberId, int page, int size) {
