@@ -55,7 +55,17 @@ public class TeamResponseDTO {
     String github;
     String email;
     String linkedIn;
-    private List<TeamMemberResponseDTO.TeamMemberDTO> members; // 팀원 목록 추가
+    List<TeamMemberResponseDTO.TeamMemberDTO> members; // 팀원 목록 추가
+    boolean isAdmin;  //관리자 여부
+  }
+
+  @Getter
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class ProjectDTO {  //프로젝트 생성
+    private Long projectId;
+    private String projectName;
   }
 
   @Builder
