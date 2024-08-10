@@ -43,7 +43,6 @@ public class PostQueryServiceImpl implements PostQueryService {
     @Override
     public Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
-        // 만약 검색어가 존재한다면
         if (optSearch.isPresent()) {
             String search = optSearch.get();
             return postRepository.findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(search, request);
@@ -52,33 +51,19 @@ public class PostQueryServiceImpl implements PostQueryService {
         return postRepository.findAllByOrderByCreatedAtDesc(request);
     }
 
+
+    @Override
     public Page<Post> getPostsByCategories(Optional<String> optSearch, int page, int size) {
         Pageable request = PageRequest.of(page, size);
-
         if (optSearch.isPresent()) {
             String search = optSearch.get();
             log.info("Searching posts by category with keyword: {}", search);
             List<Long> postIds = postRepository.findPostIdsByCategoryName(search);
-            if (postIds.isEmpty()) {
-                return Page.empty(request);
-            }
+            if (postIds.isEmpty()) { return Page.empty(request); }
             return postRepository.findByPostIdIn(postIds, request);
         }
-
-        // 검색어가 없는 경우 전체 게시글을 날짜 기준으로 페이지네이션
         return postRepository.findAllByOrderByCreatedAtDesc(request);
     }
-
-//    @Override
-//    public Page<Post> getPostsByMember(Long memberId, int page, int size) {
-//        PageRequest request = PageRequest.of(page, size);
-//        Member member = memberRepository.findById(memberId).get();
-//
-//        if (!postRepository.existsByMember(member)){
-//            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
-//        }
-//        return postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, request);
-//    }
 
 
     @Override
@@ -93,19 +78,13 @@ public class PostQueryServiceImpl implements PostQueryService {
         combinedPosts.addAll(postsByMember);
         combinedPosts.addAll(postsByCoauthor);
 
-        if (combinedPosts.isEmpty()) {
-            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
-        }
+        if (combinedPosts.isEmpty()) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER); }
         combinedPosts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
 
         int start = Math.min(page * size, combinedPosts.size());
         int end = Math.min((page + 1) * size, combinedPosts.size());
-
         return new PageImpl<>(combinedPosts.subList(start, end), request, combinedPosts.size());
     }
-
-
-
 
 
     @Override
@@ -113,26 +92,35 @@ public class PostQueryServiceImpl implements PostQueryService {
         PageRequest request = PageRequest.of(page, size);
         Team team = teamRepository.findById(teamId).get();
 
-        if (!postRepository.existsByTeam(team)){
-            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);
-        }
+        if (!postRepository.existsByTeam(team)){ throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM); }
         return postRepository.findByTeamOrderByCreatedAtDescPostIdDesc(team, request);
     }
+
 
     @Override
     public Page<Post> getPostsByMemberInProject(Long projectId, Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
-        Project project = projectRepository.findById(projectId).get();
-        Member member = memberRepository.findById(memberId).get();
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new PostHandler(ErrorStatus.PROJECT_NOT_FOUND));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new PostHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        if (!postRepository.existsByProject(project)){
-            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_PROJECT);
-        }
-        if (!postRepository.existsByMember(member)){
-            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
-        }
-        return postRepository.findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(project, member, request);
+        if (!postRepository.existsByProject(project)) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_PROJECT); }
+        List<Post> postsByMember = postRepository.findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(project, member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        List<Post> postsByCoauthor = postRepository.findByProjectAndAuthorsList_MemberOrderByCreatedAtDescPostIdDesc(project, member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+
+        List<Post> combinedPosts = new ArrayList<>();
+        combinedPosts.addAll(postsByMember);
+        combinedPosts.addAll(postsByCoauthor);
+
+        if (combinedPosts.isEmpty()) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER); }
+        combinedPosts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+
+        int start = Math.min(page * size, combinedPosts.size());
+        int end = Math.min((page + 1) * size, combinedPosts.size());
+        return new PageImpl<>(combinedPosts.subList(start, end), request, combinedPosts.size());
     }
+
 
     @Override
     public Page<Post> getPostsByTeamInProject(Long projectId, Long teamId, int page, int size) {
@@ -140,12 +128,8 @@ public class PostQueryServiceImpl implements PostQueryService {
         Project project = projectRepository.findById(projectId).get();
         Team team = teamRepository.findById(teamId).get();
 
-        if (!postRepository.existsByProject(project)){
-            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_PROJECT);
-        }
-        if (!postRepository.existsByTeam(team)){
-            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);
-        }
+        if (!postRepository.existsByProject(project)){ throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_PROJECT); }
+        if (!postRepository.existsByTeam(team)){ throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM); }
         return postRepository.findByProjectAndTeamOrderByCreatedAtDescPostIdDesc(project, team, request);
     }
 
@@ -157,13 +141,23 @@ public class PostQueryServiceImpl implements PostQueryService {
                 .orElseThrow(() -> new PostHandler(ErrorStatus.TEAM_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        if (!postRepository.existsByTeam(team)) {
-            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);
-        }
-        if (!postRepository.existsByMember(member)) {
-            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
-        }
-        return postRepository.findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(team, member, request);
+
+        if (!postRepository.existsByTeam(team)) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM); }
+        if (!postRepository.existsByMember(member)) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER); }
+
+        List<Post> postsByMember = postRepository.findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(team, member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        List<Post> postsByCoauthor = postRepository.findByTeamAndAuthorsList_MemberOrderByCreatedAtDescPostIdDesc(team, member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+
+        List<Post> combinedPosts = new ArrayList<>();
+        combinedPosts.addAll(postsByMember);
+        combinedPosts.addAll(postsByCoauthor);
+
+        if (combinedPosts.isEmpty()) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER); }
+        combinedPosts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+
+        int start = Math.min(page * size, combinedPosts.size());
+        int end = Math.min((page + 1) * size, combinedPosts.size());
+        return new PageImpl<>(combinedPosts.subList(start, end), request, combinedPosts.size());
     }
 
 
