@@ -61,7 +61,12 @@ public enum ErrorStatus implements BaseErrorCode {
     // 카테고리 관련 에러 7000
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_7001", "카테고리가 없습니다."),
     // 회원별 관심 카테고리 관련 에러 8000
-    MEMBERCATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBERCATEGORY_8001", "회원별 관심 카테고리가 없습니다.")
+    MEMBERCATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBERCATEGORY_8001", "회원별 관심 카테고리가 없습니다."),
+
+    // 프로젝트 관련 에러 9000
+    PROJECT_NOT_FOUND(HttpStatus.BAD_REQUEST, "PROJECT_3009", "프로젝트가 없습니다.")
+
+
     ;
 
 

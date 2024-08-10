@@ -15,26 +15,18 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-
     Page<Post> findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(String postTitle, Pageable pageable);
-
     Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
-
     Page<Post> findByMemberOrderByCreatedAtDescPostIdDesc(Member member, Pageable pageable);
-
     Page<Post> findByTeamOrderByCreatedAtDescPostIdDesc(Team team, Pageable pageable);
-
     Page<Post> findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(Project project, Member member, Pageable pageable);
-
     Page<Post> findByProjectAndTeamOrderByCreatedAtDescPostIdDesc(Project project, Team team, Pageable pageable);
-
     Page<Post> findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(Team team, Member member, Pageable pageable);
-
     Page<Post> findByAuthorsList_MemberOrderByCreatedAtDescPostIdDesc(Member member, Pageable pageable);
+    Page<Post> findByProjectAndAuthorsList_MemberOrderByCreatedAtDescPostIdDesc(Project project, Member member, Pageable pageable);
+    Page<Post> findByTeamAndAuthorsList_MemberOrderByCreatedAtDescPostIdDesc(Team team, Member member, Pageable pageable);
     boolean existsByTeam(Team team);
-
     boolean existsByProject(Project project);
-
     boolean existsByMember(Member member);
 
     Optional<Post> findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(Long postId);
