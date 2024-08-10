@@ -11,6 +11,7 @@ import com.codiary.backend.global.repository.TeamRepository;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -43,10 +44,12 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TeamResponseDTO.TeamCheckResponseDTO getTeamById(Long teamId) {
       Team team = teamRepository.findById(teamId)
         .orElseThrow(() -> new IllegalArgumentException("Invalid team ID"));
 
+      team.getTeamMemberList().size();
       return TeamConverter.toTeamCheckResponseDTO(team);
   }
 }
