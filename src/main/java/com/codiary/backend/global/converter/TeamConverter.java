@@ -1,5 +1,6 @@
 package com.codiary.backend.global.converter;
 
+import com.codiary.backend.global.domain.entity.Project;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.domain.enums.MemberRole;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
@@ -68,6 +69,14 @@ public class TeamConverter {
         .linkedIn(team.getLinkedin())
         .discord(team.getDiscord())
         .instagram(team.getInstagram())
+        .build();
+  }
+
+  //프로젝트 생성
+  public static TeamResponseDTO.ProjectDTO toProjectDTO(Project project) {
+    return TeamResponseDTO.ProjectDTO.builder()
+        .projectId(project.getProjectId())
+        .projectName(project.getProjectName())
         .build();
   }
 }

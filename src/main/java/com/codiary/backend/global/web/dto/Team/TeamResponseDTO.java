@@ -59,6 +59,15 @@ public class TeamResponseDTO {
     boolean isAdmin;  //관리자 여부
   }
 
+  @Getter
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class ProjectDTO {  //프로젝트 생성
+    private Long projectId;
+    private String projectName;
+  }
+
   @Builder
   public record TeamFollowResponseDto( //팀 팔로우 기능
       Long followId,

@@ -65,6 +65,16 @@ public class TeamController {
     return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, null);
   }
 
+  //팀 프로젝트 생성
+  @PostMapping("/{teamId}/projects")
+  @Operation(summary = "팀 프로젝트 생성")
+  public ApiResponse<TeamResponseDTO.ProjectDTO> createProject(
+      @PathVariable Long teamId,
+      @RequestParam Long memberId,
+      @RequestBody TeamRequestDTO.CreateProjectDTO request) {
+    TeamResponseDTO.ProjectDTO project = teamCommandService.createProject(teamId, memberId, request);
+    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, project);
+  }
   //팀 팔로우
 
 

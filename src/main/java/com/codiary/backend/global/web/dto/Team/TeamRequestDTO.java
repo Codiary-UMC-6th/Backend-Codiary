@@ -46,6 +46,14 @@ public class TeamRequestDTO {
   }
 
   @Getter
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class CreateProjectDTO {  //프로젝트 생성
+    private String projectName;
+  }
+
+  @Getter
   @Setter
   @AllArgsConstructor
   @NoArgsConstructor
