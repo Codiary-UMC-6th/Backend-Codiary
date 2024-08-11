@@ -15,6 +15,7 @@ import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.repository.TeamRepository;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,6 +77,12 @@ public class TeamQueryServiceImpl implements TeamQueryService {
         .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
 
     List<TeamFollow> followers = teamFollowRepository.findByTeamAndFollowStatusTrue(team);
+
+    // 모든 팔로워의 Member 객체를 초기화
+    followers.forEach(follower -> {
+      Hibernate.initialize(follower.getMember());
+    });
+
     return followers.stream()
         .map(TeamFollow::getMember)
         .collect(Collectors.toList());
