@@ -1,6 +1,7 @@
 package com.codiary.backend.global.service.TeamService;
 
 import com.codiary.backend.global.apiPayload.ApiResponse;
+import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import org.springframework.stereotype.Service;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
@@ -13,4 +14,7 @@ public interface TeamQueryService {
     ApiResponse<TeamResponseDTO.TeamImageDTO> getProfileImage(Long teamId);
 
     TeamResponseDTO.TeamCheckResponseDTO getTeamById(Long teamId);
+
+    // 팀 팔로우 여부 확인 메서드 추가
+    Boolean isFollowingTeam(Long teamId, Member fromMember);
 }
