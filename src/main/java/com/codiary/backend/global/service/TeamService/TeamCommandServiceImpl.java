@@ -1,17 +1,20 @@
 package com.codiary.backend.global.service.TeamService;
 
 import com.codiary.backend.global.apiPayload.ApiResponse;
+import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
+import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.domain.entity.*;
-import com.codiary.backend.global.repository.TeamBannerImageRepository;
-import com.codiary.backend.global.repository.TeamProfileImageRepository;
-import com.codiary.backend.global.repository.TeamRepository;
-import com.codiary.backend.global.repository.UuidRepository;
+import com.codiary.backend.global.jwt.SecurityUtil;
+import com.codiary.backend.global.repository.*;
 import com.codiary.backend.global.s3.AmazonS3Manager;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import com.codiary.backend.global.web.dto.Team.TeamRequestDTO;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +25,8 @@ import java.util.UUID;
 public class TeamCommandServiceImpl implements TeamCommandService {
 
   private final TeamRepository teamRepository;
+  private final TeamFollowService teamFollowService;
+  private final MemberRepository memberRepository;
   private final UuidRepository uuidRepository;
   private final AmazonS3Manager s3Manager;
   private final TeamBannerImageRepository bannerImageRepository;
@@ -59,6 +64,27 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     team.setInstagram(request.getInstagram());
 
     return teamRepository.save(team);
+  }
+
+  @Override
+  @Transactional
+  public TeamFollow followTeam(Long teamId, Member fromMember) {
+    return teamFollowService.followTeam(teamId, fromMember);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Member getRequester() {
+    String userEmail = SecurityUtil.getCurrentMemberEmail();
+    System.out.println(userEmail);
+
+    Member member = memberRepository.findByEmail(userEmail)
+        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+    // 컬렉션 초기화: size()를 호출하여 지연 로딩된 컬렉션 초기화
+    member.getFollowedTeams().size();
+
+    return member;
   }
 
   @Override
