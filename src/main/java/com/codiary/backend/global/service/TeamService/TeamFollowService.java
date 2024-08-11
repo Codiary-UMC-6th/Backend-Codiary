@@ -9,6 +9,7 @@ import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.repository.TeamFollowRepository;
 import com.codiary.backend.global.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,9 +48,14 @@ public class TeamFollowService {
         teamFollow.updateFollowStatus(true);
         fromMember.getFollowedTeams().add(teamFollow);
       }
+
+      // 지연 로딩된 컬렉션 또는 엔티티 초기화
+      fromMember.getFollowedTeams().size();
+      Hibernate.initialize(teamFollow.getMember());
     }
 
     teamFollowRepository.save(teamFollow);
+
     return teamFollow;
   }
 
