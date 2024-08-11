@@ -115,6 +115,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                     .email(getMember.getEmail())
                     .nickname(getMember.getNickname())
                     .tokenInfo(tokenInfo)
+                    .memberId(getMember.getMemberId())
                     .build());
         } catch (AuthenticationException e) {
             throw new MemberHandler(ErrorStatus.MEMBER_LOGIN_FAIL);
