@@ -4,8 +4,10 @@ import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.converter.PostConverter;
 import com.codiary.backend.global.converter.TeamConverter;
+import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
 import com.codiary.backend.global.domain.entity.Team;
+import com.codiary.backend.global.domain.entity.TeamFollow;
 import com.codiary.backend.global.service.PostService.PostCommandService;
 import com.codiary.backend.global.service.TeamService.TeamCommandService;
 import com.codiary.backend.global.service.TeamService.TeamQueryService;
@@ -13,9 +15,12 @@ import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import com.codiary.backend.global.web.dto.Team.TeamRequestDTO;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
+import com.codiary.backend.global.web.dto.Team.TeamSumResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -57,8 +62,33 @@ public class TeamController {
         TeamConverter.toUpdateTeamDTO(updatedTeam));
   }
 
-  //팀 팔로우
+  // 팀 팔로우 및 취소 기능
+  @PostMapping("/follow/{teamId}")
+  @Operation(summary = "팀 팔로우 및 취소 기능")
+  public ApiResponse<TeamResponseDTO.TeamFollowResponseDto> followTeam(@PathVariable("teamId") Long teamId) {
+    Member currentMember = teamCommandService.getRequester();
+    TeamFollow teamFollow = teamCommandService.followTeam(teamId, currentMember);
+    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamFollowResponseDto(teamFollow));
+  }
 
+  // 팀 팔로우 여부 조회
+  @GetMapping("/follow/{teamId}")
+  @Operation(summary = "팀 팔로우 여부 조회 기능")
+  public ApiResponse<Boolean> isFollowingTeam(@PathVariable("teamId") Long teamId) {
+    Member currentMember = teamCommandService.getRequester();
+    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, teamQueryService.isFollowingTeam(teamId, currentMember));
+  }
+
+  //팀 팔로워 목ㅎ록 조회
+  @Operation(
+      summary = "팀을 팔로우한 팔로워 목록 조회",
+      description = "특정 팀을 팔로우한 팔로워 목록 조회"
+  )
+  @GetMapping("/{teamId}/followers")
+  public ApiResponse<List<TeamSumResponseDTO>> getTeamFollowers(@PathVariable Long teamId) {
+    List<Member> followers = teamQueryService.getTeamFollowers(teamId);
+    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamFollowerResponseDto(followers));
+  }
 
   // 팀 이미지 설정
   @PatchMapping(path = "/{teamId}/bannerImage", consumes = "multipart/form-data")

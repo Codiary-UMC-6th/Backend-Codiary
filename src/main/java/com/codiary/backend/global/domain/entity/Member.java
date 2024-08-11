@@ -88,6 +88,9 @@ public class Member extends BaseEntity {
   private List<Follow> followers = new ArrayList<>();
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<TeamFollow> followedTeams = new ArrayList<>();
+
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Bookmark> bookmarkList = new ArrayList<>();
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
