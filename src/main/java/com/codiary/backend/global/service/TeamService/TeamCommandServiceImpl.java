@@ -12,6 +12,7 @@ import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import com.codiary.backend.global.web.dto.Team.TeamRequestDTO;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -75,8 +76,13 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     String userEmail = SecurityUtil.getCurrentMemberEmail();
     System.out.println(userEmail);
 
-    return memberRepository.findByEmail(userEmail)
+    Member member = memberRepository.findByEmail(userEmail)
         .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+    // 컬렉션 초기화
+    Hibernate.initialize(member.getFollowedTeams());
+
+    return member;
   }
 
   @Override
