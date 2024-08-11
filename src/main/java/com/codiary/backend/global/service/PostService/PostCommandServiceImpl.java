@@ -250,7 +250,6 @@ public class PostCommandServiceImpl implements PostCommandService {
                 .map(PostResponseDTO.CommentDTO::new)
                 .collect(Collectors.toList());
 
-//        return commentList;
         return commentList;
 
     }

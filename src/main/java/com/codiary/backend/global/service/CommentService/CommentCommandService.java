@@ -7,8 +7,7 @@ import com.codiary.backend.global.web.dto.Comment.CommentResponseDTO;
 public interface CommentCommandService {
 
     // 댓글 수정하기
-//    Comment patchComment(Long commentId, CommentRequestDTO.PatchCommentDTO request);
-    CommentResponseDTO.PatchCommentResultDTO patchComment(Long commentId, CommentRequestDTO.PatchCommentDTO request);
+    Comment patchComment(Long commentId, CommentRequestDTO.PatchCommentDTO request);
 
     // 댓글 삭제하기
     void deleteComment(Long commentId);

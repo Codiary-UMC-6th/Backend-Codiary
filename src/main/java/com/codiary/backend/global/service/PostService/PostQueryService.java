@@ -1,6 +1,7 @@
 package com.codiary.backend.global.service.PostService;
 
 import com.codiary.backend.global.domain.entity.Post;
+import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,4 +21,14 @@ public interface PostQueryService {
     Post.PostAdjacent findAdjacentPosts(Long postId);
 
     List<Post> getPostsByMonth(Long memberId, YearMonth yearMonth);
+
+    // 메인페이지 인기글 전체 리스트 조회
+    Page<Post> getPostPopularList(Integer page);
+    // 메인페이지 인기글 멤버 관심 카테고리별 리스트 조회
+    Page<Post> getPostPopularMemberCategoryList(Long memberCategoryId, Integer page);
+    // 메인페이지 최신글 리스트 조회
+    Page<Post> getPostLatestList(Integer page);
+    // 메인페이지 팔로잉 게시글 리스트 조회
+    Page<Post> getPostFollowingList(Long followId, Integer page);
+
 }

@@ -476,4 +476,120 @@ public class PostConverter {
                 .collect(Collectors.toList());
     }
 
+    // 메인페이지 인기글 전체 리스트 조회
+    public static PostResponseDTO.PostPopularDTO toPostPopularDTO(Post post) {
+        return PostResponseDTO.PostPopularDTO.builder()
+                .postId(post.getPostId())
+                .memberId(post.getMember().getMemberId())
+                .fileUrl((post.getThumbnailImage() != null)
+                        ? post.getThumbnailImage().getFileUrl()
+                        : "")
+                .postTitle(post.getPostTitle())
+                .nickname(post.getMember().getNickname())
+                .postBody(post.getPostBody())
+                .createdAt(post.getCreatedAt())
+                .build();
+    }
+
+    public static PostResponseDTO.PostPopularListDTO toPostPopularListDTO(Page<Post> postPopularList) {
+        List<PostResponseDTO.PostPopularDTO> postPopularDTOList = postPopularList.stream()
+                .map(PostConverter::toPostPopularDTO).collect(Collectors.toList());
+
+        return PostResponseDTO.PostPopularListDTO.builder()
+                .isLast(postPopularList.isLast())
+                .isFirst(postPopularList.isFirst())
+                .totalPage(postPopularList.getTotalPages())
+                .totalElements(postPopularList.getTotalElements())
+                .listSize(postPopularDTOList.size())
+                .postPopularList(postPopularDTOList)
+                .build();
+    }
+
+    // 메인페이지 인기글 멤버 관심 카테고리별 리스트 조회
+    public static PostResponseDTO.PostPopularMemberCategoryDTO toPostPopularMemberCategoryDTO(Post post) {
+        return PostResponseDTO.PostPopularMemberCategoryDTO.builder()
+                .postId(post.getPostId())
+                .memberId(post.getMember().getMemberId())
+                .fileUrl((post.getThumbnailImage() != null)
+                        ? post.getThumbnailImage().getFileUrl()
+                        : "")
+                .postTitle(post.getPostTitle())
+                .nickname(post.getMember().getNickname())
+                .postBody(post.getPostBody())
+                .createdAt(post.getCreatedAt())
+                .build();
+    }
+
+    public static PostResponseDTO.PostPopularMemberCategoryListDTO toPostPopularMemberCategoryListDTO(Page<Post> postPopularList) {
+        List<PostResponseDTO.PostPopularMemberCategoryDTO> postPopularDTOList = postPopularList.stream()
+                .map(PostConverter::toPostPopularMemberCategoryDTO).collect(Collectors.toList());
+
+        return PostResponseDTO.PostPopularMemberCategoryListDTO.builder()
+                .isLast(postPopularList.isLast())
+                .isFirst(postPopularList.isFirst())
+                .totalPage(postPopularList.getTotalPages())
+                .totalElements(postPopularList.getTotalElements())
+                .listSize(postPopularDTOList.size())
+                .postPopularMemberCategoryList(postPopularDTOList)
+                .build();
+    }
+
+    // 메인페이지 최신글 리스트 조회
+    public static PostResponseDTO.PostLatestDTO toPostLatestDTO(Post post) {
+        return PostResponseDTO.PostLatestDTO.builder()
+                .postId(post.getPostId())
+                .memberId(post.getMember().getMemberId())
+                .fileUrl((post.getThumbnailImage() != null)
+                        ? post.getThumbnailImage().getFileUrl()
+                        : "")
+                .postTitle(post.getPostTitle())
+                .nickname(post.getMember().getNickname())
+                .postBody(post.getPostBody())
+                .createdAt(post.getCreatedAt())
+                .build();
+    }
+
+    public static PostResponseDTO.PostLatestListDTO toPostLatestListDTO(Page<Post> postLatestList) {
+        List<PostResponseDTO.PostLatestDTO> postLatestDTOList = postLatestList.stream()
+                .map(PostConverter::toPostLatestDTO).collect(Collectors.toList());
+
+        return PostResponseDTO.PostLatestListDTO.builder()
+                .isLast(postLatestList.isLast())
+                .isFirst(postLatestList.isFirst())
+                .totalPage(postLatestList.getTotalPages())
+                .totalElements(postLatestList.getTotalElements())
+                .listSize(postLatestDTOList.size())
+                .postLatestList(postLatestDTOList)
+                .build();
+    }
+
+    // 메인페이지 팔로잉 게시글 리스트 조회
+    public static PostResponseDTO.PostFollowingDTO toPostFollowingDTO(Post post) {
+        return PostResponseDTO.PostFollowingDTO.builder()
+                .postId(post.getPostId())
+                .memberId(post.getMember().getMemberId())
+                .fileUrl((post.getThumbnailImage() != null)
+                        ? post.getThumbnailImage().getFileUrl()
+                        : "")
+                .postTitle(post.getPostTitle())
+                .nickname(post.getMember().getNickname())
+                .postBody(post.getPostBody())
+                .createdAt(post.getCreatedAt())
+                .build();
+    }
+
+    public static PostResponseDTO.PostFollowingListDTO toPostFollowingListDTO(Page<Post> postFollowingList) {
+        List<PostResponseDTO.PostFollowingDTO> postFollowingDTOList = postFollowingList.stream()
+                .map(PostConverter::toPostFollowingDTO).collect(Collectors.toList());
+
+        return PostResponseDTO.PostFollowingListDTO.builder()
+                .isLast(postFollowingList.isLast())
+                .isFirst(postFollowingList.isFirst())
+                .totalPage(postFollowingList.getTotalPages())
+                .totalElements(postFollowingList.getTotalElements())
+                .listSize(postFollowingDTOList.size())
+                .postFollowingList(postFollowingDTOList)
+                .build();
+    }
+
 }

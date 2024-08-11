@@ -302,4 +302,108 @@ public class PostController {
 
     }
 
+    // 메인페이지 인기글 전체 리스트 조회
+    @GetMapping("/poplular/list")
+    @Operation(
+            summary = "메인페이지 인기글 전체 리스트 조회 API",
+            description = "posts"
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST3000", description = "OK, 성공"),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameters({
+            @Parameter(name = "page", description = "페이지 번호, 1번이 1 페이지 입니다.")
+    })
+    public ApiResponse<PostResponseDTO.PostPopularListDTO> getPostPopularList(
+            @RequestParam(name = "page") Integer page
+    ) {
+
+        Page<Post> postPopularList = postQueryService.getPostPopularList(page);
+
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPopularListDTO(postPopularList));
+
+    }
+
+    // 메인페이지 인기글 멤버 관심 카테고리별 리스트 조회
+    @GetMapping("/popular/membercategory/list/{memberCategoryId}")
+    @Operation(
+            summary = "메인페이지 인기글 멤버 관심 카테고리별 리스트 조회 API",
+            description = "posts, memberCategoryId"
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST3000", description = "OK, 성공"),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameters({
+            @Parameter(name = "memberCategoryId", description = "관심 카테고리 고유번호, path variable 입니다!"),
+            @Parameter(name = "page", description = "페이지 번호, 1번이 1 페이지 입니다.")
+    })
+    public ApiResponse<PostResponseDTO.PostPopularMemberCategoryListDTO> getPostPopularMemberCategoryList(
+            @PathVariable(name = "memberCategoryId") Long memberCategoryId,
+            @RequestParam(name = "page") Integer page
+    ) {
+
+        Page<Post> postPopularMemberCategoryList = postQueryService.getPostPopularMemberCategoryList(memberCategoryId, page);
+
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPopularMemberCategoryListDTO(postPopularMemberCategoryList));
+
+    }
+
+    // 메인페이지 최신글 리스트 조회
+    @GetMapping("/latest/list")
+    @Operation(
+            summary = "메인페이지 최신글 리스트 조회 API",
+            description = "posts"
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST3000", description = "OK, 성공"),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameters({
+            @Parameter(name = "page", description = "페이지 번호, 1번이 1 페이지 입니다.")
+    })
+    public ApiResponse<PostResponseDTO.PostLatestListDTO> getPostLatestList(
+            @RequestParam(name = "page") Integer page
+    ) {
+
+        Page<Post> postLatestList = postQueryService.getPostLatestList(page);
+
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostLatestListDTO(postLatestList));
+
+    }
+
+    // 메인페이지 팔로잉 게시글 리스트 조회
+    @GetMapping("/following/list/{followId}")
+    @Operation(
+            summary = "메인페이지 팔로잉 게시글 리스트 조회 API",
+            description = "posts, followId"
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST3000", description = "OK, 성공"),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameters({
+            @Parameter(name = "followId", description = "팔로잉 고유번호, path variable 입니다!"),
+            @Parameter(name = "page", description = "페이지 번호, 1번이 1 페이지 입니다.")
+    })
+    public ApiResponse<PostResponseDTO.PostFollowingListDTO> getPostFollowingList(
+            @PathVariable(name = "followId") Long followId,
+            @RequestParam(name = "page") Integer page
+    ) {
+
+        Page<Post> postFollowingList = postQueryService.getPostFollowingList(followId, page);
+
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostFollowingListDTO(postFollowingList));
+
+    }
+
 }
