@@ -67,11 +67,13 @@ public class TeamCommandServiceImpl implements TeamCommandService {
   }
 
   @Override
+  @Transactional
   public TeamFollow followTeam(Long teamId, Member fromMember) {
     return teamFollowService.followTeam(teamId, fromMember);
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Member getRequester() {
     String userEmail = SecurityUtil.getCurrentMemberEmail();
     System.out.println(userEmail);
