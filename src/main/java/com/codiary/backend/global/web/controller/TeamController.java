@@ -90,6 +90,18 @@ public class TeamController {
     return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamFollowerResponseDto(followers));
   }
 
+  @PostMapping("/{teamId}/project")
+  @Operation(summary = "팀 프로젝트 추가하기", description = "팀에 프로젝트 하나씩 추가")
+  public ApiResponse<TeamResponseDTO.ProjectsDTO> createTeamProject(
+      @PathVariable Long teamId,
+      @RequestBody TeamRequestDTO.CreateTeamProjectRequestDTO requestDTO) {
+
+    return ApiResponse.onSuccess(
+        SuccessStatus.TEAM_OK,
+        teamCommandService.createTeamProject(teamId, requestDTO.getProjectName())
+    );
+  }
+
   // 팀 이미지 설정
   @PatchMapping(path = "/{teamId}/bannerImage", consumes = "multipart/form-data")
   @Operation(summary = "팀 배너 사진 설정")
