@@ -18,6 +18,7 @@ public class MemberResponseDTO {
         TokenInfo tokenInfo;
         String email;
         String nickname;
+        Long memberId;
     }
 
 
