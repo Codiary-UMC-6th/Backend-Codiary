@@ -1,7 +1,6 @@
 package com.codiary.backend.global.converter;
 
 import com.codiary.backend.global.domain.entity.Team;
-import com.codiary.backend.global.domain.entity.TeamFollow;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import com.codiary.backend.global.web.dto.TeamMember.TeamMemberResponseDTO;
 
@@ -62,17 +61,6 @@ public class TeamConverter {
         .linkedIn(team.getLinkedin())
         .discord(team.getDiscord())
         .instagram(team.getInstagram())
-        .build();
-  }
-
-  public static TeamResponseDTO.TeamFollowResponseDto toTeamFollowResponseDto(TeamFollow teamFollow) {
-    return TeamResponseDTO.TeamFollowResponseDto.builder()
-        .followId(teamFollow.getTeamFollowId())
-        .memberId(teamFollow.getMember().getMemberId())
-        .memberName(teamFollow.getMember().getNickname())
-        .teamId(teamFollow.getTeam().getTeamId())
-        .teamName(teamFollow.getTeam().getName())
-        .followStatus(teamFollow.getFollowStatus())
         .build();
   }
 }

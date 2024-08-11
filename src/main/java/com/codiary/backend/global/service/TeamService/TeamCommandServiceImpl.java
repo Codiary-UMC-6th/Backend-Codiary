@@ -61,8 +61,6 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     return teamRepository.save(team);
   }
 
-
-
   @Override
   public ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamBannerImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request) {
     Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
