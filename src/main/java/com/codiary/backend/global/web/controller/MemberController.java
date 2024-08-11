@@ -20,6 +20,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +35,7 @@ import com.codiary.backend.global.service.MemberService.FollowService;
 import com.codiary.backend.global.web.dto.Member.FollowResponseDto;
 import com.codiary.backend.global.web.dto.Member.MemberSumResponseDto;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -247,5 +254,37 @@ public class MemberController {
         Member member = memberCommandService.getRequester();
         memberCommandService.setProjects(member.getMemberId(), projectName);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberCommandService.setProjects(member.getMemberId(), projectName));
+    }
+
+    @PostMapping("/login/kakao")
+    @Operation(summary = "카카오 로그인")
+    public ApiResponse<String> kakaoLogin() {
+        String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=__&redirect_uri=__";
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "redirect:" + url.toString());
+    }
+
+    @GetMapping("/login/kakao")
+    @Operation(summary = "카카오 서버에서 요청하는 api")
+    public ApiResponse<String> kekaoToken(@RequestParam String code) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "authorization_code");
+        body.add("client_id", "__");
+        body.add("redirect_uri", "__");
+        body.add("code", code);
+
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(body, headers);
+        RestTemplate rt = new RestTemplate();
+        ResponseEntity<String> response = rt.exchange(
+                "https://kauth.kakao.com/oauth/token",
+                HttpMethod.POST,
+                kakaoTokenRequest,
+                String.class
+        );
+
+        return null;
     }
 }
