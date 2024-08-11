@@ -255,36 +255,4 @@ public class MemberController {
         memberCommandService.setProjects(member.getMemberId(), projectName);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberCommandService.setProjects(member.getMemberId(), projectName));
     }
-
-    @PostMapping("/login/kakao")
-    @Operation(summary = "카카오 로그인")
-    public ApiResponse<String> kakaoLogin() {
-        String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=__&redirect_uri=__";
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "redirect:" + url.toString());
-    }
-
-    @GetMapping("/login/kakao")
-    @Operation(summary = "카카오 서버에서 요청하는 api")
-    public ApiResponse<String> kekaoToken(@RequestParam String code) {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", "__");
-        body.add("redirect_uri", "__");
-        body.add("code", code);
-
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(body, headers);
-        RestTemplate rt = new RestTemplate();
-        ResponseEntity<String> response = rt.exchange(
-                "https://kauth.kakao.com/oauth/token",
-                HttpMethod.POST,
-                kakaoTokenRequest,
-                String.class
-        );
-
-        return null;
-    }
 }
