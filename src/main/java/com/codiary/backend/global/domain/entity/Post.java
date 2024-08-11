@@ -84,10 +84,6 @@ public class Post extends BaseEntity {
     this.postTitle = request.getPostTitle();
     this.postBody = request.getPostBody();
     this.postAccess = request.getPostAccess();
-//    List<Categories> categoryList = request.getPostCategory().stream()
-//            .map(categoryName -> Categories.createCategory(this, categoryName, this.member))
-//            .collect(Collectors.toList());
-//    setCategories(categoryList);
     this.postStatus = request.getPostStatus();
   }
 

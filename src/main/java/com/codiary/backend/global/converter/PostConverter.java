@@ -20,15 +20,12 @@ public class PostConverter {
     public static Post toPost(PostRequestDTO.CreatePostRequestDTO request, TeamRepository teamRepository, ProjectRepository projectRepository) {
         Team team = null;
         Project project = null;
-        // teamId가 제공된 경우에만 Team 객체를 조회
         if (request.getTeamId() != null) {
-            team = teamRepository.findById(request.getTeamId())
-                    .orElseThrow(() -> new IllegalArgumentException("Team not found with id: " + request.getTeamId()));
+            team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new IllegalArgumentException("Team not found with id: " + request.getTeamId()));
         }
         // projectId가 제공된 경우에만 Project 객체를 조회
         if (request.getProjectId() != null) {
-            project = projectRepository.findById(request.getProjectId())
-                    .orElseThrow(() -> new IllegalArgumentException("Project not found with id: " + request.getProjectId()));
+            project = projectRepository.findById(request.getProjectId()).orElseThrow(() -> new IllegalArgumentException("Project not found with id: " + request.getProjectId()));
         }
         return Post.builder()
                 .postTitle(request.getPostTitle())
@@ -42,9 +39,6 @@ public class PostConverter {
 
 
     public static PostResponseDTO.CreatePostResultDTO toCreateResultDTO(Post post) {
-//        List<String> postCategories = post.getCategoriesList().stream()
-//                .map(Categories::getName)
-//                .collect(Collectors.toList());
         return PostResponseDTO.CreatePostResultDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
@@ -53,7 +47,6 @@ public class PostConverter {
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                //.postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
@@ -66,10 +59,6 @@ public class PostConverter {
     }
 
     public static PostResponseDTO.UpdatePostResultDTO toUpdatePostResultDTO(Post post) {
-//        List<String> postCategories = post.getCategoriesList().stream()
-//                .map(Categories::getName)
-//                .collect(Collectors.toList());
-
         return PostResponseDTO.UpdatePostResultDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
@@ -78,7 +67,6 @@ public class PostConverter {
                 .postTitle(post.getPostTitle())
                 .postBody(post.getPostBody())
                 .postStatus(post.getPostStatus())
-                //.postCategory(String.join(", ", postCategories))
                 .coauthorIds(post.getAuthorsList().stream()
                         .map(author -> author.getMember().getMemberId())
                         .collect(Collectors.toSet()))
