@@ -6,6 +6,8 @@ import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import org.springframework.stereotype.Service;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 
+import java.util.List;
+
 @Service
 public interface TeamQueryService {
 
@@ -16,4 +18,6 @@ public interface TeamQueryService {
     TeamResponseDTO.TeamCheckResponseDTO getTeamById(Long teamId);
 
     Boolean isFollowingTeam(Long teamId, Member fromMember);
+
+    List<Member> getTeamFollowers(Long teamId);
 }

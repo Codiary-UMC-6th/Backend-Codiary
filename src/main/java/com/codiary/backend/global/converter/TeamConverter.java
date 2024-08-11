@@ -1,8 +1,10 @@
 package com.codiary.backend.global.converter;
 
+import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.domain.entity.TeamFollow;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
+import com.codiary.backend.global.web.dto.Team.TeamSumResponseDTO;
 import com.codiary.backend.global.web.dto.TeamMember.TeamMemberResponseDTO;
 
 import java.util.List;
@@ -75,5 +77,14 @@ public class TeamConverter {
         .teamName(teamFollow.getTeam().getName())
         .followStatus(teamFollow.getFollowStatus())
         .build();
+  }
+
+  public static List<TeamSumResponseDTO> toTeamFollowerResponseDto(List<Member> members) {
+    return members.stream()
+        .map(member -> new TeamSumResponseDTO(
+            member.getMemberId(),
+            member.getNickname(),
+            (member.getImage() != null) ? member.getImage().getImageUrl() : ""))
+        .collect(Collectors.toList());
   }
 }
