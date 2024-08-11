@@ -68,12 +68,12 @@ public class TeamResponseDTO {
   }
 
   @Builder
-  public record TeamFollowResponseDto( //팀 팔로우 기능
+  public record TeamFollowResponseDto(
       Long followId,
-      Long followerId,
-      String followerName,
-      Long followingId,
-      String followingName,
+      Long memberId,
+      String memberName,
+      Long teamId,
+      String teamName,
       Boolean followStatus
   ) {
   }
