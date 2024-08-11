@@ -64,9 +64,9 @@ public class TeamResponseDTO {
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
-  public static class ProjectDTO {  //프로젝트 생성
-    private Long projectId;
-    private String projectName;
+  public static class ProjectsDTO {
+    private Long teamId;
+    private List<String> projectList;
   }
 
   @Builder

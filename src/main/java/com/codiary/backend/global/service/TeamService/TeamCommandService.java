@@ -22,6 +22,8 @@ public interface TeamCommandService {
 
   Member getRequester();
 
+  TeamResponseDTO.ProjectsDTO createTeamProject(Long teamId, String projectName);
+
   ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamBannerImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request);
 
   ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamProfileImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request);
