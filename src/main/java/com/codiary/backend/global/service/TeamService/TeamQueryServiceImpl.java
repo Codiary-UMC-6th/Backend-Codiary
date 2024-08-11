@@ -2,6 +2,7 @@ package com.codiary.backend.global.service.TeamService;
 
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
+import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.repository.TeamBannerImageRepository;
 import com.codiary.backend.global.repository.TeamProfileImageRepository;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TeamQueryServiceImpl implements TeamQueryService {
 
   private final TeamRepository teamRepository;
+  private final TeamFollowService teamFollowService;
 
   @Override
   public ApiResponse<TeamResponseDTO.TeamImageDTO> getBannerImage(Long teamId) {
@@ -51,5 +53,10 @@ public class TeamQueryServiceImpl implements TeamQueryService {
 
     team.getTeamMemberList().size();
     return TeamConverter.toTeamCheckResponseDTO(team);
+  }
+
+  @Override
+  public Boolean isFollowingTeam(Long teamId, Member fromMember) {
+    return teamFollowService.isFollowingTeam(teamId, fromMember);
   }
 }
