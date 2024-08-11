@@ -79,8 +79,8 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     Member member = memberRepository.findByEmail(userEmail)
         .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-    // 컬렉션 초기화
-    Hibernate.initialize(member.getFollowedTeams());
+    // 컬렉션 초기화: size()를 호출하여 지연 로딩된 컬렉션 초기화
+    member.getFollowedTeams().size();
 
     return member;
   }
