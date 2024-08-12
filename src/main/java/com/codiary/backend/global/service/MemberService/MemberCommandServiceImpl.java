@@ -62,7 +62,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .password(passwordEncoder.encode(signUpRequest.getPassword()))
                 .nickname(signUpRequest.getNickname())
                 .birth(signUpRequest.getBirth().toString())
-                .gender(signUpRequest.getGender())
+                .gender(Member.Gender.Female)
                 .github(signUpRequest.getGithub())
                 .linkedin(signUpRequest.getLinkedin())
                 .discord(signUpRequest.getDiscord())
