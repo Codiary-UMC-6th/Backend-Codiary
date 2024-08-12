@@ -4,6 +4,7 @@ import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.service.MemberService.SocialLoginService;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
+import com.codiary.backend.global.web.dto.SocialLogin.Oauth2ResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +18,9 @@ public class SocialLoginController {
 
     @PostMapping("/login/kakao")
     @Operation(summary = "카카오 로그인")
-    public ApiResponse<String> kakaoLogin() {
+    public ApiResponse<Oauth2ResponseDTO.kakaoLoginDTO> kakaoLogin() {
         String url = socialLoginService.getRedirectUrl();
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "redirect:" + url);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO.kakaoLoginDTO(url));
     }
 
     @GetMapping("/login/kakao")
