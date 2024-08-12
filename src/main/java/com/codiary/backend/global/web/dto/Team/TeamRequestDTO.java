@@ -49,7 +49,7 @@ public class TeamRequestDTO {
   @Builder
   @AllArgsConstructor
   @NoArgsConstructor
-  public static class CreateProjectDTO {  //프로젝트 생성
+  public static class CreateTeamProjectRequestDTO {
     private String projectName;
   }
 
