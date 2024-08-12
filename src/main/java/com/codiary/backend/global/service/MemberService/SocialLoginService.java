@@ -5,6 +5,7 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.domain.entity.Member;
+import com.codiary.backend.global.domain.enums.MemberState;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
 import com.codiary.backend.global.jwt.TokenInfo;
 import com.codiary.backend.global.repository.MemberRepository;
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -55,7 +57,18 @@ public class SocialLoginService {
         String userEmail = getKakaoUserEmail(kakaoAccessToken);
 
         if (!memberRepository.existsByEmail(userEmail)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+            Member member = Member.builder()
+                    .email(userEmail)
+                    .password("")
+                    .nickname(userEmail)
+                    .birth(new LocalDate().toString())
+                    .gender(Member.Gender.Male)
+                    .github("")
+                    .linkedin("")
+                    .discord("")
+                    .image(null)
+                    .build();
+            memberRepository.save(member);
         }
         Member member = memberRepository.findByEmail(userEmail).get();
 
