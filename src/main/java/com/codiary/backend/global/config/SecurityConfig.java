@@ -69,7 +69,6 @@ public class SecurityConfig {
                                 .requestMatchers("/bookmarks/count/{postId}").permitAll()
                                 // 기타 관련 접근
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                .requestMatchers("/oauth/login/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, tokenRepository), EmailPasswordAuthenticationFilter.class).build();

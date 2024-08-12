@@ -70,33 +70,6 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
                 .build();
     }
 
-    public TokenInfo generateToken(String email, Long memberId) {
-        long now = (new Date()).getTime();
-
-        // Access Token 생성
-        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
-        String accessToken = Jwts.builder()
-                .setSubject(email)
-                .claim(AUTHORITIES_KEY, "ROLE_USER")
-                .claim("memberId", memberId)
-                .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        // Refresh Token 생성
-        String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        // 생성된 토큰 정보를 반환
-        return TokenInfo.builder()
-                .grantType(BEARER_TYPE)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
-
     // 토큰을 복호화하여 정보 추출
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
