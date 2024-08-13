@@ -1,5 +1,4 @@
 <h1>Codiary Backend Repository</h1>
----
 
 ## 🔨 Architecture
 
