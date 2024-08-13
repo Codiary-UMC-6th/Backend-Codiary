@@ -406,4 +406,30 @@ public class PostController {
 
     }
 
+    // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색
+    @GetMapping("/search/title/body/member/project/categories")
+    @Operation(
+            summary = "제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색 조회 API",
+            description = "posts"
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST3000", description = "OK, 성공"),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH003", description = "access 토큰을 주세요!", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH004", description = "access 토큰 만료", content = @Content(schema = @Schema(implementation = ApiResponse.class))),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "AUTH006", description = "access 토큰 모양이 이상함", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    })
+    @Parameters({
+            @Parameter(name = "page", description = "페이지 번호, 1번이 1 페이지 입니다.")
+    })
+    public ApiResponse<PostResponseDTO.PostSearchTitleListDTO> getPostSearchTitle(
+        @RequestParam(name = "keyword") Optional<String> keyword,
+        @RequestParam(name = "page") Integer page
+    ) {
+
+        Page<Post> postSearchTitleList = postQueryService.getPostSearchTitleList(keyword, page);
+
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostSearchTitleListDTO(postSearchTitleList));
+
+    }
+
 }

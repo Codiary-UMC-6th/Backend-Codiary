@@ -236,4 +236,27 @@ public class PostQueryServiceImpl implements PostQueryService {
 
     }
 
+    // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색
+    @Override
+    public Page<Post> getPostSearchTitleList(Optional<String> keyword, Integer page) {
+
+        if(keyword.isPresent()) {
+            String result = keyword.get();
+
+//            Page<Post> postSearchTitleResult = postRepository.findAllByPostTitleContainingOrPostBodyContainingOrMemberContainingOrProjectContainingOrCategoriesListContaining(result, result, result, result, result, PageRequest.of(page - 1, 9));
+            Page<Post> postSearchTitleResult = postRepository.searchPosts(result, PageRequest.of(page - 1, 9));
+
+            PostConverter.toPostSearchTitleListDTO(postSearchTitleResult);
+
+            return postSearchTitleResult;
+        }
+
+        Page<Post> postSearchTitleResult = postRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page - 1, 9));
+
+        PostConverter.toPostSearchTitleListDTO(postSearchTitleResult);
+
+        return postSearchTitleResult;
+
+    }
+
 }

@@ -29,5 +29,7 @@ public interface PostQueryService {
     Page<Post> getPostLatestList(Integer page);
     // 메인페이지 팔로잉 게시글 리스트 조회
     Page<Post> getPostFollowingList(Long followId, Integer page);
+    // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색
+    Page<Post> getPostSearchTitleList(Optional<String> keyword, Integer page);
 
 }

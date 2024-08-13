@@ -580,4 +580,33 @@ public class PostConverter {
                 .build();
     }
 
+    // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색
+    public static PostResponseDTO.PostSearchTitleDTO toPostSearchTitleDTO(Post post) {
+        return PostResponseDTO.PostSearchTitleDTO.builder()
+                .postId(post.getPostId())
+                .memberId(post.getMember().getMemberId())
+                .fileUrl((post.getThumbnailImage() != null)
+                        ? post.getThumbnailImage().getFileUrl()
+                        : "")
+                .postTitle(post.getPostTitle())
+                .nickname(post.getMember().getNickname())
+                .postBody(post.getPostBody())
+                .createdAt(post.getCreatedAt())
+                .build();
+    }
+
+    public static PostResponseDTO.PostSearchTitleListDTO toPostSearchTitleListDTO(Page<Post> postSearchTitleList) {
+        List<PostResponseDTO.PostSearchTitleDTO> postSearchTitleDTOList = postSearchTitleList.stream()
+                .map(PostConverter::toPostSearchTitleDTO).collect(Collectors.toList());
+
+        return PostResponseDTO.PostSearchTitleListDTO.builder()
+                .isLast(postSearchTitleList.isLast())
+                .isFirst(postSearchTitleList.isFirst())
+                .totalPage(postSearchTitleList.getTotalPages())
+                .totalElements(postSearchTitleList.getTotalElements())
+                .listSize(postSearchTitleDTOList.size())
+                .postSearchTitleList(postSearchTitleDTOList)
+                .build();
+    }
+
 }
