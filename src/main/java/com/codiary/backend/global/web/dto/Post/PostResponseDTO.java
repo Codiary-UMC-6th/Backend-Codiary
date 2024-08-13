@@ -470,5 +470,33 @@ public class PostResponseDTO {
         LocalDateTime createdAt;
     }
 
+    // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostSearchTitleListDTO {
+        List<PostResponseDTO.PostSearchTitleDTO> postSearchTitleList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostSearchTitleDTO {
+        Long postId;
+        Long memberId;
+        String fileUrl;
+        String postTitle;
+        String nickname;
+        String postBody;
+        LocalDateTime createdAt;
+    }
+
 }
 

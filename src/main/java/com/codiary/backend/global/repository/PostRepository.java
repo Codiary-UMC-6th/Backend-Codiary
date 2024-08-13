@@ -67,4 +67,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // 메인페이지 팔로잉 게시글 리스트 조회
     Page<Post> findAllByMemberOrderByCreatedAtDesc(Member toMember, Pageable pageable);
 
+    // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색
+//    Page<Post> findAllByPostTitleContainingOrPostBodyContainingOrMemberContainingOrProjectContainingOrCategoriesListContaining(String keywordTitle, String keywordBody, String keywordMember, String keywordProject, String keywordCategories, Pageable pageable);
+    @Query("SELECT DISTINCT p FROM Post p " +
+            "JOIN p.member m " +
+            "LEFT JOIN p.project proj " +
+            "LEFT JOIN p.categoriesList c " +
+            "WHERE p.postTitle LIKE %:keyword% " +
+            "OR p.postBody LIKE %:keyword% " +
+            "OR m.nickname LIKE %:keyword% " +
+            "OR proj.projectName LIKE %:keyword% " +
+            "OR c.name LIKE %:keyword%")
+    Page<Post> searchPosts(@Param("keyword") String keyword, Pageable pageable);
+
 }
