@@ -170,9 +170,8 @@ public class PostQueryServiceImpl implements PostQueryService {
 
 
     @Override
-    public List<Post> getPostsByMonth(Long memberId, YearMonth yearMonth) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    public List<Post> getPostsByMonth(Member member, YearMonth yearMonth) {
+        if(member == null) throw  new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
 
         LocalDateTime startDate = yearMonth.atDay(1).atStartOfDay();
         LocalDateTime endDate = yearMonth.atEndOfMonth().atTime(23, 59, 59);
