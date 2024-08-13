@@ -1,9 +1,8 @@
 package com.codiary.backend.global.service.PostService;
 
+import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Post;
-import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -20,7 +19,7 @@ public interface PostQueryService {
     Page<Post> getPostsByMemberInTeam(Long teamId, Long memberId, int page, int size);
     Post.PostAdjacent findAdjacentPosts(Long postId);
 
-    List<Post> getPostsByMonth(Long memberId, YearMonth yearMonth);
+    List<Post> getPostsByMonth(Member member, YearMonth yearMonth);
 
     // 메인페이지 인기글 전체 리스트 조회
     Page<Post> getPostPopularList(Integer page);
