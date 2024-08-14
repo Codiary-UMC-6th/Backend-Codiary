@@ -23,6 +23,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 @Service
 @RequiredArgsConstructor
 public class SocialLoginService {
@@ -38,7 +41,17 @@ public class SocialLoginService {
     private String kakaoClientId;
 
 
-    public String getRedirectUrl() {
+    @Value("${naver.redirect.url}")
+    private String naverRedirectUrl;
+
+    @Value("${naver.client.id}")
+    private String naverClientId;
+
+    @Value("${naver.client.secret}")
+    private String naverClientSecret;
+
+
+    public String getKakaoRedirectUrl() {
         String path = "https://kauth.kakao.com/oauth/authorize?response_type=code";
         String clientId = "&client_id=" + kakaoClientId;
         String redirectUrl = "&redirect_uri=" + kakaoRedirectUrl;
@@ -46,36 +59,108 @@ public class SocialLoginService {
         return path + clientId + redirectUrl;
     }
 
-    public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> kakaoLogin(String code) {
+    public MemberResponseDTO.MemberTokenResponseDTO kakaoLogin(String code) {
 
         String kakaoAccessToken = getKakaoToken(code);
         String userEmail = getKakaoUserEmail(kakaoAccessToken);
 
         if (!memberRepository.existsByEmail(userEmail)) {
-            Member member = Member.builder()
-                    .email(userEmail)
-                    .password("")
-                    .nickname(userEmail)
-                    .birth(new LocalDate().toString())
-                    .gender(Member.Gender.Male)
-                    .github("")
-                    .linkedin("")
-                    .discord("")
-                    .image(null)
-                    .build();
-            memberRepository.save(member);
+            signUp(userEmail);
         }
         Member member = memberRepository.findByEmail(userEmail).get();
 
 
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getMemberId());
 
-        return ApiResponse.of(SuccessStatus.MEMBER_OK, MemberResponseDTO.MemberTokenResponseDTO.builder()
+        return MemberResponseDTO.MemberTokenResponseDTO.builder()
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .tokenInfo(tokenInfo)
                 .memberId(member.getMemberId())
-                .build());
+                .build();
+    }
+
+    public String getNaverRedirectUrl() {
+        String path = "https://nid.naver.com/oauth2.0/authorize";
+        String responseType = "?response_type=code";
+        String clientId = "&client_id=" + naverClientId;
+        String redirectUrl = "&redirect_url=" + naverRedirectUrl;
+
+        return path + responseType + clientId + redirectUrl;
+    }
+
+    public MemberResponseDTO.MemberTokenResponseDTO naverLogin(String code, String state) {
+
+        String naverAccessToken = getNaverToken(code, state);
+        System.out.println("first ok");
+        String userEmail = getNaverUserEmail(naverAccessToken);
+        System.out.println("second ok");
+
+        if (!memberRepository.existsByEmail(userEmail)) {
+            signUp(userEmail);
+        }
+        Member member = memberRepository.findByEmail(userEmail).get();
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getMemberId());
+
+        return MemberResponseDTO.MemberTokenResponseDTO.builder()
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .tokenInfo(tokenInfo)
+                .memberId(member.getMemberId())
+                .build();
+    }
+
+    private String getNaverUserEmail(String accessToken) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<MultiValueMap<String, String>> naverUserInfoRequest = new HttpEntity<>(headers);
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                "https://openapi.naver.com/v1/nid/me",
+                HttpMethod.GET,
+                naverUserInfoRequest,
+                String.class
+        );
+        System.out.println("어디서 문제니");
+        String responseBody = response.getBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode;
+        try {
+            jsonNode = objectMapper.readTree(responseBody);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        String email = jsonNode.get("response").get("email").asText();
+        return email;
+    }
+
+    private String getNaverToken(String codeString, String stateString) {
+        String path = "https://nid.naver.com/oauth2.0/token";
+        String grantType = "?grant_type=authorization_code";
+        String clientId = "&client_id=" + naverClientId;
+        String clientSecret = "&client_secret=" + naverClientSecret;
+        String code = "&code=" + codeString;
+        String state = "&state=" + ((stateString != null) ? stateString : "test");
+
+        String url = path + grantType + clientId + clientSecret + code + state;
+        ResponseEntity<String> response = new RestTemplate().exchange(
+                url,
+                HttpMethod.POST,
+                null,
+                String.class);
+        String responseBody = response.getBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode;
+        try {
+            jsonNode = objectMapper.readTree(responseBody);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return jsonNode.get("access_token").asText();
     }
 
     private String getKakaoToken(String code) {
@@ -109,7 +194,6 @@ public class SocialLoginService {
         return jsonNode.get("access_token").asText();
     }
 
-
     private String getKakaoUserEmail(String kakaoAccessToken) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -139,4 +223,20 @@ public class SocialLoginService {
 
         return email;
     }
+
+    private Member signUp(String email) {
+        Member member = Member.builder()
+                .email(email)
+                .password("")
+                .nickname(email)
+                .birth(new LocalDate().toString())
+                .gender(Member.Gender.Male)
+                .github("")
+                .linkedin("")
+                .discord("")
+                .image(null)
+                .build();
+        return memberRepository.save(member);
+    }
+
 }
