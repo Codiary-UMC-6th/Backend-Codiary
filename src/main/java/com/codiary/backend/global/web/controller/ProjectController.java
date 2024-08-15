@@ -11,6 +11,7 @@ import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import com.codiary.backend.global.web.dto.Project.ProjectResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import java.util.Optional;
 @CrossOrigin
 @RequestMapping("/projects")
 @Slf4j
+@Tag(name = "프로젝트 API", description = "프로젝트 조회 관련 API입니다.")
 public class ProjectController {
 
     private final ProjectQueryService projectQueryService;

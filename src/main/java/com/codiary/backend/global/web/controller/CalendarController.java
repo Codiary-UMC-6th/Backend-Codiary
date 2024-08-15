@@ -11,6 +11,7 @@ import com.codiary.backend.global.service.MemberService.MemberCommandService;
 import com.codiary.backend.global.service.PostService.PostQueryService;
 import com.codiary.backend.global.web.dto.Calendar.CalendarDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/calendar")
 @RequiredArgsConstructor
+@Tag(name = "캘린더 API", description = "캘린더 조회/상세 내용 조회 관련 API입니다.")
 public class CalendarController {
 
     private final PostQueryService postQueryService;
