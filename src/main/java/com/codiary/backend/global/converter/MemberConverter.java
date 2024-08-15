@@ -75,6 +75,16 @@ public class MemberConverter {
                 .build();
     }
 
+    public MemberResponseDTO.ProjectsDTO toProjectsResponseDto(Member member){
+        return MemberResponseDTO.ProjectsDTO.builder()
+                .memberId(member.getMemberId())
+                .projectList(member.getMemberProjectMapList()
+                        .stream()
+                        .map(memberProjectMap -> memberProjectMap.getProject().getProjectName())
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
     public static MemberResponseDTO.UserInfoDTO toMemberInfoResponseDto(Member member) {
         return MemberResponseDTO.UserInfoDTO.builder()
                 .memberId(member.getMemberId())
