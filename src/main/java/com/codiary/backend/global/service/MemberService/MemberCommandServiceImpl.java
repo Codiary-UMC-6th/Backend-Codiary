@@ -198,6 +198,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
 
+        if (member.getTechStackList().stream().anyMatch(stack -> stack.getName().equals(techstack))) {
+            throw new GeneralException(ErrorStatus.TECH_STACK_ALREADY_EXISTS);
+        }
+
         List<TechStacks> techStackList = member.getTechStackList();
         if (techStackList == null) {
             techStackList = new ArrayList<>();
@@ -216,8 +220,13 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public MemberResponseDTO.ProjectsDTO setProjects(Long memberId, String projectName){
         Member member = memberRepository.findMemberWithProjects(memberId);
+        member.getMemberProjectMapList().forEach(map -> map.getProject().getProjectName());
         if (member == null) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+
+        if(member.getMemberProjectMapList().stream().anyMatch(map -> map.getProject().getProjectName().equals(projectName))){
+            throw new GeneralException(ErrorStatus.PROJECT_ALREADY_EXISTS);
         }
 
         Project project = Project.builder()
@@ -236,6 +245,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .stream()
                 .map(map -> map.getProject().getProjectName())
                 .collect(Collectors.toList());
+        projectList.add(projectName);
 
         return MemberResponseDTO.ProjectsDTO.builder()
                 .memberId(member.getMemberId())

@@ -245,7 +245,6 @@ public class MemberController {
     @Operation(summary = "프로젝트 추가하기", description = "프로젝트 하나씩 추가")
     public ApiResponse<?> setProjects(@PathVariable(value = "projectName") String projectName) {
         Member member = memberCommandService.getRequester();
-        memberCommandService.setProjects(member.getMemberId(), projectName);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberCommandService.setProjects(member.getMemberId(), projectName));
     }
 }
