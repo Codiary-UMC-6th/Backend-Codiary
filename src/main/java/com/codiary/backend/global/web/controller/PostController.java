@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ import java.util.Set;
 @CrossOrigin
 @RequestMapping("/posts")
 @Slf4j
+@Tag(name = "다이어리 API", description = "다이어리 생성/수정/삭제/조회 관련 API입니다.")
 public class PostController {
     private final PostCommandService postCommandService;
     private final PostQueryService postQueryService;

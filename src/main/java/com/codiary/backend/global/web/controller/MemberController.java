@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/members")
+@Tag(name = "회원 API", description = "회원가입/로그인/로그아웃/회원정보 조회/수정/삭제 관련 API입니다.")
 public class MemberController {
 
     private final MemberCommandService memberCommandService;
