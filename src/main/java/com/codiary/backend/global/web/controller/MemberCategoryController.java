@@ -13,16 +13,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-//@Validated
-//@CrossOrigin
 @RequestMapping("/membercategories")
 @Slf4j
+@Tag(name = "회원별 관심 카테고리 API", description = "회원별 관심 카테고리 추가/수정/삭제 관련 API입니다.")
 public class MemberCategoryController {
 
     private final MemberCategoryCommandService memberCategoryCommandService;

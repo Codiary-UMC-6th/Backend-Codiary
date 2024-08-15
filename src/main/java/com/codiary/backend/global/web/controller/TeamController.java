@@ -17,6 +17,7 @@ import com.codiary.backend.global.web.dto.Team.TeamRequestDTO;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import com.codiary.backend.global.web.dto.Team.TeamSumResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/teams")
+@Tag(name = "팀 API", description = "팀 생성/조회/수정 관련 API입니다.")
 public class TeamController {
 
   private final TeamCommandService teamCommandService;

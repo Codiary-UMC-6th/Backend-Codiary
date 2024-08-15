@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +30,7 @@ import java.util.Optional;
 @CrossOrigin
 @RequestMapping("/categories")
 @Slf4j
+@Tag(name = "카테고리 API", description = "카테고리 조회 관련 API입니다.")
 public class CategoryController {
 
     private final CategoryQueryService categoryQueryService;
