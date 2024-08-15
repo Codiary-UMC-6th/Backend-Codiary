@@ -18,9 +18,9 @@ public class SocialLoginController {
 
     @PostMapping("/login/kakao")
     @Operation(summary = "카카오 로그인")
-    public ApiResponse<Oauth2ResponseDTO.KakaoLoginDTO> kakaoLogin() {
+    public ApiResponse<Oauth2ResponseDTO.SocialLoginDTO> kakaoLogin() {
         String url = socialLoginService.getKakaoRedirectUrl();
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO.KakaoLoginDTO(url));
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO.SocialLoginDTO(url));
     }
 
     @GetMapping("/login/kakao")
@@ -31,9 +31,9 @@ public class SocialLoginController {
 
     @PostMapping("/login/naver")
     @Operation(summary = "네이버 로그인")
-    public ApiResponse<Oauth2ResponseDTO.NaverLoginDTO> naverLogin() {
+    public ApiResponse<Oauth2ResponseDTO.SocialLoginDTO> naverLogin() {
         String url = socialLoginService.getNaverRedirectUrl();
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO.NaverLoginDTO(url));
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO.SocialLoginDTO(url));
     }
 
     @GetMapping("/login/naver")
@@ -43,5 +43,20 @@ public class SocialLoginController {
             @RequestParam String state
     ) {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, socialLoginService.naverLogin(code, state));
+    }
+
+    @PostMapping("/login/github")
+    @Operation(summary = "깃허브 로그인")
+    public ApiResponse<Oauth2ResponseDTO.SocialLoginDTO> githubLogin() {
+        String url = socialLoginService.getGithubRedirectUrl();
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO.SocialLoginDTO(url));
+    }
+
+    @GetMapping("/login/github")
+    @Operation(summary = "깃허브에서 요청하는 api")
+    public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> githubToken(
+            @RequestParam String code
+    ) {
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, socialLoginService.githubLogin(code));
     }
 }

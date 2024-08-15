@@ -9,16 +9,7 @@ public class Oauth2ResponseDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class KakaoLoginDTO {
-        String redirectUrl;
-    }
-
-    @Getter
-    @Setter
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class NaverLoginDTO {
+    public static class SocialLoginDTO {
         String redirectUrl;
     }
 }

@@ -13,10 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -34,23 +31,29 @@ public class SocialLoginService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
+    // 카카오
     @Value("${kakao.redirect.url}")
     private String kakaoRedirectUrl;
-
     @Value("${kakao.cliend.id}")
     private String kakaoClientId;
 
-
+    // 네이버
     @Value("${naver.redirect.url}")
     private String naverRedirectUrl;
-
     @Value("${naver.client.id}")
     private String naverClientId;
-
     @Value("${naver.client.secret}")
     private String naverClientSecret;
 
+    // 깃허브
+    @Value("${github.redirect.url}")
+    private String githubRedirectUrl;
+    @Value("${github.client.id}")
+    private String githubClientId;
+    @Value("${github.client.secret}")
+    private String githubClientSecret;
 
+    // 카카오 로그인
     public String getKakaoRedirectUrl() {
         String path = "https://kauth.kakao.com/oauth/authorize?response_type=code";
         String clientId = "&client_id=" + kakaoClientId;
@@ -58,7 +61,6 @@ public class SocialLoginService {
 
         return path + clientId + redirectUrl;
     }
-
     public MemberResponseDTO.MemberTokenResponseDTO kakaoLogin(String code) {
 
         String kakaoAccessToken = getKakaoToken(code);
@@ -80,6 +82,7 @@ public class SocialLoginService {
                 .build();
     }
 
+    // 네이버 로그인
     public String getNaverRedirectUrl() {
         String path = "https://nid.naver.com/oauth2.0/authorize";
         String responseType = "?response_type=code";
@@ -88,13 +91,10 @@ public class SocialLoginService {
 
         return path + responseType + clientId + redirectUrl;
     }
-
     public MemberResponseDTO.MemberTokenResponseDTO naverLogin(String code, String state) {
 
         String naverAccessToken = getNaverToken(code, state);
-        System.out.println("first ok");
         String userEmail = getNaverUserEmail(naverAccessToken);
-        System.out.println("second ok");
 
         if (!memberRepository.existsByEmail(userEmail)) {
             signUp(userEmail);
@@ -111,6 +111,70 @@ public class SocialLoginService {
                 .build();
     }
 
+    // 깃허브 로그인
+    public String getGithubRedirectUrl() {
+        String path = "https://github.com/login/oauth/authorize";
+        String clientId = "?client_id=" + githubClientId;
+        String redirectUrl = "&redirect_url=" + githubRedirectUrl;
+
+        return path + clientId + redirectUrl;
+    }
+    public MemberResponseDTO.MemberTokenResponseDTO githubLogin(String code) {
+
+        String githubAccessToken = getGithubToken(code);
+        String userEmail = getGithubUserEmail(githubAccessToken);
+
+        if (!memberRepository.existsByEmail(userEmail)) {
+            signUp(userEmail);
+        }
+        Member member = memberRepository.findByEmail(userEmail).get();
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getMemberId());
+
+        return MemberResponseDTO.MemberTokenResponseDTO.builder()
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .tokenInfo(tokenInfo)
+                .memberId(member.getMemberId())
+                .build();
+    }
+
+    private String getGithubToken(String codeString) {
+        String path = "https://github.com/login/oauth/access_token";
+        String clientId = "?client_id=" + githubClientId;
+        String clientSecret = "&client_secret=" + githubClientSecret;
+        String code = "&code=" + codeString;
+
+        String url = path + clientId + clientSecret + code;
+        ResponseEntity<JsonNode> response = new RestTemplate().exchange(
+                url,
+                HttpMethod.POST,
+                null,
+                JsonNode.class);
+        return response.getBody().get("access_token").asText();
+    }
+
+    private String getGithubUserEmail(String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Accept", "application/vnd.github+json");
+        headers.add("Authorization", "Bearer " + accessToken);
+        headers.add("X-GitHub-Api-Version", "2022-11-28");
+
+        HttpEntity<MultiValueMap<String, String>> githubTokenRequest = new HttpEntity<>(headers);
+        ResponseEntity<JsonNode> response = new RestTemplate().exchange(
+                "https://api.github.com/user",
+                HttpMethod.GET,
+                githubTokenRequest,
+                JsonNode.class);
+        String email = "";
+        if (response.getBody().get("email") == null || response.getBody().get("email").asText() == "null") {
+            email = response.getBody().get("login").asText() + "@github.com";
+        } else {
+            email = response.getBody().get("email").asText();
+        }
+        return email;
+    }
+
     private String getNaverUserEmail(String accessToken) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -123,7 +187,6 @@ public class SocialLoginService {
                 naverUserInfoRequest,
                 String.class
         );
-        System.out.println("어디서 문제니");
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode;
