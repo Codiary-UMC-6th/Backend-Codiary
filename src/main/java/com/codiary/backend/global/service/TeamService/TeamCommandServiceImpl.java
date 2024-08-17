@@ -5,7 +5,9 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.domain.entity.*;
+import com.codiary.backend.global.domain.entity.mapping.TeamMember;
 import com.codiary.backend.global.domain.entity.mapping.TeamProjectMap;
+import com.codiary.backend.global.domain.enums.MemberRole;
 import com.codiary.backend.global.jwt.SecurityUtil;
 import com.codiary.backend.global.repository.*;
 import com.codiary.backend.global.s3.AmazonS3Manager;
@@ -42,6 +44,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
   @Override
   @Transactional
   public Team createTeam(TeamRequestDTO.CreateTeamRequestDTO request) {
+
+    Member currentMember = getRequester();
+
     Team team = Team.builder()
         .name(request.getName())
         .intro(request.getIntro())
@@ -54,6 +59,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         .build();
 
     Team savedTeam = teamRepository.save(team);
+
+    addMemberToTeam(currentMember, savedTeam, MemberRole.ADMIN);
+
     return savedTeam;
   }
 
@@ -98,6 +106,18 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     Team team = teamRepository.findById(teamId)
         .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
 
+    Member currentMember = getRequester();
+
+    boolean isAdmin = team.getTeamMemberList().stream()
+        .anyMatch(teamMember ->
+            teamMember.getMember().getMemberId().equals(currentMember.getMemberId()) &&
+                teamMember.getTeamMemberRole() == MemberRole.ADMIN
+        );
+
+    if (!isAdmin) {
+      throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
+    }
+
     // 프로젝트 생성
     Project project = Project.builder()
         .projectName(projectName)
@@ -122,6 +142,17 @@ public class TeamCommandServiceImpl implements TeamCommandService {
         .teamId(team.getTeamId())
         .projectList(projectList)
         .build();
+  }
+
+  public TeamMember addMemberToTeam(Member member, Team team, MemberRole role) {
+    TeamMember teamMember = TeamMember.builder()
+        .member(member)
+        .team(team)
+        .teamMemberRole(role)
+        .build();
+
+    team.getTeamMemberList().add(teamMember);
+    return teamMember;
   }
 
   @Override

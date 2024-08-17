@@ -3,6 +3,7 @@ package com.codiary.backend.global.service.TeamMemberService;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.domain.entity.mapping.TeamMember;
+import com.codiary.backend.global.domain.enums.MemberRole;
 import com.codiary.backend.global.repository.MemberRepository;
 import com.codiary.backend.global.repository.TeamMemberRepository;
 import com.codiary.backend.global.repository.TeamRepository;
@@ -32,6 +33,16 @@ public class TeamMemberCommandServiceImpl implements TeamMemberCommandService {
         .team(team)
         .member(member)
         .teamMemberRole(request.getMemberRole())
+        .build();
+
+    return addMemberToTeam(member, team, request.getMemberRole());
+  }
+
+  public TeamMember addMemberToTeam(Member member, Team team, MemberRole role) {
+    TeamMember teamMember = TeamMember.builder()
+        .team(team)
+        .member(member)
+        .teamMemberRole(role)
         .build();
 
     return teamMemberRepository.save(teamMember);
