@@ -25,8 +25,11 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_LOGIN_FAIL(HttpStatus.BAD_REQUEST, "MEMBER_1006", "아이디나 비밀번호가 올바르지 않습니다."),
     MEMBER_WRONG_EMAIL(HttpStatus.BAD_REQUEST, "MEMBER_1007", "이메일 형식이 올바르지 않습니다."),
     MEMBER_WRONG_PASSWORD(HttpStatus.BAD_REQUEST, "MEMBER_1008", "비밀번호 형식이 올바르지 않습니다."),
-
+    MEMBER_EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER_1009", "이미 가입된 이메일입니다."),
+    MEMBER_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER_1010", "이미 존재하는 닉네임입니다."),
     MEMBER_SELF_FOLLOW(HttpStatus.BAD_REQUEST, "MEMBER_1100", "셀프 팔로우 기능은 제공하지 않습니다"),
+    TECH_STACK_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER_1111", "이미 존재하는 기술스택입니다."),
+    PROJECT_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER_1112", "이미 존재하는 프로젝트입니다."),
 
     // 팀 관련 에러 2000
     TEAM_NOT_FOUND(HttpStatus.BAD_REQUEST, "TEAM_2001", "팀이 없습니다."),
@@ -46,6 +49,7 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST_3009", "포스트가 없습니다."),
 
     // 코멘트 관련 에러 4000
+    COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMMENT_4005", "댓글이 없습니다."),
 
 
 
@@ -59,7 +63,12 @@ public enum ErrorStatus implements BaseErrorCode {
     // 카테고리 관련 에러 7000
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "CATEGORY_7001", "카테고리가 없습니다."),
     // 회원별 관심 카테고리 관련 에러 8000
-    MEMBERCATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBERCATEGORY_8001", "회원별 관심 카테고리가 없습니다.")
+    MEMBERCATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBERCATEGORY_8001", "회원별 관심 카테고리가 없습니다."),
+
+    // 프로젝트 관련 에러 9000
+    PROJECT_NOT_FOUND(HttpStatus.BAD_REQUEST, "PROJECT_3009", "프로젝트가 없습니다.")
+
+
     ;
 
 

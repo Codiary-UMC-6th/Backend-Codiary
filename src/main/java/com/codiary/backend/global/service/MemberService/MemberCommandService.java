@@ -13,7 +13,13 @@ public interface MemberCommandService {
 
     public ApiResponse<String> signUp(MemberRequestDTO.MemberSignUpRequestDTO signUpRequest);
 
+    ApiResponse<String> checkEmailDuplication(String email);
+
+    ApiResponse<String> checkNicknameDuplication(String nickname);
+
     public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> login(MemberRequestDTO.MemberLoginRequestDTO loginRequest);
+
+    String logout(String token, Member member);
 
     // 회원별 관심 카테고리탭 리스트 조회
     List<MemberCategory> getMemberCategoryList(Long memberId);

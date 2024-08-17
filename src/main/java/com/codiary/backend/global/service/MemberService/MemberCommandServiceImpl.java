@@ -5,10 +5,7 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
-import com.codiary.backend.global.domain.entity.Member;
-import com.codiary.backend.global.domain.entity.MemberImage;
-import com.codiary.backend.global.domain.entity.Project;
-import com.codiary.backend.global.domain.entity.Uuid;
+import com.codiary.backend.global.domain.entity.*;
 import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
 import com.codiary.backend.global.domain.entity.mapping.MemberProjectMap;
 import com.codiary.backend.global.domain.entity.mapping.TechStacks;
@@ -29,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -47,13 +45,15 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final MemberImageRepository memberImageRepository;
     private final ProjectRepository projectRepository;
     private final MemberProjectMapRepository memberProjectMapRepository;
+    private final TokenRepository tokenRepository;
 
 
     @Override
     public ApiResponse<String> signUp(MemberRequestDTO.MemberSignUpRequestDTO signUpRequest) {
         signUpRequest.isCorrect();
 
-        if (memberRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (memberRepository.existsByEmail(signUpRequest.getEmail())
+                || memberRepository.existsByNickname(signUpRequest.getNickname())) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXISTS);
         }
 
@@ -65,12 +65,35 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .gender(Member.Gender.Female)
                 .github(signUpRequest.getGithub())
                 .linkedin(signUpRequest.getLinkedin())
+                .discord(signUpRequest.getDiscord())
                 .image(null)
                 .build();
         memberRepository.save(member);
 
         return ApiResponse.of(SuccessStatus.MEMBER_OK, "정상적으로 가입되었습니다.");
     }
+
+    @Override
+    public ApiResponse<String> checkEmailDuplication(String email) {
+        if (memberRepository.existsByEmail(email)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_ALREADY_EXISTS);
+        }
+
+        if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            throw new MemberHandler(ErrorStatus.MEMBER_WRONG_EMAIL);
+        }
+
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "사용가능한 이메일입니다!");
+    }
+
+    @Override
+    public ApiResponse<String> checkNicknameDuplication(String nickname) {
+        if (memberRepository.existsByNickname(nickname)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_ALREADY_EXISTS);
+        }
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "사용가능한 닉네임입니다!");
+    }
+
 
     @Override
     public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> login(MemberRequestDTO.MemberLoginRequestDTO loginRequest) {
@@ -92,10 +115,24 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                     .email(getMember.getEmail())
                     .nickname(getMember.getNickname())
                     .tokenInfo(tokenInfo)
+                    .memberId(getMember.getMemberId())
                     .build());
         } catch (AuthenticationException e) {
             throw new MemberHandler(ErrorStatus.MEMBER_LOGIN_FAIL);
         }
+    }
+
+    @Override
+    public String logout(String token, Member member) {
+        if (!tokenRepository.existsByNotAvailableToken(token)) {
+            Date expiryTime = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
+            Token tokenEntity = Token.builder()
+                    .expiryTime(expiryTime)
+                    .notAvailableToken(token)
+                    .build();
+            tokenRepository.save(tokenEntity);
+        }
+        return "로그아웃되었습니다.";
     }
 
     @Override
@@ -161,6 +198,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
 
+        if (member.getTechStackList().stream().anyMatch(stack -> stack.getName().equals(techstack))) {
+            throw new GeneralException(ErrorStatus.TECH_STACK_ALREADY_EXISTS);
+        }
+
         List<TechStacks> techStackList = member.getTechStackList();
         if (techStackList == null) {
             techStackList = new ArrayList<>();
@@ -179,8 +220,13 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public MemberResponseDTO.ProjectsDTO setProjects(Long memberId, String projectName){
         Member member = memberRepository.findMemberWithProjects(memberId);
+        member.getMemberProjectMapList().forEach(map -> map.getProject().getProjectName());
         if (member == null) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+
+        if(member.getMemberProjectMapList().stream().anyMatch(map -> map.getProject().getProjectName().equals(projectName))){
+            throw new GeneralException(ErrorStatus.PROJECT_ALREADY_EXISTS);
         }
 
         Project project = Project.builder()
@@ -199,6 +245,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .stream()
                 .map(map -> map.getProject().getProjectName())
                 .collect(Collectors.toList());
+        projectList.add(projectName);
 
         return MemberResponseDTO.ProjectsDTO.builder()
                 .memberId(member.getMemberId())

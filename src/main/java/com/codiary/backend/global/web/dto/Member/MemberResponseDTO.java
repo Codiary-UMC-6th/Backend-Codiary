@@ -18,6 +18,7 @@ public class MemberResponseDTO {
         TokenInfo tokenInfo;
         String email;
         String nickname;
+        Long memberId;
     }
 
 
@@ -43,7 +44,7 @@ public class MemberResponseDTO {
         Long memberId;
         Long bookmarkId;
         Long postId;
-        String photoUrl;
+        String thumbnailImageUrl;
         String postTitle;
         String nickname;
         String postBody;

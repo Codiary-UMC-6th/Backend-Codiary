@@ -1,11 +1,11 @@
 package com.codiary.backend.global.web.dto.Post;
 
 import com.codiary.backend.global.domain.enums.PostAccess;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Set;
 
 public class PostRequestDTO {
 
@@ -22,6 +22,7 @@ public class PostRequestDTO {
         private Boolean postStatus;
         //private Set<String> postCategory;
         private PostAccess postAccess;
+        private String thumbnailImageName;
         private List<MultipartFile> postFiles;
     }
 
@@ -36,6 +37,7 @@ public class PostRequestDTO {
         private Boolean postStatus;
         //private Set<String> postCategory;
         private PostAccess postAccess;
+        private String thumbnailImageName;
         private List<MultipartFile> addedPostFiles;
     }
 
@@ -62,6 +64,20 @@ public class PostRequestDTO {
     @AllArgsConstructor
     public static class SetTeamRequestDTO {
         private Long teamId;
+    }
+
+    // 게시글에 댓글 작성하기
+    @Getter
+    public static class CommentDTO {
+        @NotBlank
+        String commentBody;
+    }
+
+    // 게시글에 대댓글 작성하기
+    @Getter
+    public static class CommentReplyDTO {
+        @NotBlank
+        String commentReplyBody;
     }
 
 }

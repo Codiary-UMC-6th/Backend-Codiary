@@ -1,5 +1,7 @@
 package com.codiary.backend.global.service.PostService;
 
+import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
+import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.converter.PostConverter;
 import com.codiary.backend.global.converter.PostFileConverter;
 import com.codiary.backend.global.domain.entity.*;
@@ -19,6 +21,7 @@ import com.codiary.backend.global.repository.TeamRepository;
 import com.codiary.backend.global.service.CategoryService.CategoryCommandService;
 import com.codiary.backend.global.service.MemberService.MemberCommandService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
+import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -46,11 +49,12 @@ public class PostCommandServiceImpl implements PostCommandService {
     private final AmazonS3Manager s3Manager; // 추가
     private final UuidRepository uuidRepository; // 추가
     private final PostFileRepository postFileRepository; // 추가
+    private final CommentRepository commentRepository;
 
     @Override
     public Post createPost(PostRequestDTO.CreatePostRequestDTO request) {
 
-        Post newPost = PostConverter.toPost(request);
+        Post newPost = PostConverter.toPost(request, teamRepository, projectRepository);
         Member getMember = memberCommandService.getRequester();
 
         newPost.setMember(getMember);
@@ -72,6 +76,17 @@ public class PostCommandServiceImpl implements PostCommandService {
 
                 tempPost.getPostFileList().add(newPostFile);
             }
+        }
+
+        // 대표 사진 설정
+        String thumbnailImageName = request.getThumbnailImageName();
+        for (PostFile postFile : tempPost.getPostFileList()) {
+            if (postFile.getFileName().equals(thumbnailImageName)) {
+                tempPost.setThumbnailImage(postFile);
+            }
+        }
+        if (tempPost.getPostFileList().size() != 0 && tempPost.getThumbnailImage() == null) {
+            tempPost.setThumbnailImage(tempPost.getPostFileList().get(0));
         }
 
         Post savedPost = postRepository.save(tempPost);
@@ -99,6 +114,17 @@ public class PostCommandServiceImpl implements PostCommandService {
 
                 updatePost.getPostFileList().add(newPostFile);
             }
+        }
+
+        // 대표 사진 설정
+        String thumbnailImageName = request.getThumbnailImageName();
+        for (PostFile postFile : updatePost.getPostFileList()) {
+            if (postFile.getFileName() == thumbnailImageName) {
+                updatePost.setThumbnailImage(postFile);
+            }
+        }
+        if (updatePost.getPostFileList().size() != 0 && updatePost.getThumbnailImage() == null) {
+            updatePost.setThumbnailImage(updatePost.getPostFileList().get(0));
         }
 
         return postRepository.save(updatePost);
@@ -178,4 +204,54 @@ public class PostCommandServiceImpl implements PostCommandService {
 
         return postRepository.save(post);
     }
+
+    // 게시글에 댓글 작성하기
+    @Override
+    public Comment createComment(Long memberId, Long postId, PostRequestDTO.CommentDTO request) {
+
+        Comment comment = PostConverter.toComment(request);
+
+        comment.setMember(memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND)));
+        comment.setPost(postRepository.findById(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND)));
+
+        return commentRepository.save(comment);
+
+    }
+
+    // 게시글에 대댓글 작성하기
+    @Override
+    public Comment createCommentReply(Long memberId, Long postId, Long parentId, PostRequestDTO.CommentReplyDTO request) {
+
+        Comment commentReply = PostConverter.toCommentReply(request);
+
+        commentReply.setMember(memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND)));
+        commentReply.setPost(postRepository.findById(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND)));
+        commentReply.setParentId(commentRepository.findById(parentId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND)));
+
+        return commentRepository.save(commentReply);
+
+    }
+
+    // 게시글별 댓글 조회
+    @Override
+//    public List<Comment> getCommentList(Long postId) {
+    public List<PostResponseDTO.CommentDTO> getCommentList(Long postId) {
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+//        List<Comment> commentList = commentRepository.findAllByPost(post);
+        List<PostResponseDTO.CommentDTO> commentList = commentRepository.findAllByPost(post).stream()
+                .map(PostResponseDTO.CommentDTO::new)
+                .collect(Collectors.toList());
+
+        return commentList;
+
+    }
+
 }

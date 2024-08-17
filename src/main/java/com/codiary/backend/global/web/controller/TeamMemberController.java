@@ -8,12 +8,14 @@ import com.codiary.backend.global.service.TeamMemberService.TeamMemberCommandSer
 import com.codiary.backend.global.web.dto.TeamMember.TeamMemberRequestDTO;
 import com.codiary.backend.global.web.dto.TeamMember.TeamMemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/teams")
+@Tag(name = "팀원 API", description = "팀원 추가/삭제 관련 API입니다.")
 public class TeamMemberController {
 
   private final TeamMemberCommandService teamMemberCommandService;

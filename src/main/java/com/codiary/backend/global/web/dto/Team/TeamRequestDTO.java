@@ -46,6 +46,14 @@ public class TeamRequestDTO {
   }
 
   @Getter
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class CreateTeamProjectRequestDTO {
+    private String projectName;
+  }
+
+  @Getter
   @Setter
   @AllArgsConstructor
   @NoArgsConstructor

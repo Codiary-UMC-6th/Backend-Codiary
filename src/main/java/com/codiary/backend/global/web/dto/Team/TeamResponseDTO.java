@@ -56,15 +56,26 @@ public class TeamResponseDTO {
     String email;
     String linkedIn;
     private List<TeamMemberResponseDTO.TeamMemberDTO> members; // 팀원 목록 추가
+    // 팀 팔로우 정보를 추가
+    private TeamFollowResponseDto followInfo;
+  }
+
+  @Getter
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class ProjectsDTO {
+    private Long teamId;
+    private List<String> projectList;
   }
 
   @Builder
-  public record TeamFollowResponseDto( //팀 팔로우 기능
+  public record TeamFollowResponseDto(
       Long followId,
-      Long followerId,
-      String followerName,
-      Long followingId,
-      String followingName,
+      Long memberId,
+      String memberName,
+      Long teamId,
+      String teamName,
       Boolean followStatus
   ) {
   }

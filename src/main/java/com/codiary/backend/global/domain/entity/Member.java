@@ -6,6 +6,7 @@ import com.codiary.backend.global.domain.enums.MemberState;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,8 @@ public class Member extends BaseEntity {
   private MemberState status;
 
   @Column(name = "inactiveDate", columnDefinition = "timestamp")
-  private Boolean inactiveDate;
+  //private Boolean inactiveDate;
+  private LocalDateTime inacticeDate;
 
   @Column(name = "github", columnDefinition = "varchar(500)")
   private String github;
@@ -76,21 +78,24 @@ public class Member extends BaseEntity {
 //  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 //  private List<Categories> catecoriesList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> commentList = new ArrayList<>();
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Comment> commentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "fromMember", fetch = FetchType.LAZY)
-    private List<Follow> followings = new ArrayList<>();
+  @OneToMany(mappedBy = "fromMember", fetch = FetchType.LAZY)
+  private List<Follow> followings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "toMember", fetch = FetchType.LAZY)
-    private List<Follow> followers = new ArrayList<>();
+  @OneToMany(mappedBy = "toMember", fetch = FetchType.LAZY)
+  private List<Follow> followers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Bookmark> bookmarkList = new ArrayList<>();
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<TeamFollow> followedTeams = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MemberCategory> memberCategoryList = new ArrayList<>();
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Bookmark> bookmarkList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
-    private MemberImage image;
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<MemberCategory> memberCategoryList = new ArrayList<>();
+
+  @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+  private MemberImage image;
 }

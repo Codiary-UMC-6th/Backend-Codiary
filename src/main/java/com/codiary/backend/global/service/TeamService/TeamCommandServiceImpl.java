@@ -1,27 +1,37 @@
 package com.codiary.backend.global.service.TeamService;
 
 import com.codiary.backend.global.apiPayload.ApiResponse;
+import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
+import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.domain.entity.*;
-import com.codiary.backend.global.repository.TeamBannerImageRepository;
-import com.codiary.backend.global.repository.TeamProfileImageRepository;
-import com.codiary.backend.global.repository.TeamRepository;
-import com.codiary.backend.global.repository.UuidRepository;
+import com.codiary.backend.global.domain.entity.mapping.TeamProjectMap;
+import com.codiary.backend.global.jwt.SecurityUtil;
+import com.codiary.backend.global.repository.*;
 import com.codiary.backend.global.s3.AmazonS3Manager;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import com.codiary.backend.global.web.dto.Team.TeamRequestDTO;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class TeamCommandServiceImpl implements TeamCommandService {
 
   private final TeamRepository teamRepository;
+  private final ProjectRepository projectRepository;
+  private final TeamProjectMapRepository teamProjectMapRepository;
+  private final TeamFollowService teamFollowService;
+  private final MemberRepository memberRepository;
   private final UuidRepository uuidRepository;
   private final AmazonS3Manager s3Manager;
   private final TeamBannerImageRepository bannerImageRepository;
@@ -62,6 +72,59 @@ public class TeamCommandServiceImpl implements TeamCommandService {
   }
 
   @Override
+  @Transactional
+  public TeamFollow followTeam(Long teamId, Member fromMember) {
+    return teamFollowService.followTeam(teamId, fromMember);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public Member getRequester() {
+    String userEmail = SecurityUtil.getCurrentMemberEmail();
+    System.out.println(userEmail);
+
+    Member member = memberRepository.findByEmail(userEmail)
+        .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+    // 컬렉션 초기화: size()를 호출하여 지연 로딩된 컬렉션 초기화
+    member.getFollowedTeams().size();
+
+    return member;
+  }
+
+  @Override
+  @Transactional
+  public TeamResponseDTO.ProjectsDTO createTeamProject(Long teamId, String projectName) {
+    Team team = teamRepository.findById(teamId)
+        .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
+
+    // 프로젝트 생성
+    Project project = Project.builder()
+        .projectName(projectName)
+        .build();
+
+    projectRepository.save(project);
+
+    // 팀과 프로젝트 매핑
+    TeamProjectMap teamProjectMap = TeamProjectMap.builder()
+        .team(team)
+        .project(project)
+        .build();
+    teamProjectMapRepository.save(teamProjectMap);
+
+    // 팀의 모든 프로젝트 이름 리스트 가져오기
+    List<String> projectList = team.getTeamProjectMapList()
+        .stream()
+        .map(map -> map.getProject().getProjectName())
+        .collect(Collectors.toList());
+
+    return TeamResponseDTO.ProjectsDTO.builder()
+        .teamId(team.getTeamId())
+        .projectList(projectList)
+        .build();
+  }
+
+  @Override
   public ApiResponse<TeamResponseDTO.TeamImageDTO> updateTeamBannerImage(Long teamId, TeamRequestDTO.TeamImageRequestDTO request) {
     Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
 
@@ -75,9 +138,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
 
     TeamBannerImage bannerImage = TeamBannerImage.builder()
-            .imageUrl(fileUrl)
-            .team(team)
-            .build();
+        .imageUrl(fileUrl)
+        .team(team)
+        .build();
 
     TeamBannerImage savedImage = bannerImageRepository.save(bannerImage);
     TeamResponseDTO.TeamImageDTO response = new TeamResponseDTO.TeamImageDTO(savedImage.getImageUrl());
@@ -98,9 +161,9 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
 
     TeamProfileImage profileImage = TeamProfileImage.builder()
-            .imageUrl(fileUrl)
-            .team(team)
-            .build();
+        .imageUrl(fileUrl)
+        .team(team)
+        .build();
 
     TeamProfileImage savedImage = profileImageRepository.save(profileImage);
     TeamResponseDTO.TeamImageDTO response = new TeamResponseDTO.TeamImageDTO(savedImage.getImageUrl());

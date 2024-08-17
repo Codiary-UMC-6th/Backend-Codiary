@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/members")
+@Tag(name = "회원 API", description = "회원가입/로그인/로그아웃/회원정보 조회/수정/삭제 관련 API입니다.")
 public class MemberController {
 
     private final MemberCommandService memberCommandService;
@@ -50,12 +52,33 @@ public class MemberController {
         return memberCommandService.signUp(request);
     }
 
+    @GetMapping("/sign-up/check-email")
+    @Operation(summary = "이메일 중복 확인")
+    public ApiResponse<String> checkEmailDuplication(@RequestParam String email) {
+        return memberCommandService.checkEmailDuplication(email);
+    }
+
+    @GetMapping("/sign-up/check-nickname")
+    @Operation(summary = "닉네임 중복 확인")
+    public ApiResponse<String> checkNicknameDuplication(@RequestParam String nickname) {
+        return memberCommandService.checkNicknameDuplication(nickname);
+    }
+
     @PostMapping("/login")
     @Operation(
             summary = "로그인"
     )
     public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> login(@Valid @RequestBody MemberRequestDTO.MemberLoginRequestDTO request) {
         return memberCommandService.login(request);
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃")
+    public ApiResponse<String> logout(@RequestHeader("Authorization") String token) {
+        Member member = memberCommandService.getRequester();
+        String jwtToken = token.substring(7);
+        String response = memberCommandService.logout(jwtToken, member);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
     }
 
 
@@ -224,7 +247,6 @@ public class MemberController {
     @Operation(summary = "프로젝트 추가하기", description = "프로젝트 하나씩 추가")
     public ApiResponse<?> setProjects(@PathVariable(value = "projectName") String projectName) {
         Member member = memberCommandService.getRequester();
-        memberCommandService.setProjects(member.getMemberId(), projectName);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberCommandService.setProjects(member.getMemberId(), projectName));
     }
 }
