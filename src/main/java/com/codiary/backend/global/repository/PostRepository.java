@@ -27,20 +27,19 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     boolean existsByTeam(Team team);
     boolean existsByProject(Project project);
     boolean existsByMember(Member member);
-
     Optional<Post> findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(Long postId);
-
     Optional<Post> findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Long postId);
 
-
-    @Query("SELECT p FROM Post p JOIN FETCH p.project WHERE p.member = :member AND p.createdAt BETWEEN :startDate AND :endDate ORDER BY p.createdAt ASC")
-    List<Post> findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(@Param("member") Member member, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
-    
-    @Query("SELECT p.postId FROM Post p JOIN p.categoriesList c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
+    @Query("SELECT p.postId " +
+            "FROM Post p " +
+            "JOIN p.categoriesList c " +
+            "WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
     List<Long> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
 
     Page<Post> findByPostIdIn(List<Long> postIds, Pageable pageable);
 
+    @Query("SELECT p FROM Post p JOIN FETCH p.project WHERE p.member = :member AND p.createdAt BETWEEN :startDate AND :endDate ORDER BY p.createdAt ASC")
+    List<Post> findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(@Param("member") Member member, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
     @Query("SELECT p FROM Post p LEFT JOIN p.authorsList a LEFT JOIN p.project j WHERE (p.member = :member OR a.member = :member) AND j.projectId = :projectId ORDER BY p.createdAt DESC")
     Page<Post> findPostsByMemberOrAuthorAndProjectId(@Param("member") Member member, @Param("projectId") Long projectId, Pageable pageable);
 
