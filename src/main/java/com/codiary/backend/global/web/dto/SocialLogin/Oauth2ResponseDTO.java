@@ -9,7 +9,7 @@ public class Oauth2ResponseDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class kakaoLoginDTO {
+    public static class SocialLoginDTO {
         String redirectUrl;
     }
 }
