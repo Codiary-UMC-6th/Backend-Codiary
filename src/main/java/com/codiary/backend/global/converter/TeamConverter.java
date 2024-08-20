@@ -1,14 +1,19 @@
 package com.codiary.backend.global.converter;
 
 import com.codiary.backend.global.domain.entity.Member;
+import com.codiary.backend.global.domain.entity.Project;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.domain.entity.TeamFollow;
+import com.codiary.backend.global.web.dto.Project.ProjectResponseDTO;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import com.codiary.backend.global.web.dto.Team.TeamSumResponseDTO;
 import com.codiary.backend.global.web.dto.TeamMember.TeamMemberResponseDTO;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static com.codiary.backend.global.converter.ProjectConverter.toProjectPreviewDTO;
 
 public class TeamConverter {
   //팀생성
@@ -87,4 +92,23 @@ public class TeamConverter {
             (member.getImage() != null) ? member.getImage().getImageUrl() : ""))
         .collect(Collectors.toList());
   }
+
+
+
+  public static TeamResponseDTO.TeamPreviewDTO toTeamPreviewDTO(Team team) {
+    return TeamResponseDTO.TeamPreviewDTO.builder()
+            .teamId(team.getTeamId())
+            .teamName(team.getName())
+            .build();
+  }
+
+  public static TeamResponseDTO.TeamPreviewListDTO toTeamPreviewListDTO(List<Team> teamList) {
+    List<TeamResponseDTO.TeamPreviewDTO> teamPreviewDTOList = IntStream.range(0, teamList.size())
+            .mapToObj(i->toTeamPreviewDTO(teamList.get(i)))
+            .collect(Collectors.toList());
+    return TeamResponseDTO.TeamPreviewListDTO.builder()
+            .teams(teamPreviewDTOList)
+            .build();
+  }
+
 }

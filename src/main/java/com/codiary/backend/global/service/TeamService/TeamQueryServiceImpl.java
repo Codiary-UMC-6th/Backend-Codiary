@@ -4,9 +4,7 @@ import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
-import com.codiary.backend.global.domain.entity.Member;
-import com.codiary.backend.global.domain.entity.Team;
-import com.codiary.backend.global.domain.entity.TeamFollow;
+import com.codiary.backend.global.domain.entity.*;
 import com.codiary.backend.global.repository.TeamBannerImageRepository;
 import com.codiary.backend.global.repository.TeamFollowRepository;
 import com.codiary.backend.global.repository.TeamProfileImageRepository;
@@ -86,5 +84,11 @@ public class TeamQueryServiceImpl implements TeamQueryService {
     return followers.stream()
         .map(TeamFollow::getMember)
         .collect(Collectors.toList());
+  }
+
+  // 팀 전체 리스트 조회
+  @Override
+  public List<Team> getTeams() {
+    return teamRepository.findAllByOrderByTeamIdDesc();
   }
 }
