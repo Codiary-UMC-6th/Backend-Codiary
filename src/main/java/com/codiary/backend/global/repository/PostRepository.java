@@ -35,6 +35,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "JOIN p.categoriesList c " +
             "WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
     List<Long> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
+//    @Query("SELECT p FROM Post p " +
+//            "JOIN FETCH p.categoriesList c " +
+//            "WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
+//    List<Post> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
 
     Page<Post> findByPostIdIn(List<Long> postIds, Pageable pageable);
 
