@@ -24,6 +24,9 @@ public class TeamMemberCommandServiceImpl implements TeamMemberCommandService {
   private final TeamMemberRepository teamMemberRepository;
 
   public TeamMember addMemberToTeam(Member member, Team team, MemberRole role) {
+    if(teamMemberRepository.findByTeamAndMember(team, member).isPresent()) {
+      throw new GeneralException(ErrorStatus.TEAM_MEMBER_ALREADY_EXISTS);
+    }
     TeamMember teamMember = TeamMember.builder()
         .team(team)
         .member(member)
