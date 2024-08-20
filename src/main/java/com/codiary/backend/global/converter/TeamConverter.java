@@ -32,26 +32,22 @@ public class TeamConverter {
   }
 
   //팀 조회
-  public static TeamResponseDTO.TeamCheckResponseDTO toTeamCheckResponseDTO(Team team, boolean isAdmin) {
-    List<TeamMemberResponseDTO.TeamMemberDTO> members = team.getTeamMemberList().stream()
-        .map(TeamMemberConverter::toTeamMemberDTO)
-        .collect(Collectors.toList());
-
+  public static TeamResponseDTO.TeamCheckResponseDTO toTeamCheckResponseDTO(Team team, boolean isAdmin, List<TeamMemberResponseDTO.TeamMemberDTO> members) {
     return TeamResponseDTO.TeamCheckResponseDTO.builder()
         .teamId(team.getTeamId())
         .name(team.getName())
         .intro(team.getIntro())
-        .bannerImageUrl((team.getBannerImage() != null)
-            ? team.getBannerImage().getImageUrl()
-            : "")
         .profileImageUrl((team.getProfileImage() != null)
             ? team.getProfileImage().getImageUrl()
+            : "")
+        .bannerImageUrl((team.getBannerImage() != null)
+            ? team.getBannerImage().getImageUrl()
             : "")
         .github(team.getGithub())
         .email(team.getEmail())
         .linkedIn(team.getLinkedin())
-        .members(members)
-        .isAdmin(isAdmin)
+        .members(members)  // 멤버 리스트 포함
+        .isAdmin(isAdmin) 
         .build();
   }
 
