@@ -59,4 +59,17 @@ public class SocialLoginController {
     ) {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, socialLoginService.githubLogin(code));
     }
+
+    @PostMapping("/login/google")
+    @Operation(summary = "구글 로그인")
+    public ApiResponse<Oauth2ResponseDTO.SocialLoginDTO> googleLogin() {
+        String url = socialLoginService.getGoogleRedirectUrl();
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO.SocialLoginDTO(url));
+    }
+
+    @GetMapping("/login/google")
+    @Operation(summary = "구글에서 요청하는 api")
+    public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> googleToken(@RequestParam String code) {
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, socialLoginService.googleLogin(code));
+    }
 }
