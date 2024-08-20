@@ -50,6 +50,12 @@ public class PostQueryServiceImpl implements PostQueryService {
         return postRepository.findAllByOrderByCreatedAtDesc(request);
     }
 
+    @Override
+    public Post getPost(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+    }
+
 
     @Override
     public Page<Post> getPostsByCategories(Optional<String> optSearch, int page, int size) {

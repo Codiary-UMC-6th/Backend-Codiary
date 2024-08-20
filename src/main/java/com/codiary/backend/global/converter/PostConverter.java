@@ -37,6 +37,32 @@ public class PostConverter {
                 .build();
     }
 
+    public static PostResponseDTO.PostDetailDTO toPostDetailDTO(Post post){
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
+        return PostResponseDTO.PostDetailDTO.builder()
+                .postId(post.getPostId())
+                .memberId(post.getMember().getMemberId())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .postCategory(String.join(", ", postCategories))
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .thumbnailImageUrl((post.getThumbnailImage() != null)
+                        ? post.getThumbnailImage().getFileUrl()
+                        : "")
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
 
     public static PostResponseDTO.CreatePostResultDTO toCreateResultDTO(Post post) {
         return PostResponseDTO.CreatePostResultDTO.builder()
