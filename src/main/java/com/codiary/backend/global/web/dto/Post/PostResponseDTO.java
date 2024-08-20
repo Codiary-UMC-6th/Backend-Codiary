@@ -400,11 +400,19 @@ public class PostResponseDTO {
     public static class PostPopularDTO {
         Long postId;
         Long memberId;
-        String fileUrl;
-        String postTitle;
         String nickname;
+        Long teamId;
+        Long projectId;
+        String postTitle;
         String postBody;
+        String thumbnailImageUrl;
+        Boolean postStatus;
+        String postCategory;
+        Set<Long> coauthorIds;
+        PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
         LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
     // 메인페이지 인기글 멤버 관심 카테고리별 리스트 조회
@@ -428,11 +436,19 @@ public class PostResponseDTO {
     public static class PostPopularMemberCategoryDTO {
         Long postId;
         Long memberId;
-        String fileUrl;
-        String postTitle;
         String nickname;
+        Long teamId;
+        Long projectId;
+        String postTitle;
         String postBody;
+        String thumbnailImageUrl;
+        Boolean postStatus;
+        String postCategory;
+        Set<Long> coauthorIds;
+        PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
         LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
     // 메인페이지 최신글 리스트 조회
@@ -456,11 +472,19 @@ public class PostResponseDTO {
     public static class PostLatestDTO {
         Long postId;
         Long memberId;
-        String fileUrl;
-        String postTitle;
         String nickname;
+        Long teamId;
+        Long projectId;
+        String postTitle;
         String postBody;
+        String thumbnailImageUrl;
+        Boolean postStatus;
+        String postCategory;
+        Set<Long> coauthorIds;
+        PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
         LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
     // 메인페이지 팔로잉 게시글 리스트 조회
@@ -484,11 +508,19 @@ public class PostResponseDTO {
     public static class PostFollowingDTO {
         Long postId;
         Long memberId;
-        String fileUrl;
-        String postTitle;
         String nickname;
+        Long teamId;
+        Long projectId;
+        String postTitle;
         String postBody;
+        String thumbnailImageUrl;
+        Boolean postStatus;
+        String postCategory;
+        Set<Long> coauthorIds;
+        PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
         LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
     // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색
@@ -512,11 +544,19 @@ public class PostResponseDTO {
     public static class PostSearchTitleDTO {
         Long postId;
         Long memberId;
-        String fileUrl;
-        String postTitle;
         String nickname;
+        Long teamId;
+        Long projectId;
+        String postTitle;
         String postBody;
+        String thumbnailImageUrl;
+        Boolean postStatus;
+        String postCategory;
+        Set<Long> coauthorIds;
+        PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
         LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
 }
