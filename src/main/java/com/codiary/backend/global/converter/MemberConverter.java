@@ -5,11 +5,11 @@ import com.codiary.backend.global.domain.entity.Follow;
 import com.codiary.backend.global.domain.entity.Member;
 import com.codiary.backend.global.domain.entity.Team;
 import com.codiary.backend.global.domain.entity.mapping.MemberCategory;
-import com.codiary.backend.global.domain.entity.mapping.TeamMember;
 import com.codiary.backend.global.domain.entity.mapping.TechStacks;
 import com.codiary.backend.global.web.dto.Member.FollowResponseDto;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import com.codiary.backend.global.web.dto.Member.MemberSumResponseDto;
+import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
@@ -174,8 +174,13 @@ public class MemberConverter {
                         .map(TechStacks::getName)
                         .collect(Collectors.toList()))
                 .teamList(user.getTeamMemberList().stream()
-                        .map(TeamMember::getTeam)
-                        .map(Team::getName)
+                        .map(teamMember -> {
+                            Team team = teamMember.getTeam();
+                            return TeamResponseDTO.TeamInfoDTO.builder()
+                                    .teamId(team.getTeamId())
+                                    .teamName(team.getName())
+                                    .build();
+                        })
                         .collect(Collectors.toList()))
                 .myPage(user.getMemberId().equals(member.getMemberId()))
                 .build();

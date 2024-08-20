@@ -89,4 +89,15 @@ public class TeamResponseDTO {
     String url;
   }
 
+
+  @Builder
+  @Getter
+  @Setter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class TeamInfoDTO {
+    private Long teamId;
+    private String teamName;
+  }
+
 }
