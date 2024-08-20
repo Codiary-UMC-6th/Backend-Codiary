@@ -9,6 +9,7 @@ import com.codiary.backend.global.repository.FollowRepository;
 import com.codiary.backend.global.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,11 +21,13 @@ public class FollowServiceImpl implements FollowService {
     private final MemberRepository memberRepository;
 
     @Override
+    @Transactional
     public Follow follow(Long toId, Member fromMember) {
         //Validation: fromMember 존재 여부 확인/ toMember 존재 여부 확인/ 자기 자신 팔로우 불가/ 이미 팔로우 중인지 확인
         if (fromMember == null) {
             throw new GeneralException(ErrorStatus.MEMBER_NOT_FOUND);
         }
+        fromMember = memberRepository.findByMemberWithAndFollowersAndFollowings(fromMember).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         Member toMember = memberRepository.findByToIdWithFollowers(toId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
