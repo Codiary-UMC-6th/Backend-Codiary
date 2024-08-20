@@ -7,8 +7,8 @@
 <br/>
 
 ## 🔧 Stack
-- **Language** : Java
-- **Library & Framework** : Spring Boot
+- **Language** : Java 17
+- **Library & Framework** : Spring Boot 3.3.1
 - **Database** : MySQL
 - **ORM** : JPA
 - **Deploy & Cloud**: AWS EC2, Github Actions, AWS S3
