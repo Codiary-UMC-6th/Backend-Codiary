@@ -38,7 +38,7 @@ public class Post extends BaseEntity {
   @Column(name = "post_title", nullable = false, columnDefinition = "varchar(500)")
   private String postTitle;
 
-  @Column(name = "post_body", nullable = false, columnDefinition = "varchar(500)")
+  @Column(name = "post_body", nullable = false, columnDefinition = "varchar(3000)")
   private String postBody;
 
   @OneToOne
