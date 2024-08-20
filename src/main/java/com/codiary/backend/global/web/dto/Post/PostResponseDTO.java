@@ -59,6 +59,27 @@ public class PostResponseDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class PostDetailDTO{
+        Long postId;
+        Long memberId;
+        Long teamId;
+        Long projectId;
+        String postTitle;
+        String postBody;
+        String thumbnailImageUrl;
+        Boolean postStatus;
+        String postCategory;
+        Set<Long> coauthorIds;
+        PostAccess postAccess;
+        PostFileResponseDTO.PostFileListDTO postFileList;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class PostPreviewDTO { // Post 조회
         Long postId;
         Long memberId;
