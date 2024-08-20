@@ -58,6 +58,11 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toCreateResultDTO(newPost));
     }
 
+    @Operation(summary = "다이어리 조회 API", description = "다이어리를 조회합니다.")
+    @GetMapping("/{postId}")
+    public  ApiResponse<PostResponseDTO.PostDetailDTO> getPost(@PathVariable(value = "postId") Long postId) {
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostDetailDTO(postQueryService.getPost(postId)));
+    }
 
     // 멤버의 다이어리 수정하기
     @PatchMapping(path = "/{postId}", consumes = "multipart/form-data")

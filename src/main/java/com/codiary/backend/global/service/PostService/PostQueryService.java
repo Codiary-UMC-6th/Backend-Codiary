@@ -32,4 +32,5 @@ public interface PostQueryService {
     // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색
     Page<Post> getPostSearchTitleList(Optional<String> keyword, Integer page);
 
+    Post getPost(Long postId);
 }
