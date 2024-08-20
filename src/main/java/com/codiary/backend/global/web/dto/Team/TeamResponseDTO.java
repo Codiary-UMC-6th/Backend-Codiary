@@ -56,8 +56,8 @@ public class TeamResponseDTO {
     String email;
     String linkedIn;
     private List<TeamMemberResponseDTO.TeamMemberDTO> members; // 팀원 목록 추가
-    // 팀 팔로우 정보를 추가
-    private TeamFollowResponseDto followInfo;
+    private Boolean isAdmin;
+    private TeamFollowResponseDto followInfo; // 팀 팔로우 정보를 추가
   }
 
   @Getter
@@ -88,5 +88,23 @@ public class TeamResponseDTO {
   public static class TeamImageDTO {
     String url;
   }
+
+  @Getter
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class TeamPreviewDTO {
+    Long teamId;
+    String teamName;
+  }
+
+  @Getter
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class TeamPreviewListDTO {
+    List<TeamResponseDTO.TeamPreviewDTO> teams;
+  }
+
 
 }

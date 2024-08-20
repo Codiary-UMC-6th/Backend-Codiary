@@ -2,6 +2,7 @@ package com.codiary.backend.global.web.dto.Member;
 
 import com.codiary.backend.global.domain.enums.TechStack;
 import com.codiary.backend.global.jwt.TokenInfo;
+import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -97,7 +98,7 @@ public class MemberResponseDTO {
         String discordUrl;
         String introduction;
         List<TechStack> techStacksList;
-        List<String> teamList;
+        List<TeamResponseDTO.TeamPreviewDTO> teamList;
         Boolean myPage;
     }
 

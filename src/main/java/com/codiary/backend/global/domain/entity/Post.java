@@ -38,7 +38,7 @@ public class Post extends BaseEntity {
   @Column(name = "post_title", nullable = false, columnDefinition = "varchar(500)")
   private String postTitle;
 
-  @Column(name = "post_body", nullable = false, columnDefinition = "varchar(500)")
+  @Column(name = "post_body", nullable = false, columnDefinition = "varchar(3000)")
   private String postBody;
 
   @OneToOne
@@ -54,7 +54,7 @@ public class Post extends BaseEntity {
   private Boolean postStatus;
 
   @Builder.Default
-  @ManyToMany(fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name = "post_category",
           joinColumns = @JoinColumn(name = "post_id"),
@@ -63,19 +63,19 @@ public class Post extends BaseEntity {
   private List<Categories> categoriesList = new ArrayList<>();
 
   @Builder.Default
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)//, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   private List<PostFile> postFileList = new ArrayList<>();
 
   @Builder.Default
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)//, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   private List<Authors> authorsList = new ArrayList<>();
 
   @Builder.Default
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)//,  fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true,  fetch = FetchType.EAGER)
   private List<Comment> commentList = new ArrayList<>();
 
  
-  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)//,  fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true,  fetch = FetchType.EAGER)
   private List<Bookmark> bookmarkList = new ArrayList<>();
 
   public void setProject(Project project) { this.project = project;}

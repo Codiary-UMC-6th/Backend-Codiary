@@ -30,11 +30,20 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(Long postId);
     Optional<Post> findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Long postId);
 
-    @Query("SELECT p.postId " +
-            "FROM Post p " +
-            "JOIN p.categoriesList c " +
-            "WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
+    @Query("SELECT p.postId FROM Post p JOIN p.categoriesList c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
     List<Long> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
+//    @Query("SELECT p.postId " +
+//            "FROM Post p " +
+//            "JOIN p.categoriesList c " +
+//            "WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
+//    List<Long> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
+//    @Query("SELECT p FROM Post p " +
+//            "JOIN FETCH p.categoriesList c " +
+//            "WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
+//    List<Post> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
+//    @Query("SELECT p.postId FROM Post p JOIN FETCH p.categoriesList c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
+//    List<Long> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
+
 
     Page<Post> findByPostIdIn(List<Long> postIds, Pageable pageable);
 
