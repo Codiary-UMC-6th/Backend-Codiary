@@ -53,6 +53,14 @@ public class SocialLoginService {
     @Value("${github.client.secret}")
     private String githubClientSecret;
 
+    // 구글
+    @Value("${google.redirect.url}")
+    private String googleRedirectUrl;
+    @Value("${google.client.id}")
+    private String googleClientId;
+    @Value("${google.client.secret}")
+    private String googleClientSecret;
+
     // 카카오 로그인
     public String getKakaoRedirectUrl() {
         String path = "https://kauth.kakao.com/oauth/authorize?response_type=code";
@@ -138,6 +146,71 @@ public class SocialLoginService {
                 .memberId(member.getMemberId())
                 .build();
     }
+
+    // 구글 로그인
+    public String getGoogleRedirectUrl() {
+        String path = "https://accounts.google.com/o/oauth2/v2/auth";
+        String clientId = "?client_id=" + googleClientId;
+        String redirectUri = "&redirect_uri=" + googleRedirectUrl;
+        String responseType = "&response_type=code";
+        String scope = "&scope=email";
+
+        return path + clientId + redirectUri + responseType + scope;
+    }
+    public MemberResponseDTO.MemberTokenResponseDTO googleLogin(String code) {
+
+        String googleAccessToken = getGoogleToken(code);
+        String userEmail = getGoogleUserEmail(googleAccessToken);
+
+        if (!memberRepository.existsByEmail(userEmail)) {
+            signUp(userEmail);
+        }
+        Member member = memberRepository.findByEmail(userEmail).get();
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getMemberId());
+
+        return MemberResponseDTO.MemberTokenResponseDTO.builder()
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .tokenInfo(tokenInfo)
+                .memberId(member.getMemberId())
+                .build();
+
+    }
+
+    private String getGoogleToken(String codeString) {
+        String path = "https://oauth2.googleapis.com/token";
+        String clientId = "?client_id=" + googleClientId;
+        String clientSecret = "&client_secret=" + googleClientSecret;
+        String code = "&code=" + codeString;
+        String redirectUri = "&redirect_uri=" + googleRedirectUrl;
+        String grantType = "&grant_type=authorization_code";
+
+        String url = path + clientId + clientSecret + code + redirectUri + grantType;
+        ResponseEntity<JsonNode> response = new RestTemplate().exchange(
+                url,
+                HttpMethod.POST,
+                null,
+                JsonNode.class
+        );
+        return response.getBody().get("access_token").asText();
+    }
+
+    private String getGoogleUserEmail(String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<MultiValueMap<String, String>> googleTokenRequest = new HttpEntity<>(headers);
+        ResponseEntity<JsonNode> response = new RestTemplate().exchange(
+                "https://www.googleapis.com/oauth2/v2/userinfo",
+                HttpMethod.GET,
+                googleTokenRequest,
+                JsonNode.class
+        );
+        return response.getBody().get("email").asText();
+    }
+
+
 
     private String getGithubToken(String codeString) {
         String path = "https://github.com/login/oauth/access_token";
