@@ -87,6 +87,8 @@ public class TeamMemberCommandServiceImpl implements TeamMemberCommandService {
     TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, member)
         .orElseThrow(() -> new IllegalArgumentException("Team member not found"));
 
+    team.getTeamMemberList().remove(teamMember);
+
     teamMemberRepository.delete(teamMember);
   }
 
