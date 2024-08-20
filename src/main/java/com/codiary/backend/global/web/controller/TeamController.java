@@ -3,20 +3,20 @@ package com.codiary.backend.global.web.controller;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.converter.PostConverter;
+import com.codiary.backend.global.converter.ProjectConverter;
 import com.codiary.backend.global.converter.TeamConverter;
-import com.codiary.backend.global.domain.entity.Member;
-import com.codiary.backend.global.domain.entity.Post;
-import com.codiary.backend.global.domain.entity.Team;
-import com.codiary.backend.global.domain.entity.TeamFollow;
+import com.codiary.backend.global.domain.entity.*;
 import com.codiary.backend.global.service.PostService.PostCommandService;
 import com.codiary.backend.global.service.TeamService.TeamCommandService;
 import com.codiary.backend.global.service.TeamService.TeamQueryService;
 import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
 import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
+import com.codiary.backend.global.web.dto.Project.ProjectResponseDTO;
 import com.codiary.backend.global.web.dto.Team.TeamRequestDTO;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import com.codiary.backend.global.web.dto.Team.TeamSumResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -154,6 +154,15 @@ public class TeamController {
       @PathVariable Long teamId
   ) {
     return teamCommandService.deleteTeamProfileImage(teamId);
+  }
+
+
+  // 팀 설정을 위한 팀 리스트 조회
+  @GetMapping("/list")
+  @Operation(summary = "팀 리스트 조회 API", description = "팀 설정을 위한 팀 전체 리스트를 조회합니다.", security = @SecurityRequirement(name = "accessToken"))
+  public ApiResponse<TeamResponseDTO.TeamPreviewListDTO> findTeams(){
+    List<Team> teams = teamQueryService.getTeams();
+    return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamPreviewListDTO(teams));
   }
 
 }
