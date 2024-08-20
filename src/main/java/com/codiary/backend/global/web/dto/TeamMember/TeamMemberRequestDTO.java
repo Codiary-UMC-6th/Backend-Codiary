@@ -15,6 +15,7 @@ public class TeamMemberRequestDTO {
     private Long teamId;
     private Long memberId;
     private MemberRole memberRole;
+    private String memberPosition;
   }
 
   @Getter

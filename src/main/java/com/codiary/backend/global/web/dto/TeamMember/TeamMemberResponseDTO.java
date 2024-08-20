@@ -30,6 +30,8 @@ public class TeamMemberResponseDTO {
     private Long teamMemberId;
     private Long teamId;
     private Long memberId;
+    private String nickname;
     private MemberRole memberRole;
+    private String memberPosition;
   }
 }

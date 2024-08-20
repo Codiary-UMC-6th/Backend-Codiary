@@ -23,7 +23,7 @@ public class TeamMemberCommandServiceImpl implements TeamMemberCommandService {
   private final MemberRepository memberRepository;
   private final TeamMemberRepository teamMemberRepository;
 
-  public TeamMember addMemberToTeam(Member member, Team team, MemberRole role) {
+  public TeamMember addMemberToTeam(Member member, Team team, MemberRole role, String position) {
     if(teamMemberRepository.findByTeamAndMember(team, member).isPresent()) {
       throw new GeneralException(ErrorStatus.TEAM_MEMBER_ALREADY_EXISTS);
     }
@@ -31,6 +31,7 @@ public class TeamMemberCommandServiceImpl implements TeamMemberCommandService {
         .team(team)
         .member(member)
         .teamMemberRole(role)
+        .memberPosition(position)
         .build();
 
     return teamMemberRepository.save(teamMember);
@@ -57,13 +58,7 @@ public class TeamMemberCommandServiceImpl implements TeamMemberCommandService {
     Member member = memberRepository.findById(request.getMemberId())
         .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
 
-    TeamMember teamMember = TeamMember.builder()
-        .team(team)
-        .member(member)
-        .teamMemberRole(request.getMemberRole())
-        .build();
-
-    return addMemberToTeam(member, team, request.getMemberRole());
+    return addMemberToTeam(member, team, request.getMemberRole(), request.getMemberPosition());
   }
 
   @Override

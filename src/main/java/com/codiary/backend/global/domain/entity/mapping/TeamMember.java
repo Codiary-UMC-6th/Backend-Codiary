@@ -30,4 +30,7 @@ public class TeamMember {
   @JoinColumn(name = "team_id")
   private Team team;
 
+  @Column(name = "member_position", columnDefinition = "varchar(500)")
+  private String memberPosition;
+
 }

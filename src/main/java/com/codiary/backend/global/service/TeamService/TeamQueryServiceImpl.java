@@ -16,6 +16,7 @@ import com.codiary.backend.global.jwt.SecurityUtil;
 import com.codiary.backend.global.repository.*;
 import com.codiary.backend.global.converter.TeamConverter;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
+import com.codiary.backend.global.web.dto.TeamMember.TeamMemberResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
@@ -71,8 +72,18 @@ public class TeamQueryServiceImpl implements TeamQueryService {
                 teamMember.getTeamMemberRole() == MemberRole.ADMIN
         );
 
-    team.getTeamMemberList().size();
-    return TeamConverter.toTeamCheckResponseDTO(team, isAdmin);
+    List<TeamMemberResponseDTO.TeamMemberDTO> members = team.getTeamMemberList().stream()
+        .map(teamMember -> TeamMemberResponseDTO.TeamMemberDTO.builder()
+            .teamMemberId(teamMember.getTeamMemberId())
+            .teamId(team.getTeamId())
+            .memberId(teamMember.getMember().getMemberId())
+            .nickname(teamMember.getMember().getNickname())
+            .memberRole(teamMember.getTeamMemberRole())
+            .memberPosition(teamMember.getMemberPosition())
+            .build())
+        .collect(Collectors.toList());
+
+    return TeamConverter.toTeamCheckResponseDTO(team, isAdmin, members);
   }
 
   private Member getRequester() {
