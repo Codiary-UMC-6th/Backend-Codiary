@@ -58,7 +58,19 @@ public class TeamResponseDTO {
     private List<TeamMemberResponseDTO.TeamMemberDTO> members; // 팀원 목록 추가
     private Boolean isAdmin;
     private TeamFollowResponseDto followInfo; // 팀 팔로우 정보를 추가
+    private List<ProjectDTO> projects;
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ProjectDTO {
+      private Long projectId;
+      private String projectName;
+    }
   }
+
+
 
   @Getter
   @Builder

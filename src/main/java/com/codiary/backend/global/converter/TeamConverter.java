@@ -32,7 +32,9 @@ public class TeamConverter {
   }
 
   //팀 조회
-  public static TeamResponseDTO.TeamCheckResponseDTO toTeamCheckResponseDTO(Team team, boolean isAdmin, List<TeamMemberResponseDTO.TeamMemberDTO> members) {
+  public static TeamResponseDTO.TeamCheckResponseDTO toTeamCheckResponseDTO(Team team, boolean isAdmin,
+                                                                            List<TeamMemberResponseDTO.TeamMemberDTO> members,
+                                                                            List<TeamResponseDTO.TeamCheckResponseDTO.ProjectDTO> projects) {
     return TeamResponseDTO.TeamCheckResponseDTO.builder()
         .teamId(team.getTeamId())
         .name(team.getName())
@@ -47,7 +49,8 @@ public class TeamConverter {
         .email(team.getEmail())
         .linkedIn(team.getLinkedin())
         .members(members)  // 멤버 리스트 포함
-        .isAdmin(isAdmin) 
+        .isAdmin(isAdmin)
+        .projects(projects)
         .build();
   }
 

@@ -11,6 +11,8 @@ public class TeamMemberConverter {
         .teamId(teamMember.getTeam().getTeamId())
         .memberId(teamMember.getMember().getMemberId())
         .memberRole(teamMember.getTeamMemberRole())
+        .memberPosition(teamMember.getMemberPosition())
+        .nickname(teamMember.getMember().getNickname())
         .build();
   }
 }

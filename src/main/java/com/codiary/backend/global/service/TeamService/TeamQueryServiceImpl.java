@@ -83,7 +83,14 @@ public class TeamQueryServiceImpl implements TeamQueryService {
             .build())
         .collect(Collectors.toList());
 
-    return TeamConverter.toTeamCheckResponseDTO(team, isAdmin, members);
+    List<TeamResponseDTO.TeamCheckResponseDTO.ProjectDTO> projects = team.getTeamProjectMapList().stream()
+        .map(teamProjectMap -> TeamResponseDTO.TeamCheckResponseDTO.ProjectDTO.builder()
+            .projectId(teamProjectMap.getProject().getProjectId())
+            .projectName(teamProjectMap.getProject().getProjectName())
+            .build())
+        .collect(Collectors.toList());
+
+    return TeamConverter.toTeamCheckResponseDTO(team, isAdmin, members, projects);
   }
 
   private Member getRequester() {
