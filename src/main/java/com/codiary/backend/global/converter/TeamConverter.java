@@ -32,7 +32,7 @@ public class TeamConverter {
   }
 
   //팀 조회
-  public static TeamResponseDTO.TeamCheckResponseDTO toTeamCheckResponseDTO(Team team) {
+  public static TeamResponseDTO.TeamCheckResponseDTO toTeamCheckResponseDTO(Team team, boolean isAdmin) {
     List<TeamMemberResponseDTO.TeamMemberDTO> members = team.getTeamMemberList().stream()
         .map(TeamMemberConverter::toTeamMemberDTO)
         .collect(Collectors.toList());
@@ -51,6 +51,7 @@ public class TeamConverter {
         .email(team.getEmail())
         .linkedIn(team.getLinkedin())
         .members(members)
+        .isAdmin(isAdmin)
         .build();
   }
 
