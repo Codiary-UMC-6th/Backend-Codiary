@@ -466,16 +466,30 @@ public class PostConverter {
 
     // 메인페이지 인기글 전체 리스트 조회
     public static PostResponseDTO.PostPopularDTO toPostPopularDTO(Post post) {
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.PostPopularDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
-                .fileUrl((post.getThumbnailImage() != null)
+                .nickname(post.getMember().getNickname())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .postCategory(String.join(", ", postCategories))
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .thumbnailImageUrl((post.getThumbnailImage() != null)
                         ? post.getThumbnailImage().getFileUrl()
                         : "")
-                .postTitle(post.getPostTitle())
-                .nickname(post.getMember().getNickname())
-                .postBody(post.getPostBody())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
                 .build();
     }
 
@@ -495,16 +509,30 @@ public class PostConverter {
 
     // 메인페이지 인기글 멤버 관심 카테고리별 리스트 조회
     public static PostResponseDTO.PostPopularMemberCategoryDTO toPostPopularMemberCategoryDTO(Post post) {
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.PostPopularMemberCategoryDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
-                .fileUrl((post.getThumbnailImage() != null)
+                .nickname(post.getMember().getNickname())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .postCategory(String.join(", ", postCategories))
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .thumbnailImageUrl((post.getThumbnailImage() != null)
                         ? post.getThumbnailImage().getFileUrl()
                         : "")
-                .postTitle(post.getPostTitle())
-                .nickname(post.getMember().getNickname())
-                .postBody(post.getPostBody())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
                 .build();
     }
 
@@ -524,16 +552,30 @@ public class PostConverter {
 
     // 메인페이지 최신글 리스트 조회
     public static PostResponseDTO.PostLatestDTO toPostLatestDTO(Post post) {
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.PostLatestDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
-                .fileUrl((post.getThumbnailImage() != null)
+                .nickname(post.getMember().getNickname())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .postCategory(String.join(", ", postCategories))
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .thumbnailImageUrl((post.getThumbnailImage() != null)
                         ? post.getThumbnailImage().getFileUrl()
                         : "")
-                .postTitle(post.getPostTitle())
-                .nickname(post.getMember().getNickname())
-                .postBody(post.getPostBody())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
                 .build();
     }
 
@@ -553,16 +595,30 @@ public class PostConverter {
 
     // 메인페이지 팔로잉 게시글 리스트 조회
     public static PostResponseDTO.PostFollowingDTO toPostFollowingDTO(Post post) {
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.PostFollowingDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
-                .fileUrl((post.getThumbnailImage() != null)
+                .nickname(post.getMember().getNickname())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .postCategory(String.join(", ", postCategories))
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .thumbnailImageUrl((post.getThumbnailImage() != null)
                         ? post.getThumbnailImage().getFileUrl()
                         : "")
-                .postTitle(post.getPostTitle())
-                .nickname(post.getMember().getNickname())
-                .postBody(post.getPostBody())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
                 .build();
     }
 
@@ -582,16 +638,30 @@ public class PostConverter {
 
     // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색
     public static PostResponseDTO.PostSearchTitleDTO toPostSearchTitleDTO(Post post) {
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Categories::getName)
+                .collect(Collectors.toList());
+
         return PostResponseDTO.PostSearchTitleDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
-                .fileUrl((post.getThumbnailImage() != null)
+                .nickname(post.getMember().getNickname())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .postCategory(String.join(", ", postCategories))
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .thumbnailImageUrl((post.getThumbnailImage() != null)
                         ? post.getThumbnailImage().getFileUrl()
                         : "")
-                .postTitle(post.getPostTitle())
-                .nickname(post.getMember().getNickname())
-                .postBody(post.getPostBody())
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
                 .build();
     }
 
