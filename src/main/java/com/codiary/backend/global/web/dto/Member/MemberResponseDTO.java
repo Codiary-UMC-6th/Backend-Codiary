@@ -98,7 +98,7 @@ public class MemberResponseDTO {
         String discordUrl;
         String introduction;
         List<TechStack> techStacksList;
-        List<TeamResponseDTO.TeamInfoDTO> teamList;
+        List<TeamResponseDTO.TeamPreviewDTO> teamList;
         Boolean myPage;
     }
 

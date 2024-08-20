@@ -89,15 +89,22 @@ public class TeamResponseDTO {
     String url;
   }
 
-
-  @Builder
   @Getter
-  @Setter
+  @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class TeamInfoDTO {
-    private Long teamId;
-    private String teamName;
+  public static class TeamPreviewDTO {
+    Long teamId;
+    String teamName;
   }
+
+  @Getter
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class TeamPreviewListDTO {
+    List<TeamResponseDTO.TeamPreviewDTO> teams;
+  }
+
 
 }

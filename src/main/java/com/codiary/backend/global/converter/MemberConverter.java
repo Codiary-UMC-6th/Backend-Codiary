@@ -176,7 +176,7 @@ public class MemberConverter {
                 .teamList(user.getTeamMemberList().stream()
                         .map(teamMember -> {
                             Team team = teamMember.getTeam();
-                            return TeamResponseDTO.TeamInfoDTO.builder()
+                            return TeamResponseDTO.TeamPreviewDTO.builder()
                                     .teamId(team.getTeamId())
                                     .teamName(team.getName())
                                     .build();

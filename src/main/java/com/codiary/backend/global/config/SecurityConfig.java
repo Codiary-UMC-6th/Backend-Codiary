@@ -63,7 +63,7 @@ public class SecurityConfig {
                                 .requestMatchers("/posts","/posts/{postId}", "/posts/visibility/{postId}", "/posts/coauthors/{postId}", "/posts/categories/{postId}").permitAll()
                                 .requestMatchers("/posts/title/paging", "/posts/team/{teamId}/{postId}", "/posts/team/{teamId}/member/{memberId}/paging", "/posts/project/{projectId}/team/{teamId}/paging", "/posts/project/{projectId}/member/{memberId}/paging", "/posts/member/{memberId}/paging", "/posts/categories/paging", "/posts/{postId}/adjacent").permitAll()
                                 .requestMatchers("/posts/poplular/list", "/posts/latest/list", "/posts/comments/list/{postId}", "/posts/search/title/body/member/project/categories").permitAll()
-                                .requestMatchers("/categories/list", "/projects/list").permitAll()
+                                .requestMatchers("/categories/list", "/projects/list", "/teams/list").permitAll()
                                 // Comment 관련 접근
                                 .requestMatchers("/comments/count/{postId}").permitAll()
                                 // Bookmark 관련 접근
