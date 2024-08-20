@@ -34,7 +34,7 @@ public class SocialLoginService {
     // 카카오
     @Value("${kakao.redirect.url}")
     private String kakaoRedirectUrl;
-    @Value("${kakao.cliend.id}")
+    @Value("${kakao.client.id}")
     private String kakaoClientId;
 
     // 네이버
