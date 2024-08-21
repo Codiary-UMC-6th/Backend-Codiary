@@ -354,7 +354,7 @@ public class PostConverter {
         return PostResponseDTO.PostAdjacentDTO.PostAdjacentPreviewDTO.builder()
                 .postId(post.getPostId())
                 .memberId(post.getMember().getMemberId())
-                //.nickname(post.getMember().getNickname())
+                .nickname(post.getMember().getNickname())
                 .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
                 .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
                 .postTitle(post.getPostTitle())
