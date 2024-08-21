@@ -71,6 +71,7 @@ public class TeamQueryServiceImpl implements TeamQueryService {
             teamMember.getMember().getMemberId().equals(currentMember.getMemberId()) &&
                 teamMember.getTeamMemberRole() == MemberRole.ADMIN
         );
+    team.getTeamProjectMapList().size();
 
     List<TeamMemberResponseDTO.TeamMemberDTO> members = team.getTeamMemberList().stream()
         .map(teamMember -> TeamMemberResponseDTO.TeamMemberDTO.builder()
