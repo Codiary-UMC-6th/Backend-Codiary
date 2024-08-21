@@ -52,7 +52,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p LEFT JOIN p.authorsList a LEFT JOIN p.project j WHERE (p.member = :member OR a.member = :member) AND j.projectId = :projectId ORDER BY p.createdAt DESC")
     Page<Post> findPostsByMemberOrAuthorAndProjectId(@Param("member") Member member, @Param("projectId") Long projectId, Pageable pageable);
 
-    // 메인페이지 인기글 전체 리스트 조회
+    // 메인페이지 인기글 전체 리스트 조회///////
     @Query("SELECT p FROM Post p " +
             "LEFT JOIN p.bookmarkList b " +
             "LEFT JOIN p.commentList c " +
@@ -60,7 +60,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY (COUNT(b) + COUNT(c)) DESC")
     Page<Post> findAllByBookmarkAndCommentCount(Pageable pageable);
 
-    // 메인페이지 인기글 멤버 관심 카테고리별 리스트 조회
+    // 메인페이지 인기글 멤버 관심 카테고리별 리스트 조회///////
     @Query("SELECT p FROM Post p " +
             "JOIN p.categoriesList c " +
             "JOIN c.memberCategoryList mc " +
@@ -69,13 +69,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "ORDER BY (SIZE(p.bookmarkList) + SIZE(p.commentList)) DESC")
     Page<Post> findPostsByMemberCategorySorted(MemberCategory memberCategory, Pageable pageable);
 
-    // 메인페이지 최신글 리스트 조회
+    // 메인페이지 최신글 리스트 조회///////
 //    Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
-    // 메인페이지 팔로잉 게시글 리스트 조회
+    // 메인페이지 팔로잉 게시글 리스트 조회///////
     Page<Post> findAllByMemberOrderByCreatedAtDesc(Member toMember, Pageable pageable);
 
-    // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색
+    // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색///////
 //    Page<Post> findAllByPostTitleContainingOrPostBodyContainingOrMemberContainingOrProjectContainingOrCategoriesListContaining(String keywordTitle, String keywordBody, String keywordMember, String keywordProject, String keywordCategories, Pageable pageable);
     @Query("SELECT DISTINCT p FROM Post p " +
             "JOIN p.member m " +

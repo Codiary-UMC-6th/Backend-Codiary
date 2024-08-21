@@ -185,7 +185,7 @@ public class PostQueryServiceImpl implements PostQueryService {
         return posts;
     }
 
-    // 메인페이지 인기글 전체 리스트 조회
+    // 메인페이지 인기글 전체 리스트 조회///////
     @Override
     public Page<Post> getPostPopularList(Integer page) {
 
@@ -197,7 +197,7 @@ public class PostQueryServiceImpl implements PostQueryService {
 
     }
 
-    // 메인페이지 인기글 멤버 관심 카테고리별 리스트 조회
+    // 메인페이지 인기글 멤버 관심 카테고리별 리스트 조회///////
     @Override
     public Page<Post> getPostPopularMemberCategoryList(Long memberCategoryId, Integer page) {
 
@@ -212,7 +212,7 @@ public class PostQueryServiceImpl implements PostQueryService {
 
     }
 
-    // 메인페이지 최신글 리스트 조회
+    // 메인페이지 최신글 리스트 조회///////
     @Override
     public Page<Post> getPostLatestList(Integer page) {
 
@@ -224,7 +224,7 @@ public class PostQueryServiceImpl implements PostQueryService {
 
     }
 
-    // 메인페이지 팔로잉 게시글 리스트 조회
+    // 메인페이지 팔로잉 게시글 리스트 조회///////
     @Override
     public Page<Post> getPostFollowingList(Long followId, Integer page) {
 
@@ -242,7 +242,7 @@ public class PostQueryServiceImpl implements PostQueryService {
 
     }
 
-    // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색
+    // 제목 & 본문 & 저자 & 프로젝트 & 카테고리 검색///////
     @Override
     public Page<Post> getPostSearchTitleList(Optional<String> keyword, Integer page) {
 
