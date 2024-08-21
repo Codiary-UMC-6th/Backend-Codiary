@@ -278,6 +278,7 @@ public class PostResponseDTO {
         public static class PostAdjacentPreviewDTO {
             Long postId;
             Long memberId;
+            String nickname;
             Long teamId;
             Long projectId;
             String postTitle;
