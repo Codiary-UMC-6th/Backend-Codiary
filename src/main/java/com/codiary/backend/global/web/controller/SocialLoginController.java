@@ -6,10 +6,12 @@ import com.codiary.backend.global.service.MemberService.SocialLoginService;
 import com.codiary.backend.global.web.dto.Member.MemberResponseDTO;
 import com.codiary.backend.global.web.dto.SocialLogin.Oauth2ResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Tag(name = "소셜 로그인", description = "소셜 로그인 관련 API입니다.")
 @RequestMapping("/oauth")
 @RequiredArgsConstructor
 public class SocialLoginController {
