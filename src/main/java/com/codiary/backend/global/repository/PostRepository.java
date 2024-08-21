@@ -29,6 +29,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     boolean existsByMember(Member member);
     Optional<Post> findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(Long postId);
     Optional<Post> findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Long postId);
+//    @Query("SELECT p FROM Post p JOIN FETCH p.member WHERE p.postId < :postId ORDER BY p.createdAt DESC, p.postId DESC")
+//    Optional<Post> findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(@Param("postId") Long postId);
+//
+//    @Query("SELECT p FROM Post p JOIN FETCH p.member WHERE p.postId > :postId ORDER BY p.createdAt ASC, p.postId ASC")
+//    Optional<Post> findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(@Param("postId") Long postId);
+
 
     @Query("SELECT p.postId FROM Post p JOIN p.categoriesList c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
     List<Long> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
