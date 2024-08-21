@@ -23,7 +23,7 @@ public class Post extends BaseEntity {
   @Column(name = "post_id", nullable = false,columnDefinition = "bigint")
   private Long postId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "member_id", nullable = false)
   private Member member;
 
