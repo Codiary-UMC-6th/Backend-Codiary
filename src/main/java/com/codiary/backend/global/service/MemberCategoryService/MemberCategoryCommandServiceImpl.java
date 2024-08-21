@@ -26,7 +26,7 @@ public class MemberCategoryCommandServiceImpl implements MemberCategoryCommandSe
     private final CategoryRepository categoryRepository;
     private final MemberCategoryRepository memberCategoryRepository;
 
-    // 카테고리를 회원별 관심 카테고리에 추가
+    // 카테고리를 회원별 관심 카테고리에 추가///////
     @Override
     public MemberCategory createMemberCategory(Long memberId, Long categoryId) {
 

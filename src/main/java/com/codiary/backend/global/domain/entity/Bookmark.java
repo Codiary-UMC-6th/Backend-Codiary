@@ -26,6 +26,15 @@ public class Bookmark extends BaseEntity {
 
 
 
+//    @Builder
+//    public Bookmark(Long id, Member member, Post post) {
+//        this.id = id;
+//        this.member = member;
+//        this.post = post;
+//    }
+
+
+
     public void setMember(Member member) {
         if (this.member != null) {
             member.getBookmarkList().remove(this);

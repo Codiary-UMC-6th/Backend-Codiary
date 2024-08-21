@@ -237,7 +237,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 
     }
 
-    // 게시글별 댓글 조회
+    // 게시글별 댓글 조회///////
     @Override
 //    public List<Comment> getCommentList(Long postId) {
     public List<PostResponseDTO.CommentDTO> getCommentList(Long postId) {
@@ -246,7 +246,7 @@ public class PostCommandServiceImpl implements PostCommandService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
 //        List<Comment> commentList = commentRepository.findAllByPost(post);
-        List<PostResponseDTO.CommentDTO> commentList = commentRepository.findAllByPost(post).stream()
+        List<PostResponseDTO.CommentDTO> commentList = commentRepository.findAllByPostAndParentIdIsNull(post).stream()
                 .map(PostResponseDTO.CommentDTO::new)
                 .collect(Collectors.toList());
 
