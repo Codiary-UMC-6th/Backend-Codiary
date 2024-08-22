@@ -67,7 +67,7 @@ public class SecurityConfig {
                                 // Comment 관련 접근
                                 .requestMatchers("/comments/count/{postId}", "/comments/delete/{commentId}").permitAll()
                                 // Team 관련 접근
-                                .requestMatchers("/teams", "/teams/{teamId}/project", "/teams/follow/{teamId}", "/teams/{teamId}/profileImage", "/teams/{teamId}/bannerImage", "/teams/profile/{teamId}", "/teams/{teamId}/followers", "/teams/list").permitAll()
+                                .requestMatchers("/teams", "/teams/{teamId}", "/teams/{teamId}/project", "/teams/follow/{teamId}", "/teams/{teamId}/profileImage", "/teams/{teamId}/bannerImage", "/teams/profile/{teamId}", "/teams/{teamId}/followers", "/teams/list").permitAll()
                                 // Bookmark 관련 접근
                                 .requestMatchers("/bookmarks/count/{postId}").permitAll()
                                 // 기타 관련 접근
