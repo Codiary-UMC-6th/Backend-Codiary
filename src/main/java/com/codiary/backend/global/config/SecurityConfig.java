@@ -63,11 +63,11 @@ public class SecurityConfig {
                                 .requestMatchers("/posts","/posts/{postId}", "/posts/visibility/{postId}", "/posts/coauthors/{postId}", "/posts/categories/{postId}").permitAll()
                                 .requestMatchers("/posts/title/paging", "/posts/team/{teamId}/{postId}", "/posts/team/{teamId}/member/{memberId}/paging", "/posts/project/{projectId}/team/{teamId}/paging", "/posts/project/{projectId}/member/{memberId}/paging", "/posts/member/{memberId}/paging", "/posts/categories/paging", "/posts/{postId}/adjacent").permitAll()
                                 .requestMatchers("/posts/poplular/list", "/posts/latest/list", "/posts/comments/list/{postId}", "/posts/search/title/body/member/project/categories").permitAll()
-                                .requestMatchers("/categories/list", "/projects/list", "/teams/list").permitAll()
+                                .requestMatchers("/categories/list", "/projects/list").permitAll()
                                 // Comment 관련 접근
-                                .requestMatchers("/comments/count/{postId}").permitAll()
+                                .requestMatchers("/comments/count/{postId}", "/comments/delete/{commentId}").permitAll()
                                 // Team 관련 접근
-                                .requestMatchers("/teams/{teamId}").permitAll()
+                                .requestMatchers("/teams", "/teams/{teamId}/project", "/teams/follow/{teamId}", "/teams/{teamId}/profileImage", "/teams/{teamId}/bannerImage", "/teams/profile/{teamId}", "/teams/{teamId}/followers", "/teams/list").permitAll()
                                 // Bookmark 관련 접근
                                 .requestMatchers("/bookmarks/count/{postId}").permitAll()
                                 // 기타 관련 접근
