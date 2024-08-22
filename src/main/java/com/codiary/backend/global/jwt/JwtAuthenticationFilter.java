@@ -40,6 +40,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             if (tokenRepository.existsByNotAvailableToken(token)) {
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
                 httpResponse.setContentType("application/json");
+                httpResponse.setHeader("Access-Control-Allow-Origin", "*");
+                httpResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT");
+                httpResponse.setHeader("Access-Control-Max-Age", "3600");
+                httpResponse.setHeader("Access-Control-Allow-Headers", "x-requested-with, origin, content-type, accept");
                 httpResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
                 // 오류 메시지 JSON 생성

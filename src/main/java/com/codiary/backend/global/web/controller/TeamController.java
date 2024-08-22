@@ -26,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/teams")
+@CrossOrigin(origins = "http://localhost:8080, http://localhost:3000")
 @Tag(name = "팀 API", description = "팀 생성/조회/수정 관련 API입니다.")
 public class TeamController {
 
