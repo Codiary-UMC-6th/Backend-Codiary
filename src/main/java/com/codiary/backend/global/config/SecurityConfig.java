@@ -66,6 +66,8 @@ public class SecurityConfig {
                                 .requestMatchers("/categories/list", "/projects/list", "/teams/list").permitAll()
                                 // Comment 관련 접근
                                 .requestMatchers("/comments/count/{postId}").permitAll()
+                                // Team 관련 접근
+                                .requestMatchers("/teams/{teamId}").permitAll()
                                 // Bookmark 관련 접근
                                 .requestMatchers("/bookmarks/count/{postId}").permitAll()
                                 // 기타 관련 접근
