@@ -56,7 +56,7 @@ public class SecurityConfig {
                         authorize -> authorize
                                 // Member 관련 접근
                                 .requestMatchers("/members/sign-up", "/members/sign-up/check-email", "/members/sign-up/check-nickname").permitAll()
-                                .requestMatchers("/members/login", "members/logout", "members/posts").permitAll()
+                                .requestMatchers("/members/login", "/members/logout", "/members/posts", "/members/info").permitAll()
                                 .requestMatchers("/members/**").permitAll()
                                 .requestMatchers("oauth/login/**").permitAll()
                                 // Post 관련 접근
@@ -65,11 +65,13 @@ public class SecurityConfig {
                                 .requestMatchers("/posts/poplular/list", "/posts/latest/list", "/posts/comments/list/{postId}", "/posts/search/title/body/member/project/categories").permitAll()
                                 .requestMatchers("/categories/list", "/projects/list").permitAll()
                                 // Comment 관련 접근
-                                .requestMatchers("/comments/count/{postId}", "/comments/delete/{commentId}").permitAll()
+                                .requestMatchers("/comments/count/{postId}", "/comments/delete/{commentId}", "/comments/patch/{commentId}").permitAll()
                                 // Team 관련 접근
                                 .requestMatchers("/teams", "/teams/{teamId}", "/teams/{teamId}/project", "/teams/follow/{teamId}", "/teams/{teamId}/profileImage", "/teams/{teamId}/bannerImage", "/teams/profile/{teamId}", "/teams/{teamId}/followers", "/teams/list").permitAll()
                                 // Bookmark 관련 접근
-                                .requestMatchers("/bookmarks/count/{postId}").permitAll()
+                                .requestMatchers("/bookmarks/add/{memberId}/{postId}", "/bookmarks/count/{postId}", "/bookmarks/delete/{bookmarkId}").permitAll()
+                                // Calendar 관련 접근
+                                .requestMatchers("/calendar", "/calendar/project").permitAll()
                                 // 기타 관련 접근
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
