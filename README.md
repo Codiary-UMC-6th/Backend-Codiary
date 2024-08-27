@@ -2,7 +2,7 @@
 
 ## 🔨 Architecture
 
-<img src="https://codiary.s3.ap-northeast-2.amazonaws.com/files/bdba4f72-5c51-4144-9034-38a617604713">
+<img src="https://github.com/user-attachments/assets/8291591f-b76b-40cd-af86-45f9ca4d3e74">
 
 <br/>
 
