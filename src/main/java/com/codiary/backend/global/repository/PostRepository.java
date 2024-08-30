@@ -29,30 +29,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     boolean existsByMember(Member member);
     Optional<Post> findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(Long postId);
     Optional<Post> findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Long postId);
-//    @Query("SELECT p FROM Post p JOIN FETCH p.member WHERE p.postId < :postId ORDER BY p.createdAt DESC, p.postId DESC")
-//    Optional<Post> findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(@Param("postId") Long postId);
-//
-//    @Query("SELECT p FROM Post p JOIN FETCH p.member WHERE p.postId > :postId ORDER BY p.createdAt ASC, p.postId ASC")
-//    Optional<Post> findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(@Param("postId") Long postId);
-
-
     @Query("SELECT p.postId FROM Post p JOIN p.categoriesList c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
     List<Long> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
-//    @Query("SELECT p.postId " +
-//            "FROM Post p " +
-//            "JOIN p.categoriesList c " +
-//            "WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
-//    List<Long> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
-//    @Query("SELECT p FROM Post p " +
-//            "JOIN FETCH p.categoriesList c " +
-//            "WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
-//    List<Post> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
-//    @Query("SELECT p.postId FROM Post p JOIN FETCH p.categoriesList c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
-//    List<Long> findPostIdsByCategoryName(@Param("categoryName") String categoryName);
-
-
     Page<Post> findByPostIdIn(List<Long> postIds, Pageable pageable);
-
     @Query("SELECT p FROM Post p JOIN FETCH p.project WHERE p.member = :member AND p.createdAt BETWEEN :startDate AND :endDate ORDER BY p.createdAt ASC")
     List<Post> findByMemberAndCreatedAtBetweenOrderByCreatedAtAsc(@Param("member") Member member, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
     @Query("SELECT p FROM Post p LEFT JOIN p.authorsList a LEFT JOIN p.project j WHERE (p.member = :member OR a.member = :member) AND j.projectId = :projectId ORDER BY p.createdAt DESC")
