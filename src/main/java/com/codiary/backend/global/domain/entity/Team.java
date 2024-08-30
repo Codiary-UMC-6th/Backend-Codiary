@@ -58,5 +58,4 @@ public class Team {
 
   @OneToOne(mappedBy = "team", cascade = CascadeType.ALL)
   private TeamProfileImage profileImage;
-
 }
