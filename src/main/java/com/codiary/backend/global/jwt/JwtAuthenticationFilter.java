@@ -70,19 +70,4 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         return null;
     }
 
-    //    @Override
-//    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-//
-//        // 1. 요청에서 토큰 추출
-//        String token = resolveToken(request);
-//
-//        // 2. 토큰 유효성 검사
-//        if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
-//            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//        }
-//
-//        filterChain.doFilter(request, response);
-//    }
-
 }
