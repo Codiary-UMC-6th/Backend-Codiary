@@ -9,7 +9,7 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     // 게시글별 댓글 조회
-    List<Comment> findAllByPost(Post post);
+    List<Comment> findAllByPostAndParentIdIsNull(Post post);
 
     // 게시글의 댓글 개수 조회
     int countByPost(Post post);

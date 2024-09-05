@@ -27,6 +27,15 @@ public class MemberCategory extends BaseEntity {
 
 
 
+//    @Builder
+//    public MemberCategory(Long memberCategoryId, Member member, Categories categories) {
+//        this.memberCategoryId = memberCategoryId;
+//        this.member = member;
+//        this.categories = categories;
+//    }
+
+
+
     public void setMember(Member member) {
         if (this.member != null) {
             member.getMemberCategoryList().remove(this);

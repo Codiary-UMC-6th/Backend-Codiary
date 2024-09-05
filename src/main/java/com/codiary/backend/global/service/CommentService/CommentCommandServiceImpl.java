@@ -23,7 +23,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
-    // 댓글 수정하기
+    // 댓글 수정하기///////
     @Override
     public Comment patchComment(Long commentId, CommentRequestDTO.PatchCommentDTO request) {
 

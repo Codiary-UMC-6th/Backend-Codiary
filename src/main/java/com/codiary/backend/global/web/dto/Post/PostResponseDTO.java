@@ -241,6 +241,7 @@ public class PostResponseDTO {
         public record PostAdjacentPreviewDTO(
                 Long postId,
                 Long memberId,
+                String nickname,
                 Long teamId,
                 Long projectId,
                 String postTitle,
