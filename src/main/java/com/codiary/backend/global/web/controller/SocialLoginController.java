@@ -20,9 +20,9 @@ public class SocialLoginController {
 
     @PostMapping("/login/kakao")
     @Operation(summary = "카카오 로그인")
-    public ApiResponse<Oauth2ResponseDTO.SocialLoginDTO> kakaoLogin() {
+    public ApiResponse<Oauth2ResponseDTO> kakaoLogin() {
         String url = socialLoginService.getKakaoRedirectUrl();
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO.SocialLoginDTO(url));
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO(url));
     }
 
     @GetMapping("/login/kakao")
@@ -33,9 +33,9 @@ public class SocialLoginController {
 
     @PostMapping("/login/naver")
     @Operation(summary = "네이버 로그인")
-    public ApiResponse<Oauth2ResponseDTO.SocialLoginDTO> naverLogin() {
+    public ApiResponse<Oauth2ResponseDTO> naverLogin() {
         String url = socialLoginService.getNaverRedirectUrl();
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO.SocialLoginDTO(url));
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO(url));
     }
 
     @GetMapping("/login/naver")
@@ -49,9 +49,9 @@ public class SocialLoginController {
 
     @PostMapping("/login/github")
     @Operation(summary = "깃허브 로그인")
-    public ApiResponse<Oauth2ResponseDTO.SocialLoginDTO> githubLogin() {
+    public ApiResponse<Oauth2ResponseDTO> githubLogin() {
         String url = socialLoginService.getGithubRedirectUrl();
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO.SocialLoginDTO(url));
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO(url));
     }
 
     @GetMapping("/login/github")
@@ -64,9 +64,9 @@ public class SocialLoginController {
 
     @PostMapping("/login/google")
     @Operation(summary = "구글 로그인")
-    public ApiResponse<Oauth2ResponseDTO.SocialLoginDTO> googleLogin() {
+    public ApiResponse<Oauth2ResponseDTO> googleLogin() {
         String url = socialLoginService.getGoogleRedirectUrl();
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO.SocialLoginDTO(url));
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO(url));
     }
 
     @GetMapping("/login/google")

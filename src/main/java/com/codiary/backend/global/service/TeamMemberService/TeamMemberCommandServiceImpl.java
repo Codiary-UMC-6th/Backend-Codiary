@@ -40,7 +40,7 @@ public class TeamMemberCommandServiceImpl implements TeamMemberCommandService {
   @Override
   @Transactional
   public TeamMember addMember(TeamMemberRequestDTO.AddMemberDTO request) {
-    Team team = teamRepository.findById(request.getTeamId())
+    Team team = teamRepository.findById(request.teamId())
         .orElseThrow(() -> new IllegalArgumentException("Invalid team ID"));
 
     Member currentMember = getRequester();
@@ -55,16 +55,16 @@ public class TeamMemberCommandServiceImpl implements TeamMemberCommandService {
       throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
     }
 
-    Member member = memberRepository.findById(request.getMemberId())
+    Member member = memberRepository.findById(request.memberId())
         .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
 
-    return addMemberToTeam(member, team, request.getMemberRole(), request.getMemberPosition());
+    return addMemberToTeam(member, team, request.memberRole(), request.memberPosition());
   }
 
   @Override
   @Transactional
   public void removeMember(TeamMemberRequestDTO.RemoveMemberDTO request) {
-    Team team = teamRepository.findById(request.getTeamId())
+    Team team = teamRepository.findById(request.teamId())
         .orElseThrow(() -> new IllegalArgumentException("Invalid team ID"));
 
     Member currentMember = getRequester();
@@ -79,7 +79,7 @@ public class TeamMemberCommandServiceImpl implements TeamMemberCommandService {
       throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
     }
 
-    Member member = memberRepository.findById(request.getMemberId())
+    Member member = memberRepository.findById(request.memberId())
         .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
 
     TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, member)

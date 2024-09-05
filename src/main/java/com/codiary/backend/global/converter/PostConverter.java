@@ -20,20 +20,20 @@ public class PostConverter {
     public static Post toPost(PostRequestDTO.CreatePostRequestDTO request, TeamRepository teamRepository, ProjectRepository projectRepository) {
         Team team = null;
         Project project = null;
-        if (request.getTeamId() != null) {
-            team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new IllegalArgumentException("Team not found with id: " + request.getTeamId()));
+        if (request.teamId() != null) {
+            team = teamRepository.findById(request.teamId()).orElseThrow(() -> new IllegalArgumentException("Team not found with id: " + request.teamId()));
         }
         // projectId가 제공된 경우에만 Project 객체를 조회
-        if (request.getProjectId() != null) {
-            project = projectRepository.findById(request.getProjectId()).orElseThrow(() -> new IllegalArgumentException("Project not found with id: " + request.getProjectId()));
+        if (request.projectId() != null) {
+            project = projectRepository.findById(request.projectId()).orElseThrow(() -> new IllegalArgumentException("Project not found with id: " + request.projectId()));
         }
         return Post.builder()
-                .postTitle(request.getPostTitle())
-                .postBody(request.getPostBody())
+                .postTitle(request.postTitle())
+                .postBody(request.postBody())
                 .team(team)
                 .project(project)
-                .postStatus(request.getPostStatus())
-                .postAccess(request.getPostAccess())
+                .postStatus(request.postStatus())
+                .postAccess(request.postAccess())
                 .build();
     }
 
@@ -437,7 +437,7 @@ public class PostConverter {
     // 게시글에 댓글 작성하기
     public static Comment toComment(PostRequestDTO.CommentDTO request) {
         return Comment.builder()
-                .commentBody(request.getCommentBody())
+                .commentBody(request.commentBody())
                 .build();
     }
 
@@ -455,7 +455,7 @@ public class PostConverter {
     // 게시글에 대댓글 작성하기
     public static Comment toCommentReply(PostRequestDTO.CommentReplyDTO request) {
         return Comment.builder()
-                .commentBody(request.getCommentReplyBody())
+                .commentBody(request.commentReplyBody())
                 .build();
     }
 

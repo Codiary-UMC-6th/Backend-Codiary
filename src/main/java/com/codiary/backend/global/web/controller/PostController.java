@@ -118,7 +118,7 @@ public class PostController {
         Member member = memberCommandService.getRequester();
         jwtTokenProvider.isValidToken(member.getMemberId());
 
-        Post updatedPost = postCommandService.setPostTeam(postId, request.getTeamId());
+        Post updatedPost = postCommandService.setPostTeam(postId, request.teamId());
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(updatedPost));
     }
 

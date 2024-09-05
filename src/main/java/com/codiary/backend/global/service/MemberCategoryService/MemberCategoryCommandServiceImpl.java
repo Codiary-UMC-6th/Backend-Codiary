@@ -49,7 +49,7 @@ public class MemberCategoryCommandServiceImpl implements MemberCategoryCommandSe
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBERCATEGORY_NOT_FOUND));
 
         if (request != null) {
-            Categories categories = categoryRepository.findById(request.getCategoryId())
+            Categories categories = categoryRepository.findById(request.categoryId())
                     .orElseThrow(() -> new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND));
 
             memberCategory.patchCategories(categories);
