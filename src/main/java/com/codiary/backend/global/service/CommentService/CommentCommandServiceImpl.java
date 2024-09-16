@@ -31,7 +31,7 @@ public class CommentCommandServiceImpl implements CommentCommandService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
 
         if (request != null) {
-            comment.patchComment(request.getCommentBody());
+            comment.patchComment(request.commentBody());
         }
 
         CommentConverter.toPatchCommentResultDTO(comment);

@@ -1,28 +1,17 @@
 package com.codiary.backend.global.web.dto.Calendar;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
 
 public class CalendarDTO {
 
-    @Getter
+    // 날짜별 프로젝트와 제목 리스트 응답 DTO
     @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ToCalendarDTO {
-        private Map<String, List<String[]>> projectAndTitlesByDate;
-    }
+    public record ToCalendarDTO(Map<String, List<String[]>> projectAndTitlesByDate) {}
 
-    @Getter
+    // 프로젝트별 제목 리스트 응답 DTO
     @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ToProjectDTO {
-        private Map<String, List<String>> titlesByProject;
-    }
+    public record ToProjectDTO(Map<String, List<String>> titlesByProject) {}
 }

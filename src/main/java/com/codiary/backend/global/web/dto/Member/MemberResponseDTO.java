@@ -3,7 +3,7 @@ package com.codiary.backend.global.web.dto.Member;
 import com.codiary.backend.global.domain.enums.TechStack;
 import com.codiary.backend.global.jwt.TokenInfo;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
-import lombok.*;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,130 +11,82 @@ import java.util.List;
 public class MemberResponseDTO {
 
     @Builder
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MemberTokenResponseDTO {
-        TokenInfo tokenInfo;
-        String email;
-        String nickname;
-        Long memberId;
-    }
-
+    public record MemberTokenResponseDTO(
+            TokenInfo tokenInfo,
+            String email,
+            String nickname,
+            Long memberId) {}
 
     // 회원별 북마크 리스트 조회
     @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class BookmarkListDTO {
-        List<MemberResponseDTO.BookmarkDTO> bookmarkList;
-        Integer listSize;
-        Integer totalPage;
-        Long totalElements;
-        Boolean isFirst;
-        Boolean isLast;
-    }
+    public record BookmarkListDTO(
+            List<BookmarkDTO> bookmarkList,
+            Integer listSize,
+            Integer totalPage,
+            Long totalElements,
+            Boolean isFirst,
+            Boolean isLast) {}
 
     @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class BookmarkDTO {
-        Long memberId;
-        Long bookmarkId;
-        Long postId;
-        String thumbnailImageUrl;
-        String postTitle;
-        String nickname;
-        String postBody;
-        LocalDateTime createdAt;
-    }
+    public record BookmarkDTO(
+            Long memberId,
+            Long bookmarkId,
+            Long postId,
+            String thumbnailImageUrl,
+            String postTitle,
+            String nickname,
+            String postBody,
+            LocalDateTime createdAt) {}
 
     // 회원별 관심 카테고리탭 리스트 조회
     @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MemberCategoryListDTO {
-        List<MemberResponseDTO.MemberCategoryDTO> memberCategoryList;
-        Integer listSize;
-    }
+    public record MemberCategoryListDTO(
+            List<MemberCategoryDTO> memberCategoryList,
+            Integer listSize) {}
 
     @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MemberCategoryDTO {
-        Long memberId;
-        Long memberCategoryId;
-        Long categoryId;
-        String categoryName;
-        LocalDateTime createdAt;
-    }
+    public record MemberCategoryDTO(
+            Long memberId,
+            Long memberCategoryId,
+            Long categoryId,
+            String categoryName,
+            LocalDateTime createdAt) {}
 
     @Builder
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MemberImageDTO {
-        String url;
-    }
+    public record MemberImageDTO(String url) {}
 
     @Builder
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class UserProfileDTO {
-        Long currentMemberId;
-        Long userId;
-        String userName;
-        String photoUrl;
-        String githubUrl;
-        String linkedinUrl;
-        String discordUrl;
-        String introduction;
-        List<TechStack> techStacksList;
-        List<TeamResponseDTO.TeamPreviewDTO> teamList;
-        Boolean myPage;
-    }
+    public record UserProfileDTO(
+            Long currentMemberId,
+            Long userId,
+            String userName,
+            String photoUrl,
+            String githubUrl,
+            String linkedinUrl,
+            String discordUrl,
+            String introduction,
+            List<TechStack> techStacksList,
+            List<TeamResponseDTO.TeamPreviewDTO> teamList,
+            Boolean myPage) {}
 
     @Builder
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class UserInfoDTO {
-        Long memberId;
-        String email;
-        String nickname;
-        String birth;
-        String introduction;
-        String githubUrl;
-        String linkedinUrl;
-        String discordUrl;
-    }
+    public record UserInfoDTO(
+            Long memberId,
+            String email,
+            String nickname,
+            String birth,
+            String introduction,
+            String githubUrl,
+            String linkedinUrl,
+            String discordUrl) {}
 
     @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor // 기본 생성자 추가
-    @Getter
-    @Setter
-    public static class TechStacksDTO {
-        private Long memberId;
-        private List<TechStack> techStackList;
-    }
+    public record TechStacksDTO(
+            Long memberId,
+            List<TechStack> techStackList) {}
 
     @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor // 기본 생성자 추가
-    @Getter
-    @Setter
-    public static class ProjectsDTO {
-        private Long memberId;
-        private List<String> projectList;
-    }
+    public record ProjectsDTO(
+            Long memberId,
+            List<String> projectList) {}
 }

@@ -52,20 +52,20 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     public ApiResponse<String> signUp(MemberRequestDTO.MemberSignUpRequestDTO signUpRequest) {
         signUpRequest.isCorrect();
 
-        if (memberRepository.existsByEmail(signUpRequest.getEmail())
-                || memberRepository.existsByNickname(signUpRequest.getNickname())) {
+        if (memberRepository.existsByEmail(signUpRequest.email())
+                || memberRepository.existsByNickname(signUpRequest.nickname())) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXISTS);
         }
 
         Member member = Member.builder()
-                .email(signUpRequest.getEmail())
-                .password(passwordEncoder.encode(signUpRequest.getPassword()))
-                .nickname(signUpRequest.getNickname())
-                .birth(signUpRequest.getBirth().toString())
+                .email(signUpRequest.email())
+                .password(passwordEncoder.encode(signUpRequest.password()))
+                .nickname(signUpRequest.nickname())
+                .birth(signUpRequest.birth().toString())
                 .gender(Member.Gender.Female)
-                .github(signUpRequest.getGithub())
-                .linkedin(signUpRequest.getLinkedin())
-                .discord(signUpRequest.getDiscord())
+                .github(signUpRequest.github())
+                .linkedin(signUpRequest.linkedin())
+                .discord(signUpRequest.discord())
                 .image(null)
                 .build();
         memberRepository.save(member);
@@ -108,7 +108,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                     .authenticate(authenticationToken);
 
             // 3. 인증 정보를 기반으로 JWT 토큰 생성
-            Member getMember = memberRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
+            Member getMember = memberRepository.findByEmail(loginRequest.email()).orElseThrow();
             TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, getMember.getMemberId());
 
             return ApiResponse.of(SuccessStatus.MEMBER_OK, MemberResponseDTO.MemberTokenResponseDTO.builder()
@@ -168,7 +168,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         String uuid = UUID.randomUUID().toString();
         Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
-        String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
+        String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.image());
 
         MemberImage memberImage = MemberImage.builder()
                 .imageUrl(fileUrl)
@@ -256,11 +256,11 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     @Override
     public Member updateMemberInfo(Member member, MemberRequestDTO.MemberInfoRequestDTO request){
         Member updatedMember = member.toBuilder()
-                .birth(request.getBirth())
-                .introduction(request.getIntroduction())
-                .github(request.getGithub())
-                .linkedin(request.getLinkedin())
-                .discord(request.getDiscord())
+                .birth(request.birth())
+                .introduction(request.introduction())
+                .github(request.github())
+                .linkedin(request.linkedin())
+                .discord(request.discord())
                 .build();
 
         return memberRepository.save(updatedMember);

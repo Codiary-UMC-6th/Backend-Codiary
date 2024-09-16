@@ -2,16 +2,10 @@ package com.codiary.backend.global.web.controller;
 
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
-import com.codiary.backend.global.converter.PostConverter;
-import com.codiary.backend.global.converter.ProjectConverter;
 import com.codiary.backend.global.converter.TeamConverter;
 import com.codiary.backend.global.domain.entity.*;
-import com.codiary.backend.global.service.PostService.PostCommandService;
 import com.codiary.backend.global.service.TeamService.TeamCommandService;
 import com.codiary.backend.global.service.TeamService.TeamQueryService;
-import com.codiary.backend.global.web.dto.Post.PostRequestDTO;
-import com.codiary.backend.global.web.dto.Post.PostResponseDTO;
-import com.codiary.backend.global.web.dto.Project.ProjectResponseDTO;
 import com.codiary.backend.global.web.dto.Team.TeamRequestDTO;
 import com.codiary.backend.global.web.dto.Team.TeamResponseDTO;
 import com.codiary.backend.global.web.dto.Team.TeamSumResponseDTO;
@@ -27,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/teams")
 @CrossOrigin(origins = "http://localhost:8080, http://localhost:3000")
-@Tag(name = "팀 API", description = "팀 생성/조회/수정 관련 API입니다.")
+@Tag(name = "팀 API", description = "팀 생성/조회/수정 관련 API 입니다.")
 public class TeamController {
 
   private final TeamCommandService teamCommandService;
@@ -101,7 +95,7 @@ public class TeamController {
 
     return ApiResponse.onSuccess(
         SuccessStatus.TEAM_OK,
-        teamCommandService.createTeamProject(teamId, requestDTO.getProjectName())
+        teamCommandService.createTeamProject(teamId, requestDTO.projectName())
     );
   }
 

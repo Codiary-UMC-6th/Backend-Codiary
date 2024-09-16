@@ -1,122 +1,87 @@
 package com.codiary.backend.global.web.dto.Team;
 
-import com.codiary.backend.global.domain.enums.PostAccess;
-import com.codiary.backend.global.jwt.TokenInfo;
 import com.codiary.backend.global.web.dto.TeamMember.TeamMemberResponseDTO;
-import lombok.*;
+import lombok.Builder;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Set;
 
 public class TeamResponseDTO {
 
   @Builder
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class CreateTeamResponseDTO {  // 팀 생성
-    Long teamId;
-    String name;
-    String intro;
-    String profileImageUrl;
-    String bannerImageUrl;
-  }
-
-  @Getter
-  @Builder
-  @Setter
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class UpdateTeamDTO { // 팀 프로필 수정
-    Long teamId;
-    String name;
-    String intro;
-    String profileImageUrl;
-    String bannerImageUrl;
-    String github;
-    String email;
-    String linkedIn;
-    String discord;
-    String instagram;
-  }
+  public record CreateTeamResponseDTO(
+          Long teamId,
+          String name,
+          String intro,
+          String profileImageUrl,
+          String bannerImageUrl
+  ) {}
 
   @Builder
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class TeamCheckResponseDTO {  // 팀 조회
-    Long teamId;
-    String name;
-    String intro;
-    String profileImageUrl;
-    String bannerImageUrl;
-    String github;
-    String email;
-    String linkedIn;
-    private List<TeamMemberResponseDTO.TeamMemberDTO> members; // 팀원 목록 추가
-    private Boolean isAdmin;
-    private TeamFollowResponseDto followInfo; // 팀 팔로우 정보를 추가
-    private List<ProjectDTO> projects;
+  public record UpdateTeamDTO(
+          Long teamId,
+          String name,
+          String intro,
+          String profileImageUrl,
+          String bannerImageUrl,
+          String github,
+          String email,
+          String linkedIn,
+          String discord,
+          String instagram
+  ) {}
 
-    @Getter
+  @Builder
+  public record TeamCheckResponseDTO(
+          Long teamId,
+          String name,
+          String intro,
+          String profileImageUrl,
+          String bannerImageUrl,
+          String github,
+          String email,
+          String linkedIn,
+          List<TeamMemberResponseDTO.TeamMemberDTO> members,
+          Boolean isAdmin,
+          TeamFollowResponseDto followInfo,
+          List<ProjectDTO> projects
+  ) {
     @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class ProjectDTO {
-      private Long projectId;
-      private String projectName;
-    }
+    public record ProjectDTO(
+            Long projectId,
+            String projectName
+    ) {}
   }
 
-
-
-  @Getter
   @Builder
-  @AllArgsConstructor
-  @NoArgsConstructor
-  public static class ProjectsDTO {
-    private Long teamId;
-    private List<String> projectList;
-  }
+  public record ProjectsDTO(
+          Long teamId,
+          List<String> projectList
+  ) {}
 
   @Builder
   public record TeamFollowResponseDto(
-      Long followId,
-      Long memberId,
-      String memberName,
-      Long teamId,
-      String teamName,
-      Boolean followStatus
-  ) {
-  }
+          Long followId,
+          Long memberId,
+          String memberName,
+          Long teamId,
+          String teamName,
+          Boolean followStatus
+  ) {}
 
   @Builder
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class TeamImageDTO {
-    String url;
-  }
+  public record TeamImageDTO(
+          String url
+  ) {}
 
-  @Getter
   @Builder
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class TeamPreviewDTO {
-    Long teamId;
-    String teamName;
-  }
+  public record TeamPreviewDTO(
+          Long teamId,
+          String teamName
+  ) {}
 
-  @Getter
   @Builder
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class TeamPreviewListDTO {
-    List<TeamResponseDTO.TeamPreviewDTO> teams;
-  }
-
-
+  public record TeamPreviewListDTO(
+          List<TeamPreviewDTO> teams
+  ) {}
 }

@@ -30,7 +30,7 @@ public class CommentConverter {
     public static CommentResponseDTO.CountCommentsResultDTO toCountCommentsResultDTO(Long postId, int countComments) {
         return CommentResponseDTO.CountCommentsResultDTO.builder()
                 .postId(postId)
-                .countComments(countComments)
+                .countComment(countComments)
                 .build();
     }
 

@@ -62,8 +62,8 @@ public class PostCommandServiceImpl implements PostCommandService {
         Post tempPost = postRepository.save(newPost);
         tempPost.setPostFileList(new ArrayList<>());
 
-        if (request.getPostFiles() != null) {
-            for (MultipartFile file : request.getPostFiles()) {
+        if (request.postFiles() != null) {
+            for (MultipartFile file : request.postFiles()) {
                 if (file.isEmpty()) {
                     continue;
                 }
@@ -79,7 +79,7 @@ public class PostCommandServiceImpl implements PostCommandService {
         }
 
         // 대표 사진 설정
-        String thumbnailImageName = request.getThumbnailImageName();
+        String thumbnailImageName = request.thumbnailImageName();
         for (PostFile postFile : tempPost.getPostFileList()) {
             if (postFile.getFileName().equals(thumbnailImageName)) {
                 tempPost.setThumbnailImage(postFile);
@@ -100,8 +100,8 @@ public class PostCommandServiceImpl implements PostCommandService {
         updatePost.update(request);
 
         // 새로운 이미지 추가
-        if (request.getAddedPostFiles() != null) {
-            for (MultipartFile file : request.getAddedPostFiles()) {
+        if (request.addedPostFiles() != null) {
+            for (MultipartFile file : request.addedPostFiles()) {
                 if (file.isEmpty()) {
                     continue;
                 }
@@ -117,7 +117,7 @@ public class PostCommandServiceImpl implements PostCommandService {
         }
 
         // 대표 사진 설정
-        String thumbnailImageName = request.getThumbnailImageName();
+        String thumbnailImageName = request.thumbnailImageName();
         for (PostFile postFile : updatePost.getPostFileList()) {
             if (postFile.getFileName() == thumbnailImageName) {
                 updatePost.setThumbnailImage(postFile);
@@ -145,7 +145,7 @@ public class PostCommandServiceImpl implements PostCommandService {
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
         Member getMember = memberCommandService.getRequester();
 
-        post.setPostStatus(request.getPostStatus());
+        post.setPostStatus(request.postStatus());
         return postRepository.save(post);
     }
 
@@ -159,7 +159,7 @@ public class PostCommandServiceImpl implements PostCommandService {
         post.getAuthorsList().clear();
 
         // 새로운 공동 저자 리스트 추가
-        Set<Authors> coauthors = request.getMemberIds().stream()
+        Set<Authors> coauthors = request.memberIds().stream()
                 .map(newCoauthorId -> {
                     Member newCoauthor = memberRepository.findById(newCoauthorId)
                             .orElseThrow(() -> new IllegalArgumentException("Member not found: " + newCoauthorId));

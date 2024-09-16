@@ -49,12 +49,12 @@ public class TeamCommandServiceImpl implements TeamCommandService {
     Member currentMember = getRequester();
 
     Team team = Team.builder()
-        .name(request.getName())
-        .intro(request.getIntro())
-        .github(request.getGithub())
-        .email(request.getEmail())
-        .linkedin(request.getLinkedIn())
-        .instagram(request.getInstagram())
+        .name(request.name())
+        .intro(request.intro())
+        .github(request.github())
+        .email(request.email())
+        .linkedin(request.linkedIn())
+        .instagram(request.instagram())
         .teamMemberList(new ArrayList<>())
         .bannerImage(null)
         .profileImage(null)
@@ -72,11 +72,11 @@ public class TeamCommandServiceImpl implements TeamCommandService {
   public Team updateTeam(Long teamId, TeamRequestDTO.UpdateTeamDTO request) {
     Team team = teamRepository.findById(teamId).orElseThrow(() -> new IllegalArgumentException("Invalid team ID"));
 
-    team.setName(request.getName());
-    team.setIntro(request.getIntro());
-    team.setGithub(request.getGithub());
-    team.setLinkedin(request.getLinkedIn());
-    team.setInstagram(request.getInstagram());
+    team.setName(request.name());
+    team.setIntro(request.intro());
+    team.setGithub(request.github());
+    team.setLinkedin(request.linkedIn());
+    team.setInstagram(request.instagram());
 
     return teamRepository.save(team);
   }
@@ -168,7 +168,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     String uuid = UUID.randomUUID().toString();
     Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
-    String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
+    String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.image());
 
     TeamBannerImage bannerImage = TeamBannerImage.builder()
         .imageUrl(fileUrl)
@@ -191,7 +191,7 @@ public class TeamCommandServiceImpl implements TeamCommandService {
 
     String uuid = UUID.randomUUID().toString();
     Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
-    String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
+    String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.image());
 
     TeamProfileImage profileImage = TeamProfileImage.builder()
         .imageUrl(fileUrl)

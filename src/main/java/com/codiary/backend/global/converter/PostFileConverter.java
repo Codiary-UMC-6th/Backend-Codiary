@@ -18,21 +18,13 @@ public class PostFileConverter {
     }
 
     public static PostFileResponseDTO.PostFileListDTO toPostFileListDTO(List<PostFile> postFileList) {
-        PostFileResponseDTO.PostFileListDTO postFileListDTO = new PostFileResponseDTO.PostFileListDTO();
-        postFileListDTO.setPostFileList(new ArrayList<>());
-
-        for (PostFile postFile:postFileList) {
-            postFileListDTO.getPostFileList().add(toPostFileDTO(postFile));
-        }
+        PostFileResponseDTO.PostFileListDTO postFileListDTO = new PostFileResponseDTO.PostFileListDTO(postFileList);
 
         return postFileListDTO;
     }
 
-    public static PostFileResponseDTO.postFileDTO toPostFileDTO(PostFile postFile) {
-        PostFileResponseDTO.postFileDTO postFileDTO = new PostFileResponseDTO.postFileDTO();
-
-        postFileDTO.setName(postFile.getFileName());
-        postFileDTO.setUrl(postFile.getFileUrl());
+    public static PostFileResponseDTO.PostFileDTO toPostFileDTO(PostFile postFile) {
+        PostFileResponseDTO.PostFileDTO postFileDTO = new PostFileResponseDTO.PostFileDTO(postFile.getFileName(), postFile.getFileUrl());
 
         return postFileDTO;
     }
