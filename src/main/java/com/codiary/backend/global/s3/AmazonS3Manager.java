@@ -1,11 +1,10 @@
 package com.codiary.backend.global.s3;
 
-import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.codiary.backend.global.config.S3Config;
-import com.codiary.backend.global.domain.entity.Uuid;
+import com.codiary.backend.domain.member.entity.Uuid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

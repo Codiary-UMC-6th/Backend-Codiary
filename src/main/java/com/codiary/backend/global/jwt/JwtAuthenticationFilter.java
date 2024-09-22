@@ -1,8 +1,6 @@
 package com.codiary.backend.global.jwt;
 
-import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
-import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
-import com.codiary.backend.global.repository.TokenRepository;
+import com.codiary.backend.domain.member.repository.TokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -10,12 +8,10 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
