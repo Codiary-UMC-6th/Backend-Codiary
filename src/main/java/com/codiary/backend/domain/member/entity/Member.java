@@ -18,9 +18,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
-@Builder(toBuilder = true)
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
 
@@ -28,16 +25,16 @@ public class Member extends BaseEntity {
   @Column(name = "member_id", nullable = false, columnDefinition = "bigint")
   private Long memberId;
 
-  @Column(name = "email", nullable = false, columnDefinition = "varchar(256)")
+  @Column(nullable = false, columnDefinition = "varchar(256)")
   private String email;
 
-  @Column(name = "password", nullable = false, columnDefinition = "varchar(256)")
+  @Column(nullable = false, columnDefinition = "varchar(256)")
   private String password;
 
-  @Column(name = "nickname", nullable = false, columnDefinition = "varchar(256)")
+  @Column(nullable = false, columnDefinition = "varchar(256)")
   private String nickname;
 
-  @Column(name = "birth", columnDefinition = "varchar(256)")
+  @Column(columnDefinition = "varchar(256)")
   private String birth;
 
   @Enumerated(EnumType.STRING)
@@ -45,14 +42,12 @@ public class Member extends BaseEntity {
 
   public enum Gender {Male, Female}
 
-  //계정상태
   @Column(name = "status", columnDefinition = "varchar(500)")
   @Enumerated(EnumType.STRING)
   private MemberState status;
 
   @Column(name = "inactiveDate", columnDefinition = "timestamp")
-  //private Boolean inactiveDate;
-  private LocalDateTime inacticeDate;
+  private LocalDateTime inactiveDate;
 
   @Column(name = "github", columnDefinition = "varchar(500)")
   private String github;
@@ -81,9 +76,6 @@ public class Member extends BaseEntity {
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<MemberProjectMap> memberProjectMapList = new ArrayList<>();
 
-//  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-//  private List<Categories> catecoriesList = new ArrayList<>();
-
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> commentList = new ArrayList<>();
 
@@ -104,4 +96,21 @@ public class Member extends BaseEntity {
 
   @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
   private MemberImage image;
+
+  @Builder
+  public Member(String email, String password, String nickname, String birth, Gender gender, String github, String linkedin, String discord, MemberImage image) {
+    this.email = email;
+    this.password = password;
+    this.nickname = nickname;
+    this.birth = birth;
+    this.gender = gender;
+    this.github = github;
+    this.linkedin = linkedin;
+    this.discord = discord;
+    this.image = image;
+  }
+
+  public void setImage(MemberImage image) {
+    this.image = image;
+  }
 }

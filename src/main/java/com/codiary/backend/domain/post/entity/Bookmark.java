@@ -7,13 +7,10 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Bookmark extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bookmark_id", nullable = false, columnDefinition = "bigint")
     private Long id;
 
@@ -24,17 +21,6 @@ public class Bookmark extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
-
-
-
-//    @Builder
-//    public Bookmark(Long id, Member member, Post post) {
-//        this.id = id;
-//        this.member = member;
-//        this.post = post;
-//    }
-
-
 
     public void setMember(Member member) {
         if (this.member != null) {

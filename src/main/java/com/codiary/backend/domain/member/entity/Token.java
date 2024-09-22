@@ -6,11 +6,8 @@ import lombok.*;
 import java.util.Date;
 
 @Entity
-@Builder
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Token {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,4 +19,10 @@ public class Token {
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date expiryTime;
+
+    @Builder
+    public Token(String notAvailableToken, Date expiryTime) {
+        this.notAvailableToken = notAvailableToken;
+        this.expiryTime = expiryTime;
+    }
 }

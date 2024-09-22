@@ -7,8 +7,6 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class TeamProjectMap {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

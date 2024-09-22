@@ -20,11 +20,4 @@ public class MemberProjectMap {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "project_id")
   private Project project;
-
-  @Builder
-  public MemberProjectMap(Member member, Project project) {
-    this.member = member;
-    this.project = project;
-  }
-
 }

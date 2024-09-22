@@ -17,7 +17,7 @@ public class Categories {
   @Column(name = "category_id", nullable = false, columnDefinition = "bigint")
   private Long categoryId;
 
-  @Column(name = "name", nullable = false, columnDefinition = "varchar(100)")
+  @Column(nullable = false, columnDefinition = "varchar(100)")
   private String name;
 
   @ManyToMany(mappedBy = "categoriesList")
@@ -25,9 +25,4 @@ public class Categories {
 
   @OneToMany(mappedBy = "categories", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<MemberCategory> memberCategoryList = new ArrayList<>();
-
-  @Builder
-  public Categories(String name) { this.name = name;}
-
-
 }

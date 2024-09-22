@@ -9,10 +9,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Team {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

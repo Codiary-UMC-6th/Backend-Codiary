@@ -16,9 +16,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Post extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +45,6 @@ public class Post extends BaseEntity {
   @JoinColumn(name = "thumbnail_image_id")
   private PostFile thumbnailImage;
 
-  @Builder.Default
   @Enumerated(EnumType.STRING)
   @Column(name = "post_access", nullable = false, columnDefinition = "varchar(500)")
   private PostAccess postAccess = PostAccess.MEMBER;
@@ -55,7 +52,6 @@ public class Post extends BaseEntity {
   @Column(name = "post_status", nullable = false, columnDefinition = "tinyint")
   private Boolean postStatus;
 
-  @Builder.Default
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name = "post_category",
@@ -64,32 +60,19 @@ public class Post extends BaseEntity {
   )
   private List<Categories> categoriesList = new ArrayList<>();
 
-  @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   private List<PostFile> postFileList = new ArrayList<>();
 
-  @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   private List<Authors> authorsList = new ArrayList<>();
 
-  @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true,  fetch = FetchType.EAGER)
   private List<Comment> commentList = new ArrayList<>();
 
- 
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true,  fetch = FetchType.EAGER)
   private List<Bookmark> bookmarkList = new ArrayList<>();
 
   public void setMember(Member member) { this.member = member;}
   public void setTeam(Team team) { this.team = team;}
-
-  @Builder
-  @Getter
-  @AllArgsConstructor
-  @NoArgsConstructor
-  public static class PostAdjacent{
-    Post laterPost;
-    Post olderPost;
-  }
 
 }

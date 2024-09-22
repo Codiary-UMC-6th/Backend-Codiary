@@ -11,9 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Comment extends BaseEntity {
 
     @Id
@@ -21,7 +19,7 @@ public class Comment extends BaseEntity {
     @Column(name = "comment_id", nullable = false, columnDefinition = "bigint")
     private Long commentId;
 
-    @Column(name = "comment_body", nullable = false, columnDefinition = "varchar(500)")
+    @Column(nullable = false, columnDefinition = "varchar(500)")
     private String commentBody;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,16 +30,12 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Comment parentId;
 
     @OneToMany(mappedBy = "parentId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> childComments = new ArrayList<>();
-
-
 
     public void setMember(Member member) {
         if (this.member != null) {
@@ -62,21 +56,4 @@ public class Comment extends BaseEntity {
 
         post.getCommentList().add(this);
     }
-
-    public void setParentId(Comment parentId) {
-        if (this.parentId != null) {
-            parentId.getChildComments().remove(this);
-        }
-
-        this.parentId = parentId;
-
-        parentId.getChildComments().add(this);
-
-    }
-
-    // 댓글 수정하기
-    public void patchComment(String commentBody) {
-        this.commentBody = commentBody;
-    }
-
 }

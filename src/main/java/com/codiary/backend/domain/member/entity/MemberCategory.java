@@ -7,9 +7,7 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class MemberCategory extends BaseEntity {
 
     @Id
@@ -25,17 +23,6 @@ public class MemberCategory extends BaseEntity {
     @JoinColumn(name = "category_id")
     private Categories categories;
 
-
-
-//    @Builder
-//    public MemberCategory(Long memberCategoryId, Member member, Categories categories) {
-//        this.memberCategoryId = memberCategoryId;
-//        this.member = member;
-//        this.categories = categories;
-//    }
-
-
-
     public void setMember(Member member) {
         if (this.member != null) {
             member.getMemberCategoryList().remove(this);
@@ -45,22 +32,4 @@ public class MemberCategory extends BaseEntity {
 
         member.getMemberCategoryList().add(this);
     }
-
-    public void setCategories(Categories categories) {
-        if (this.categories != null) {
-            categories.getMemberCategoryList().remove(this);
-        }
-
-        this.categories = categories;
-
-        member.getMemberCategoryList().add(this);
-    }
-
-
-
-    // 회원별 관심 카테고리탭 수정하기
-    public void patchCategories(Categories categories) {
-        this.categories = categories;
-    }
-
 }

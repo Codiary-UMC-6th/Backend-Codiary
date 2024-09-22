@@ -10,9 +10,8 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Authors {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "coAuthorId", nullable = false,columnDefinition = "bigint")
+  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "co_author_id", nullable = false,columnDefinition = "bigint")
   private Long coAuthorId;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -23,7 +22,6 @@ public class Authors {
   @JoinColumn(name = "post_id")
   private Post post;
 
-
   public void setPost(Post post) {
     this.post = post;
   }
@@ -31,12 +29,4 @@ public class Authors {
   public void setMember(Member member) {
     this.member = member;
   }
-
-  public static Authors createAuthors(Post post, Member member) {
-    Authors authors = new Authors();
-    authors.setPost(post);
-    authors.setMember(member);
-    return authors;
-  }
-
 }

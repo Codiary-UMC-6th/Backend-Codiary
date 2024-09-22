@@ -4,11 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
-@Setter
-@Builder
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class MemberImage {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +18,10 @@ public class MemberImage {
 
     @Column(name = "image_url", nullable = false, columnDefinition = "varchar(500)")
     private String imageUrl;
+
+    @Builder
+    public MemberImage(Member member, String imageUrl) {
+        this.member = member;
+        this.imageUrl = imageUrl;
+    }
 }

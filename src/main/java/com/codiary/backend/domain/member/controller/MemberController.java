@@ -1,9 +1,9 @@
 package com.codiary.backend.domain.member.controller;
 
 import com.codiary.backend.domain.member.entity.Member;
-import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.member.service.MemberQueryService;
+import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;

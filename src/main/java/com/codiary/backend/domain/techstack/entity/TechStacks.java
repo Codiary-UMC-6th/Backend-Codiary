@@ -23,10 +23,4 @@ public class TechStacks {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
-    // 생성자 추가
-    public TechStacks(TechStack name, Member member) {
-        this.name = name;
-        this.member = member;
-    }
 }
