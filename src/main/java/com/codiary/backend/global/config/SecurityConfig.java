@@ -46,34 +46,21 @@ public class SecurityConfig {
 //        return http.build();
         return http
                 .httpBasic(httpBasic -> httpBasic.disable())
-                .csrf(csrf->csrf.disable())
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 // Member 관련 접근
-                                .requestMatchers("/members/sign-up", "/members/sign-up/check-email", "/members/sign-up/check-nickname").permitAll()
-                                .requestMatchers("/members/login", "/members/logout", "/members/posts", "/members/info").permitAll()
-                                .requestMatchers("/members/**").permitAll()
-                                .requestMatchers("oauth/login/**").permitAll()
+                                .requestMatchers("/api/v2/members/sign-up", "/api/v2/members/sign-up/check-email", "api/v2/members/sign-up/check-nickname").permitAll()
+                                .requestMatchers("/api/v2/members/login", "api/v2/members/logout").permitAll()
                                 // Post 관련 접근
-                                .requestMatchers("/posts","/posts/{postId}", "/posts/visibility/{postId}", "/posts/coauthors/{postId}", "/posts/categories/{postId}").permitAll()
-                                .requestMatchers("/posts/title/paging", "/posts/team/{teamId}/{postId}", "/posts/team/{teamId}/member/{memberId}/paging", "/posts/project/{projectId}/team/{teamId}/paging").permitAll()
-                                .requestMatchers("/posts/project/{projectId}/member/{memberId}/paging", "/posts/member/{memberId}/paging", "/posts/categories/paging", "/posts/{postId}/adjacent").permitAll()
-                                .requestMatchers("/posts/poplular/list", "/posts/latest/list", "/posts/comments/list/{postId}", "/posts/search/title/body/member/project/categories").permitAll()
                                 // Comment 관련 접근
-                                .requestMatchers("/comments/count/{postId}", "/comments/delete/{commentId}", "/comments/patch/{commentId}").permitAll()
                                 // Team 관련 접근
-                                .requestMatchers("/teams", "/teams/{teamId}", "/teams/{teamId}/project", "/teams/follow/{teamId}", "/teams/{teamId}/profileImage").permitAll()
-                                .requestMatchers("/teams/{teamId}/bannerImage", "/teams/profile/{teamId}", "/teams/{teamId}/followers", "/teams/list").permitAll()
                                 // Bookmark 관련 접근
-                                .requestMatchers("/bookmarks/add/{memberId}/{postId}", "/bookmarks/count/{postId}", "/bookmarks/delete/{bookmarkId}").permitAll()
                                 // Calendar 관련 접근
-                                .requestMatchers("/calendar", "/calendar/project").permitAll()
                                 // Project 관련 접근
-                                .requestMatchers("/projects/list").permitAll()
                                 // Category 관련 접근
-                                .requestMatchers("/categories/list").permitAll()
                                 // 기타 관련 접근
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
