@@ -4,14 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+
+import java.util.Date;
 
 @Builder
 @Data
 @Getter
-@AllArgsConstructor
 public class TokenInfo {
     private String grantType;
     private String accessToken;
     private String refreshToken;
-    private Long refreshTokenExpirationTime;
+    private Date refreshTokenExpirationTime;
 }
