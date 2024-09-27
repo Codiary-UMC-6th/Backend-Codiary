@@ -67,6 +67,7 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .refreshTokenExpirationTime(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
                 .build();
     }
 
