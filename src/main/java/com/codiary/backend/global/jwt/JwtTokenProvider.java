@@ -59,6 +59,7 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
+                .setSubject(authentication.getName())
                 .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -87,6 +88,7 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
+                .setSubject(email)
                 .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -127,7 +129,7 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
             log.info("Unsupported JWT Token", e);
         } catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty.", e);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("잘못된 토큰 값입니다.");
         }
         return false;
@@ -165,5 +167,23 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    public String createAccessToken(String email) {
+        long now = (new Date()).getTime();
+
+        String accessToken = Jwts.builder()
+                .setSubject(email)
+                .claim(AUTHORITIES_KEY, "ROLE_USER")
+                .setExpiration(new Date(now + ACCESS_TOKEN_EXPIRE_TIME))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        return accessToken;
+    }
+
+    public String getUserEmailFromToken(String token) {
+        Claims claims = parseClaims(token);
+        return claims.getSubject();
     }
 }

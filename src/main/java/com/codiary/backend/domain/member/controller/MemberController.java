@@ -1,20 +1,16 @@
 package com.codiary.backend.domain.member.controller;
 
+import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
+import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.member.service.MemberQueryService;
 import com.codiary.backend.global.apiPayload.ApiResponse;
-import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
-import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
+import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -47,9 +43,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    @Operation(
-            summary = "로그인"
-    )
+    @Operation(summary = "로그인")
     public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> login(@Valid @RequestBody MemberRequestDTO.MemberLoginRequestDTO request) {
         return memberCommandService.login(request);
     }
@@ -60,6 +54,13 @@ public class MemberController {
         Member member = memberCommandService.getRequester();
         String jwtToken = token.substring(7);
         String response = memberCommandService.logout(jwtToken, member);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
+    }
+
+    @PostMapping("/refresh")
+    public ApiResponse<MemberResponseDTO.TokenRefreshResponseDTO> refresh(@Valid @RequestBody MemberRequestDTO.MemberRefreshRequestDTO request) {
+        String jwtToken = request.refreshToken();
+        MemberResponseDTO.TokenRefreshResponseDTO response = memberCommandService.refresh(jwtToken);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
     }
 

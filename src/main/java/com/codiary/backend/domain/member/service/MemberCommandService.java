@@ -132,6 +132,30 @@ public class MemberCommandService {
     }
 
     @Transactional
+    public MemberResponseDTO.TokenRefreshResponseDTO refresh(String refreshToken) {
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            //예외 처리 필요
+        }
+
+        boolean isBlackListed = false;
+        if (isBlackListed) {
+            //예외처리 필요
+        }
+
+        String userEmail = jwtTokenProvider.getUserEmailFromToken(refreshToken);
+        System.out.println("email:" + userEmail);
+        String newAccessToken = jwtTokenProvider.createAccessToken(userEmail);
+        Member member = memberRepository.findByEmail(userEmail).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return MemberResponseDTO.TokenRefreshResponseDTO.builder()
+                .accessToken(newAccessToken)
+                .email(userEmail)
+                .nickname(member.getNickname())
+                .memberId(member.getMemberId())
+                .build();
+    }
+
+    @Transactional
     public Member getRequester() {
         String userEmail = SecurityUtil.getCurrentMemberEmail();
         System.out.println(userEmail);

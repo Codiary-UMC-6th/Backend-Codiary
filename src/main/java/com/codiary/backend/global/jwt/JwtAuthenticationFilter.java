@@ -18,7 +18,7 @@ import java.io.PrintWriter;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
-// extends OncePerRequestFilter
+    // extends OncePerRequestFilter
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer";
 

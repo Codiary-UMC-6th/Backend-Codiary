@@ -1,8 +1,8 @@
 package com.codiary.backend.domain.member.dto.request;
 
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
-import com.codiary.backend.domain.member.entity.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,7 +45,8 @@ public class MemberRequestDTO {
     }
 
     // 프로필 이미지 요청 DTO
-    public record MemberProfileImageRequestDTO(MultipartFile image) {}
+    public record MemberProfileImageRequestDTO(MultipartFile image) {
+    }
 
     // 회원 정보 요청 DTO
     public record MemberInfoRequestDTO(
@@ -53,5 +54,10 @@ public class MemberRequestDTO {
             String introduction,
             String github,
             String linkedin,
-            String discord) {}
+            String discord) {
+    }
+
+    public record MemberRefreshRequestDTO(
+            String refreshToken) {
+    }
 }

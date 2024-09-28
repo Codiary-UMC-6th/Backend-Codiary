@@ -12,8 +12,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 가장 일반적인 응답
     _INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON500", "서버 에러, 관리자에게 문의 바랍니다."),
-    _BAD_REQUEST(HttpStatus.BAD_REQUEST,"COMMON400","잘못된 요청입니다."),
-    _UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON401","인증이 필요합니다."),
+    _BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON400", "잘못된 요청입니다."),
+    _UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON401", "인증이 필요합니다."),
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
     // 회원 관려 에러 1000
@@ -27,6 +27,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_WRONG_PASSWORD(HttpStatus.BAD_REQUEST, "MEMBER_1008", "비밀번호 형식이 올바르지 않습니다."),
     MEMBER_EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER_1009", "이미 가입된 이메일입니다."),
     MEMBER_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER_1010", "이미 존재하는 닉네임입니다."),
+    MEMBER_REFRESH_FAIL(HttpStatus.BAD_REQUEST, "MEMBER_1011", "토큰 갱신에 실패했습니다."),
     MEMBER_SELF_FOLLOW(HttpStatus.BAD_REQUEST, "MEMBER_1100", "셀프 팔로우 기능은 제공하지 않습니다"),
     TECH_STACK_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER_1111", "이미 존재하는 기술스택입니다."),
     PROJECT_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER_1112", "이미 존재하는 프로젝트입니다."),
@@ -52,7 +53,6 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMMENT_4005", "댓글이 없습니다."),
 
 
-
     // 북마크 관련 에러 6000
 //    BOOKMARK_CREATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "BOOKMARK_6001", "북마크 추가 권한이 없습니다."),
 //    BOOKMARK_VIEW_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "BOOKMARK_6002", "북마크 게시글 리스트 조회 권한이 없습니다."),
@@ -66,11 +66,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBERCATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBERCATEGORY_8001", "회원별 관심 카테고리가 없습니다."),
 
     // 프로젝트 관련 에러 9000
-    PROJECT_NOT_FOUND(HttpStatus.BAD_REQUEST, "PROJECT_3009", "프로젝트가 없습니다.")
-
-
-    ;
-
+    PROJECT_NOT_FOUND(HttpStatus.BAD_REQUEST, "PROJECT_3009", "프로젝트가 없습니다.");
 
 
     private final HttpStatus httpStatus;
