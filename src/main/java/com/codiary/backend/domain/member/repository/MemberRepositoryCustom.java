@@ -6,4 +6,8 @@ import java.util.Optional;
 
 public interface MemberRepositoryCustom {
     Optional<Member> findMemberWithTechStacksAndProjectsAndTeam(Long userId);
+
+    Optional<Member> findByIdWithAndFollowersAndFollowings(Long id);
+
+    Optional<Member> findByIdWithFollowers(Long id);
 }

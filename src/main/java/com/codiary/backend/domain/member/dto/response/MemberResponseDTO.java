@@ -37,4 +37,13 @@ public class MemberResponseDTO {
             List<TechStack> techStacksList,
             List<TeamResponseDTO.SimpleTeamDTO> teamList,
             Boolean myPage) {}
+
+    @Builder
+    public record FollowDTO(
+            Long followId,
+            Long followerId,
+            String followerName,
+            Long followingId,
+            String followingName,
+            Boolean followStatus) {}
 }
