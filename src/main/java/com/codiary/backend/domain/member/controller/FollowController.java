@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v2/follow")
@@ -40,4 +42,14 @@ public class FollowController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.isFollowing(toId, member));
     }
 
+    @Operation(
+            summary = "유저가 팔로우한 팔로잉 목록 조회",
+            description = "로그인한 유저가 팔로우한 팔로잉 목록 조회"
+    )
+    @GetMapping("/following")
+    public ApiResponse<List<MemberResponseDTO.SimpleMemberDTO>> getFollowings() {
+        Member member = memberCommandService.getRequester();
+        List<Member> followings = followService.getFollowings(member);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toSimpleFollowResponseDto(followings));
+    }
 }

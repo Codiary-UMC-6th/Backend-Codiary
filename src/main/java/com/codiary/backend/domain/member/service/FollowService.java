@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -68,6 +71,20 @@ public class FollowService {
         return followRepository.findByFromMemberAndToMember(fromMember, toMember)
                 .map(Follow::getFollowStatus)
                 .orElse(false);
+    }
+
+    public List<Member> getFollowings(Member member) {
+        //Validation: member 존재 여부 확인(Followings 가져오기)
+        member = memberRepository.findByIdWithFollowings(member.getMemberId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        //Business Logic: 팔로잉 리스트 조회
+        List<Follow> followings = followRepository.findByFromMemberAndFollowStatusTrueOrderByUpdatedAtDesc(member);
+
+        //Response: 팔로잉 리스트 반환
+        return followings.stream()
+                .map(Follow::getToMember)
+                .collect(Collectors.toList());
     }
 
 

@@ -9,5 +9,6 @@ public interface MemberRepositoryCustom {
 
     Optional<Member> findByIdWithAndFollowersAndFollowings(Long id);
 
+    Optional<Member> findByIdWithFollowings(Long id);
     Optional<Member> findByIdWithFollowers(Long id);
 }

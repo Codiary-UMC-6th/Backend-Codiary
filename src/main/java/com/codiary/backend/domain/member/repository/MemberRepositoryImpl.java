@@ -45,6 +45,16 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
         return Optional.ofNullable(fetchedMember);
     }
 
+    public Optional<Member> findByIdWithFollowings(Long id) {
+        Member fetchedMember = queryFactory
+                .selectFrom(member)
+                .leftJoin(member.followings)
+                .where(member.memberId.eq(id))
+                .fetchOne();
+
+        return Optional.ofNullable(fetchedMember);
+    }
+
     public Optional<Member> findByIdWithFollowers(Long id) {
         Member fetchedMember = queryFactory
                 .selectFrom(member)

@@ -7,6 +7,7 @@ import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
 import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.techstack.entity.TechStacks;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class MemberConverter {
@@ -47,5 +48,17 @@ public class MemberConverter {
                 .followingName(follow.getToMember().getNickname())
                 .followStatus(follow.getFollowStatus())
                 .build();
+    }
+
+    public static List<MemberResponseDTO.SimpleMemberDTO> toSimpleFollowResponseDto(List<Member> members) {
+        return members.stream()
+                .map(member -> MemberResponseDTO.SimpleMemberDTO.builder()
+                        .userId(member.getMemberId())
+                        .userName(member.getNickname())
+                        .photoUrl((member.getImage() != null)
+                                ? member.getImage().getImageUrl()
+                                : "")
+                        .build())
+                .collect(Collectors.toList());
     }
 }
