@@ -87,6 +87,20 @@ public class FollowService {
                 .collect(Collectors.toList());
     }
 
+    public List<Member> getFollowers(Member member) {
+        //Validation: member 존재 여부 확인(Followers 가져오기)
+        member = memberRepository.findByIdWithFollowers(member.getMemberId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        //Business Logic: 팔로워 리스트 조회
+        List<Follow> followers = member.getFollowers();
+
+        //Response: 팔로워 리스트 반환
+        return followers.stream()
+                .map(Follow::getFromMember)
+                .collect(Collectors.toList());
+    }
+
 
     private void addFollow(Member fromMember, Member toMember, Follow follow) {
         fromMember.getFollowings().add(follow);

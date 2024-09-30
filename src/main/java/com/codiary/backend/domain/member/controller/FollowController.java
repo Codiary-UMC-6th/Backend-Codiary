@@ -42,14 +42,19 @@ public class FollowController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, followService.isFollowing(toId, member));
     }
 
-    @Operation(
-            summary = "유저가 팔로우한 팔로잉 목록 조회",
-            description = "로그인한 유저가 팔로우한 팔로잉 목록 조회"
-    )
+    @Operation(summary = "유저가 팔로우한 팔로잉 목록 조회", description = "로그인한 유저가 팔로우한 팔로잉 목록 조회")
     @GetMapping("/following")
     public ApiResponse<List<MemberResponseDTO.SimpleMemberDTO>> getFollowings() {
         Member member = memberCommandService.getRequester();
         List<Member> followings = followService.getFollowings(member);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toSimpleFollowResponseDto(followings));
+    }
+
+    @Operation(summary = "유저를 팔로우한 팔로워 목록 조회", description = "로그인한 유저를 팔로우한 팔로워 목록 조회")
+    @GetMapping("/followers")
+    public ApiResponse<List<MemberResponseDTO.SimpleMemberDTO>> getFollowers() {
+        Member member = memberCommandService.getRequester();
+        List<Member> followers = followService.getFollowers(member);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toSimpleFollowResponseDto(followers));
     }
 }
