@@ -56,6 +56,21 @@ public class FollowService {
         return follow;
     }
 
+    public Boolean isFollowing(Long toId, Member fromMember) {
+        //Validation: toMember 존재 여부 확인/ 자기 자신 팔로우 불가
+        if (toId.equals(fromMember.getMemberId())) {
+            throw new GeneralException(ErrorStatus.MEMBER_SELF_FOLLOW);
+        }
+        Member toMember = memberRepository.findById(toId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // Business Logic & Response: 팔로잉 여부 반환
+        return followRepository.findByFromMemberAndToMember(fromMember, toMember)
+                .map(Follow::getFollowStatus)
+                .orElse(false);
+    }
+
+
     private void addFollow(Member fromMember, Member toMember, Follow follow) {
         fromMember.getFollowings().add(follow);
         toMember.getFollowers().add(follow);
