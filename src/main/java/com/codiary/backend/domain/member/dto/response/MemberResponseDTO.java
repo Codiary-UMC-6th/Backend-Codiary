@@ -1,11 +1,17 @@
 package com.codiary.backend.domain.member.dto.response;
 
+import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
+import com.codiary.backend.domain.techstack.enumerate.TechStack;
 import com.codiary.backend.global.jwt.TokenInfo;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class MemberResponseDTO {
 
     @Builder
@@ -16,35 +22,19 @@ public class MemberResponseDTO {
             Long memberId) {}
 
     @Builder
-    public record BookmarkDTO(
-            Long memberId,
-            Long bookmarkId,
-            Long postId,
-            String thumbnailImageUrl,
-            String postTitle,
-            String nickname,
-            String postBody,
-            LocalDateTime createdAt) {}
-
-    // 회원별 관심 카테고리탭 리스트 조회
-    @Builder
-    public record MemberCategoryListDTO(
-            List<MemberCategoryDTO> memberCategoryList,
-            Integer listSize) {}
-
-    @Builder
-    public record MemberCategoryDTO(
-            Long memberId,
-            Long memberCategoryId,
-            Long categoryId,
-            String categoryName,
-            LocalDateTime createdAt) {}
-
-    @Builder
     public record MemberImageDTO(String url) {}
 
     @Builder
-    public record ProjectsDTO(
-            Long memberId,
-            List<String> projectList) {}
+    public record SimpleMemberDTO(
+            Long currentMemberId,
+            Long userId,
+            String userName,
+            String photoUrl,
+            String githubUrl,
+            String linkedinUrl,
+            String discordUrl,
+            String introduction,
+            List<TechStack> techStacksList,
+            List<TeamResponseDTO.SimpleTeamDTO> teamList,
+            Boolean myPage) {}
 }
