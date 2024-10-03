@@ -1,11 +1,13 @@
 package com.codiary.backend.domain.member.converter;
 
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
+import com.codiary.backend.domain.member.entity.Follow;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
 import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.techstack.entity.TechStacks;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class MemberConverter {
@@ -35,5 +37,28 @@ public class MemberConverter {
                         .collect(Collectors.toList()))
                 .myPage(user.getMemberId().equals(member.getMemberId()))
                 .build();
+    }
+
+    public static MemberResponseDTO.FollowDTO toFollowDto(Follow follow) {
+        return MemberResponseDTO.FollowDTO.builder()
+                .followId(follow.getFollowId())
+                .followerId(follow.getFromMember().getMemberId())
+                .followerName(follow.getFromMember().getNickname())
+                .followingId(follow.getToMember().getMemberId())
+                .followingName(follow.getToMember().getNickname())
+                .followStatus(follow.getFollowStatus())
+                .build();
+    }
+
+    public static List<MemberResponseDTO.SimpleMemberDTO> toSimpleFollowResponseDto(List<Member> members) {
+        return members.stream()
+                .map(member -> MemberResponseDTO.SimpleMemberDTO.builder()
+                        .userId(member.getMemberId())
+                        .userName(member.getNickname())
+                        .photoUrl((member.getImage() != null)
+                                ? member.getImage().getImageUrl()
+                                : "")
+                        .build())
+                .collect(Collectors.toList());
     }
 }
