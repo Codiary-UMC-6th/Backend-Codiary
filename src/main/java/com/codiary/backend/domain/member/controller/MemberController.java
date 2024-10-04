@@ -2,6 +2,7 @@ package com.codiary.backend.domain.member.controller;
 
 import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
+import com.codiary.backend.domain.member.converter.MemberConverter;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.member.service.MemberQueryService;
@@ -85,5 +86,13 @@ public class MemberController {
     @Operation(summary = "사용자 프로필 사진 조회")
     public ApiResponse<MemberResponseDTO.MemberImageDTO> getProfileImage(@PathVariable Long memberId) {
         return memberQueryService.getProfileImage(memberId);
+    }
+
+    @GetMapping(path = "/profile/{member_id}")
+    @Operation(summary = "사용자 프로필 기본 정보 조회", description = "마이페이지 사용자 정보 조회 기능")
+    public ApiResponse<MemberResponseDTO.SimpleMemberDTO> getUserProfile(@PathVariable(value = "member_id") Long memberId){
+        Member member = memberCommandService.getRequester();
+        Member user = memberQueryService.getUserProfile(memberId);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toSimpleMemberResponseDto(member, user));
     }
 }

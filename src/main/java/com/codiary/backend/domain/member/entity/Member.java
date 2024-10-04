@@ -113,4 +113,12 @@ public class Member extends BaseEntity {
   public void setImage(MemberImage image) {
     this.image = image;
   }
+
+  public void setMemberProjectMapList(List<MemberProjectMap> projects) {
+    this.memberProjectMapList = projects;
+  }
+
+  public void setTeamMemberList(List<TeamMember> teamMembers) {
+    this.teamMemberList = teamMembers;
+  }
 }
