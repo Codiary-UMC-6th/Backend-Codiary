@@ -122,12 +122,16 @@ public class MemberCommandService {
 
     @Transactional
     public String logout(String refreshToken) {
+        if (redisTemplate.hasKey(refreshToken)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_LOGGED_OUT);
+        }
+
         if (jwtTokenProvider.validateToken(refreshToken)) {
             Date expirationDate = jwtTokenProvider.getExpirationTimeFromToken(refreshToken);
             long expirationTime = (expirationDate.getTime() - (new Date()).getTime()) / 1000;
             redisTemplate.opsForValue().set(refreshToken, "blacklisted", expirationTime, TimeUnit.SECONDS);
         } else {
-            // 예외 처리 필요
+            throw new MemberHandler(ErrorStatus.MEMBER_WRONG_TOKEN);
         }
         return "로그아웃되었습니다.";
     }
@@ -135,11 +139,11 @@ public class MemberCommandService {
     @Transactional
     public MemberResponseDTO.TokenRefreshResponseDTO refresh(String refreshToken) {
         if (!jwtTokenProvider.validateToken(refreshToken)) {
-            //예외 처리 필요
+            throw new MemberHandler(ErrorStatus.MEMBER_WRONG_TOKEN);
         }
 
         if (redisTemplate.hasKey(refreshToken)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_LOGOUTED);
+            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_LOGGED_OUT);
         }
 
         String userEmail = jwtTokenProvider.getUserEmailFromToken(refreshToken);
