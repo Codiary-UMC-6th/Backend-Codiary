@@ -1,8 +1,8 @@
 package com.codiary.backend.domain.member.controller;
 
+import com.codiary.backend.domain.member.converter.MemberConverter;
 import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
-import com.codiary.backend.domain.member.converter.MemberConverter;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.member.service.MemberQueryService;
@@ -51,24 +51,21 @@ public class MemberController {
 
     @PostMapping("/logout")
     @Operation(summary = "로그아웃")
-    public ApiResponse<String> logout(@RequestHeader("Authorization") String token) {
-        Member member = memberCommandService.getRequester();
-        String jwtToken = token.substring(7);
-        String response = memberCommandService.logout(jwtToken, member);
+    public ApiResponse<String> logout(@Valid @RequestBody MemberRequestDTO.refreshRequestDTO request) {
+        String response = memberCommandService.logout(request.refreshToken());
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
     }
 
     @PostMapping("/refresh")
-    public ApiResponse<MemberResponseDTO.TokenRefreshResponseDTO> refresh(@Valid @RequestBody MemberRequestDTO.MemberRefreshRequestDTO request) {
+    @Operation(summary = "액세스 토큰 재할당")
+    public ApiResponse<MemberResponseDTO.TokenRefreshResponseDTO> refresh(@Valid @RequestBody MemberRequestDTO.refreshRequestDTO request) {
         String jwtToken = request.refreshToken();
         MemberResponseDTO.TokenRefreshResponseDTO response = memberCommandService.refresh(jwtToken);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
     }
 
     @PatchMapping(path = "/profile-image", consumes = "multipart/form-data")
-    @Operation(
-            summary = "프로필 사진 설정"
-    )
+    @Operation(summary = "프로필 사진 설정")
     public ApiResponse<MemberResponseDTO.MemberImageDTO> updateProfileImage(@ModelAttribute MemberRequestDTO.MemberProfileImageRequestDTO request) {
         Member member = memberCommandService.getRequester();
 
@@ -77,7 +74,7 @@ public class MemberController {
 
     @DeleteMapping("/profile-image")
     @Operation(summary = "프로필 사진 삭제")
-    public ApiResponse<String> deleteProflieImage() {
+    public ApiResponse<String> deleteProfileImage() {
         Member member = memberCommandService.getRequester();
         return memberCommandService.deleteProfileImage(member);
     }

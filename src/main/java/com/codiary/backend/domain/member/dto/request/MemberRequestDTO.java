@@ -57,7 +57,7 @@ public class MemberRequestDTO {
             String discord) {
     }
 
-    public record MemberRefreshRequestDTO(
+    public record refreshRequestDTO(
             String refreshToken) {
     }
 }

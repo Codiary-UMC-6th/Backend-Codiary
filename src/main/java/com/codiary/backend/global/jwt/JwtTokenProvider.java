@@ -186,4 +186,9 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
         Claims claims = parseClaims(token);
         return claims.getSubject();
     }
+
+    public Date getExpirationTimeFromToken(String token) {
+        Claims claims = parseClaims(token);
+        return claims.getExpiration();
+    }
 }
