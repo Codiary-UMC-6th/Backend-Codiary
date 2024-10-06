@@ -1,6 +1,5 @@
 package com.codiary.backend.global.config;
 
-import com.codiary.backend.domain.member.repository.TokenRepository;
 import com.codiary.backend.global.jwt.EmailPasswordAuthenticationFilter;
 import com.codiary.backend.global.jwt.JwtAuthenticationFilter;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
@@ -24,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
-    private final TokenRepository tokenRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -65,7 +63,7 @@ public class SecurityConfig {
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, tokenRepository), EmailPasswordAuthenticationFilter.class).build();
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), EmailPasswordAuthenticationFilter.class).build();
     }
 
     @Bean

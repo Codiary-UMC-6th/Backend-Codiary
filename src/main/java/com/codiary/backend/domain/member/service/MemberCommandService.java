@@ -7,7 +7,6 @@ import com.codiary.backend.domain.member.entity.MemberImage;
 import com.codiary.backend.domain.member.entity.Uuid;
 import com.codiary.backend.domain.member.repository.MemberImageRepository;
 import com.codiary.backend.domain.member.repository.MemberRepository;
-import com.codiary.backend.domain.member.repository.TokenRepository;
 import com.codiary.backend.domain.member.repository.UuidRepository;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
@@ -43,7 +42,6 @@ public class MemberCommandService {
     private final UuidRepository uuidRepository;
     private final AmazonS3Manager s3Manager;
     private final MemberImageRepository memberImageRepository;
-    private final TokenRepository tokenRepository;
     private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
