@@ -172,4 +172,10 @@ public class MemberCommandService {
         }
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "성공적으로 삭제되었습니다!");
     }
+
+    @Transactional
+    public Member updateMemberInfo(Member member, MemberRequestDTO.MemberInfoDTO request){
+        member.updateInfo(request);
+        return memberRepository.save(member);
+    }
 }

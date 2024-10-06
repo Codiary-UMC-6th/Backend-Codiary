@@ -29,4 +29,10 @@ public class MemberQueryService{
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         return user;
     }
+
+    public Member getUserInfo(Long memberId) {
+        Member user = memberRepository.findMemberWithTechStacksAndProjectsAndTeam(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        return user;
+    }
 }

@@ -87,11 +87,27 @@ public class MemberController {
         return memberQueryService.getProfileImage(memberId);
     }
 
-    @GetMapping(path = "/profile/{member_id}")
+    @GetMapping("/profile/{member_id}")
     @Operation(summary = "사용자 프로필 기본 정보 조회", description = "마이페이지 사용자 정보 조회 기능")
     public ApiResponse<MemberResponseDTO.SimpleMemberDTO> getUserProfile(@PathVariable(value = "member_id") Long memberId){
         Member member = memberCommandService.getRequester();
         Member user = memberQueryService.getUserProfile(memberId);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toSimpleMemberResponseDto(member, user));
+    }
+
+    @PutMapping("/info")
+    @Operation(summary = "사용자 정보 수정", description = "마이페이지 사용자 정보 수정 기능")
+    public ApiResponse<MemberResponseDTO.MemberInfoDTO> updateUserInfo(@Valid @RequestBody MemberRequestDTO.MemberInfoDTO request){
+        Member member = memberCommandService.getRequester();
+        Member updatedMember = memberCommandService.updateMemberInfo(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberInfoResponseDto(updatedMember));
+    }
+
+    @GetMapping("/info")
+    @Operation(summary = "사용자 정보 조회", description = "마이페이지 사용자 정보 조회 기능")
+    public ApiResponse<MemberResponseDTO.MemberInfoDTO> getUserInfo(){
+        Member member = memberCommandService.getRequester();
+        Member fetchedMember = memberQueryService.getUserInfo(member.getMemberId());
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberInfoResponseDto(fetchedMember));
     }
 }

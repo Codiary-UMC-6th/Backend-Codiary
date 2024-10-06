@@ -34,6 +34,17 @@ public class MemberResponseDTO{
             Boolean myPage) {}
 
     @Builder
+    public record MemberInfoDTO(
+            Long memberId,
+            String email,
+            String nickname,
+            String birth,
+            String introduction,
+            String github,
+            String linkedin,
+            String discord) {}
+
+    @Builder
     public record FollowDTO(
             Long followId,
             Long followerId,

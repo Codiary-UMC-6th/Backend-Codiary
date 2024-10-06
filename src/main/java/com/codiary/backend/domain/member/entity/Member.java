@@ -2,6 +2,8 @@ package com.codiary.backend.domain.member.entity;
 
 import com.codiary.backend.domain.coauthor.entity.Authors;
 import com.codiary.backend.domain.comment.entity.Comment;
+import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
+import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.post.entity.Bookmark;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.team.entity.TeamFollow;
@@ -98,16 +100,25 @@ public class Member extends BaseEntity {
   private MemberImage image;
 
   @Builder
-  public Member(String email, String password, String nickname, String birth, Gender gender, String github, String linkedin, String discord, MemberImage image) {
+  public Member(String email, String password, String nickname, String birth, String introduction, Gender gender, String github, String linkedin, String discord, MemberImage image) {
     this.email = email;
     this.password = password;
     this.nickname = nickname;
     this.birth = birth;
+    this.introduction = introduction;
     this.gender = gender;
     this.github = github;
     this.linkedin = linkedin;
     this.discord = discord;
     this.image = image;
+  }
+
+  public void updateInfo(MemberRequestDTO.MemberInfoDTO memberInfo) {
+    this.birth = memberInfo.birth();
+    this.introduction = memberInfo.introduction();
+    this.github = memberInfo.github();
+    this.linkedin = memberInfo.linkedin();
+    this.discord = memberInfo.discord();
   }
 
   public void setImage(MemberImage image) {

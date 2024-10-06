@@ -48,7 +48,7 @@ public class MemberRequestDTO {
     public record MemberProfileImageRequestDTO(MultipartFile image) {}
 
     // 회원 정보 요청 DTO
-    public record MemberInfoRequestDTO(
+    public record MemberInfoDTO(
             String birth,
             String introduction,
             String github,

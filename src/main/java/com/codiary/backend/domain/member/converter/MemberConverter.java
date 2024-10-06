@@ -39,6 +39,19 @@ public class MemberConverter {
                 .build();
     }
 
+    public static MemberResponseDTO.MemberInfoDTO toMemberInfoResponseDto(Member member) {
+        return MemberResponseDTO.MemberInfoDTO.builder()
+                .memberId(member.getMemberId())
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .birth(member.getBirth())
+                .introduction(member.getIntroduction())
+                .github(member.getGithub())
+                .linkedin(member.getLinkedin())
+                .discord(member.getDiscord())
+                .build();
+    }
+
     public static MemberResponseDTO.FollowDTO toFollowDto(Follow follow) {
         return MemberResponseDTO.FollowDTO.builder()
                 .followId(follow.getFollowId())
