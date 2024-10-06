@@ -10,9 +10,12 @@ import com.codiary.backend.domain.member.repository.MemberImageRepository;
 import com.codiary.backend.domain.member.repository.MemberRepository;
 import com.codiary.backend.domain.member.repository.TokenRepository;
 import com.codiary.backend.domain.member.repository.UuidRepository;
+import com.codiary.backend.domain.techstack.entity.TechStacks;
+import com.codiary.backend.domain.techstack.enumerate.TechStack;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
+import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
 import com.codiary.backend.global.jwt.SecurityUtil;
@@ -27,8 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -177,5 +179,24 @@ public class MemberCommandService {
     public Member updateMemberInfo(Member member, MemberRequestDTO.MemberInfoDTO request){
         member.updateInfo(request);
         return memberRepository.save(member);
+    }
+
+    @Transactional
+    public Member addTechStack(Long memberId, TechStack techstack) {
+        //validatation: member 존재 여부 확인, 기술스택 중복 확인
+        Member member = memberRepository.findMemberWithTechStacks(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (member.getTechStackList().stream().anyMatch(stack -> stack.getName().equals(techstack))) {
+            throw new GeneralException(ErrorStatus.TECH_STACK_ALREADY_EXISTS);
+        }
+
+        //business logic: 기술스택 추가
+        List<TechStacks> techStackList = Optional.of(member.getTechStackList()).orElse(new ArrayList<>());
+        TechStacks newTechStack = new TechStacks(techstack, member);
+        techStackList.add(newTechStack);
+
+        //response: member 반환
+        return member;
     }
 }

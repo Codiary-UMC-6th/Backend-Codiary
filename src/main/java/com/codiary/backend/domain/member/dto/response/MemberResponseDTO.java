@@ -52,4 +52,9 @@ public class MemberResponseDTO{
             Long followingId,
             String followingName,
             Boolean followStatus) {}
+
+    @Builder
+    public record MemberTechStackDTO (
+            Long memberId,
+            List<TechStack> techStacks) {}
 }

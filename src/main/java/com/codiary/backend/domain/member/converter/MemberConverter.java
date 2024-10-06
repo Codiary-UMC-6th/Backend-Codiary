@@ -74,4 +74,13 @@ public class MemberConverter {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    public static MemberResponseDTO.MemberTechStackDTO toMemberTechStackResponseDto(Member updatedMember) {
+        return MemberResponseDTO.MemberTechStackDTO.builder()
+                .memberId(updatedMember.getMemberId())
+                .techStacks(updatedMember.getTechStackList().stream()
+                        .map(TechStacks::getName)
+                        .collect(Collectors.toList()))
+                .build();
+    }
 }

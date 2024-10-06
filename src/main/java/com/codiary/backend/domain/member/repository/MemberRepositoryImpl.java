@@ -34,6 +34,16 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
         return Optional.ofNullable(fetchedMember);
     }
 
+    public Optional<Member> findMemberWithTechStacks(Long userId) {
+        Member fetchedMember = queryFactory
+                .selectFrom(member)
+                .leftJoin(member.techStackList, techStacks).fetchJoin()
+                .where(member.memberId.eq(userId))
+                .fetchOne();
+
+        return Optional.ofNullable(fetchedMember);
+    }
+
     public Optional<Member> findByIdWithAndFollowersAndFollowings(Long id) {
         Member fetchedMember = queryFactory
                 .selectFrom(member)

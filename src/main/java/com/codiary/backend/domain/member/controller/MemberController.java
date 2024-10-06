@@ -4,6 +4,7 @@ import com.codiary.backend.domain.member.converter.MemberConverter;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.member.service.MemberQueryService;
+import com.codiary.backend.domain.techstack.enumerate.TechStack;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
@@ -109,5 +110,13 @@ public class MemberController {
         Member member = memberCommandService.getRequester();
         Member fetchedMember = memberQueryService.getUserInfo(member.getMemberId());
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberInfoResponseDto(fetchedMember));
+    }
+
+    @PatchMapping("/techstack/{techstack_name}")
+    @Operation(summary = "사용자 기술스택 추가", description = "마이페이지 사용자 기술스택 추가 기능")
+    public ApiResponse<MemberResponseDTO.MemberTechStackDTO> addTechStack(@PathVariable(value = "techstack_name") TechStack techStackName){
+        Member member = memberCommandService.getRequester();
+        Member updatedMember = memberCommandService.addTechStack(member.getMemberId(),techStackName);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberTechStackResponseDto(updatedMember));
     }
 }
