@@ -4,11 +4,9 @@ import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.entity.MemberImage;
-import com.codiary.backend.domain.member.entity.Token;
 import com.codiary.backend.domain.member.entity.Uuid;
 import com.codiary.backend.domain.member.repository.MemberImageRepository;
 import com.codiary.backend.domain.member.repository.MemberRepository;
-import com.codiary.backend.domain.member.repository.TokenRepository;
 import com.codiary.backend.domain.member.repository.UuidRepository;
 import com.codiary.backend.domain.techstack.entity.TechStacks;
 import com.codiary.backend.domain.techstack.enumerate.TechStack;
@@ -22,6 +20,7 @@ import com.codiary.backend.global.jwt.SecurityUtil;
 import com.codiary.backend.global.jwt.TokenInfo;
 import com.codiary.backend.global.s3.AmazonS3Manager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -31,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +44,7 @@ public class MemberCommandService {
     private final UuidRepository uuidRepository;
     private final AmazonS3Manager s3Manager;
     private final MemberImageRepository memberImageRepository;
-    private final TokenRepository tokenRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     public ApiResponse<String> signUp(MemberRequestDTO.MemberSignUpRequestDTO signUpRequest) {
@@ -121,16 +121,41 @@ public class MemberCommandService {
     }
 
     @Transactional
-    public String logout(String token, Member member) {
-        if (!tokenRepository.existsByNotAvailableToken(token)) {
-            Date expiryTime = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24);
-            Token tokenEntity = Token.builder()
-                    .expiryTime(expiryTime)
-                    .notAvailableToken(token)
-                    .build();
-            tokenRepository.save(tokenEntity);
+    public String logout(String refreshToken) {
+        if (redisTemplate.hasKey(refreshToken)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_LOGGED_OUT);
+        }
+
+        if (jwtTokenProvider.validateToken(refreshToken)) {
+            Date expirationDate = jwtTokenProvider.getExpirationTimeFromToken(refreshToken);
+            long expirationTime = (expirationDate.getTime() - (new Date()).getTime()) / 1000;
+            redisTemplate.opsForValue().set(refreshToken, "blacklisted", expirationTime, TimeUnit.SECONDS);
+        } else {
+            throw new MemberHandler(ErrorStatus.MEMBER_WRONG_TOKEN);
         }
         return "로그아웃되었습니다.";
+    }
+
+    @Transactional
+    public MemberResponseDTO.TokenRefreshResponseDTO refresh(String refreshToken) {
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_WRONG_TOKEN);
+        }
+
+        if (redisTemplate.hasKey(refreshToken)) {
+            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_LOGGED_OUT);
+        }
+
+        String userEmail = jwtTokenProvider.getUserEmailFromToken(refreshToken);
+        String newAccessToken = jwtTokenProvider.createAccessToken(userEmail);
+        Member member = memberRepository.findByEmail(userEmail).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return MemberResponseDTO.TokenRefreshResponseDTO.builder()
+                .accessToken(newAccessToken)
+                .email(userEmail)
+                .nickname(member.getNickname())
+                .memberId(member.getMemberId())
+                .build();
     }
 
     @Transactional
