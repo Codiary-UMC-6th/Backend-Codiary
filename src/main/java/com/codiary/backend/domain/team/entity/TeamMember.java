@@ -30,4 +30,10 @@ public class TeamMember {
   @Column(name = "member_position", columnDefinition = "varchar(500)")
   private String memberPosition;
 
+  @Builder
+    public TeamMember(MemberRole teamMemberRole, Member member, Team team) {
+        this.teamMemberRole = teamMemberRole;
+        this.member = member;
+        this.team = team;
+    }
 }

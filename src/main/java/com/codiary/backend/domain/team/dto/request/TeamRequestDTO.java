@@ -1,29 +1,28 @@
-package com.codiary.backend.domain.team.dto.response;
+package com.codiary.backend.domain.team.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.Builder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class TeamResponseDTO {
-
-    @Builder
-    public record SimpleTeamDTO(
-            Long teamId,
-            String teamName) {}
-
-    @Builder
-    public record TeamDTO(
-            Long teamId,
+public class TeamRequestDTO {
+    public record CreateTeamDTO(
             String name,
             String intro,
-            String profileImageUrl,
-            String bannerImageUrl,
             String github,
             String email,
             String linkedIn,
             String discord,
-            String instagram) {}
+            String instagram
+    ) {}
+
+    public record UpdateTeamDTO(
+            String name,
+            String intro,
+            String github,
+            String linkedIn,
+            String discord,
+            String instagram
+    ) {}
 }

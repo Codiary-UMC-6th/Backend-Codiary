@@ -54,4 +54,22 @@ public class Team {
 
   @OneToOne(mappedBy = "team", cascade = CascadeType.ALL)
   private TeamProfileImage profileImage;
+
+  @Builder
+    public Team(Long teamId, String name, String intro, String github, String email, String linkedin, String discord, String instagram, List<TeamProjectMap> teamProjectMapList, List<Post> postList, List<TeamMember> teamMemberList, List<TeamFollow> followers, TeamBannerImage bannerImage, TeamProfileImage profileImage) {
+        this.teamId = teamId;
+        this.name = name;
+        this.intro = intro;
+        this.github = github;
+        this.email = email;
+        this.linkedin = linkedin;
+        this.discord = discord;
+        this.instagram = instagram;
+        this.teamProjectMapList = teamProjectMapList;
+        this.postList = postList;
+        this.teamMemberList = teamMemberList;
+        this.followers = followers;
+        this.bannerImage = bannerImage;
+        this.profileImage = profileImage;
+    }
 }
