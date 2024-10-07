@@ -3,7 +3,6 @@ package com.codiary.backend.global.config;
 import com.codiary.backend.global.jwt.EmailPasswordAuthenticationFilter;
 import com.codiary.backend.global.jwt.JwtAuthenticationFilter;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
-import com.codiary.backend.domain.member.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
-    private final TokenRepository tokenRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -53,7 +51,7 @@ public class SecurityConfig {
                         authorize -> authorize
                                 // Member 관련 접근
                                 .requestMatchers("/api/v2/members/sign-up", "/api/v2/members/sign-up/check-email", "api/v2/members/sign-up/check-nickname").permitAll()
-                                .requestMatchers("/api/v2/members/login", "api/v2/members/logout").permitAll()
+                                .requestMatchers("/api/v2/members/login", "/api/v2/members/refresh", "api/v2/members/logout").permitAll()
                                 // Post 관련 접근
                                 // Comment 관련 접근
                                 // Team 관련 접근
@@ -65,7 +63,7 @@ public class SecurityConfig {
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, tokenRepository), EmailPasswordAuthenticationFilter.class).build();
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), EmailPasswordAuthenticationFilter.class).build();
     }
 
     @Bean
