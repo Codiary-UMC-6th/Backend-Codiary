@@ -1,8 +1,13 @@
 package com.codiary.backend.domain.team.entity;
 
 import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.global.common.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +15,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Team {
+@SQLDelete(sql = "UPDATE team SET deleted_at = NOW() where id = ?")
+public class Team extends BaseEntity {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "team_id", nullable = false, columnDefinition = "bigint")

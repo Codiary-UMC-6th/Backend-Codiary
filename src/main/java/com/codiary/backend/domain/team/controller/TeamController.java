@@ -12,10 +12,7 @@ import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/teams")
@@ -33,4 +30,11 @@ public class TeamController {
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamResponseDto(newTeam));
     }
 
+    @GetMapping("/{team_id}")
+    @Operation(summary = "팀 정보 조회")
+    public ApiResponse<TeamResponseDTO.TeamProfileDTO> getTeam(@PathVariable("team_id") Long teamId){
+        Member member = memberCommandService.getRequester();
+        Team fetchedTeam = teamService.getTeam(teamId, member);
+        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamProfileResponseDto(fetchedTeam));
+    }
 }

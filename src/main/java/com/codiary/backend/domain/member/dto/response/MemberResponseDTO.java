@@ -28,6 +28,12 @@ public class MemberResponseDTO{
     public record MemberImageDTO(String url) {}
 
     @Builder
+    public record SimpleMemberProfileDTO(
+            Long userId,
+            String userName,
+            String photoUrl){}
+
+    @Builder
     public record SimpleMemberDTO(
             Long currentMemberId,
             Long userId,

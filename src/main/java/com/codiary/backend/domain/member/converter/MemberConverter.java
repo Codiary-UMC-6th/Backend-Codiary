@@ -75,6 +75,16 @@ public class MemberConverter {
                 .collect(Collectors.toList());
     }
 
+    public static List<MemberResponseDTO.SimpleMemberProfileDTO> toSimpleMemberProfileResponseDto(List<Member> members){
+        return members.stream()
+                .map(member -> MemberResponseDTO.SimpleMemberProfileDTO.builder()
+                        .userId(member.getMemberId())
+                        .userName(member.getNickname())
+                        .photoUrl(member.getImage() != null ? member.getImage().getImageUrl() : "")
+                        .build())
+                .collect(Collectors.toList());
+    }
+
     public static MemberResponseDTO.MemberTechStackDTO toMemberTechStackResponseDto(Member updatedMember) {
         return MemberResponseDTO.MemberTechStackDTO.builder()
                 .memberId(updatedMember.getMemberId())
