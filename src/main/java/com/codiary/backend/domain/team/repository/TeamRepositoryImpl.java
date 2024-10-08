@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.team.repository;
 
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.team.entity.Team;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,15 @@ public class TeamRepositoryImpl implements TeamRepositoryCustom{
                 .fetchOne();
 
         return Optional.ofNullable(fetchedTeam);
+    }
+
+    @Override
+    public boolean isTeamMember(Team fetchedTeam, Member member) {
+        return queryFactory
+                .selectOne()
+                .from(teamMember)
+                .where(teamMember.team.teamId.eq(fetchedTeam.getTeamId())
+                        .and(teamMember.member.memberId.eq(member.getMemberId())))
+                .fetchFirst() != null;
     }
 }

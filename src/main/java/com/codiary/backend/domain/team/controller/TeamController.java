@@ -30,11 +30,28 @@ public class TeamController {
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamResponseDto(newTeam));
     }
 
-    @GetMapping("/{team_id}")
-    @Operation(summary = "팀 정보 조회")
-    public ApiResponse<TeamResponseDTO.TeamProfileDTO> getTeam(@PathVariable("team_id") Long teamId){
+    @GetMapping("/profile/{team_id}")
+    @Operation(summary = "팀 프로필 조회")
+    public ApiResponse<TeamResponseDTO.TeamProfileDTO> getTeamProfile(@PathVariable("team_id") Long teamId){
         Member member = memberCommandService.getRequester();
-        Team fetchedTeam = teamService.getTeam(teamId, member);
+        Team fetchedTeam = teamService.getTeamProfile(teamId, member);
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamProfileResponseDto(fetchedTeam));
     }
+
+    @GetMapping("/{team_id}")
+    @Operation(summary = "팀 정보 조회")
+    public ApiResponse<TeamResponseDTO.TeamDTO> getTeam(@PathVariable("team_id") Long teamId){
+        Member member = memberCommandService.getRequester();
+        Team fetchedTeam = teamService.getTeam(teamId, member);
+        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamResponseDto(fetchedTeam));
+    }
+
+    @PutMapping("/{team_id}")
+    @Operation(summary = "팀 정보 수정")
+    public ApiResponse<TeamResponseDTO.TeamDTO> updateTeam(@PathVariable("team_id") Long teamId, @RequestBody TeamRequestDTO.UpdateTeamDTO request){
+        Member member = memberCommandService.getRequester();
+        Team updatedTeam = teamService.updateTeam(request, teamId, member);
+        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamResponseDto(updatedTeam));
+    }
+
 }

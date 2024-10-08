@@ -1,6 +1,7 @@
 package com.codiary.backend.domain.team.entity;
 
 import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.domain.team.dto.request.TeamRequestDTO;
 import com.codiary.backend.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -77,5 +78,15 @@ public class Team extends BaseEntity {
         this.followers = followers;
         this.bannerImage = bannerImage;
         this.profileImage = profileImage;
+    }
+
+    public void update(TeamRequestDTO.UpdateTeamDTO request){
+        this.name = request.name();
+        this.intro = request.intro();
+        this.email = request.email();
+        this.github = request.github();
+        this.linkedin = request.linkedIn();
+        this.discord = request.discord();
+        this.instagram = request.instagram();
     }
 }

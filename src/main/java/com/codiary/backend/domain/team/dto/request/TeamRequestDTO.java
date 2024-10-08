@@ -11,7 +11,6 @@ public class TeamRequestDTO {
             String name,
             String intro,
             String github,
-            String email,
             String linkedIn,
             String discord,
             String instagram
@@ -19,6 +18,7 @@ public class TeamRequestDTO {
 
     public record UpdateTeamDTO(
             String name,
+            String email,
             String intro,
             String github,
             String linkedIn,

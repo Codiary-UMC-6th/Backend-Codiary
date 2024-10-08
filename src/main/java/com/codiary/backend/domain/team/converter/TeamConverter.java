@@ -13,6 +13,7 @@ public class TeamConverter {
                 .teamId(team.getTeamId())
                 .name(team.getName())
                 .intro(team.getIntro())
+                .adminMail(team.getEmail())
                 .profileImageUrl(team.getProfileImage() == null ? null : team.getProfileImage().getImageUrl())
                 .bannerImageUrl(team.getBannerImage() == null ? null : team.getBannerImage().getImageUrl())
                 .github(team.getGithub())

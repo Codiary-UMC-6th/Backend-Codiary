@@ -22,6 +22,7 @@ public class TeamResponseDTO {
             Long teamId,
             String name,
             String intro,
+            String adminMail,
             String profileImageUrl,
             String bannerImageUrl,
             String github,
