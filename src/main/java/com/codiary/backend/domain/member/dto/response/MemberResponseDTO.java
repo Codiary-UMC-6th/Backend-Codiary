@@ -3,6 +3,9 @@ package com.codiary.backend.domain.member.dto.response;
 import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
 import com.codiary.backend.domain.techstack.enumerate.TechStack;
 import com.codiary.backend.global.jwt.TokenInfo;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Builder;
 
 import java.util.List;
@@ -24,15 +27,21 @@ public class MemberResponseDTO{
             String nickname,
             Long memberId) {}
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
     public record MemberImageDTO(String url) {}
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
     public record SimpleMemberProfileDTO(
             Long userId,
             String userName,
             String photoUrl){}
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
     public record SimpleMemberDTO(
             Long currentMemberId,
@@ -47,6 +56,8 @@ public class MemberResponseDTO{
             List<TeamResponseDTO.SimpleTeamDTO> teamList,
             Boolean myPage) {}
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
     public record MemberInfoDTO(
             Long memberId,
@@ -58,6 +69,8 @@ public class MemberResponseDTO{
             String linkedin,
             String discord) {}
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
     public record FollowDTO(
             Long followId,
@@ -67,6 +80,8 @@ public class MemberResponseDTO{
             String followingName,
             Boolean followStatus) {}
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
     public record MemberTechStackDTO (
             Long memberId,

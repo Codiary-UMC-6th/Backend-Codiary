@@ -8,15 +8,17 @@ import lombok.Builder;
 
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class TeamResponseDTO {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
     public record SimpleTeamDTO(
             Long teamId,
             String teamName) {}
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
     public record TeamDTO(
             Long teamId,
@@ -31,6 +33,8 @@ public class TeamResponseDTO {
             String discord,
             String instagram) {}
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
     public record TeamProfileDTO(
             Long teamId,
