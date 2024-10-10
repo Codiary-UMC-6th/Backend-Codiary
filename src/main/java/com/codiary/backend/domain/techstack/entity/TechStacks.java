@@ -4,6 +4,7 @@ import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.techstack.enumerate.TechStack;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,10 @@ public class TechStacks {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    public TechStacks(TechStack name, Member member) {
+        this.name = name;
+        this.member = member;
+    }
 }

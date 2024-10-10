@@ -49,7 +49,7 @@ public class MemberRequestDTO {
     }
 
     // 회원 정보 요청 DTO
-    public record MemberInfoRequestDTO(
+    public record MemberInfoDTO(
             String birth,
             String introduction,
             String github,

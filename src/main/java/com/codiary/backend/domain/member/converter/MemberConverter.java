@@ -39,6 +39,19 @@ public class MemberConverter {
                 .build();
     }
 
+    public static MemberResponseDTO.MemberInfoDTO toMemberInfoResponseDto(Member member) {
+        return MemberResponseDTO.MemberInfoDTO.builder()
+                .memberId(member.getMemberId())
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .birth(member.getBirth())
+                .introduction(member.getIntroduction())
+                .github(member.getGithub())
+                .linkedin(member.getLinkedin())
+                .discord(member.getDiscord())
+                .build();
+    }
+
     public static MemberResponseDTO.FollowDTO toFollowDto(Follow follow) {
         return MemberResponseDTO.FollowDTO.builder()
                 .followId(follow.getFollowId())
@@ -60,5 +73,24 @@ public class MemberConverter {
                                 : "")
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    public static List<MemberResponseDTO.SimpleMemberProfileDTO> toSimpleMemberProfileResponseDto(List<Member> members){
+        return members.stream()
+                .map(member -> MemberResponseDTO.SimpleMemberProfileDTO.builder()
+                        .userId(member.getMemberId())
+                        .userName(member.getNickname())
+                        .photoUrl(member.getImage() != null ? member.getImage().getImageUrl() : "")
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public static MemberResponseDTO.MemberTechStackDTO toMemberTechStackResponseDto(Member updatedMember) {
+        return MemberResponseDTO.MemberTechStackDTO.builder()
+                .memberId(updatedMember.getMemberId())
+                .techStacks(updatedMember.getTechStackList().stream()
+                        .map(TechStacks::getName)
+                        .collect(Collectors.toList()))
+                .build();
     }
 }
