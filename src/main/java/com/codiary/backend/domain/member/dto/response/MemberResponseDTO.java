@@ -68,19 +68,6 @@ public class MemberResponseDTO{
             String github,
             String linkedin,
             String discord) {}
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    @Builder
-    public record MemberInfoDTO(
-            Long memberId,
-            String email,
-            String nickname,
-            String birth,
-            String introduction,
-            String github,
-            String linkedin,
-            String discord) {}
   
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
