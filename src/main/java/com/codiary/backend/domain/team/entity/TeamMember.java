@@ -1,9 +1,12 @@
 package com.codiary.backend.domain.team.entity;
 
 import com.codiary.backend.domain.member.entity.Member;
-import com.codiary.backend.domain.member.enumerate.MemberRole;
+import com.codiary.backend.domain.team.enumerate.TeamMemberRole;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -17,7 +20,7 @@ public class TeamMember {
   //팀원 직책
   @Column(name = "member_role", columnDefinition = "varchar(500)")
   @Enumerated(EnumType.STRING)
-  private MemberRole teamMemberRole;
+  private TeamMemberRole teamMemberRole;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id")
@@ -30,4 +33,10 @@ public class TeamMember {
   @Column(name = "member_position", columnDefinition = "varchar(500)")
   private String memberPosition;
 
+  @Builder
+    public TeamMember(TeamMemberRole teamMemberRole, Member member, Team team) {
+        this.teamMemberRole = teamMemberRole;
+        this.member = member;
+        this.team = team;
+    }
 }
