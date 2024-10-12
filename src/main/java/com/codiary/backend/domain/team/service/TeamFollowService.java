@@ -72,10 +72,10 @@ public class TeamFollowService {
 
     public List<Member> getFollowers(Long teamId, Member requester) {
         // 팀 존재 확인
-        Team team = teamRepository.findById(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+        Team team = teamRepository.findByIdWithFollowers(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
         // 팀에 소속 멤버인지 확인
-        if (!team.getTeamMemberList().contains(requester)) {
+        if (!teamRepository.isTeamMember(team, requester)) {
             throw new TeamHandler(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS);
         }
 

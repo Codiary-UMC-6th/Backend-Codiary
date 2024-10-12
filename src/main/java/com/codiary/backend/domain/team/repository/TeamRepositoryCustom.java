@@ -9,4 +9,6 @@ public interface TeamRepositoryCustom {
     Optional<Team> findTeamProfile(Long teamId);
 
     boolean isTeamMember(Team team, Member member);
+
+    Optional<Team> findByIdWithFollowers(Long teamId);
 }
