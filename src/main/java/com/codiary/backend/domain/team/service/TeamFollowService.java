@@ -7,6 +7,7 @@ import com.codiary.backend.domain.team.entity.TeamFollow;
 import com.codiary.backend.domain.team.repository.TeamFollowRepository;
 import com.codiary.backend.domain.team.repository.TeamRepository;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
+import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.apiPayload.exception.handler.TeamHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,9 +24,12 @@ public class TeamFollowService {
 
     private final TeamRepository teamRepository;
     private final TeamFollowRepository teamFollowRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public TeamFollow followTeam(Long toId, Member fromMember) {
+        fromMember = memberRepository.findByIdWithFollowedTeams(fromMember.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         Team toTeam = teamRepository.findById(toId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         TeamFollow teamFollow;
 
