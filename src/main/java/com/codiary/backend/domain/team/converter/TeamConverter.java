@@ -1,10 +1,13 @@
 package com.codiary.backend.domain.team.converter;
 
 import com.codiary.backend.domain.member.converter.MemberConverter;
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
 import com.codiary.backend.domain.team.entity.Team;
+import com.codiary.backend.domain.team.entity.TeamFollow;
 import com.codiary.backend.domain.team.entity.TeamMember;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class TeamConverter {
@@ -43,6 +46,24 @@ public class TeamConverter {
                                 .stream()
                                 .map(TeamMember::getMember)
                                 .collect(Collectors.toList())))
+                .build();
+    }
+
+    public static TeamResponseDTO.TeamFollowDTO toTeamFollowResponseDTO(TeamFollow teamFollow) {
+        return TeamResponseDTO.TeamFollowDTO.builder()
+                .teamFollowId(teamFollow.getTeamFollowId())
+                .followerId(teamFollow.getMember().getMemberId())
+                .followerName(teamFollow.getMember().getNickname())
+                .followingTeamId(teamFollow.getTeam().getTeamId())
+                .followingTeamName(teamFollow.getTeam().getName())
+                .followStatus(teamFollow.getFollowStatus())
+                .build();
+    }
+
+    public static TeamResponseDTO.TeamFollowersDTO toTeamFollowersResponseDTO(Long teamId, List<Member> followers) {
+        return TeamResponseDTO.TeamFollowersDTO.builder()
+                .teamId(teamId)
+                .followers(MemberConverter.toSimpleFollowResponseDto(followers))
                 .build();
     }
 }

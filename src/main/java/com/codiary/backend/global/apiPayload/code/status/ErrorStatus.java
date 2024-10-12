@@ -41,6 +41,7 @@ public enum ErrorStatus implements BaseErrorCode {
     TEAM_ADMIN_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "TEAM_2004", "관리자 권한이 없습니다."),
     TEAM_MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "TEAM_2005", "이미 존재하는 팀원입니다."),
     TEAM_LEADER_NOT_FOUND(HttpStatus.BAD_REQUEST, "TEAM_2006", "팀 관리자를 찾을 수 없습니다"),
+    TEAM_MEMBER_ONLY_ACCESS(HttpStatus.BAD_REQUEST, "TEAM_2007", "팀 멤버만 조회할 수 있습니다."),
     // 포스트 관려 에러 3000
     POST_CREATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3001", "포스트 생성 권한이 없습니다."),
     POST_UPDATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3002", "포스트 수정 권한이 없습니다."),

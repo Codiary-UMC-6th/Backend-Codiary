@@ -29,4 +29,14 @@ public class TeamFollow extends BaseEntity {
   @Column(name="follow_status", columnDefinition = "tinyint")
   private Boolean followStatus;
 
+  @Builder
+  public TeamFollow(Member member, Team team) {
+    this.member = member;
+    this.team = team;
+    followStatus = true;
+  }
+
+  public void update() {
+    followStatus = !followStatus;
+  }
 }
