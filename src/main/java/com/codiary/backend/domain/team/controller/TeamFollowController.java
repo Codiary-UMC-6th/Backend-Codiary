@@ -17,34 +17,34 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v2/follow/teams/{team-id}")
+@RequestMapping("/api/v2/follow/teams/{team_id}")
 @Tag(name = "팀 팔로우 API", description = "팀 팔로우와 관련된 API 입니다.")
 public class TeamFollowController {
 
     private final TeamFollowService teamFollowService;
     private final MemberCommandService memberCommandService;
 
-    @Operation(summary = "팀 팔로우/언팔로우", description = "{team-id}에 해당하는 팀에 대한 팔로우/언팔로우 기능을 수행합니다.")
+    @Operation(summary = "팀 팔로우/언팔로우", description = "{team_id}에 해당하는 팀에 대한 팔로우/언팔로우 기능을 수행합니다.")
     @PostMapping()
-    public ApiResponse<TeamResponseDTO.TeamFollowDTO> followTeam(@PathVariable("team-id") Long teamId) {
+    public ApiResponse<TeamResponseDTO.TeamFollowDTO> followTeam(@PathVariable("team_id") Long teamId) {
         Member requester = memberCommandService.getRequester();
         TeamFollow teamFollow = teamFollowService.followTeam(teamId, requester);
 
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamFollowResponseDTO(teamFollow));
     }
 
-    @Operation(summary = "팀 팔로우 여부 조회", description = "{team-id}에 해당하는 팀에 대해 팔로우 여부를 조회합니다.")
+    @Operation(summary = "팀 팔로우 여부 조회", description = "{team_id}에 해당하는 팀에 대해 팔로우 여부를 조회합니다.")
     @GetMapping()
-    public ApiResponse<Boolean> isFollowing(@PathVariable("team-id") Long teamId) {
+    public ApiResponse<Boolean> isFollowing(@PathVariable("team_id") Long teamId) {
         Member member = memberCommandService.getRequester();
         Boolean followStatus = teamFollowService.isFollowing(teamId, member);
 
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, followStatus);
     }
 
-    @Operation(summary = "팀 팔로워 리스트 조회", description = "{team-id}에 해당하는 팀의 팔로워 리스트를 조회힙니다. 팀에 소속된 사용자만 사용 가능합니다.")
+    @Operation(summary = "팀 팔로워 리스트 조회", description = "{team_id}에 해당하는 팀의 팔로워 리스트를 조회힙니다. 팀에 소속된 사용자만 사용 가능합니다.")
     @GetMapping("followers")
-    public ApiResponse<TeamResponseDTO.TeamFollowersDTO> getFollowers(@PathVariable("team-id") Long teamId) {
+    public ApiResponse<TeamResponseDTO.TeamFollowersDTO> getFollowers(@PathVariable("team_id") Long teamId) {
         Member member = memberCommandService.getRequester();
         List<Member> followers = teamFollowService.getFollowers(teamId, member);
 
