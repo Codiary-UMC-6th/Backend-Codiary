@@ -8,6 +8,7 @@ public interface MemberRepositoryCustom {
     Optional<Member> findMemberWithTechStacksAndProjectsAndTeam(Long userId);
     Optional<Member> findMemberWithTechStacks(Long userId);
 
+    Optional<Member> findByIdWithFollowedTeams(Long id);
     Optional<Member> findByIdWithAndFollowersAndFollowings(Long id);
 
     Optional<Member> findByIdWithFollowings(Long id);
