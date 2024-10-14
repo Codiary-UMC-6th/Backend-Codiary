@@ -1,7 +1,6 @@
 package com.codiary.backend.domain.team.converter;
 
 import com.codiary.backend.domain.member.converter.MemberConverter;
-import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
 import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.team.entity.TeamFollow;
@@ -60,10 +59,15 @@ public class TeamConverter {
                 .build();
     }
 
-    public static TeamResponseDTO.TeamFollowersDTO toTeamFollowersResponseDTO(Long teamId, List<Member> followers) {
+    public static TeamResponseDTO.TeamFollowersDTO toTeamFollowersResponseDTO(Long teamId, List<TeamFollow> followers) {
         return TeamResponseDTO.TeamFollowersDTO.builder()
                 .teamId(teamId)
-                .followers(MemberConverter.toSimpleFollowResponseDto(followers))
+                .followers(MemberConverter.toSimpleFollowResponseDto(
+                                followers.stream()
+                                        .map(TeamFollow::getMember)
+                                        .collect(Collectors.toList())
+                        )
+                )
                 .build();
     }
 }

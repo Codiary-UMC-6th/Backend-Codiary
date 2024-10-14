@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface TeamFollowRepository extends JpaRepository<TeamFollow, Long> {
+public interface TeamFollowRepository extends JpaRepository<TeamFollow, Long>, TeamFollowRepositoryCustom {
 
     Boolean existsByTeamAndAndMember(Team team, Member member);
 

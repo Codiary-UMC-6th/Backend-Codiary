@@ -46,7 +46,7 @@ public class TeamFollowController {
     @GetMapping("followers")
     public ApiResponse<TeamResponseDTO.TeamFollowersDTO> getFollowers(@PathVariable("team_id") Long teamId) {
         Member member = memberCommandService.getRequester();
-        List<Member> followers = teamFollowService.getFollowers(teamId, member);
+        List<TeamFollow> followers = teamFollowService.getFollowers(teamId, member);
 
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamFollowersResponseDTO(teamId, followers));
     }

@@ -13,9 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +26,13 @@ public class TeamFollowService {
 
     @Transactional
     public TeamFollow followTeam(Long toId, Member fromMember) {
+        // validation: member 존재 여부 확인 및 팀 존재 여부 확인
         fromMember = memberRepository.findByIdWithFollowedTeams(fromMember.getMemberId()).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Team toTeam = teamRepository.findById(toId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
         TeamFollow teamFollow;
 
+        // business logic: 팔로우/언팔로우
         if (teamFollowRepository.existsByTeamAndAndMember(toTeam, fromMember)) {
             // 관계 있음
             teamFollow = teamFollowRepository.findTeamFollowByTeamAndMember(toTeam, fromMember).get();
@@ -57,35 +57,32 @@ public class TeamFollowService {
             fromMember.getFollowedTeams().add(teamFollow);
         }
 
+        // response: 생성/갱신된 teamFollow 반환
         return teamFollowRepository.save(teamFollow);
     }
 
     public Boolean isFollowing(Long toId, Member fromMember) {
-        // 팀 존재 확인
+        // validation: 팀 존재 확인
         Team toTeam = teamRepository.findById(toId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
-        // response
+        // business logic & response: 팀 팔로우 여부 반환
         return teamFollowRepository.findTeamFollowByTeamAndMember(toTeam, fromMember)
                 .map(TeamFollow::getFollowStatus)
                 .orElse(false);
     }
 
-    public List<Member> getFollowers(Long teamId, Member requester) {
-        // 팀 존재 확인
+    public List<TeamFollow> getFollowers(Long teamId, Member requester) {
+        // validation: 팀 존재 확인 & 팀 소속 여부 확인
         Team team = teamRepository.findByIdWithFollowers(teamId).orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
 
-        // 팀에 소속 멤버인지 확인
         if (!teamRepository.isTeamMember(team, requester)) {
             throw new TeamHandler(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS);
         }
 
-        if (team.getFollowers() == null) {
-            return new ArrayList<>();
-        }
+        // business logic: follower 조회
+        List<TeamFollow> teamFollowers = teamFollowRepository.findFollowersByTeamId(teamId);
 
-        return team.getFollowers().stream()
-                .filter(TeamFollow::getFollowStatus)
-                .map(TeamFollow::getMember)
-                .collect(Collectors.toList());
+        // response: 조회한 팔로워 반환
+        return teamFollowers;
     }
 }
