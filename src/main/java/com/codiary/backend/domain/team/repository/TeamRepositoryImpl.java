@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import static com.codiary.backend.domain.member.entity.QMember.member;
 import static com.codiary.backend.domain.team.entity.QTeam.team;
+import static com.codiary.backend.domain.team.entity.QTeamFollow.teamFollow;
 import static com.codiary.backend.domain.team.entity.QTeamMember.teamMember;
 
 @RequiredArgsConstructor
@@ -37,5 +38,15 @@ public class TeamRepositoryImpl implements TeamRepositoryCustom{
                 .where(teamMember.team.teamId.eq(fetchedTeam.getTeamId())
                         .and(teamMember.member.memberId.eq(member.getMemberId())))
                 .fetchFirst() != null;
+    }
+
+    @Override
+    public Optional<Team> findByIdWithFollowers(Long teamId) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(team)
+                .leftJoin(team.followers, teamFollow).fetchJoin()
+                .leftJoin(teamFollow.member).fetchJoin()
+                .where(team.teamId.eq(teamId))
+                .fetchOne());
     }
 }

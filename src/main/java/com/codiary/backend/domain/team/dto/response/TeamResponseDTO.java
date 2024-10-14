@@ -48,5 +48,23 @@ public class TeamResponseDTO {
             String discord,
             String instagram,
             Boolean isFollowed,
-            List<MemberResponseDTO.SimpleMemberProfileDTO> teamMemberList){}
+            List<MemberResponseDTO.SimpleMemberProfileDTO> teamMemberList) {}
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @Builder
+    public record TeamFollowDTO(
+            Long teamFollowId,
+            Long followerId,
+            String followerName,
+            Long followingTeamId,
+            String followingTeamName,
+            Boolean followStatus) {}
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @Builder
+    public record TeamFollowersDTO(
+        Long teamId,
+        List<MemberResponseDTO.SimpleMemberDTO> followers) {}
 }
