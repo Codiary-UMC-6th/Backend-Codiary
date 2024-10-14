@@ -18,52 +18,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v2/members")
-@Tag(name = "회원 API", description = "회원가입/로그인/로그아웃/회원정보 조회/수정/삭제 관련 API입니다.")
+@Tag(name = "회원 API", description = "회원정보 조회/수정/삭제 관련 API입니다.")
 public class MemberController {
 
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
-
-    @PostMapping("/sign-up")
-    @Operation(
-            summary = "회원가입"
-    )
-    public ApiResponse<String> signUp(@Valid @RequestBody MemberRequestDTO.MemberSignUpRequestDTO request) {
-        return memberCommandService.signUp(request);
-    }
-
-    @GetMapping("/sign-up/check-email")
-    @Operation(summary = "이메일 중복 확인")
-    public ApiResponse<String> checkEmailDuplication(@RequestParam String email) {
-        return memberCommandService.checkEmailDuplication(email);
-    }
-
-    @GetMapping("/sign-up/check-nickname")
-    @Operation(summary = "닉네임 중복 확인")
-    public ApiResponse<String> checkNicknameDuplication(@RequestParam String nickname) {
-        return memberCommandService.checkNicknameDuplication(nickname);
-    }
-
-    @PostMapping("/login")
-    @Operation(summary = "로그인")
-    public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> login(@Valid @RequestBody MemberRequestDTO.MemberLoginRequestDTO request) {
-        return memberCommandService.login(request);
-    }
-
-    @PostMapping("/logout")
-    @Operation(summary = "로그아웃")
-    public ApiResponse<String> logout(@Valid @RequestBody MemberRequestDTO.refreshRequestDTO request) {
-        String response = memberCommandService.logout(request.refreshToken());
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
-    }
-
-    @PostMapping("/refresh")
-    @Operation(summary = "액세스 토큰 재할당")
-    public ApiResponse<MemberResponseDTO.TokenRefreshResponseDTO> refresh(@Valid @RequestBody MemberRequestDTO.refreshRequestDTO request) {
-        String jwtToken = request.refreshToken();
-        MemberResponseDTO.TokenRefreshResponseDTO response = memberCommandService.refresh(jwtToken);
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
-    }
 
     @PatchMapping(path = "/profile-image", consumes = "multipart/form-data")
     @Operation(summary = "프로필 사진 설정")
