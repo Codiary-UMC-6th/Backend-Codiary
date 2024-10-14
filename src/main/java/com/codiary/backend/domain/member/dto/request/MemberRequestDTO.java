@@ -1,6 +1,5 @@
 package com.codiary.backend.domain.member.dto.request;
 
-import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,7 +23,6 @@ public class MemberRequestDTO {
             String password,
             String nickname,
             LocalDate birth,
-            Member.Gender gender,
             String github,
             String linkedin,
             String discord) {
