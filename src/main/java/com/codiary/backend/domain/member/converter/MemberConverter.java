@@ -100,6 +100,7 @@ public class MemberConverter {
         Member member = Member.builder()
                 .email(request.email())
                 .password(password)
+                .nickname(request.nickname())
                 .birth(request.birth().toString())
                 .github(request.github())
                 .linkedin(request.linkedin())

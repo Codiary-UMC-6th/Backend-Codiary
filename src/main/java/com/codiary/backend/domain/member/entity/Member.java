@@ -44,7 +44,7 @@ public class Member extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private Gender gender;
 
-  public enum Gender {Male, Female, NotSet}
+  public enum Gender {Male, Female}
 
   @Column(name = "status", columnDefinition = "varchar(500)")
   @Enumerated(EnumType.STRING)
@@ -108,7 +108,7 @@ public class Member extends BaseEntity {
     this.nickname = nickname;
     this.birth = birth;
     this.introduction = "";
-    this.gender = Gender.NotSet;
+    this.gender = Gender.Male;
     this.github = github;
     this.linkedin = linkedin;
     this.discord = discord;

@@ -33,19 +33,19 @@ public class AuthService {
     private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
-    public String signUp(MemberRequestDTO.MemberSignUpRequestDTO signUpRequest) {
+    public String signUp(MemberRequestDTO.MemberSignUpRequestDTO request) {
         // validation
         // - 이메일, 닉네임, 비밀번호 적합한지 확인
         // - 존재하는 닉네임/이메일인지 확인
-        signUpRequest.isCorrect();
-        if (memberRepository.existsByEmail(signUpRequest.email())
-                || memberRepository.existsByNickname(signUpRequest.nickname())) {
+        request.isCorrect();
+        if (memberRepository.existsByEmail(request.email())
+                || memberRepository.existsByNickname(request.nickname())) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXISTS);
         }
 
         // business logic: dto 바탕으로 member entity 제작 및 저장
-        String encodedPassword = passwordEncoder.encode(signUpRequest.password());
-        Member member = MemberConverter.toMember(signUpRequest, encodedPassword);
+        String encodedPassword = passwordEncoder.encode(request.password());
+        Member member = MemberConverter.toMember(request, encodedPassword);
         memberRepository.save(member);
 
         // response: 정상적으로 계정 생성되었음을 반환
@@ -85,11 +85,11 @@ public class AuthService {
 
 
     @Transactional
-    public MemberResponseDTO.MemberTokenResponseDTO login(MemberRequestDTO.MemberLoginRequestDTO loginRequest) {
+    public MemberResponseDTO.MemberTokenResponseDTO login(MemberRequestDTO.MemberLoginRequestDTO request) {
 
         try {
             // 1. Login ID/PW를 기반으로 Authentication 객체 생성
-            UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
+            UsernamePasswordAuthenticationToken authenticationToken = request.toAuthentication();
 
             // 2. 비밀번호 체크
             // loadUserByUsername method 실행됨
@@ -97,7 +97,7 @@ public class AuthService {
                     .authenticate(authenticationToken);
 
             // 3. 인증 정보를 기반으로 JWT 토큰 생성
-            Member getMember = memberRepository.findByEmail(loginRequest.email()).orElseThrow();
+            Member getMember = memberRepository.findByEmail(request.email()).orElseThrow();
             TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, getMember.getMemberId());
 
             return MemberResponseDTO.MemberTokenResponseDTO.builder()
@@ -112,7 +112,9 @@ public class AuthService {
     }
 
     @Transactional
-    public String logout(String refreshToken) {
+    public String logout(MemberRequestDTO.refreshRequestDTO request) {
+        String refreshToken = request.refreshToken();
+
         // validation: 로그인 상태인지 확인, 정상 토큰인지 확인
         if (redisTemplate.hasKey(refreshToken)) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_LOGGED_OUT);
@@ -130,7 +132,9 @@ public class AuthService {
     }
 
     @Transactional
-    public MemberResponseDTO.TokenRefreshResponseDTO refresh(String refreshToken) {
+    public MemberResponseDTO.TokenRefreshResponseDTO refresh(MemberRequestDTO.refreshRequestDTO request) {
+        String refreshToken = request.refreshToken();
+
         // validation: 정상 토큰 확인 및 로그아웃한 유저인지 확인
         if (!jwtTokenProvider.validateToken(refreshToken)) {
             throw new MemberHandler(ErrorStatus.MEMBER_WRONG_TOKEN);

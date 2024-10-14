@@ -78,20 +78,4 @@ public class MemberRequestDTO {
     public record refreshRequestDTO(
             String refreshToken) {
     }
-
-    // 이메일 확인 요청 DTO
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    @Builder
-    public record emailDuplicationCheckRequestDTO(
-            String email) {
-    }
-
-    // 이메일 확인 요청 DTO
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    @Builder
-    public record nickNameDuplicationCheckRequestDTO(
-            String nickName) {
-    }
 }
