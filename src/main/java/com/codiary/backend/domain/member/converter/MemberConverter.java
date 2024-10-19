@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.member.converter;
 
+import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.member.entity.Follow;
 import com.codiary.backend.domain.member.entity.Member;
@@ -92,5 +93,19 @@ public class MemberConverter {
                         .map(TechStacks::getName)
                         .collect(Collectors.toList()))
                 .build();
+    }
+
+    // 회원가입시 활용
+    public static Member toMember(MemberRequestDTO.MemberSignUpRequestDTO request, String password) {
+        Member member = Member.builder()
+                .email(request.email())
+                .password(password)
+                .nickname(request.nickname())
+                .birth(request.birth().toString())
+                .github(request.github())
+                .linkedin(request.linkedin())
+                .discord(request.discord())
+                .build();
+        return member;
     }
 }

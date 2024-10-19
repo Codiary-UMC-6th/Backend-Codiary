@@ -3,16 +3,18 @@ package com.codiary.backend.domain.member.entity;
 import com.codiary.backend.domain.coauthor.entity.Authors;
 import com.codiary.backend.domain.comment.entity.Comment;
 import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
-import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
+import com.codiary.backend.domain.member.enumerate.MemberState;
 import com.codiary.backend.domain.post.entity.Bookmark;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.team.entity.TeamFollow;
 import com.codiary.backend.domain.team.entity.TeamMember;
 import com.codiary.backend.domain.techstack.entity.TechStacks;
 import com.codiary.backend.global.common.BaseEntity;
-import com.codiary.backend.domain.member.enumerate.MemberState;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -100,17 +102,17 @@ public class Member extends BaseEntity {
   private MemberImage image;
 
   @Builder
-  public Member(String email, String password, String nickname, String birth, String introduction, Gender gender, String github, String linkedin, String discord, MemberImage image) {
+  public Member(String email, String password, String nickname, String birth, String github, String linkedin, String discord) {
     this.email = email;
     this.password = password;
     this.nickname = nickname;
     this.birth = birth;
-    this.introduction = introduction;
-    this.gender = gender;
+    this.introduction = "";
+    this.gender = Gender.Male;
     this.github = github;
     this.linkedin = linkedin;
     this.discord = discord;
-    this.image = image;
+    this.image = null;
   }
 
   public void updateInfo(MemberRequestDTO.MemberInfoDTO memberInfo) {

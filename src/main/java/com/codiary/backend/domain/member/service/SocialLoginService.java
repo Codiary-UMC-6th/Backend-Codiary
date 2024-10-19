@@ -1,17 +1,20 @@
 package com.codiary.backend.domain.member.service;
 
+import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.member.entity.Member;
+import com.codiary.backend.domain.member.repository.MemberRepository;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
 import com.codiary.backend.global.jwt.TokenInfo;
-import com.codiary.backend.domain.member.repository.MemberRepository;
-import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -361,11 +364,9 @@ public class SocialLoginService {
                 .password("")
                 .nickname(email)
                 .birth(new LocalDate().toString())
-                .gender(Member.Gender.Male)
                 .github("")
                 .linkedin("")
                 .discord("")
-                .image(null)
                 .build();
         return memberRepository.save(member);
     }

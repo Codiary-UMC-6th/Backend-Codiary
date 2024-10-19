@@ -15,22 +15,16 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
-import com.codiary.backend.global.jwt.JwtTokenProvider;
 import com.codiary.backend.global.jwt.SecurityUtil;
-import com.codiary.backend.global.jwt.TokenInfo;
 import com.codiary.backend.global.s3.AmazonS3Manager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -38,125 +32,9 @@ import java.util.concurrent.TimeUnit;
 public class MemberCommandService {
 
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UuidRepository uuidRepository;
     private final AmazonS3Manager s3Manager;
     private final MemberImageRepository memberImageRepository;
-    private final RedisTemplate<String, String> redisTemplate;
-
-    @Transactional
-    public ApiResponse<String> signUp(MemberRequestDTO.MemberSignUpRequestDTO signUpRequest) {
-        signUpRequest.isCorrect();
-
-        if (memberRepository.existsByEmail(signUpRequest.email())
-                || memberRepository.existsByNickname(signUpRequest.nickname())) {
-            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXISTS);
-        }
-
-        Member member = Member.builder()
-                .email(signUpRequest.email())
-                .password(passwordEncoder.encode(signUpRequest.password()))
-                .nickname(signUpRequest.nickname())
-                .birth(signUpRequest.birth().toString())
-                .gender(Member.Gender.Female)
-                .github(signUpRequest.github())
-                .linkedin(signUpRequest.linkedin())
-                .discord(signUpRequest.discord())
-                .image(null)
-                .build();
-        memberRepository.save(member);
-
-        return ApiResponse.of(SuccessStatus.MEMBER_OK, "정상적으로 가입되었습니다.");
-    }
-
-    @Transactional
-    public ApiResponse<String> checkEmailDuplication(String email) {
-        if (memberRepository.existsByEmail(email)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_EMAIL_ALREADY_EXISTS);
-        }
-
-        if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
-            throw new MemberHandler(ErrorStatus.MEMBER_WRONG_EMAIL);
-        }
-
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "사용가능한 이메일입니다!");
-    }
-
-    @Transactional
-    public ApiResponse<String> checkNicknameDuplication(String nickname) {
-        if (memberRepository.existsByNickname(nickname)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_NICKNAME_ALREADY_EXISTS);
-        }
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "사용가능한 닉네임입니다!");
-    }
-
-
-    @Transactional
-    public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> login(MemberRequestDTO.MemberLoginRequestDTO loginRequest) {
-
-        try {
-            // 1. Login ID/PW를 기반으로 Authentication 객체 생성
-            UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
-
-            // 2. 비밀번호 체크
-            // loadUserByUsername method 실행됨
-            Authentication authentication = authenticationManagerBuilder.getObject()
-                    .authenticate(authenticationToken);
-
-            // 3. 인증 정보를 기반으로 JWT 토큰 생성
-            Member getMember = memberRepository.findByEmail(loginRequest.email()).orElseThrow();
-            TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, getMember.getMemberId());
-
-            return ApiResponse.of(SuccessStatus.MEMBER_OK, MemberResponseDTO.MemberTokenResponseDTO.builder()
-                    .email(getMember.getEmail())
-                    .nickname(getMember.getNickname())
-                    .tokenInfo(tokenInfo)
-                    .memberId(getMember.getMemberId())
-                    .build());
-        } catch (AuthenticationException e) {
-            throw new MemberHandler(ErrorStatus.MEMBER_LOGIN_FAIL);
-        }
-    }
-
-    @Transactional
-    public String logout(String refreshToken) {
-        if (redisTemplate.hasKey(refreshToken)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_LOGGED_OUT);
-        }
-
-        if (jwtTokenProvider.validateToken(refreshToken)) {
-            Date expirationDate = jwtTokenProvider.getExpirationTimeFromToken(refreshToken);
-            long expirationTime = (expirationDate.getTime() - (new Date()).getTime()) / 1000;
-            redisTemplate.opsForValue().set(refreshToken, "blacklisted", expirationTime, TimeUnit.SECONDS);
-        } else {
-            throw new MemberHandler(ErrorStatus.MEMBER_WRONG_TOKEN);
-        }
-        return "로그아웃되었습니다.";
-    }
-
-    @Transactional
-    public MemberResponseDTO.TokenRefreshResponseDTO refresh(String refreshToken) {
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_WRONG_TOKEN);
-        }
-
-        if (redisTemplate.hasKey(refreshToken)) {
-            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_LOGGED_OUT);
-        }
-
-        String userEmail = jwtTokenProvider.getUserEmailFromToken(refreshToken);
-        String newAccessToken = jwtTokenProvider.createAccessToken(userEmail);
-        Member member = memberRepository.findByEmail(userEmail).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        return MemberResponseDTO.TokenRefreshResponseDTO.builder()
-                .accessToken(newAccessToken)
-                .email(userEmail)
-                .nickname(member.getNickname())
-                .memberId(member.getMemberId())
-                .build();
-    }
 
     @Transactional
     public Member getRequester() {

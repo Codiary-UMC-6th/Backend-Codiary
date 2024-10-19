@@ -4,6 +4,7 @@ import com.codiary.backend.domain.member.converter.MemberConverter;
 import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.member.entity.Member;
+import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.member.service.MemberQueryService;
 import com.codiary.backend.domain.techstack.enumerate.TechStack;
@@ -13,57 +14,17 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v2/members")
-@Tag(name = "회원 API", description = "회원가입/로그인/로그아웃/회원정보 조회/수정/삭제 관련 API입니다.")
+@Tag(name = "회원 API", description = "회원정보 조회/수정/삭제 관련 API입니다.")
 public class MemberController {
 
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
-
-    @PostMapping("/sign-up")
-    @Operation(
-            summary = "회원가입"
-    )
-    public ApiResponse<String> signUp(@Valid @RequestBody MemberRequestDTO.MemberSignUpRequestDTO request) {
-        return memberCommandService.signUp(request);
-    }
-
-    @GetMapping("/sign-up/check-email")
-    @Operation(summary = "이메일 중복 확인")
-    public ApiResponse<String> checkEmailDuplication(@RequestParam String email) {
-        return memberCommandService.checkEmailDuplication(email);
-    }
-
-    @GetMapping("/sign-up/check-nickname")
-    @Operation(summary = "닉네임 중복 확인")
-    public ApiResponse<String> checkNicknameDuplication(@RequestParam String nickname) {
-        return memberCommandService.checkNicknameDuplication(nickname);
-    }
-
-    @PostMapping("/login")
-    @Operation(summary = "로그인")
-    public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> login(@Valid @RequestBody MemberRequestDTO.MemberLoginRequestDTO request) {
-        return memberCommandService.login(request);
-    }
-
-    @PostMapping("/logout")
-    @Operation(summary = "로그아웃")
-    public ApiResponse<String> logout(@Valid @RequestBody MemberRequestDTO.refreshRequestDTO request) {
-        String response = memberCommandService.logout(request.refreshToken());
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
-    }
-
-    @PostMapping("/refresh")
-    @Operation(summary = "액세스 토큰 재할당")
-    public ApiResponse<MemberResponseDTO.TokenRefreshResponseDTO> refresh(@Valid @RequestBody MemberRequestDTO.refreshRequestDTO request) {
-        String jwtToken = request.refreshToken();
-        MemberResponseDTO.TokenRefreshResponseDTO response = memberCommandService.refresh(jwtToken);
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
-    }
 
     @PatchMapping(path = "/profile-image", consumes = "multipart/form-data")
     @Operation(summary = "프로필 사진 설정")
@@ -104,9 +65,9 @@ public class MemberController {
 
     @GetMapping("/info")
     @Operation(summary = "사용자 정보 조회", description = "마이페이지 사용자 정보 조회 기능")
-    public ApiResponse<MemberResponseDTO.MemberInfoDTO> getUserInfo(){
-        Member member = memberCommandService.getRequester();
-        Member fetchedMember = memberQueryService.getUserInfo(member.getMemberId());
+    public ApiResponse<MemberResponseDTO.MemberInfoDTO> getUserInfo(@AuthenticationPrincipal CustomMemberDetails customMemberDetails) {
+        Long memberId = customMemberDetails.getId();
+        Member fetchedMember = memberQueryService.getUserInfo(memberId);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberInfoResponseDto(fetchedMember));
     }
 
