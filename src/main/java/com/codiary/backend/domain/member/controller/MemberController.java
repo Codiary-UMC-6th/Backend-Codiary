@@ -4,6 +4,7 @@ import com.codiary.backend.domain.member.converter.MemberConverter;
 import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.member.entity.Member;
+import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.member.service.MemberQueryService;
 import com.codiary.backend.domain.techstack.enumerate.TechStack;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -63,9 +65,9 @@ public class MemberController {
 
     @GetMapping("/info")
     @Operation(summary = "사용자 정보 조회", description = "마이페이지 사용자 정보 조회 기능")
-    public ApiResponse<MemberResponseDTO.MemberInfoDTO> getUserInfo(){
-        Member member = memberCommandService.getRequester();
-        Member fetchedMember = memberQueryService.getUserInfo(member.getMemberId());
+    public ApiResponse<MemberResponseDTO.MemberInfoDTO> getUserInfo(@AuthenticationPrincipal CustomMemberDetails customMemberDetails) {
+        Long memberId = customMemberDetails.getId();
+        Member fetchedMember = memberQueryService.getUserInfo(memberId);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberInfoResponseDto(fetchedMember));
     }
 

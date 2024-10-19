@@ -6,7 +6,6 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,7 @@ public class CustomMemberDetailsService implements UserDetailsService {
     }
 
     private UserDetails createUserDetails(Member member) {
-        return new User(member.getEmail(), member.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        return new CustomMemberDetails(member.getEmail(), member.getMemberId(), member.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
     }
 
 }
