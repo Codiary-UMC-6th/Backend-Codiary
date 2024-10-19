@@ -1,6 +1,6 @@
 package com.codiary.backend.global.jwt;
 
-import com.codiary.backend.domain.member.service.CustomMemberDetailsService;
+import com.codiary.backend.domain.member.security.CustomMemberDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

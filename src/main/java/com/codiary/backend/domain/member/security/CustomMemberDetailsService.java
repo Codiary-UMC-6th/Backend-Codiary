@@ -1,4 +1,4 @@
-package com.codiary.backend.domain.member.service;
+package com.codiary.backend.domain.member.security;
 
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.repository.MemberRepository;
