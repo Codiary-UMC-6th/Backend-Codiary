@@ -41,7 +41,7 @@ jobs:
       - name: Make application-secret.yml
         run: |
           cd ./src/main
-          mkdir resources
+          [ ! -d "resources" ] && mkdir resources
           cd ./resources
           touch ./application.yml
           echo "${{ secrets.APPLICATION_SECRET_YML}}" > ./application.yml
