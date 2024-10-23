@@ -79,4 +79,10 @@ public class TeamConverter {
                 .build();
 
     }
+
+    public static List<TeamResponseDTO.TeamMemberDTO> toTeamMemberListResponseDto(Team team) {
+        return team.getTeamMemberList().stream()
+                .map(TeamConverter::toTeamMemberResponseDTO)
+                .collect(Collectors.toList());
+    }
 }

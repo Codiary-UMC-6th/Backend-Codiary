@@ -1,6 +1,5 @@
 package com.codiary.backend.domain.team.controller;
 
-import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.team.converter.TeamConverter;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/teams")
+@RequestMapping("/api/v2/teams")
 @RequiredArgsConstructor
 @Tag(name = "팀 API", description = "팀 생성/조회/수정 관련 API 입니다.")
 public class TeamController {
