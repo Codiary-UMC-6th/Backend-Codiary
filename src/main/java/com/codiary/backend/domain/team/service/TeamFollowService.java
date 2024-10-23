@@ -33,7 +33,7 @@ public class TeamFollowService {
         TeamFollow teamFollow;
 
         // business logic: 팔로우/언팔로우
-        if (teamFollowRepository.existsByTeamAndAndMember(toTeam, fromMember)) {
+        if (teamFollowRepository.existsByTeamAndMember(toTeam, fromMember)) {
             // 관계 있음
             teamFollow = teamFollowRepository.findTeamFollowByTeamAndMember(toTeam, fromMember).get();
 

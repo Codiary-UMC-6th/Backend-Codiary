@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface TeamFollowRepository extends JpaRepository<TeamFollow, Long>, TeamFollowRepositoryCustom {
 
-    Boolean existsByTeamAndAndMember(Team team, Member member);
+    Boolean existsByTeamAndMember(Team team, Member member);
 
     Optional<TeamFollow> findTeamFollowByTeamAndMember(Team team, Member member);
 }

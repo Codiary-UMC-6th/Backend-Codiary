@@ -17,7 +17,7 @@ public enum ErrorStatus implements BaseErrorCode {
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
     // 회원 관려 에러 1000
-    MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER_1001", "사용자가 없습니다."),
+    MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER_1001", "사용자를 찾을 수 없습니다."),
     MEMBER_NAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "MEMBER_1002", "이름입력은 필수 입니다."),
     MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER_1003", "이미 존재하는 유저입니다."),
     MEMBER_ID_NULL(HttpStatus.BAD_REQUEST, "MEMBER_1004", "사용자 아이디는 필수 입니다."),
@@ -41,7 +41,7 @@ public enum ErrorStatus implements BaseErrorCode {
     TEAM_ADMIN_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "TEAM_2004", "관리자 권한이 없습니다."),
     TEAM_MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "TEAM_2005", "이미 존재하는 팀원입니다."),
     TEAM_LEADER_NOT_FOUND(HttpStatus.BAD_REQUEST, "TEAM_2006", "팀 관리자를 찾을 수 없습니다"),
-    TEAM_MEMBER_ONLY_ACCESS(HttpStatus.BAD_REQUEST, "TEAM_2007", "팀 멤버만 조회할 수 있습니다."),
+    TEAM_MEMBER_ONLY_ACCESS(HttpStatus.BAD_REQUEST, "TEAM_2007", "팀 멤버만 접근할 수 있습니다."),
     // 포스트 관려 에러 3000
     POST_CREATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3001", "포스트 생성 권한이 없습니다."),
     POST_UPDATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3002", "포스트 수정 권한이 없습니다."),

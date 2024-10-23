@@ -67,4 +67,12 @@ public class TeamResponseDTO {
     public record TeamFollowersDTO(
         Long teamId,
         List<MemberResponseDTO.SimpleMemberDTO> followers) {}
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @Builder
+    public record TeamMemberDTO(
+            Long teamMemberId,
+            String teamMemberRole,
+            MemberResponseDTO.SimpleMemberProfileDTO member) {}
 }
