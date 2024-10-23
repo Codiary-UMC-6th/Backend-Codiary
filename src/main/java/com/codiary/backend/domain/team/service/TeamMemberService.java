@@ -52,4 +52,26 @@ public class TeamMemberService {
         //return
         return teamMemberRepository.save(teamMember);
     }
+
+    public void deleteTeamMember(Long requestMemberId, Long teamId, Long memberId) {
+        //validation: 팀/요청자/팀원 유효성 및 요청자가 팀원인지, 존재하는 팀원인지 유효성 검사
+        Team team = teamRepository.findByIdWithTeamMemberList(teamId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
+
+        Member requester = memberRepository.findById(requestMemberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if(!teamMemberRepository.existsByTeamAndMember(team, requester)){
+            throw new GeneralException(ErrorStatus.TEAM_MEMBER_NOT_FOUND);
+        }
+
+        TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_MEMBER_NOT_FOUND));
+
+        //business logic: 팀원 삭제
+        return teamMemberRepository.delete(teamMember);
+    }
 }

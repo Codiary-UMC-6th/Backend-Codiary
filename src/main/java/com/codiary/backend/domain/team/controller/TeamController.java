@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/teams")
 @RequiredArgsConstructor
@@ -60,7 +62,7 @@ public class TeamController {
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamResponseDto(updatedTeam));
     }
 
-    @PostMapping("/add")
+    @PostMapping("/team_member")
     @Operation(summary = "팀원 추가")
     public ApiResponse<TeamResponseDTO.TeamMemberDTO> addTeamMember(
             @RequestParam("team_id") Long teamId,
@@ -69,5 +71,25 @@ public class TeamController {
     ){
        TeamMember teamMember = teamMemberService.addTeamMember(memberDetails.getId(), teamId, request);
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamMemberResponseDTO(teamMember));
+    }
+
+    @DeleteMapping("/team_member")
+    @Operation(summary = "팀원 삭제")
+    public ApiResponse<String> deleteTeamMember(
+            @RequestParam("team_id") Long teamId,
+            @RequestParam("member_id") Long memberId,
+            @AuthenticationPrincipal CustomMemberDetails memberDetails
+    ){
+        teamMemberService.deleteTeamMember(memberDetails.getId(), teamId, memberId);
+        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, "팀원 삭제가 완료되었습니다.");
+    }
+
+    @GetMapping("/team_member")
+    @Operation(summary = "팀원 조회")
+    public ApiResponse<List<TeamResponseDTO.TeamMemberDTO>> getTeamMember(
+            @RequestParam("team_id") Long teamId
+    ){
+        Team team = teamMemberService.getTeamMember(teamId);
+        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamMemberListResponseDto(team));
     }
 }

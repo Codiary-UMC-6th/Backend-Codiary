@@ -2,6 +2,8 @@ package com.codiary.backend.domain.team.repository;
 
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.team.entity.Team;
+import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
+import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -46,6 +48,15 @@ public class TeamRepositoryImpl implements TeamRepositoryCustom{
                 .selectFrom(team)
                 .leftJoin(team.followers, teamFollow).fetchJoin()
                 .leftJoin(teamFollow.member).fetchJoin()
+                .where(team.teamId.eq(teamId))
+                .fetchOne());
+    }
+
+    @Override
+    public Optional<Team> findByIdWithTeamMemberList(Long teamId) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(team)
+                .leftJoin(team.teamMemberList, teamMember).fetchJoin()
                 .where(team.teamId.eq(teamId))
                 .fetchOne());
     }
