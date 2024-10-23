@@ -1,6 +1,7 @@
 package com.codiary.backend.domain.team.service;
 
 import com.codiary.backend.domain.member.entity.Member;
+import com.codiary.backend.domain.member.repository.MemberRepository;
 import com.codiary.backend.domain.team.dto.request.TeamRequestDTO;
 import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.team.entity.TeamMember;
@@ -19,9 +20,14 @@ import java.util.ArrayList;
 @Transactional(readOnly = true)
 public class TeamService {
     private final TeamRepository teamRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
-    public Team createTeam(TeamRequestDTO.CreateTeamDTO request, Member member){
+    public Team createTeam(TeamRequestDTO.CreateTeamDTO request, Long memberId){
+        //validation: 팀장 존재 여부 확인
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
         //business logic: 팀 생성, 팀장 등록
         Team team = Team.builder()
                 .name(request.name())
@@ -40,7 +46,11 @@ public class TeamService {
         return teamRepository.save(team);
     }
 
-    public Team getTeamProfile(Long teamId, Member member){
+    public Team getTeamProfile(Long teamId, Long memberId){
+        //validation: member 유효성 확인
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
         //business logic: 팀 조회
         Team team = teamRepository.findTeamProfile(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
@@ -49,7 +59,11 @@ public class TeamService {
         return team;
     }
 
-    public Team getTeam(Long teamId, Member member){
+    public Team getTeam(Long teamId, Long memberId){
+        //validation: member 유효성 확인
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
         //business logic: 팀 조회 / 수정 페이지 접근 권환 확인
         Team team = teamRepository.findByTeamIdAndDeletedAtIsNull(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
@@ -63,8 +77,11 @@ public class TeamService {
     }
 
     @Transactional
-    public Team updateTeam(TeamRequestDTO.UpdateTeamDTO request, Long teamId, Member member){
-        //validation: team 존재 여부 확인  / 수정 페이지 접근 권환 확인
+    public Team updateTeam(TeamRequestDTO.UpdateTeamDTO request, Long teamId, Long memberId){
+        //validation: member 유효성 확인 / team 존재 여부 확인  / 수정 페이지 접근 권환 확인
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
         Team team = teamRepository.findByTeamIdAndDeletedAtIsNull(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
 
