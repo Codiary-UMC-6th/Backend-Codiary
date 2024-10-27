@@ -49,4 +49,14 @@ public class TeamRepositoryImpl implements TeamRepositoryCustom{
                 .where(team.teamId.eq(teamId))
                 .fetchOne());
     }
+
+    @Override
+    public Optional<Team> findByIdWithTeamMemberList(Long teamId) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(team)
+                .leftJoin(team.teamMemberList, teamMember).fetchJoin()
+                .leftJoin(teamMember.member).fetchJoin()
+                .where(team.teamId.eq(teamId))
+                .fetchOne());
+    }
 }

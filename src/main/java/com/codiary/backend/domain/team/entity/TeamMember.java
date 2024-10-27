@@ -30,9 +30,6 @@ public class TeamMember {
   @JoinColumn(name = "team_id")
   private Team team;
 
-  @Column(name = "member_position", columnDefinition = "varchar(500)")
-  private String memberPosition;
-
   @Builder
     public TeamMember(TeamMemberRole teamMemberRole, Member member, Team team) {
         this.teamMemberRole = teamMemberRole;

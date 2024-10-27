@@ -55,6 +55,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v2/post/search").permitAll()
                                 // Comment 관련 접근
                                 // Team 관련 접근
+                                .requestMatchers("/api/v2/teams/team_member").permitAll()
                                 // Bookmark 관련 접근
                                 // Calendar 관련 접근
                                 // Project 관련 접근
