@@ -4,16 +4,21 @@ import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.repository.MemberRepository;
 import com.codiary.backend.domain.team.dto.request.TeamRequestDTO;
 import com.codiary.backend.domain.team.entity.Team;
+import com.codiary.backend.domain.team.entity.TeamBannerImage;
 import com.codiary.backend.domain.team.entity.TeamMember;
+import com.codiary.backend.domain.team.entity.TeamProfileImage;
 import com.codiary.backend.domain.team.enumerate.TeamMemberRole;
+import com.codiary.backend.domain.team.repository.TeamBannerImageRepository;
+import com.codiary.backend.domain.team.repository.TeamProfileImageRepository;
 import com.codiary.backend.domain.team.repository.TeamRepository;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
+import com.codiary.backend.global.s3.AmazonS3Manager;
+import java.util.ArrayList;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +26,9 @@ import java.util.ArrayList;
 public class TeamService {
     private final TeamRepository teamRepository;
     private final MemberRepository memberRepository;
+    private final AmazonS3Manager s3Manager;
+    private final TeamBannerImageRepository bannerImageRepository;
+    private final TeamProfileImageRepository profileImageRepository;
 
     @Transactional
     public Team createTeam(TeamRequestDTO.CreateTeamDTO request, Long memberId){
@@ -104,4 +112,76 @@ public class TeamService {
                 .build();
         team.getTeamMemberList().add(teamMember);
     }
+
+    @Transactional
+    public TeamProfileImage setTeamProfileImage(Long teamId, Long memberId, TeamRequestDTO.TeamImageDTO request) {
+        Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
+
+        if (team.getProfileImage() != null) {
+            s3Manager.deleteFile(team.getProfileImage().getImageUrl());
+            profileImageRepository.delete(team.getProfileImage());
+        }
+
+        String uuid = UUID.randomUUID().toString();
+        Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
+        String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.image());
+
+        TeamProfileImage profileImage = TeamProfileImage.builder()
+                .imageUrl(fileUrl)
+                .team(team)
+                .build();
+
+        return profileImageRepository.save(profileImage);
+    }
+
+    @Transactional
+    public String deleteTeamProfileImage(Long teamId, Long memberId) {
+        Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
+
+        if (team.getProfileImage() != null) {
+            s3Manager.deleteFile(team.getProfileImage().getImageUrl());
+            profileImageRepository.delete(team.getProfileImage());
+            team.setProfileImage(null);
+            teamRepository.save(team);
+        }
+
+        return "성공적으로 삭제되었습니다!";
+    }
+
+    @Transactional
+    public TeamBannerImage setTeamBannerImage(Long teamId, Long memberId, TeamRequestDTO.TeamImageDTO request) {
+        Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
+
+        if (team.getBannerImage() != null) {
+            s3Manager.deleteFile(team.getBannerImage().getImageUrl());
+            bannerImageRepository.delete(team.getBannerImage());
+        }
+
+        String uuid = UUID.randomUUID().toString();
+        Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
+        String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.image());
+
+        TeamBannerImage bannerImage = TeamBannerImage.builder()
+                .imageUrl(fileUrl)
+                .team(team)
+                .build();
+
+        return bannerImageRepository.save(bannerImage);
+    }
+
+    @Transactional
+    public String deleteTeamBannerImage(Long teamId, Long memberId) {
+        Team team = teamRepository.findById(teamId).orElseThrow(); // 예외 처리 필요
+
+        if (team.getBannerImage() != null) {
+            s3Manager.deleteFile(team.getBannerImage().getImageUrl());
+            bannerImageRepository.delete(team.getBannerImage());
+            team.setBannerImage(null);
+            teamRepository.save(team);
+        }
+
+        return "성공적으로 삭제되었습니다!";
+    }
+
+
 }

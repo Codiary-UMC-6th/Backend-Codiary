@@ -3,15 +3,21 @@ package com.codiary.backend.domain.team.entity;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.team.dto.request.TeamRequestDTO;
 import com.codiary.backend.global.common.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -88,5 +94,13 @@ public class Team extends BaseEntity {
         this.linkedin = request.linkedIn();
         this.discord = request.discord();
         this.instagram = request.instagram();
+    }
+
+    public void setProfileImage(TeamProfileImage profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public void setBannerImage(TeamBannerImage bannerImage) {
+        this.bannerImage = bannerImage;
     }
 }
