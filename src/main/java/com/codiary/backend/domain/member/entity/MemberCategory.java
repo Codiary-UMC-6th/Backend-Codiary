@@ -1,7 +1,7 @@
 package com.codiary.backend.domain.member.entity;
 
+import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.global.common.BaseEntity;
-import com.codiary.backend.domain.category.entity.Categories;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,15 +21,11 @@ public class MemberCategory extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    private Categories categories;
+    private Category category;
 
-    public void setMember(Member member) {
-        if (this.member != null) {
-            member.getMemberCategoryList().remove(this);
-        }
-
+    @Builder
+    public MemberCategory(Member member, Category category) {
         this.member = member;
-
-        member.getMemberCategoryList().add(this);
+        this.category = category;
     }
 }
