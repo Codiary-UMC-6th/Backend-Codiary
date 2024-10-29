@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
@@ -43,7 +45,17 @@ public class CategoryService {
                 .category(category)
                 .build();
 
+        //response: 카테고리 반환
         return memberCategoryRepository.save(memberCategory);
+    }
+
+    public List<MemberCategory> getCategoryList(Long memberId){
+        //validation: 멤버인지 확인
+        Member member = memberRepository.findByIdWithCategory(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        //business logic & return: 카테고리 조회
+        return member.getMemberCategoryList();
     }
 
 }

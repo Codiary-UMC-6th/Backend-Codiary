@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/category")
@@ -23,5 +25,11 @@ public class CategoryController {
     public ApiResponse<?> createCategory(@RequestParam(value = "category_name") String categoryName, @AuthenticationPrincipal CustomMemberDetails customMemberDetails) {
         MemberCategory memberCategory = categoryService.createCategory(categoryName, customMemberDetails.getId());
         return ApiResponse.onSuccess(SuccessStatus.CATEGORY_OK, CategoryConverter.toMemberCategoryDTO(memberCategory));
+    }
+
+    @GetMapping("")
+    public ApiResponse<?> getCategoryList(@AuthenticationPrincipal CustomMemberDetails customMemberDetails) {
+        List<MemberCategory> memberCategoryList = categoryService.getCategoryList(customMemberDetails.getId());
+        return ApiResponse.onSuccess(SuccessStatus.CATEGORY_OK, CategoryConverter.toMemberCategoryListDTO(memberCategoryList));
     }
 }
