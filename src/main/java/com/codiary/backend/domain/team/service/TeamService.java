@@ -13,6 +13,8 @@ import com.codiary.backend.domain.team.repository.TeamProfileImageRepository;
 import com.codiary.backend.domain.team.repository.TeamRepository;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
+import com.codiary.backend.global.common.uuid.Uuid;
+import com.codiary.backend.global.common.uuid.UuidRepository;
 import com.codiary.backend.global.s3.AmazonS3Manager;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -29,6 +31,7 @@ public class TeamService {
     private final AmazonS3Manager s3Manager;
     private final TeamBannerImageRepository bannerImageRepository;
     private final TeamProfileImageRepository profileImageRepository;
+    private final UuidRepository uuidRepository;
 
     @Transactional
     public Team createTeam(TeamRequestDTO.CreateTeamDTO request, Long memberId){

@@ -99,7 +99,7 @@ public class TeamController {
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamMemberListResponseDTO(team));
     }
 
-    @PostMapping("/{team_id}/profile_image")
+    @PostMapping(path = "/{team_id}/profile_image", consumes = "multipart/form-data")
     @Operation(summary = "팀 프로필 사진 설정")
     public ApiResponse<?> setTeamProfileImage(
             @RequestParam("team_id") Long teamId,
@@ -122,8 +122,8 @@ public class TeamController {
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, response);
     }
 
-    @PostMapping("/{team_id}/banner_image")
-    @Operation(summary = "팀 프로필 사진 설정")
+    @PostMapping(path = "/{team_id}/banner_image", consumes = "multipart/form-data")
+    @Operation(summary = "팀 배너 사진 설정")
     public ApiResponse<?> setTeamBannerImage(
             @RequestParam("team_id") Long teamId,
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
@@ -135,7 +135,7 @@ public class TeamController {
     }
 
     @DeleteMapping("/{team_id}/banner_image")
-    @Operation(summary = "팀 프로필 사진 설정")
+    @Operation(summary = "팀 배너 사진 설정")
     public ApiResponse<String> deleteTeamBannerImage(
             @RequestParam("team_id") Long teamId,
             @AuthenticationPrincipal CustomMemberDetails memberDetails
