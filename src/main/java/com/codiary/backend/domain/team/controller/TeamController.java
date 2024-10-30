@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -101,10 +102,10 @@ public class TeamController {
 
     @PostMapping(path = "/{team_id}/profile_image", consumes = "multipart/form-data")
     @Operation(summary = "팀 프로필 사진 설정")
-    public ApiResponse<?> setTeamProfileImage(
+    public ApiResponse<TeamResponseDTO.TeamImageDTO> setTeamProfileImage(
             @RequestParam("team_id") Long teamId,
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
-            TeamRequestDTO.TeamImageDTO request
+            @ModelAttribute TeamRequestDTO.TeamImageDTO request
     ) {
         Long memberId = memberDetails.getId();
         TeamProfileImage profileImage = teamService.setTeamProfileImage(teamId, memberId, request);
@@ -124,10 +125,10 @@ public class TeamController {
 
     @PostMapping(path = "/{team_id}/banner_image", consumes = "multipart/form-data")
     @Operation(summary = "팀 배너 사진 설정")
-    public ApiResponse<?> setTeamBannerImage(
+    public ApiResponse<TeamResponseDTO.TeamImageDTO> setTeamBannerImage(
             @RequestParam("team_id") Long teamId,
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
-            TeamRequestDTO.TeamImageDTO request
+            @ModelAttribute TeamRequestDTO.TeamImageDTO request
     ) {
         Long memberId = memberDetails.getId();
         TeamBannerImage bannerImage = teamService.setTeamBannerImage(teamId, memberId, request);
