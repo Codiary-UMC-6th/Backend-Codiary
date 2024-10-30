@@ -3,6 +3,7 @@ package com.codiary.backend.global.config;
 import com.codiary.backend.global.jwt.EmailPasswordAuthenticationFilter;
 import com.codiary.backend.global.jwt.JwtAuthenticationFilter;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +16,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -56,6 +55,8 @@ public class SecurityConfig {
                                 // Comment 관련 접근
                                 // Team 관련 접근
                                 .requestMatchers("/api/v2/teams/team_member").permitAll()
+                                .requestMatchers("/api/v2/teams/{team_id}/profile_image").permitAll()
+                                .requestMatchers("/api/v2/teams/{team_id}/banner_image").permitAll()
                                 // Bookmark 관련 접근
                                 // Calendar 관련 접근
                                 // Project 관련 접근
