@@ -131,8 +131,11 @@ public class TeamService {
 
         // business logic: 팀 프로필 이미지 갱신 (기존 이미지 삭제 후 새 이미지 등록)
         if (team.getProfileImage() != null) {
-            s3Manager.deleteFile(team.getProfileImage().getImageUrl());
-            profileImageRepository.delete(team.getProfileImage());
+            TeamProfileImage preProfileImage = team.getProfileImage();
+            team.setProfileImage(null);
+            s3Manager.deleteFile(preProfileImage.getImageUrl());
+            profileImageRepository.delete(preProfileImage);
+            profileImageRepository.flush();
         }
 
         String uuid = UUID.randomUUID().toString();
@@ -188,8 +191,11 @@ public class TeamService {
 
         // business Logic: 팀 배너 이미지 갱신 (기존 이미지 삭제 후 새 이미지 등록)
         if (team.getBannerImage() != null) {
-            s3Manager.deleteFile(team.getBannerImage().getImageUrl());
-            bannerImageRepository.delete(team.getBannerImage());
+            TeamBannerImage preBannerImage = team.getBannerImage();
+            team.setBannerImage(null);
+            s3Manager.deleteFile(preBannerImage.getImageUrl());
+            bannerImageRepository.delete(preBannerImage);
+            bannerImageRepository.flush();
         }
 
         String uuid = UUID.randomUUID().toString();
