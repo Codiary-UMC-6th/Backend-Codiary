@@ -1,10 +1,18 @@
 package com.codiary.backend.global.jwt;
 
 import com.codiary.backend.domain.member.security.CustomMemberDetailsService;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import java.security.Key;
+import java.util.Date;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,10 +23,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import java.security.Key;
-import java.util.Date;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -97,6 +101,7 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .refreshTokenExpirationTime(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
                 .build();
     }
 
