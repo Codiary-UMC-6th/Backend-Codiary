@@ -58,4 +58,18 @@ public class CategoryService {
         return member.getMemberCategoryList();
     }
 
+    @Transactional
+    public void deleteCategory(Long memberCategoryId, Long memberId) {
+        // validation: 멤버인지, 카테고리가 존재하는지 확인
+        Member member = memberRepository.findByIdWithCategory(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        MemberCategory memberCategory = memberCategoryRepository.findByMemberCategoryIdAndMember(memberCategoryId, member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND));
+
+        // business logic: 카테고리 삭제
+        memberCategory.getMember().getMemberCategoryList().remove(memberCategory);
+        memberCategory.getCategory().getMemberCategoryList().remove(memberCategory);
+        memberCategoryRepository.delete(memberCategory);
+    }
 }

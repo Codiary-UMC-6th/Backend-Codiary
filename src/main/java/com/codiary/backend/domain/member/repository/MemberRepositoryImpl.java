@@ -1,7 +1,6 @@
 package com.codiary.backend.domain.member.repository;
 
 import com.codiary.backend.domain.member.entity.Member;
-import com.codiary.backend.domain.member.entity.MemberCategory;
 import com.codiary.backend.domain.member.entity.MemberProjectMap;
 import com.codiary.backend.domain.team.entity.TeamMember;
 import com.querydsl.jpa.impl.JPAQueryFactory;
