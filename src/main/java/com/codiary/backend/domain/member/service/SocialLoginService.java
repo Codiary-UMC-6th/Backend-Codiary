@@ -8,6 +8,8 @@ import com.codiary.backend.global.jwt.TokenInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Value;
@@ -176,6 +178,9 @@ public class SocialLoginService {
     }
 
     private String getGoogleToken(String codeString) {
+        // %2F -> / 로 변환해주지 않으면 오류 발생
+        codeString = URLDecoder.decode(codeString, StandardCharsets.UTF_8);
+
         String path = "https://oauth2.googleapis.com/token";
         String clientId = "?client_id=" + googleClientId;
         String clientSecret = "&client_secret=" + googleClientSecret;
