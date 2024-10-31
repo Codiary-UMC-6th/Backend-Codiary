@@ -173,7 +173,6 @@ public class SocialLoginService {
                 .tokenInfo(tokenInfo)
                 .memberId(member.getMemberId())
                 .build();
-
     }
 
     private String getGoogleToken(String codeString) {
