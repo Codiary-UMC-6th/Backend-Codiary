@@ -34,7 +34,7 @@ public class TeamService {
     private final UuidRepository uuidRepository;
 
     @Transactional
-    public Team createTeam(TeamRequestDTO.CreateTeamDTO request, Long memberId){
+    public Team createTeam(TeamRequestDTO.CreateTeamDTO request, Long memberId) {
         //validation: 팀장 존재 여부 확인
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -57,7 +57,7 @@ public class TeamService {
         return teamRepository.save(team);
     }
 
-    public Team getTeamProfile(Long teamId, Long memberId){
+    public Team getTeamProfile(Long teamId, Long memberId) {
         //validation: member 유효성 확인
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -70,7 +70,7 @@ public class TeamService {
         return team;
     }
 
-    public Team getTeam(Long teamId, Long memberId){
+    public Team getTeam(Long teamId, Long memberId) {
         //validation: member 유효성 확인
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -79,7 +79,7 @@ public class TeamService {
         Team team = teamRepository.findByTeamIdAndDeletedAtIsNull(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
 
-        if (!teamRepository.isTeamMember(team, member)){
+        if (!teamRepository.isTeamMember(team, member)) {
             throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
         }
 
@@ -88,7 +88,7 @@ public class TeamService {
     }
 
     @Transactional
-    public Team updateTeam(TeamRequestDTO.UpdateTeamDTO request, Long teamId, Long memberId){
+    public Team updateTeam(TeamRequestDTO.UpdateTeamDTO request, Long teamId, Long memberId) {
         //validation: member 유효성 확인 / team 존재 여부 확인  / 수정 페이지 접근 권환 확인
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -96,7 +96,7 @@ public class TeamService {
         Team team = teamRepository.findByTeamIdAndDeletedAtIsNull(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
 
-        if (!teamRepository.isTeamMember(team, member)){
+        if (!teamRepository.isTeamMember(team, member)) {
             throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
         }
 
@@ -129,23 +129,25 @@ public class TeamService {
             throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
         }
 
-        // business logic: 팀 프로필 이미지 갱신 (기존 이미지 삭제 후 새 이미지 등록)
-        if (team.getProfileImage() != null) {
-            TeamProfileImage preProfileImage = team.getProfileImage();
-            team.setProfileImage(null);
-            s3Manager.deleteFile(preProfileImage.getImageUrl());
-            profileImageRepository.delete(preProfileImage);
-            profileImageRepository.flush();
-        }
-
+        // business logic: 팀 프로필 이미지 갱신
         String uuid = UUID.randomUUID().toString();
         Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
         String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.image());
 
-        TeamProfileImage profileImage = TeamProfileImage.builder()
-                .imageUrl(fileUrl)
-                .team(team)
-                .build();
+        // 기존 프로필 이미지 객체와 연결 되어 있는 경우 url 수정
+        TeamProfileImage profileImage;
+        if (team.getProfileImage() != null) {
+            if (!team.getProfileImage().getImageUrl().isEmpty()) {
+                s3Manager.deleteFile(team.getProfileImage().getImageUrl());
+            }
+            profileImage = team.getProfileImage();
+            profileImage.setImageUrl(fileUrl);
+        } else {
+            profileImage = TeamProfileImage.builder()
+                    .imageUrl(fileUrl)
+                    .team(team)
+                    .build();
+        }
 
         // response: 저장된 이미지 반환
         return profileImageRepository.save(profileImage);
@@ -167,9 +169,8 @@ public class TeamService {
         // business logic: 팀 프로필 이미지 삭제
         if (team.getProfileImage() != null) {
             s3Manager.deleteFile(team.getProfileImage().getImageUrl());
-            profileImageRepository.delete(team.getProfileImage());
-            team.setProfileImage(null);
-            teamRepository.save(team);
+            team.getProfileImage().setImageUrl("");
+            profileImageRepository.save(team.getProfileImage());
         }
 
         // response: 성공을 반환
@@ -189,23 +190,25 @@ public class TeamService {
             throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
         }
 
-        // business Logic: 팀 배너 이미지 갱신 (기존 이미지 삭제 후 새 이미지 등록)
-        if (team.getBannerImage() != null) {
-            TeamBannerImage preBannerImage = team.getBannerImage();
-            team.setBannerImage(null);
-            s3Manager.deleteFile(preBannerImage.getImageUrl());
-            bannerImageRepository.delete(preBannerImage);
-            bannerImageRepository.flush();
-        }
-
+        // business Logic: 팀 배너 이미지 갱신
         String uuid = UUID.randomUUID().toString();
         Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
         String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.image());
 
-        TeamBannerImage bannerImage = TeamBannerImage.builder()
-                .imageUrl(fileUrl)
-                .team(team)
-                .build();
+        // 기존 배너 이미지 객체와 연결 되어 있는 경우 url 수정
+        TeamBannerImage bannerImage;
+        if (team.getBannerImage() != null) {
+            if (!team.getBannerImage().getImageUrl().isEmpty()) {
+                s3Manager.deleteFile(team.getBannerImage().getImageUrl());
+            }
+            bannerImage = team.getBannerImage();
+            bannerImage.setImageUrl(fileUrl);
+        } else {
+            bannerImage = TeamBannerImage.builder()
+                    .imageUrl(fileUrl)
+                    .team(team)
+                    .build();
+        }
 
         // response: 저장된 이미지 반환
         return bannerImageRepository.save(bannerImage);
@@ -227,9 +230,8 @@ public class TeamService {
         // business logic: 팀 배너 이미지 삭제
         if (team.getBannerImage() != null) {
             s3Manager.deleteFile(team.getBannerImage().getImageUrl());
-            bannerImageRepository.delete(team.getBannerImage());
-            team.setBannerImage(null);
-            teamRepository.save(team);
+            team.getBannerImage().setImageUrl("");
+            bannerImageRepository.save(team.getBannerImage());
         }
 
         // response: 성공을 반환

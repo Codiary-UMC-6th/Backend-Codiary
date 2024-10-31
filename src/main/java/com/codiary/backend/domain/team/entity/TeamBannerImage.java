@@ -35,4 +35,8 @@ public class TeamBannerImage {
         this.imageUrl = imageUrl;
         this.team = team;
     }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
