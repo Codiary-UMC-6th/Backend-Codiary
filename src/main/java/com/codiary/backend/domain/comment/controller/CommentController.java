@@ -23,11 +23,8 @@ public class CommentController {
     private final CommentService commentService;
 
     @Operation(summary = "댓글 달기")
-    @PostMapping("/{comment_id}")
-    public ApiResponse<?> commentPost(
-            @PathVariable("post_id") Long postId,
-            @PathVariable("comment_id") Long commentId
-    ) {
+    @PostMapping()
+    public ApiResponse<?> commentPost(@PathVariable("post_id") Long postId) {
         return null;
     }
 
