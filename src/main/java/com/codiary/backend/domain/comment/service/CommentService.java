@@ -7,7 +7,10 @@ import com.codiary.backend.domain.comment.repository.CommentRepository;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.repository.MemberRepository;
 import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.post.repository.PostRepository;
+import com.codiary.backend.domain.team.entity.Team;
+import com.codiary.backend.domain.team.repository.TeamRepository;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
@@ -26,13 +29,23 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final TeamRepository teamRepository;
 
     public Comment commentOnPost(Long postId, Long commenterId, CommentDTO request) {
         // validation: 사용자, post 유무 확인
-        // + 사용자가 해당 게시물에 대한 댓글 권한 있는지( 이후 구현 )
         Member commenter = memberRepository.findById(commenterId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+
+        // validation: 사용자가 해당 게시물에 대한 권한 있는지
+        if (post.getPostAccess().equals(PostAccess.MEMBER) && post.getMember() != commenter) {
+            throw new GeneralException(ErrorStatus.COMMENT_CREATE_UNAUTHORIZED);
+        } else if (post.getPostStatus().equals(PostAccess.TEAM)) {
+            Team teamOfPost = post.getTeam();
+            if (!teamRepository.isTeamMember(teamOfPost, commenter)) {
+                throw new GeneralException((ErrorStatus.COMMENT_CREATE_UNAUTHORIZED));
+            }
+        }
 
         // business logic: 댓글 생성
         Comment comment = Comment.builder()
@@ -47,7 +60,7 @@ public class CommentService {
 
     public String deleteComment(Long commentId, Long memberId) {
         // validation: 사용자, comment 유무 확인
-        // + 사용자가 해당 댓글에 대한 댓글 권한 있는지
+        // + 사용자가 해당 댓글에 대한 권한 있는지
         Member requester = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId)
@@ -66,7 +79,7 @@ public class CommentService {
     @Transactional
     public Comment updateComment(Long commentId, Long memberId, CommentRequestDTO.CommentDTO request) {
         // validation: 사용자, comment 유무 확인
-        // + 사용자가 해당 댓글에 대한 댓글 권한 있는지
+        // + 사용자가 해당 댓글에 대한 권한 있는지
         Member requester = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId)
@@ -85,10 +98,19 @@ public class CommentService {
     @Transactional(readOnly = true)
     public List<Comment> getComments(Long postId, Long memberId, Pageable pageable) {
         // validation: 사용자, post 유무 확인
-        // + 사용자가 해당 게시물에 대한 읽기 권한 있는지( 이후 구현 )
         Member requester = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+
+        // validation: 사용자가 해당 게시물에 대한 권한 있는지
+        if (post.getPostAccess().equals(PostAccess.MEMBER) && post.getMember() != requester) {
+            throw new GeneralException(ErrorStatus.COMMENT_CREATE_UNAUTHORIZED);
+        } else if (post.getPostStatus().equals(PostAccess.TEAM)) {
+            Team teamOfPost = post.getTeam();
+            if (!teamRepository.isTeamMember(teamOfPost, requester)) {
+                throw new GeneralException((ErrorStatus.COMMENT_CREATE_UNAUTHORIZED));
+            }
+        }
 
         // business logic: 댓글 조회
         List<Comment> comments = commentRepository.findByPostWithMemberInfoOrderByCreatedAtDesc(postId, pageable);
