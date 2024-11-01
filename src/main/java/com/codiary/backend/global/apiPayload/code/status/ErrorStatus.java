@@ -57,6 +57,9 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 코멘트 관련 에러 4000
     COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMMENT_4005", "댓글이 없습니다."),
+    COMMENT_CREATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "COMMENT_4006", "댓글 생성 권한이 없습니다."),
+    COMMENT_UPDATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "COMMENT_4006", "댓글 수정 권한이 없습니다."),
+    COMMENT_DELETE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "COMMENT_4006", "댓글 삭제 권한이 없습니다."),
 
 
     // 북마크 관련 에러 6000
