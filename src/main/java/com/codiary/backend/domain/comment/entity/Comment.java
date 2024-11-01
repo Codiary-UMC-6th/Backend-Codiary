@@ -74,4 +74,8 @@ public class Comment extends BaseEntity {
 
         post.getCommentList().add(this);
     }
+
+    public void setCommentBody(String commentBody) {
+        this.commentBody = commentBody;
+    }
 }

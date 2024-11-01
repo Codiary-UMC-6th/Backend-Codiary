@@ -1,6 +1,7 @@
 package com.codiary.backend.domain.comment.service;
 
 import com.codiary.backend.domain.comment.dto.request.CommentRequestDTO;
+import com.codiary.backend.domain.comment.dto.request.CommentRequestDTO.CommentDTO;
 import com.codiary.backend.domain.comment.entity.Comment;
 import com.codiary.backend.domain.comment.repository.CommentRepository;
 import com.codiary.backend.domain.member.entity.Member;
@@ -26,7 +27,7 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
 
-    public Comment commentOnPost(Long postId, Long commenterId, CommentRequestDTO.CreateCommentDTO request) {
+    public Comment commentOnPost(Long postId, Long commenterId, CommentDTO request) {
         // validation: 사용자, post 유무 확인
         // + 사용자가 해당 게시물에 대한 댓글 권한 있는지( 이후 구현 )
         Member commenter = memberRepository.findById(commenterId)
@@ -60,6 +61,25 @@ public class CommentService {
 
         // response: 삭제 성공 반환
         return "성공적으로 삭제되었습니다!";
+    }
+
+    @Transactional
+    public Comment updateComment(Long commentId, Long memberId, CommentRequestDTO.CommentDTO request) {
+        // validation: 사용자, comment 유무 확인
+        // + 사용자가 해당 댓글에 대한 댓글 권한 있는지
+        Member requester = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+        if (comment.getMember() != requester) {
+            throw new GeneralException(ErrorStatus.COMMENT_UPDATE_UNAUTHORIZED);
+        }
+
+        // business logic: 댓글 수정
+        comment.setCommentBody(request.commentBody());
+
+        // response
+        return commentRepository.save(comment);
     }
 
     @Transactional(readOnly = true)

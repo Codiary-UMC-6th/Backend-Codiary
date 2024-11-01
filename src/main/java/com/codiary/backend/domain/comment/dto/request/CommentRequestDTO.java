@@ -11,7 +11,7 @@ public class CommentRequestDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
-    public record CreateCommentDTO(
+    public record CommentDTO(
             String commentBody
     ) {
     }
