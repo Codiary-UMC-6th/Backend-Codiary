@@ -46,11 +46,14 @@ public class CommentService {
 
     public String deleteComment(Long commentId, Long memberId) {
         // validation: 사용자, comment 유무 확인
-        // + 사용자가 해당 댓글에 대한 댓글 권한 있는지( 이후 구현 )
-        Member commenter = memberRepository.findById(memberId)
+        // + 사용자가 해당 댓글에 대한 댓글 권한 있는지
+        Member requester = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+        if (comment.getMember() != requester) {
+            throw new GeneralException(ErrorStatus.COMMENT_DELETE_UNAUTHORIZED);
+        }
 
         // business logic: 댓글 삭제
         commentRepository.delete(comment);
@@ -63,7 +66,7 @@ public class CommentService {
     public List<Comment> getComments(Long postId, Long memberId, Pageable pageable) {
         // validation: 사용자, post 유무 확인
         // + 사용자가 해당 게시물에 대한 읽기 권한 있는지( 이후 구현 )
-        Member commenter = memberRepository.findById(memberId)
+        Member requester = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
 
