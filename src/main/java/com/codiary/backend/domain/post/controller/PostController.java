@@ -23,7 +23,6 @@ import org.springframework.data.domain.Pageable;
 @Tag(name = "게시글 API", description = "게시글 관련 API입니다.")
 public class PostController {
     private final PostService postService;
-
     @Operation(summary = "게시글 검색 결과 페이지네이션", description = "게시글(제목/내용) 키워드 검색 결과를 페이지네이션하여 반환합니다.")
     @GetMapping("/search")
     public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> searchPost(
