@@ -72,6 +72,27 @@ public class PostConverter {
     }
 
 
+    public static PostResponseDTO.UpdatePostResultDTO toUpdatePostResultDTO(Post post) {
+        return PostResponseDTO.UpdatePostResultDTO.builder()
+                .postId(post.getPostId())
+                .memberId(post.getMember().getMemberId())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .thumbnailImageUrl((post.getThumbnailImage() != null)
+                        ? post.getThumbnailImage().getFileUrl()
+                        : "")
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
+                .build();
+    }
+
+
 
 
 }

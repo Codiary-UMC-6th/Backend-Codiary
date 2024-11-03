@@ -44,4 +44,21 @@ public class PostRequestDTO {
         private List<MultipartFile> postFiles;
     }
 
+    @Getter
+    //@Setter
+    @Builder
+    @AllArgsConstructor
+    //@NoArgsConstructor
+    public static class UpdatePostDTO {
+        private String postTitle;
+        private String postBody;
+        private Boolean postStatus;
+        //private Set<String> postCategory;
+        private PostAccess postAccess;
+        private String thumbnailImageName;
+        private List<MultipartFile> addedPostFiles;
+    }
+
+
+
 }
