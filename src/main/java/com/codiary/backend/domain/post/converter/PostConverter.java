@@ -33,19 +33,19 @@ public class PostConverter {
     public static Post toPost(PostRequestDTO.CreatePostRequestDTO request, TeamRepository teamRepository, ProjectRepository projectRepository) {
         Team team = null;
         Project project = null;
-        if (request.teamId() != null) {
-            team = teamRepository.findById(request.teamId()).orElseThrow(() -> new IllegalArgumentException("Team not found with id: " + request.teamId()));
+        if (request.getTeamId() != null) {
+            team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new IllegalArgumentException("Team not found with id: " + request.getTeamId()));
         }
-        if (request.projectId() != null) {
-            project = projectRepository.findById(request.projectId()).orElseThrow(() -> new IllegalArgumentException("Project not found with id: " + request.projectId()));
+        if (request.getProjectId() != null) {
+            project = projectRepository.findById(request.getProjectId()).orElseThrow(() -> new IllegalArgumentException("Project not found with id: " + request.getProjectId()));
         }
         return Post.builder()
-                .postTitle(request.postTitle())
-                .postBody(request.postBody())
+                .postTitle(request.getPostTitle())
+                .postBody(request.getPostBody())
                 .team(team)
                 .project(project)
-                .postStatus(request.postStatus() != null ? request.postStatus() : true)  // 기본값 설정
-                .postAccess(request.postAccess() != null ? request.postAccess() : PostAccess.MEMBER)  // 기본값 설정
+                .postStatus(request.getPostStatus() != null ? request.getPostStatus() : true)  // 기본값 설정
+                .postAccess(request.getPostAccess() != null ? request.getPostAccess() : PostAccess.MEMBER)  // 기본값 설정
                 .build();
     }
 

@@ -25,23 +25,41 @@ public class PostResponseDTO {
     }
 
 
-    @Builder
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public record CreatePostResultDTO(
-            Long postId,
-            Long memberId,
-            Long teamId,
-            Long projectId,
-            String postTitle,
-            String postBody,
-            String thumbnailImageUrl,
-            Boolean postStatus,
-            String postCategory,
-            Set<Long> coauthorIds,
-            PostAccess postAccess,
-            PostFileResponseDTO.PostFileListDTO postFileList
-    ){
+//    @Builder
+//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+//    @JsonInclude(JsonInclude.Include.NON_NULL)
+//    public record CreatePostResultDTO(
+//            Long postId,
+//            Long memberId,
+//            Long teamId,
+//            Long projectId,
+//            String postTitle,
+//            String postBody,
+//            String thumbnailImageUrl,
+//            Boolean postStatus,
+//            String postCategory,
+//            Set<Long> coauthorIds,
+//            PostAccess postAccess,
+//            PostFileResponseDTO.PostFileListDTO postFileList
+//    ){
+//    }
+@Getter
+@Builder
+@AllArgsConstructor
+//@NoArgsConstructor
+public static class CreatePostResultDTO {
+    Long postId;
+    Long memberId;
+    Long teamId;
+    Long projectId;
+    String postTitle;
+    String postBody;
+    String thumbnailImageUrl;
+    Boolean postStatus;
+    String postCategory;
+    Set<Long> coauthorIds;
+    PostAccess postAccess;
+    PostFileResponseDTO.PostFileListDTO postFileList;
+}
 
-    }
 }

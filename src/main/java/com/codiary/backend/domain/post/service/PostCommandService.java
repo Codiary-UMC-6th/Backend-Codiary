@@ -49,8 +49,8 @@ public class PostCommandService {
         Post tempPost = postRepository.save(newPost);
         tempPost.setPostFileList(new ArrayList<>());
 
-        if (request.postFiles() != null) {
-            for (MultipartFile file : request.postFiles()) {
+        if (request.getPostFiles() != null) {
+            for (MultipartFile file : request.getPostFiles()) {
                 if (file.isEmpty()) {
                     continue;
                 }
@@ -66,7 +66,7 @@ public class PostCommandService {
         }
 
         // 대표 사진 설정
-        String thumbnailImageName = request.thumbnailImageName();
+        String thumbnailImageName = request.getThumbnailImageName();
         for (PostFile postFile : tempPost.getPostFileList()) {
             if (postFile.getFileName().equals(thumbnailImageName)) {
                 tempPost.setThumbnailImage(postFile);

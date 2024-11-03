@@ -48,11 +48,27 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toCreateResultDTO(newPost));
     }
 
-    // 멤버의 게시글 수정하기
+//    // 멤버의 게시글 수정하기
+//    @PatchMapping(path = "/{postId}", consumes = "multipart/form-data")
+//    @Operation(summary = "다이어리 수정 API", description = "다이어리를 수정합니다.")
+//    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(@ModelAttribute PostRequestDTO.UpdatePostDTO request, @PathVariable Long postId){
+//        Member member = memberCommandService.getRequester();
+//        jwtTokenProvider.isValidToken(member.getMemberId());
+//
+//        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(postCommandService.updatePost(postId, request)));
+//    }
 
 
-    // 게시글 삭제하기
-
+//    // 게시글 삭제하기
+//    @DeleteMapping("/{postId}")
+//    @Operation(summary = "다이어리 삭제 API", description = "다이어리를 삭제합니다.")
+//    public ApiResponse<?> deletePost(@PathVariable Long postId){
+//        Member member = memberCommandService.getRequester();
+//        jwtTokenProvider.isValidToken(member.getMemberId());
+//
+//        postCommandService.deletePost(postId);
+//        return ApiResponse.onSuccess(SuccessStatus.POST_OK, null);
+//    }
 
 
 
