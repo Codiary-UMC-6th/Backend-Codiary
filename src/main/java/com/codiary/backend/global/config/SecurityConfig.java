@@ -56,6 +56,8 @@ public class SecurityConfig {
                                 // Comment 관련 접근
                                 // Team 관련 접근
                                 .requestMatchers("/api/v2/teams/team_member").permitAll()
+                                .requestMatchers("/api/v2/teams/{team_id}/profile_image").permitAll()
+                                .requestMatchers("/api/v2/teams/{team_id}/banner_image").permitAll()
                                 // Bookmark 관련 접근
                                 // Calendar 관련 접근
                                 // Project 관련 접근
