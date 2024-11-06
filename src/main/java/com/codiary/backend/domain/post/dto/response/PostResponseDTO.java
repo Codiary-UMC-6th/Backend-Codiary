@@ -1,11 +1,13 @@
 package com.codiary.backend.domain.post.dto.response;
 
+import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.Builder;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 public class PostResponseDTO {
 
@@ -20,5 +22,26 @@ public class PostResponseDTO {
             LocalDateTime createdAt,
             String thumbnailImage
     ) {
+    }
+
+
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record CreatePostResultDTO(
+            Long postId,
+            Long memberId,
+            Long teamId,
+            Long projectId,
+            String postTitle,
+            String postBody,
+            String thumbnailImageUrl,
+            Boolean postStatus,
+            String postCategory,
+            Set<Long> coauthorIds,
+            PostAccess postAccess,
+            PostFileResponseDTO.PostFileListDTO postFileList
+    ){
+
     }
 }
