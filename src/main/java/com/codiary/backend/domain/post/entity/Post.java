@@ -86,7 +86,7 @@ public class Post extends BaseEntity {
 
   public void setProject(Project project) { this.project = project;}
 
-  public void setCategories(List<Categories> categories) {
+  public void setCategories(List<Category> categories) {
     this.categoriesList.clear();
     this.categoriesList.addAll(categories);
   }
