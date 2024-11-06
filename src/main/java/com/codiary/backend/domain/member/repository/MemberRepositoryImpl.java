@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.Optional;
 
+import static com.codiary.backend.domain.category.entity.QCategory.category;
 import static com.codiary.backend.domain.member.entity.QMember.member;
+import static com.codiary.backend.domain.member.entity.QMemberCategory.memberCategory;
 import static com.codiary.backend.domain.techstack.entity.QTechStacks.techStacks;
 import static com.codiary.backend.domain.member.entity.QMemberProjectMap.memberProjectMap;
 import static com.codiary.backend.domain.project.entity.QProject.project;
@@ -103,5 +105,16 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .fetch();
 
         fetchedMember.setTeamMemberList(teamMembers);
+    }
+
+    public Optional<Member> findByIdWithCategory(Long id) {
+        Member fetchedMember = queryFactory
+                .selectFrom(member)
+                .leftJoin(member.memberCategoryList, memberCategory).fetchJoin()
+                .leftJoin(memberCategory.category, category).fetchJoin()
+                .where(member.memberId.eq(id))
+                .fetchOne();
+
+        return Optional.ofNullable(fetchedMember);
     }
 }

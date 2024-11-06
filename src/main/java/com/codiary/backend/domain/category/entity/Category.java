@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Categories {
+public class Category {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "category_id", nullable = false, columnDefinition = "bigint")
@@ -23,6 +23,11 @@ public class Categories {
   @ManyToMany(mappedBy = "categoriesList")
   private List<Post> posts = new ArrayList<>();
 
-  @OneToMany(mappedBy = "categories", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<MemberCategory> memberCategoryList = new ArrayList<>();
+
+  @Builder
+    public Category(String name) {
+        this.name = name;
+    }
 }
