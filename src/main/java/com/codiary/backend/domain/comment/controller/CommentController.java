@@ -12,8 +12,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -71,11 +69,10 @@ public class CommentController {
     @GetMapping("/posts/{post_id}/comments")
     public ApiResponse<List<CommentResponseDTO.CommentDTO>> getComments(
             @PathVariable("post_id") Long postId,
-            @AuthenticationPrincipal CustomMemberDetails memberDetails,
-            @PageableDefault(size = 10) Pageable pageable
+            @AuthenticationPrincipal CustomMemberDetails memberDetails
     ) {
         Long memberId = memberDetails.getId();
-        List<Comment> comments = commentService.getComments(postId, memberId, pageable);
+        List<Comment> comments = commentService.getComments(postId, memberId);
         return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toCommentResponseListDto(comments));
     }
 }
