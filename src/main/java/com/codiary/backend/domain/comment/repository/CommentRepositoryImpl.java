@@ -15,7 +15,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Comment> findByPostWithMemberInfoOrderByCreatedAtDesc(Long postId) {
+    public List<Comment> findByPostWithMemberInfoOrderByCreatedAtAsc(Long postId) {
         List<Comment> comments = queryFactory
                 .selectFrom(comment)
                 .leftJoin(comment.member, member)
@@ -23,6 +23,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 .where(comment.post.postId.eq(postId))
 //                .offset(pageable.getOffset())
 //                .limit(pageable.getPageSize())
+                .orderBy(comment.createdAt.asc())
                 .fetch();
 
         return comments;

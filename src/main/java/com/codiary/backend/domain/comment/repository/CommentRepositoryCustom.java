@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface CommentRepositoryCustom {
 
-    List<Comment> findByPostWithMemberInfoOrderByCreatedAtDesc(Long postId);
+    List<Comment> findByPostWithMemberInfoOrderByCreatedAtAsc(Long postId);
 }

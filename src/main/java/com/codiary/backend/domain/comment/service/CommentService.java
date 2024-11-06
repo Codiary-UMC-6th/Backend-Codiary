@@ -112,7 +112,7 @@ public class CommentService {
         }
 
         // business logic: 댓글 조회
-        List<Comment> comments = commentRepository.findByPostWithMemberInfoOrderByCreatedAtDesc(postId);
+        List<Comment> comments = commentRepository.findByPostWithMemberInfoOrderByCreatedAtAsc(postId);
 
         // response: comment list 반환
         return comments;

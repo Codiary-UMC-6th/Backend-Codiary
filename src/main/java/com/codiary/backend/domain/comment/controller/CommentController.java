@@ -65,7 +65,7 @@ public class CommentController {
         return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toCommentResponseDto(updatedComment));
     }
 
-    @Operation(summary = "댓글 조회", description = "기본적으로 10개씩 페이지네이션하여 제공됩니다.")
+    @Operation(summary = "댓글 조회")
     @GetMapping("/posts/{post_id}/comments")
     public ApiResponse<List<CommentResponseDTO.CommentDTO>> getComments(
             @PathVariable("post_id") Long postId,
