@@ -1,6 +1,5 @@
-package com.codiary.backend.domain.member.repository;
+package com.codiary.backend.global.common.uuid;
 
-import com.codiary.backend.domain.member.entity.Uuid;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UuidRepository extends JpaRepository<Uuid, Long> {
