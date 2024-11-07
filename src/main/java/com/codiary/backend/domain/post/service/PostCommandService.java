@@ -1,28 +1,27 @@
 package com.codiary.backend.domain.post.service;
 
+import com.codiary.backend.domain.member.entity.Member;
+import com.codiary.backend.domain.member.repository.MemberRepository;
+import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.post.converter.PostConverter;
 import com.codiary.backend.domain.post.converter.PostFileConverter;
-import com.codiary.backend.domain.member.entity.Member;
-import com.codiary.backend.domain.member.entity.Uuid;
-import com.codiary.backend.domain.member.repository.MemberRepository;
-import com.codiary.backend.domain.member.repository.UuidRepository;
-import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.entity.PostFile;
-import com.codiary.backend.domain.post.repository.PostRepository;
 import com.codiary.backend.domain.post.repository.PostFileRepository;
+import com.codiary.backend.domain.post.repository.PostRepository;
 import com.codiary.backend.domain.project.repository.ProjectRepository;
 import com.codiary.backend.domain.team.repository.TeamRepository;
+import com.codiary.backend.global.common.uuid.Uuid;
+import com.codiary.backend.global.common.uuid.UuidRepository;
 import com.codiary.backend.global.s3.AmazonS3Manager;
+import java.util.ArrayList;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
