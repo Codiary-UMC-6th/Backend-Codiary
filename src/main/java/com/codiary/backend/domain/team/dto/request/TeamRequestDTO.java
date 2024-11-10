@@ -37,7 +37,9 @@ public class TeamRequestDTO {
             @Schema(description = "추가할 팀원 닉네임", example = "abc123*")
             String memberNickName,
             @Schema(description = "추가할 팀원 역할", example = "MEMBER | ADMIN")
-            String memberRole
+            String memberRole,
+            @Schema(description = "추가할 팀원 포지션", example = "BACKEND | FRONTEND | DESIGNER | PLANNER")
+            String memberPosition
     ){}
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

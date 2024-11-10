@@ -6,9 +6,11 @@ import com.codiary.backend.global.jwt.TokenInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 import java.util.List;
+import java.util.Map;
 
 public class MemberResponseDTO{
 
@@ -36,8 +38,13 @@ public class MemberResponseDTO{
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
     public record SimpleMemberProfileDTO(
+            @Schema(description = "멤버 아이디")
             Long userId,
+
+            @Schema(description = "멤버 이름")
             String userName,
+
+            @Schema(description = "멤버 프로필 이미지")
             String photoUrl){}
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -86,4 +93,16 @@ public class MemberResponseDTO{
     public record MemberTechStackDTO (
             Long memberId,
             List<TechStack> techStacks) {}
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @Builder
+    public record MemberCalendarDTO(
+            Map<String, List<ProjectsAndTitlesByDate>> projectsAndTitlesByDate) {
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+        @Builder
+        public record ProjectsAndTitlesByDate(String project, List<String> titles) {}
+    }
 }

@@ -17,10 +17,12 @@ public class TeamMember {
   @Column(name = "team_member_id", nullable = false, columnDefinition = "bigint")
   private Long teamMemberId;
 
-  //팀원 직책
   @Column(name = "member_role", columnDefinition = "varchar(500)")
   @Enumerated(EnumType.STRING)
   private TeamMemberRole teamMemberRole;
+
+  @Column(columnDefinition = "varchar(500)")
+  private String memberPosition;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id")
@@ -31,9 +33,10 @@ public class TeamMember {
   private Team team;
 
   @Builder
-    public TeamMember(TeamMemberRole teamMemberRole, Member member, Team team) {
+    public TeamMember(TeamMemberRole teamMemberRole, Member member, Team team, String memberPosition) {
         this.teamMemberRole = teamMemberRole;
         this.member = member;
         this.team = team;
+        this.memberPosition = memberPosition;
     }
 }

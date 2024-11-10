@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 public class TeamResponseDTO {
@@ -47,7 +49,7 @@ public class TeamResponseDTO {
             String discord,
             String instagram,
             Boolean isFollowed,
-            List<MemberResponseDTO.SimpleMemberProfileDTO> teamMemberList) {}
+            List<TeamMemberDTO> teamMemberList) {}
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -71,8 +73,13 @@ public class TeamResponseDTO {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
     public record TeamMemberDTO(
+            @Schema(description = "팀원 아이디", example = "1")
             Long teamMemberId,
+            @Schema(description = "팀원 역할", example = "MEMBER | ADMIN")
             String teamMemberRole,
+            @Schema(description = "팀원 포지션", example = "BACKEND | FRONTEND | DESIGNER | PLANNER")
+            String teamMemberPosition,
+            @Schema(description = "팀원 정보")
             MemberResponseDTO.SimpleMemberProfileDTO member) {}
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
