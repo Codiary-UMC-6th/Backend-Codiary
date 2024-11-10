@@ -12,19 +12,53 @@ import java.util.List;
 public class PostRequestDTO {
 
 
+//    @Builder
+//    @JsonInclude(JsonInclude.Include.NON_NULL)
+//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+//    public record CreatePostRequestDTO (
+//            Long teamId,
+//            Long projectId,
+//            String postTitle,
+//            String postBody,
+//            Boolean postStatus,
+//            PostAccess postAccess,
+//            String thumbnailImageName,
+//            List<MultipartFile> postFiles
+//    ) {
+//    }
+
+    @Getter
+    //@Setter
     @Builder
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public record CreatePostRequestDTO (
-            Long teamId,
-            Long projectId,
-            String postTitle,
-            String postBody,
-            Boolean postStatus,
-            PostAccess postAccess,
-            String thumbnailImageName,
-            List<MultipartFile> postFiles
-    ) {
+    @AllArgsConstructor
+    //@NoArgsConstructor
+    public static class CreatePostRequestDTO {
+        private Long teamId;
+        private Long projectId;
+        private String postTitle;
+        private String postBody;
+        private Boolean postStatus;
+        //private Set<String> postCategory;
+        private PostAccess postAccess;
+        private String thumbnailImageName;
+        private List<MultipartFile> postFiles;
     }
+
+    @Getter
+    //@Setter
+    @Builder
+    @AllArgsConstructor
+    //@NoArgsConstructor
+    public static class UpdatePostDTO {
+        private String postTitle;
+        private String postBody;
+        private Boolean postStatus;
+        //private Set<String> postCategory;
+        private PostAccess postAccess;
+        private String thumbnailImageName;
+        private List<MultipartFile> addedPostFiles;
+    }
+
+
 
 }
