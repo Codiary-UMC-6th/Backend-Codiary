@@ -53,16 +53,16 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v2/oauth/**").permitAll()
                                 // Post 관련 접근
                                 .requestMatchers("/api/v2/post/search").permitAll()
-                                .requestMatchers("/api/v2/posts","/api/v2/posts/{postId}", "/api/v2/posts/visibility/{postId}", "/api/v2/posts/coauthors/{postId}", "/api/v2/posts/categories/{postId}").permitAll()
-                                .requestMatchers("/api/v2/posts/title/paging", "/api/v2/posts/team/{teamId}/{postId}", "/api/v2/posts/team/{teamId}/member/{memberId}/paging", "/api/v2/posts/project/{projectId}/team/{teamId}/paging").permitAll()
-                                .requestMatchers("/api/v2/posts/project/{projectId}/member/{memberId}/paging", "/api/v2/posts/member/{memberId}/paging", "/api/v2/posts/categories/paging", "/api/v2/posts/{postId}/adjacent").permitAll()
-                                .requestMatchers("/api/v2/posts/poplular/list", "/api/v2/posts/latest/list", "/api/v2/posts/comments/list/{postId}", "/api/v2/posts/search/title/body/member/project/categories").permitAll()
+                                .requestMatchers("/api/v2/post","/api/v2/post/{postId}", "/api/v2/post/visibility/{postId}", "/api/v2/post/coauthor/{postId}", "/api/v2/post/category/{postId}").permitAll()
+                                .requestMatchers("/api/v2/post/title/paging", "/api/v2/post/team/{teamId}/{postId}", "/api/v2/post/team/{teamId}/member/{memberId}/paging", "/api/v2/post/project/{projectId}/team/{teamId}/paging").permitAll()
+                                .requestMatchers("/api/v2/post/project/{projectId}/member/{memberId}/paging", "/api/v2/post/member/{memberId}/paging", "/api/v2/post/category/paging", "/api/v2/post/{postId}/adjacent").permitAll()
+                                .requestMatchers("/api/v2/post/poplular/list", "/api/v2/post/latest/list", "/api/v2/post/comment/list/{postId}", "/api/v2/post/search/title/body/member/project/category").permitAll()
 
                                 // Comment 관련 접근
                                 // Team 관련 접근
-                                .requestMatchers("/api/v2/teams/team_member").permitAll()
-                                .requestMatchers("/api/v2/teams/{team_id}/profile_image").permitAll()
-                                .requestMatchers("/api/v2/teams/{team_id}/banner_image").permitAll()
+                                .requestMatchers("/api/v2/team/team_member").permitAll()
+                                .requestMatchers("/api/v2/team/{team_id}/profile_image").permitAll()
+                                .requestMatchers("/api/v2/team/{team_id}/banner_image").permitAll()
                                 // Bookmark 관련 접근
                                 // Calendar 관련 접근
                                 // Project 관련 접근
