@@ -4,10 +4,8 @@ import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.entity.MemberImage;
-import com.codiary.backend.domain.member.entity.Uuid;
 import com.codiary.backend.domain.member.repository.MemberImageRepository;
 import com.codiary.backend.domain.member.repository.MemberRepository;
-import com.codiary.backend.domain.member.repository.UuidRepository;
 import com.codiary.backend.domain.techstack.entity.TechStacks;
 import com.codiary.backend.domain.techstack.enumerate.TechStack;
 import com.codiary.backend.global.apiPayload.ApiResponse;
@@ -15,16 +13,17 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
+import com.codiary.backend.global.common.uuid.Uuid;
+import com.codiary.backend.global.common.uuid.UuidRepository;
 import com.codiary.backend.global.jwt.SecurityUtil;
 import com.codiary.backend.global.s3.AmazonS3Manager;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

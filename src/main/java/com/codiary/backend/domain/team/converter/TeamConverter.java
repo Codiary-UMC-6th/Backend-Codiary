@@ -3,9 +3,10 @@ package com.codiary.backend.domain.team.converter;
 import com.codiary.backend.domain.member.converter.MemberConverter;
 import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
 import com.codiary.backend.domain.team.entity.Team;
+import com.codiary.backend.domain.team.entity.TeamBannerImage;
 import com.codiary.backend.domain.team.entity.TeamFollow;
 import com.codiary.backend.domain.team.entity.TeamMember;
-
+import com.codiary.backend.domain.team.entity.TeamProfileImage;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,9 +81,21 @@ public class TeamConverter {
 
     }
 
-    public static List<TeamResponseDTO.TeamMemberDTO> toTeamMemberListResponseDto(Team team) {
+    public static List<TeamResponseDTO.TeamMemberDTO> toTeamMemberListResponseDTO(Team team) {
         return team.getTeamMemberList().stream()
                 .map(TeamConverter::toTeamMemberResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    public static TeamResponseDTO.TeamImageDTO toTeamImageResponseDTO(TeamProfileImage profileImage) {
+        return TeamResponseDTO.TeamImageDTO.builder()
+                .url(profileImage.getImageUrl())
+                .build();
+    }
+
+    public static TeamResponseDTO.TeamImageDTO toTeamImageResponseDTO(TeamBannerImage bannerImage) {
+        return TeamResponseDTO.TeamImageDTO.builder()
+                .url(bannerImage.getImageUrl())
+                .build();
     }
 }

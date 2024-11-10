@@ -56,6 +56,8 @@ public class SecurityConfig {
                                 // Comment 관련 접근
                                 // Team 관련 접근
                                 .requestMatchers("/api/v2/teams/team_member").permitAll()
+                                .requestMatchers("/api/v2/teams/{team_id}/profile_image").permitAll()
+                                .requestMatchers("/api/v2/teams/{team_id}/banner_image").permitAll()
                                 // Bookmark 관련 접근
                                 // Calendar 관련 접근
                                 // Project 관련 접근
@@ -78,8 +80,8 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOriginPatterns(List.of("*", "http://localhost:3000, "));
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedOriginPatterns(List.of("*", "http://localhost:3000", "https://www.codiary.site"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "https://www.codiary.site"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));

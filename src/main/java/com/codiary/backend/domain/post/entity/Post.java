@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.post.entity;
 
+import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.domain.comment.entity.Comment;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
@@ -7,7 +8,6 @@ import com.codiary.backend.global.common.BaseEntity;
 import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.coauthor.entity.Authors;
-import com.codiary.backend.domain.category.entity.Categories;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import jakarta.persistence.*;
 import lombok.*;
@@ -64,7 +64,7 @@ public class Post extends BaseEntity {
           joinColumns = @JoinColumn(name = "post_id"),
           inverseJoinColumns = @JoinColumn(name = "category_id")
   )
-  private List<Categories> categoriesList = new ArrayList<>();
+  private List<Category> categoriesList = new ArrayList<>();
 
   @Builder.Default
   @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -87,6 +87,7 @@ public class Post extends BaseEntity {
 
   public void setProject(Project project) { this.project = project;}
 
+
   public void update(PostRequestDTO.UpdatePostDTO request) {
     this.postTitle = request.getPostTitle();
     this.postBody = request.getPostBody();
@@ -94,8 +95,9 @@ public class Post extends BaseEntity {
     this.postStatus = request.getPostStatus();
   }
 
-  public void setCategories(List<Categories> categories) {
+  public void setCategories(List<Category> categories) {
     this.categoriesList.clear();
     this.categoriesList.addAll(categories);
   }
+  
 }

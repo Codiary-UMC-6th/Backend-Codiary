@@ -4,9 +4,8 @@ import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.Builder;
-
 import java.util.List;
+import lombok.Builder;
 
 public class TeamResponseDTO {
 
@@ -75,4 +74,11 @@ public class TeamResponseDTO {
             Long teamMemberId,
             String teamMemberRole,
             MemberResponseDTO.SimpleMemberProfileDTO member) {}
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @Builder
+    public record TeamImageDTO(
+            String url) {
+    }
 }
