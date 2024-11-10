@@ -17,6 +17,7 @@ import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.apiPayload.exception.handler.PostHandler;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,7 +96,7 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<Comment> getComments(Long postId, Long memberId) {
+    public List<Comment> getComments(Long postId, Long memberId, Pageable pageable) {
         // validation: 사용자, post 유무 확인
         Member requester = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -112,7 +113,7 @@ public class CommentService {
         }
 
         // business logic: 댓글 조회
-        List<Comment> comments = commentRepository.findByPostWithMemberInfoOrderByCreatedAtAsc(postId);
+        List<Comment> comments = commentRepository.findByPostWithMemberInfoOrderByCreatedAtAsc(postId, pageable);
 
         // response: comment list 반환
         return comments;
