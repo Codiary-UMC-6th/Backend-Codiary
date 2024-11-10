@@ -53,6 +53,11 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v2/oauth/**").permitAll()
                                 // Post 관련 접근
                                 .requestMatchers("/api/v2/post/search").permitAll()
+                                .requestMatchers("/api/v2/posts","/api/v2/posts/{postId}", "/api/v2/posts/visibility/{postId}", "/api/v2/posts/coauthors/{postId}", "/api/v2/posts/categories/{postId}").permitAll()
+                                .requestMatchers("/api/v2/posts/title/paging", "/api/v2/posts/team/{teamId}/{postId}", "/api/v2/posts/team/{teamId}/member/{memberId}/paging", "/api/v2/posts/project/{projectId}/team/{teamId}/paging").permitAll()
+                                .requestMatchers("/api/v2/posts/project/{projectId}/member/{memberId}/paging", "/api/v2/posts/member/{memberId}/paging", "/api/v2/posts/categories/paging", "/api/v2/posts/{postId}/adjacent").permitAll()
+                                .requestMatchers("/api/v2/posts/poplular/list", "/api/v2/posts/latest/list", "/api/v2/posts/comments/list/{postId}", "/api/v2/posts/search/title/body/member/project/categories").permitAll()
+
                                 // Comment 관련 접근
                                 // Team 관련 접근
                                 .requestMatchers("/api/v2/teams/team_member").permitAll()

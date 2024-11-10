@@ -7,12 +7,16 @@ import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.post.service.PostCommandService;
+import com.codiary.backend.domain.post.service.PostQueryService;
 import com.codiary.backend.domain.post.service.PostService;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,6 +37,7 @@ import com.codiary.backend.global.jwt.JwtTokenProvider;
 public class PostController {
     private final PostService postService;
     private final PostCommandService postCommandService;
+    private final PostQueryService postQueryService;
     private final MemberCommandService memberCommandService;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -69,6 +74,46 @@ public class PostController {
         postCommandService.deletePost(postId);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, null);
     }
+
+    // 저자의 다이어리 리스트 페이징 조회
+    @GetMapping("/member/{memberId}/paging")
+    @Operation(summary = "저자의 다이어리 리스트 페이징 조회 API", description = "저자의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**", security = @SecurityRequirement(name = "accessToken"))
+    public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> findPostByMember(@PathVariable Long memberId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size) {
+        Page<Post> posts = postQueryService.getPostsByMember(memberId, page, size);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toMemberPostPreviewListDTO(posts));
+    }
+
+
+    // 팀의 다이어리 리스트 페이징 조회
+    @GetMapping("/team/{teamId}/paging")
+    @Operation(summary = "팀의 다이어리 리스트 페이징 조회 API", description = "팀의 다이어리 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'를 받습니다. **첫 페이지는 0부터 입니다.**", security = @SecurityRequirement(name = "accessToken"))
+    public ApiResponse<PostResponseDTO.TeamPostPreviewListDTO> findPostByTeam(@PathVariable Long teamId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(6) Integer size){
+        Page<Post> posts = postQueryService.getPostsByTeam(teamId, page, size);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toTeamPostPreviewListDTO(posts));
+    }
+
+
+    // 프로젝트별 저자의 다이어리 리스트 페이징 조회
+
+
+
+    // 프로젝트별 팀의 다이어리 리스트 페이징 조회
+
+
+
+    // 팀별 저자의 다이러리 리스트 페이징 조회
+
+
+
+    // 제목으로 다이어리 리스트 페이징 조회
+
+
+
+    // 카테고리명으로 다이어리 리스트 페이징 조회
+
+
+
+    // 인접한 다이어리 조회 (이전 다이어리, 다음 다이어리)
 
 
 

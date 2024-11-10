@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 public class PostResponseDTO {
@@ -61,5 +62,78 @@ public class PostResponseDTO {
         PostAccess postAccess;
         PostFileResponseDTO.PostFileListDTO postFileList;
     }
+
+
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record MemberPostPreviewDTO(    // 저자별 Post 조회
+            Long memberId,
+            Long postId,
+            Long teamId,
+            Long projectId,
+            String postTitle,
+            String postBody,
+            String thumbnailImageUrl,
+            Boolean postStatus,
+            String postCategory,
+            Set<Long> coauthorIds,
+            PostAccess postAccess,
+            PostFileResponseDTO.PostFileListDTO postFileList,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt
+    ) {
+    }
+
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record MemberPostPreviewListDTO(  // 저자별 Post 리스트 조회
+            List<MemberPostPreviewDTO> posts,
+            Integer listSize,
+            Integer totalPage,
+            Long totalElements,
+            boolean isFirst,
+            boolean isLast
+    ) {
+    }
+
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record TeamPostPreviewDTO(
+            Long teamId,
+            Long postId,
+            Long memberId,
+            Long projectId,
+            String postTitle,
+            String postBody,
+            String thumbnailImageUrl,
+            Boolean postStatus,
+            String postCategory,
+            Set<Long> coauthorIds,
+            PostAccess postAccess,
+            PostFileResponseDTO.PostFileListDTO postFileList,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt
+    ) {
+    }
+
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record TeamPostPreviewListDTO ( // 팀별 Post 리스트 조회
+        List<TeamPostPreviewDTO> posts,
+        Integer listSize,
+        Integer totalPage,
+        Long totalElements,
+        boolean isFirst,
+        boolean isLast
+    ) {
+    }
+
+
+
+
 
 }
