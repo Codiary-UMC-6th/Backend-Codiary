@@ -3,6 +3,7 @@ package com.codiary.backend.domain.post.entity;
 import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.domain.comment.entity.Comment;
 import com.codiary.backend.domain.member.entity.Member;
+import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.global.common.BaseEntity;
 import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.team.entity.Team;
@@ -38,10 +39,10 @@ public class Post extends BaseEntity {
   @JoinColumn(name = "project_id")
   private Project project;
 
-  @Column(name = "post_title", columnDefinition = "varchar(500)")
+  @Column(name = "post_title", nullable = false, columnDefinition = "varchar(500)")
   private String postTitle;
 
-  @Column(name = "post_body", columnDefinition = "varchar(3000)")
+  @Column(name = "post_body", nullable = false, columnDefinition = "varchar(3000)")
   private String postBody;
 
   @OneToOne
@@ -86,8 +87,17 @@ public class Post extends BaseEntity {
 
   public void setProject(Project project) { this.project = project;}
 
+
+  public void update(PostRequestDTO.UpdatePostDTO request) {
+    this.postTitle = request.getPostTitle();
+    this.postBody = request.getPostBody();
+    this.postAccess = request.getPostAccess();
+    this.postStatus = request.getPostStatus();
+  }
+
   public void setCategories(List<Category> categories) {
     this.categoriesList.clear();
     this.categoriesList.addAll(categories);
   }
+  
 }

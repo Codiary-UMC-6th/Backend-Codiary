@@ -49,8 +49,8 @@ public class PostCommandService {
         Post tempPost = postRepository.save(newPost);
         tempPost.setPostFileList(new ArrayList<>());
 
-        if (request.postFiles() != null) {
-            for (MultipartFile file : request.postFiles()) {
+        if (request.getPostFiles() != null) {
+            for (MultipartFile file : request.getPostFiles()) {
                 if (file.isEmpty()) {
                     continue;
                 }
@@ -66,7 +66,7 @@ public class PostCommandService {
         }
 
         // 대표 사진 설정
-        String thumbnailImageName = request.thumbnailImageName();
+        String thumbnailImageName = request.getThumbnailImageName();
         for (PostFile postFile : tempPost.getPostFileList()) {
             if (postFile.getFileName().equals(thumbnailImageName)) {
                 tempPost.setThumbnailImage(postFile);
@@ -79,4 +79,52 @@ public class PostCommandService {
         Post savedPost = postRepository.save(tempPost);
         return savedPost;
     }
+
+
+    public Post updatePost(Long postId, PostRequestDTO.UpdatePostDTO request) {
+        Member getMember = memberCommandService.getRequester();
+        Post updatePost = postRepository.findById(postId).get();
+        updatePost.update(request);
+
+        // 새로운 이미지 추가
+        if (request.getAddedPostFiles() != null) {
+            for (MultipartFile file : request.getAddedPostFiles()) {
+                if (file.isEmpty()) {
+                    continue;
+                }
+                String uuid = UUID.randomUUID().toString();
+                Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
+                String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), file);
+
+                PostFile newPostFile = PostFileConverter.toPostFile(fileUrl, updatePost, file.getOriginalFilename());
+                postFileRepository.save(newPostFile);
+
+                updatePost.getPostFileList().add(newPostFile);
+            }
+        }
+
+        // 대표 사진 설정
+        String thumbnailImageName = request.getThumbnailImageName();
+        for (PostFile postFile : updatePost.getPostFileList()) {
+            if (postFile.getFileName() == thumbnailImageName) {
+                updatePost.setThumbnailImage(postFile);
+            }
+        }
+        if (updatePost.getPostFileList().size() != 0 && updatePost.getThumbnailImage() == null) {
+            updatePost.setThumbnailImage(updatePost.getPostFileList().get(0));
+        }
+
+        return postRepository.save(updatePost);
+    }
+
+
+    public void deletePost(Long postId) {
+        Member getMember = memberCommandService.getRequester();
+
+        Post deletePost = postRepository.findById(postId).get();
+        postRepository.delete(deletePost);
+    }
+
+
+
 }
