@@ -3,6 +3,7 @@ package com.codiary.backend.domain.post.converter;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
 import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.team.entity.Team;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import com.codiary.backend.domain.project.repository.ProjectRepository;
 import com.codiary.backend.domain.team.repository.TeamRepository;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class PostConverter {
@@ -92,6 +94,94 @@ public class PostConverter {
                 .build();
     }
 
+
+    // 저자별 Post 조회
+    public static PostResponseDTO.MemberPostPreviewDTO toMemberPostPreviewDTO(Post post) {
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Category::getName)
+                .collect(Collectors.toList());
+
+        return PostResponseDTO.MemberPostPreviewDTO.builder()
+                .memberId(post.getMember().getMemberId())
+                .postId(post.getPostId())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .postCategory(String.join(", ", postCategories))
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .thumbnailImageUrl((post.getThumbnailImage() != null)
+                        ? post.getThumbnailImage().getFileUrl()
+                        : "")
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
+
+    // 저자별 Post 페이징 조회
+    public static PostResponseDTO.MemberPostPreviewListDTO toMemberPostPreviewListDTO(Page<Post> posts) {
+        List<PostResponseDTO.MemberPostPreviewDTO> memberPostPreviewDTOList = posts.getContent().stream()
+                .map(PostConverter::toMemberPostPreviewDTO)
+                .collect(Collectors.toList());
+
+        return PostResponseDTO.MemberPostPreviewListDTO.builder()
+                .posts(memberPostPreviewDTOList)
+                .listSize(posts.getNumberOfElements())
+                .totalPage(posts.getTotalPages())
+                .totalElements(posts.getTotalElements())
+                .isFirst(posts.isFirst())
+                .isLast(posts.isLast())
+                .build();
+    }
+
+    // 팀별 Post 조회
+    public static PostResponseDTO.TeamPostPreviewDTO toTeamPostPreviewDTO(Post post) {
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Category::getName)
+                .collect(Collectors.toList());
+
+        return PostResponseDTO.TeamPostPreviewDTO.builder()
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .postId(post.getPostId())
+                .memberId(post.getMember().getMemberId())
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .postCategory(String.join(", ", postCategories))
+                .coauthorIds(post.getAuthorsList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .thumbnailImageUrl((post.getThumbnailImage() != null)
+                        ? post.getThumbnailImage().getFileUrl()
+                        : "")
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
+                .build();
+    }
+
+    // 팀별 Post 페이징 조회
+    public static PostResponseDTO.TeamPostPreviewListDTO toTeamPostPreviewListDTO(Page<Post> posts) {
+        List<PostResponseDTO.TeamPostPreviewDTO> teamPostPreviewDTOList = posts.getContent().stream()
+                .map(PostConverter::toTeamPostPreviewDTO)
+                .collect(Collectors.toList());
+
+        return PostResponseDTO.TeamPostPreviewListDTO.builder()
+                .posts(teamPostPreviewDTOList)
+                .listSize(posts.getNumberOfElements())
+                .totalPage(posts.getTotalPages())
+                .totalElements(posts.getTotalElements())
+                .isFirst(posts.isFirst())
+                .isLast(posts.isLast())
+                .build();
+    }
 
 
 
