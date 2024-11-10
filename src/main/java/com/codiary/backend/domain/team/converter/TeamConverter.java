@@ -42,10 +42,7 @@ public class TeamConverter {
                 .instagram(team.getInstagram())
                 .isFollowed(false)
                 .teamMemberList(team.getTeamMemberList() == null ? null :
-                        MemberConverter.toSimpleMemberProfileListResponseDto(team.getTeamMemberList()
-                                .stream()
-                                .map(TeamMember::getMember)
-                                .collect(Collectors.toList())))
+                        TeamConverter.toTeamMemberListResponseDTO(team))
                 .build();
     }
 
@@ -77,6 +74,7 @@ public class TeamConverter {
                 .teamMemberId(teamMember.getTeamMemberId())
                 .member(MemberConverter.tosimpleMemberProfileResponseDto(teamMember.getMember()))
                 .teamMemberRole(teamMember.getTeamMemberRole().name())
+                .teamMemberPosition(teamMember.getMemberPosition())
                 .build();
 
     }
