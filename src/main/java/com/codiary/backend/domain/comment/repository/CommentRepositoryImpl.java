@@ -29,4 +29,19 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 
         return comments;
     }
+
+    @Override
+    public List<Comment> findByParentWithMemberInfoOrderByCreatedAtAsc(Long commentId, Pageable pageable) {
+        List<Comment> comments = queryFactory
+                .selectFrom(comment)
+                .leftJoin(comment.member, member)
+                .leftJoin(comment.parent, comment)
+                .where(comment.post.postId.eq(commentId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(comment.createdAt.asc())
+                .fetch();
+
+        return comments;
+    }
 }

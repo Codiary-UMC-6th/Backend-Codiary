@@ -12,6 +12,7 @@ public class CommentConverter {
                 .commentId(comment.getCommentId())
                 .commentBody(comment.getCommentBody())
                 .postId(comment.getPost().getPostId())
+                .parentId(comment.getParent().getCommentId())
                 .commenterId(comment.getMember().getMemberId())
                 .commenterProfileImageUrl(
                         (comment.getMember().getImage() != null) ? (comment.getMember().getImage().getImageUrl()) : "")

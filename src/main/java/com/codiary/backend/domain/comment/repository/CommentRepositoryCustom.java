@@ -8,4 +8,6 @@ import java.util.List;
 public interface CommentRepositoryCustom {
 
     List<Comment> findByPostWithMemberInfoOrderByCreatedAtAsc(Long postId, Pageable pageable);
+
+    List<Comment> findByParentWithMemberInfoOrderByCreatedAtAsc(Long commentId, Pageable pageable);
 }

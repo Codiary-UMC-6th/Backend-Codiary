@@ -33,7 +33,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @Operation(summary = "댓글 달기")
-    @PostMapping("/posts/{post_id}/comments")
+    @PostMapping("/post/{post_id}/comment")
     public ApiResponse<CommentResponseDTO.CommentDTO> commentOnPost(
             @PathVariable("post_id") Long postId,
             @RequestBody CommentDTO request,
@@ -45,7 +45,7 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 삭제")
-    @DeleteMapping("comments/{comment_id}")
+    @DeleteMapping("comment/{comment_id}")
     public ApiResponse<String> deleteComment(
             @PathVariable("comment_id") Long commentId,
             @AuthenticationPrincipal CustomMemberDetails memberDetails
@@ -56,7 +56,7 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 수정")
-    @PatchMapping("comments/{comment_id}")
+    @PatchMapping("comment/{comment_id}")
     public ApiResponse<CommentResponseDTO.CommentDTO> updateComment(
             @PathVariable("comment_id") Long commentId,
             @RequestBody CommentDTO request,
@@ -68,7 +68,7 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 조회")
-    @GetMapping("/posts/{post_id}/comments")
+    @GetMapping("/post/{post_id}/comment")
     public ApiResponse<List<CommentResponseDTO.CommentDTO>> getComments(
             @PathVariable("post_id") Long postId,
             @AuthenticationPrincipal CustomMemberDetails memberDetails,

@@ -14,8 +14,11 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.TeamHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -56,5 +59,71 @@ public class ReplyService {
 
         // response: 대댓글 반환
         return commentRepository.save(reply);
+    }
+
+    public Comment updateReply(Long replyId, Long replierId, CommentRequestDTO.CommentDTO request) {
+        // validation: 사용자 유무, 대댓글 유무
+        Member replier = memberRepository.findById(replierId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        Comment reply = commentRepository.findById(replyId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+
+        // validation: 작성자 인지 확인
+        if (!replier.equals(reply.getMember())) {
+            throw new GeneralException(ErrorStatus.COMMENT_UPDATE_UNAUTHORIZED);
+        }
+
+        // business logic: 수정
+        reply.setCommentBody(request.commentBody());
+
+        // response
+        return commentRepository.save(reply);
+    }
+
+    public String deleteReply(Long replyId, Long replierId) {
+        // validation: 사용자 유무, 대댓글 유무
+        Member replier = memberRepository.findById(replierId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        Comment reply = commentRepository.findById(replyId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+
+        // validation: 작성자 인지 확인
+        if (!replier.equals(reply.getMember())) {
+            throw new GeneralException(ErrorStatus.COMMENT_DELETE_UNAUTHORIZED);
+        }
+
+        // business logic: 삭제
+        commentRepository.delete(reply);
+
+        // response
+        return "대댓글이 삭제되었습니다!";
+    }
+
+    @Transactional(readOnly = true)
+    public List<Comment> getReplies(Long commentId, Long requesterId, Pageable pageable) {
+        // validation: 사용자, 댓글 유무 확인
+        Member requester = memberRepository.findById(requesterId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+        Post post = postRepository.findById(comment.getPost().getPostId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        // validation: 사용자 권한 확인
+        if (post.getPostAccess().equals(PostAccess.MEMBER) && post.getMember() != requester) {
+            throw new GeneralException(ErrorStatus.COMMENT_CREATE_UNAUTHORIZED);
+        } else if (post.getPostAccess().equals(PostAccess.TEAM)) {
+            Team teamOfPost = teamRepository.findByIdWithTeamMemberList(post.getTeam().getTeamId())
+                    .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+            if (!teamRepository.isTeamMember(teamOfPost, requester)) {
+                throw new GeneralException((ErrorStatus.COMMENT_CREATE_UNAUTHORIZED));
+            }
+        }
+
+        // business logic: 대댓글 조회
+        List<Comment> replies = commentRepository.findByParentWithMemberInfoOrderByCreatedAtAsc(commentId, pageable);
+
+        // response
+        return replies;
     }
 }
