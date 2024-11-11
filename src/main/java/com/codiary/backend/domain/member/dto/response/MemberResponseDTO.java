@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.member.dto.response;
 
+import com.codiary.backend.domain.project.dto.response.ProjectResponseDTO;
 import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
 import com.codiary.backend.domain.techstack.enumerate.TechStack;
 import com.codiary.backend.global.jwt.TokenInfo;
@@ -97,12 +98,7 @@ public class MemberResponseDTO{
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
-    public record MemberCalendarDTO(
-            Map<String, List<ProjectsAndTitlesByDate>> projectsAndTitlesByDate) {
-
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-        @Builder
-        public record ProjectsAndTitlesByDate(String project, List<String> titles) {}
+    public record MonthCalendarDTO(
+            Map<String, List<ProjectResponseDTO.SimpleProjectResponseDTO>> projectsByDate) {
     }
 }
