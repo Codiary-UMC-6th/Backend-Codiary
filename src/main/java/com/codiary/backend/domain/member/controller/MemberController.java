@@ -78,4 +78,12 @@ public class MemberController {
         Member updatedMember = memberCommandService.addTechStack(member.getMemberId(),techStackName);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberTechStackResponseDto(updatedMember));
     }
+
+    @GetMapping("/calendar")
+    @Operation(summary = "사용자 캘린더 조회", description = "마이페이지 사용자 캘린더 조회 기능")
+    public ApiResponse<MemberResponseDTO.MemberCalendarDTO> getCalendar(@AuthenticationPrincipal CustomMemberDetails customMemberDetails) {
+        Long memberId = customMemberDetails.getId();
+        Member fetchedMember = memberQueryService.getUserInfo(memberId);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberCalendarResponseDto(fetchedMember));
+    }
 }

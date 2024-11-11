@@ -8,7 +8,10 @@ import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
 import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.techstack.entity.TechStacks;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MemberConverter {
@@ -17,9 +20,7 @@ public class MemberConverter {
                 .currentMemberId(member.getMemberId())
                 .userId(user.getMemberId())
                 .userName(user.getNickname())
-                .photoUrl((member.getImage() != null)
-                        ? member.getImage().getImageUrl()
-                        : "")
+                .photoUrl(member.getImage() != null ? member.getImage().getImageUrl() : "")
                 .githubUrl(user.getGithub())
                 .linkedinUrl(user.getLinkedin())
                 .discordUrl(user.getDiscord())
@@ -115,5 +116,24 @@ public class MemberConverter {
                 .discord(request.discord())
                 .build();
         return member;
+    }
+
+    // 캘린더
+    public static MemberResponseDTO.MemberCalendarDTO toMemberCalendarResponseDto(Member member) {
+        Map<String, List<MemberResponseDTO.MemberCalendarDTO.ProjectsAndTitlesByDate>> postMap = new HashMap<>();
+        member.getPostList().forEach(post -> {
+            String date = post.getCreatedAt().toLocalDate().toString();
+            if (postMap.containsKey(date)) {
+                postMap.get(date).add(new MemberResponseDTO.MemberCalendarDTO.ProjectsAndTitlesByDate(post.getProject().getProjectName(), List.of(post.getPostTitle())));
+            } else {
+                List<MemberResponseDTO.MemberCalendarDTO.ProjectsAndTitlesByDate> projectsAndTitles = new ArrayList<>();
+                projectsAndTitles.add(new MemberResponseDTO.MemberCalendarDTO.ProjectsAndTitlesByDate(post.getProject().getProjectName(), List.of(post.getPostTitle())));
+                postMap.put(date, projectsAndTitles);
+            }
+        });
+
+        return MemberResponseDTO.MemberCalendarDTO.builder()
+                .projectsAndTitlesByDate(postMap)
+                .build();
     }
 }

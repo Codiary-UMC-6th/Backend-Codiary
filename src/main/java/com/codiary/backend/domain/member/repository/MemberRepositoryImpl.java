@@ -100,7 +100,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     private void fetchTeamMembers(Long userId, Member fetchedMember) {
         List<TeamMember> teamMembers = queryFactory
                 .selectFrom(teamMember)
-                .leftJoin(teamMember.team, team)
+                .leftJoin(teamMember.team, team).fetchJoin()
                 .where(teamMember.member.memberId.eq(userId))
                 .fetch();
 

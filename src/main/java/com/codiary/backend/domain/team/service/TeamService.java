@@ -51,7 +51,7 @@ public class TeamService {
                 .bannerImage(null)
                 .profileImage(null)
                 .build();
-        addMemberToTeam(member, team, TeamMemberRole.ADMIN);
+        addMemberToTeam(member, team, TeamMemberRole.ADMIN, "");
 
         //response: 팀 반환
         return teamRepository.save(team);
@@ -107,11 +107,12 @@ public class TeamService {
         return teamRepository.save(team);
     }
 
-    private void addMemberToTeam(Member member, Team team, TeamMemberRole role) {
+    private void addMemberToTeam(Member member, Team team, TeamMemberRole role, String memberPosition) {
         TeamMember teamMember = TeamMember.builder()
                 .member(member)
                 .team(team)
                 .teamMemberRole(role)
+                .memberPosition(memberPosition)
                 .build();
         team.getTeamMemberList().add(teamMember);
     }
