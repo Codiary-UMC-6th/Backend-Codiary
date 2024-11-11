@@ -6,6 +6,7 @@ import com.codiary.backend.domain.comment.entity.Comment;
 import com.codiary.backend.domain.comment.repository.CommentRepository;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.repository.MemberRepository;
+import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.post.repository.PostRepository;
@@ -130,20 +131,27 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Comment> getComments(Long postId, Long memberId, Pageable pageable) {
-        // validation: 사용자, post 유무 확인
-        Member requester = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    public Page<Comment> getComments(Long postId, CustomMemberDetails memberDetails, Pageable pageable) {
+        // validation: post 유무 확인
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
 
         // validation: 사용자가 해당 게시물에 대한 권한 있는지
-        if (post.getPostAccess().equals(PostAccess.MEMBER) && post.getMember() != requester) {
-            throw new GeneralException(ErrorStatus.COMMENT_CREATE_UNAUTHORIZED);
-        } else if (post.getPostAccess().equals(PostAccess.TEAM)) {
-            Team teamOfPost = teamRepository.findByIdWithTeamMemberList(post.getTeam().getTeamId())
-                    .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-            if (!teamRepository.isTeamMember(teamOfPost, requester)) {
-                throw new GeneralException((ErrorStatus.COMMENT_CREATE_UNAUTHORIZED));
+        if (!post.getPostAccess().equals(PostAccess.ENTIRE)) {
+            if (memberDetails == null) {
+                throw new GeneralException(ErrorStatus.COMMENT_READ_UNAUTHORIZED);
+            }
+
+            Member requester = memberRepository.findById(memberDetails.getId())
+                    .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+            if (post.getPostAccess().equals(PostAccess.MEMBER) && post.getMember() != requester) {
+                throw new GeneralException(ErrorStatus.COMMENT_READ_UNAUTHORIZED);
+            } else {
+                Team teamOfPost = teamRepository.findByIdWithTeamMemberList(post.getTeam().getTeamId())
+                        .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+                if (!teamRepository.isTeamMember(teamOfPost, requester)) {
+                    throw new GeneralException((ErrorStatus.COMMENT_READ_UNAUTHORIZED));
+                }
             }
         }
 
@@ -156,23 +164,30 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Comment> getReplies(Long commentId, Long requesterId, Pageable pageable) {
-        // validation: 사용자, 댓글 유무 확인
-        Member requester = memberRepository.findById(requesterId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    public Page<Comment> getReplies(Long commentId, CustomMemberDetails memberDetails, Pageable pageable) {
+        // validation: 댓글 유무 확인
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+
+        // validation: 사용자가 해당 게시물에 대한 권한 있는지
         Post post = postRepository.findById(comment.getPost().getPostId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        if (!post.getPostAccess().equals(PostAccess.ENTIRE)) {
+            if (memberDetails == null) {
+                throw new GeneralException(ErrorStatus.COMMENT_READ_UNAUTHORIZED);
+            }
+            
+            Member requester = memberRepository.findById(memberDetails.getId())
+                    .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        // validation: 사용자 권한 확인
-        if (post.getPostAccess().equals(PostAccess.MEMBER) && post.getMember() != requester) {
-            throw new GeneralException(ErrorStatus.COMMENT_CREATE_UNAUTHORIZED);
-        } else if (post.getPostAccess().equals(PostAccess.TEAM)) {
-            Team teamOfPost = teamRepository.findByIdWithTeamMemberList(post.getTeam().getTeamId())
-                    .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
-            if (!teamRepository.isTeamMember(teamOfPost, requester)) {
-                throw new GeneralException((ErrorStatus.COMMENT_CREATE_UNAUTHORIZED));
+            if (post.getPostAccess().equals(PostAccess.MEMBER) && post.getMember() != requester) {
+                throw new GeneralException(ErrorStatus.COMMENT_READ_UNAUTHORIZED);
+            } else {
+                Team teamOfPost = teamRepository.findByIdWithTeamMemberList(post.getTeam().getTeamId())
+                        .orElseThrow(() -> new TeamHandler(ErrorStatus.TEAM_NOT_FOUND));
+                if (!teamRepository.isTeamMember(teamOfPost, requester)) {
+                    throw new GeneralException((ErrorStatus.COMMENT_READ_UNAUTHORIZED));
+                }
             }
         }
 

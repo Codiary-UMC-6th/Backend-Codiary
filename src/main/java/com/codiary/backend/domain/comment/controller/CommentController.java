@@ -87,8 +87,7 @@ public class CommentController {
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
             @PageableDefault(sort = "oldest") Pageable pageable
     ) {
-        Long memberId = memberDetails.getId();
-        Page<Comment> comments = commentService.getComments(postId, memberId, pageable);
+        Page<Comment> comments = commentService.getComments(postId, memberDetails, pageable);
         return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toCommentResponseListDto(comments));
     }
 
@@ -99,8 +98,7 @@ public class CommentController {
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
             @PageableDefault(sort = "oldest") Pageable pageable
     ) {
-        Long requesterId = memberDetails.getId();
-        Page<Comment> replies = commentService.getReplies(commentId, requesterId, pageable);
+        Page<Comment> replies = commentService.getReplies(commentId, memberDetails, pageable);
         return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toCommentResponseListDto(replies));
     }
 }
