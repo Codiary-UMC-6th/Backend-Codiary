@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.member.dto.response;
 
+import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
 import com.codiary.backend.domain.project.dto.response.ProjectResponseDTO;
 import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
 import com.codiary.backend.domain.techstack.enumerate.TechStack;
@@ -100,5 +101,12 @@ public class MemberResponseDTO{
     @Builder
     public record MonthCalendarDTO(
             Map<String, List<ProjectResponseDTO.SimpleProjectResponseDTO>> projectsByDate) {
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @Builder
+    public record DayCalendarDTO(
+            Map<String, List<PostResponseDTO.PostTitleResponseDTO>> postsByDate) {
     }
 }

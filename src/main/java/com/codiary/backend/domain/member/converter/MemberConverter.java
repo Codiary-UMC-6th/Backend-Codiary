@@ -4,6 +4,7 @@ import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.member.entity.Follow;
 import com.codiary.backend.domain.member.entity.Member;
+import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.project.dto.response.ProjectResponseDTO;
 import com.codiary.backend.domain.project.entity.Project;
@@ -135,6 +136,25 @@ public class MemberConverter {
         });
         return MemberResponseDTO.MonthCalendarDTO.builder()
                 .projectsByDate(projectMap)
+                .build();
+    }
+
+    public static MemberResponseDTO.DayCalendarDTO toDayCalendarResponseDto(Map<Project, List<Post>> posts){
+        Map<String, List<PostResponseDTO.PostTitleResponseDTO>> postMap = new HashMap<>();
+        posts.forEach((project, postList) -> {
+            List<PostResponseDTO.PostTitleResponseDTO> postResponses = postList.stream()
+                    .filter(Objects::nonNull)
+                    .map(post -> PostResponseDTO.PostTitleResponseDTO.builder()
+                            .id(post.getPostId())
+                            .title(post.getPostTitle())
+                            .build())
+                    .toList();
+            if (!postResponses.isEmpty()) {
+                postMap.put(project.getProjectName(), postResponses);
+            }
+        });
+        return MemberResponseDTO.DayCalendarDTO.builder()
+                .postsByDate(postMap)
                 .build();
     }
 }
