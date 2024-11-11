@@ -1,30 +1,40 @@
 package com.codiary.backend.domain.post.controller;
 
+import com.codiary.backend.domain.member.entity.Member;
+import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.post.converter.PostConverter;
-import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
+import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
 import com.codiary.backend.domain.post.entity.Post;
-import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.post.service.PostCommandService;
 import com.codiary.backend.domain.post.service.PostQueryService;
 import com.codiary.backend.domain.post.service.PostService;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
+import com.codiary.backend.global.jwt.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
-import com.codiary.backend.global.jwt.JwtTokenProvider;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RequiredArgsConstructor
@@ -116,13 +126,33 @@ public class PostController {
     // 인접한 다이어리 조회 (이전 다이어리, 다음 다이어리)
 
 
+    // 전체 인기글 조회
+    @Operation(summary = "전체 인기글 조회")
+    @GetMapping("popular")
+    public ApiResponse<?> getPopularPosts() {
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, null);
+    }
 
+    // 관심 카테고리 인기글 조회
+    @Operation(summary = "관심 카테고리 인기글 조회")
+    @GetMapping("popular/my_categories")
+    public ApiResponse<?> getCategoryPopularPosts(@AuthenticationPrincipal CustomMemberDetails memberDetails) {
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, null);
+    }
 
+    // 최신글 조회
+    @Operation(summary = "최신글 조회")
+    @GetMapping("latest")
+    public ApiResponse<?> getLatestPosts() {
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, null);
+    }
 
-
-
-
-
+    // 팔로잉 게시글 리스트 조회
+    @Operation(summary = "팔로잉 멤버 게시글 조회")
+    @GetMapping("following")
+    public ApiResponse<?> getFollowingMemberPosts() {
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, null);
+    }
 
 
     @Operation(summary = "게시글 검색 결과 페이지네이션", description = "게시글(제목/내용) 키워드 검색 결과를 페이지네이션하여 반환합니다.")
