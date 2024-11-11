@@ -13,12 +13,11 @@ import com.codiary.backend.domain.team.repository.TeamRepository;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.TeamHandler;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -51,10 +50,11 @@ public class ReplyService {
         }
 
         // business logic: 대댓글 생성
-        Comment reply = Comment.replyBuilder()
+        Comment reply = Comment.builder()
                 .commentBody(request.commentBody())
                 .member(replier)
-                .comment(comment)
+                .parent(comment)
+                .post(null)
                 .build();
 
         // response: 대댓글 반환

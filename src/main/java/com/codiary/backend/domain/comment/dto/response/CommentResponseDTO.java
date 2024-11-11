@@ -20,7 +20,8 @@ public class CommentResponseDTO {
             String commenterProfileImageUrl,
             String commenterNickname,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt
+            LocalDateTime updatedAt,
+            Integer numberOfReply
     ) {
     }
 }

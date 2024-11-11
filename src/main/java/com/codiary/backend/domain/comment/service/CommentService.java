@@ -15,10 +15,8 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.apiPayload.exception.handler.PostHandler;
-
-import java.util.List;
-
 import com.codiary.backend.global.apiPayload.exception.handler.TeamHandler;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -56,6 +54,7 @@ public class CommentService {
                 .commentBody(request.commentBody())
                 .member(commenter)
                 .post(post)
+                .parent(null)
                 .build();
 
         // response: 댓글 반환
@@ -118,7 +117,8 @@ public class CommentService {
         }
 
         // business logic: 댓글 조회
-        List<Comment> comments = commentRepository.findByPostWithMemberInfoOrderByCreatedAtAsc(postId, pageable);
+        List<Comment> comments = commentRepository.findByPostWithMemberInfoAndRepliesOrderByCreatedAtAsc(postId,
+                pageable);
 
         // response: comment list 반환
         return comments;

@@ -11,14 +11,15 @@ public class CommentConverter {
         return CommentResponseDTO.CommentDTO.builder()
                 .commentId(comment.getCommentId())
                 .commentBody(comment.getCommentBody())
-                .postId(comment.getPost().getPostId())
-                .parentId(comment.getParent().getCommentId())
+                .postId((comment.getPost() != null) ? comment.getPost().getPostId() : null)
+                .parentId((comment.getParent() != null) ? comment.getParent().getCommentId() : null)
                 .commenterId(comment.getMember().getMemberId())
                 .commenterProfileImageUrl(
                         (comment.getMember().getImage() != null) ? (comment.getMember().getImage().getImageUrl()) : "")
                 .commenterNickname(comment.getMember().getNickname())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
+                .numberOfReply((comment.getParent() == null) ? comment.getChildComments().size() : null)
                 .build();
     }
 

@@ -49,17 +49,11 @@ public class Comment extends BaseEntity {
     private List<Comment> childComments = new ArrayList<>();
 
     @Builder
-    public Comment(String commentBody, Member member, Post post) {
+    public Comment(String commentBody, Member member, Post post, Comment parent) {
         this.commentBody = commentBody;
         this.member = member;
         this.post = post;
-    }
-
-    @Builder(builderMethodName = "replyBuilder")
-    public Comment(String commentBody, Member member, Comment comment) {
-        this.commentBody = commentBody;
-        this.member = member;
-        this.parent = comment;
+        this.parent = parent;
     }
 
     public void setMember(Member member) {
