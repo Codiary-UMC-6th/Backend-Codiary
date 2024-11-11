@@ -16,8 +16,8 @@ import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.apiPayload.exception.handler.PostHandler;
 import com.codiary.backend.global.apiPayload.exception.handler.TeamHandler;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -130,7 +130,7 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<Comment> getComments(Long postId, Long memberId, Pageable pageable) {
+    public Page<Comment> getComments(Long postId, Long memberId, Pageable pageable) {
         // validation: 사용자, post 유무 확인
         Member requester = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -148,7 +148,7 @@ public class CommentService {
         }
 
         // business logic: 댓글 조회
-        List<Comment> comments
+        Page<Comment> comments
                 = commentRepository.findByPostWithMemberInfoAndRepliesOrderByCreatedAtAsc(postId, pageable);
 
         // response: comment list 반환
@@ -156,7 +156,7 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<Comment> getReplies(Long commentId, Long requesterId, Pageable pageable) {
+    public Page<Comment> getReplies(Long commentId, Long requesterId, Pageable pageable) {
         // validation: 사용자, 댓글 유무 확인
         Member requester = memberRepository.findById(requesterId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
@@ -177,7 +177,7 @@ public class CommentService {
         }
 
         // business logic: 대댓글 조회
-        List<Comment> replies = commentRepository.findByParentWithMemberInfoOrderByCreatedAtAsc(commentId, pageable);
+        Page<Comment> replies = commentRepository.findByParentWithMemberInfoOrderByCreatedAtAsc(commentId, pageable);
 
         // response
         return replies;

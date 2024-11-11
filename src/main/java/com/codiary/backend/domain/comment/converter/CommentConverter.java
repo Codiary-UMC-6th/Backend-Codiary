@@ -2,8 +2,7 @@ package com.codiary.backend.domain.comment.converter;
 
 import com.codiary.backend.domain.comment.dto.response.CommentResponseDTO;
 import com.codiary.backend.domain.comment.entity.Comment;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class CommentConverter {
 
@@ -23,9 +22,7 @@ public class CommentConverter {
                 .build();
     }
 
-    public static List<CommentResponseDTO.CommentDTO> toCommentResponseListDto(List<Comment> comments) {
-        return comments.stream()
-                .map(CommentConverter::toCommentResponseDto)
-                .collect(Collectors.toList());
+    public static Page<CommentResponseDTO.CommentDTO> toCommentResponseListDto(Page<Comment> comments) {
+        return comments.map(CommentConverter::toCommentResponseDto);
     }
 }

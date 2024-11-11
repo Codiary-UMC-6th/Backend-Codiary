@@ -11,8 +11,8 @@ import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -82,25 +82,25 @@ public class CommentController {
 
     @Operation(summary = "댓글 조회")
     @GetMapping("/post/{post_id}/comment")
-    public ApiResponse<List<CommentResponseDTO.CommentDTO>> getComments(
+    public ApiResponse<Page<CommentResponseDTO.CommentDTO>> getComments(
             @PathVariable("post_id") Long postId,
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(sort = "oldest") Pageable pageable
     ) {
         Long memberId = memberDetails.getId();
-        List<Comment> comments = commentService.getComments(postId, memberId, pageable);
+        Page<Comment> comments = commentService.getComments(postId, memberId, pageable);
         return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toCommentResponseListDto(comments));
     }
 
     @Operation(summary = "대댓글 조회")
     @GetMapping("comment/{comment_id}/reply")
-    public ApiResponse<List<CommentResponseDTO.CommentDTO>> getReplyList(
+    public ApiResponse<Page<CommentResponseDTO.CommentDTO>> getReplyList(
             @PathVariable("comment_id") Long commentId,
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault(sort = "oldest") Pageable pageable
     ) {
         Long requesterId = memberDetails.getId();
-        List<Comment> replies = commentService.getReplies(commentId, requesterId, pageable);
+        Page<Comment> replies = commentService.getReplies(commentId, requesterId, pageable);
         return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toCommentResponseListDto(replies));
     }
 }

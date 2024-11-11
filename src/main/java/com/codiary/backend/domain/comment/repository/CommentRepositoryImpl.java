@@ -10,6 +10,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
@@ -18,7 +20,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Comment> findByPostWithMemberInfoAndRepliesOrderByCreatedAtAsc(Long postId, Pageable pageable) {
+    public Page<Comment> findByPostWithMemberInfoAndRepliesOrderByCreatedAtAsc(Long postId, Pageable pageable) {
         QComment child = new QComment("child");
         List<Comment> comments = queryFactory
                 .selectFrom(comment)
@@ -31,11 +33,17 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 .orderBy(comment.createdAt.asc())
                 .fetch();
 
-        return comments;
+        Long total = queryFactory
+                .select(comment.count())
+                .from(comment)
+                .where(comment.post.postId.eq(postId))
+                .fetchOne();
+
+        return new PageImpl<>(comments, pageable, total);
     }
 
     @Override
-    public List<Comment> findByParentWithMemberInfoOrderByCreatedAtAsc(Long commentId, Pageable pageable) {
+    public Page<Comment> findByParentWithMemberInfoOrderByCreatedAtAsc(Long commentId, Pageable pageable) {
         QComment parent = new QComment("parent");
         List<Comment> comments = queryFactory
                 .selectFrom(comment)
@@ -47,7 +55,13 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 .orderBy(comment.createdAt.asc())
                 .fetch();
 
-        return comments;
+        Long total = queryFactory
+                .select(comment.count())
+                .from(comment)
+                .where(comment.parent.commentId.eq(commentId))
+                .fetchOne();
+
+        return new PageImpl<>(comments, pageable, total);
     }
 
     @Override
