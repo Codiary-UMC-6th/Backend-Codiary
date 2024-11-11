@@ -3,6 +3,8 @@ package com.codiary.backend.domain.post.service;
 
 
 
+import com.codiary.backend.domain.category.entity.Category;
+import com.codiary.backend.domain.category.service.CategoryService;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.repository.MemberRepository;
 
@@ -26,7 +28,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +45,7 @@ public class PostCommandService {
     private final UuidRepository uuidRepository; // 추가
     private final PostFileRepository postFileRepository;
     private final MemberCommandService memberCommandService;
+    private final CategoryService categoryService;
     private final AmazonS3Manager s3Manager;
 
     // 포스트 생성
@@ -130,5 +136,22 @@ public class PostCommandService {
     }
 
 
+    public Post setPostCategories(Long postId, Set<String> categoryNames) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+        // 카테고리 이름으로 Categories 엔티티를 생성하거나 조회
+        List<Category> categories = categoryNames.stream()
+                .map(name -> {
+                    // 카테고리 이름으로 Categories 엔티티를 조회하거나 새로 생성
+                    return categoryService.addCategory(post, name);
+                })
+                .collect(Collectors.toList());
+
+        // 포스트에 카테고리를 설정
+        post.setCategories(categories);
+
+        return postRepository.save(post);
+    }
 
 }

@@ -51,7 +51,7 @@ public class FollowController {
     }
 
     @Operation(summary = "유저를 팔로우한 팔로워 목록 조회", description = "로그인한 유저를 팔로우한 팔로워 목록 조회")
-    @GetMapping("/followers")
+    @GetMapping("/follower")
     public ApiResponse<List<MemberResponseDTO.SimpleMemberDTO>> getFollowers() {
         Member member = memberCommandService.getRequester();
         List<Member> followers = followService.getFollowers(member);

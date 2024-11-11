@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v2/teams")
+@RequestMapping("/api/v2/team")
 @RequiredArgsConstructor
 @Tag(name = "팀 API", description = "팀 생성/조회/수정 관련 API 입니다.")
 public class TeamController {

@@ -6,6 +6,7 @@ import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.entity.MemberCategory;
 import com.codiary.backend.domain.member.repository.MemberCategoryRepository;
 import com.codiary.backend.domain.member.repository.MemberRepository;
+import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
@@ -71,5 +72,14 @@ public class CategoryService {
         memberCategory.getMember().getMemberCategoryList().remove(memberCategory);
         memberCategory.getCategory().getMemberCategoryList().remove(memberCategory);
         memberCategoryRepository.delete(memberCategory);
+    }
+
+
+    @Transactional
+    public Category addCategory(Post post, String categoryName) {
+        return categoryRepository.findByName(categoryName)
+                .orElseGet(() -> categoryRepository.save(Category.builder()
+                        .name(categoryName)
+                        .build()));
     }
 }
