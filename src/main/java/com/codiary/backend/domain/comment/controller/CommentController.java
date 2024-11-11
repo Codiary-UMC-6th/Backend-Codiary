@@ -1,6 +1,7 @@
 package com.codiary.backend.domain.comment.controller;
 
 import com.codiary.backend.domain.comment.converter.CommentConverter;
+import com.codiary.backend.domain.comment.dto.request.CommentRequestDTO;
 import com.codiary.backend.domain.comment.dto.request.CommentRequestDTO.CommentDTO;
 import com.codiary.backend.domain.comment.dto.response.CommentResponseDTO;
 import com.codiary.backend.domain.comment.entity.Comment;
@@ -44,7 +45,19 @@ public class CommentController {
         return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toCommentResponseDto(newComment));
     }
 
-    @Operation(summary = "댓글 삭제")
+    @Operation(summary = "대댓글 달기")
+    @PostMapping("comment/{comment_id}/reply")
+    public ApiResponse<CommentResponseDTO.CommentDTO> replyToComment(
+            @PathVariable("comment_id") Long commentId,
+            @RequestBody CommentRequestDTO.CommentDTO request,
+            @AuthenticationPrincipal CustomMemberDetails memberDetails
+    ) {
+        Long replierId = memberDetails.getId();
+        Comment newReply = commentService.replyToComment(commentId, replierId, request);
+        return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toCommentResponseDto(newReply));
+    }
+
+    @Operation(summary = "댓글/대댓글 삭제")
     @DeleteMapping("comment/{comment_id}")
     public ApiResponse<String> deleteComment(
             @PathVariable("comment_id") Long commentId,
@@ -55,7 +68,7 @@ public class CommentController {
         return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, response);
     }
 
-    @Operation(summary = "댓글 수정")
+    @Operation(summary = "댓글/대댓글 수정")
     @PatchMapping("comment/{comment_id}")
     public ApiResponse<CommentResponseDTO.CommentDTO> updateComment(
             @PathVariable("comment_id") Long commentId,
@@ -77,5 +90,17 @@ public class CommentController {
         Long memberId = memberDetails.getId();
         List<Comment> comments = commentService.getComments(postId, memberId, pageable);
         return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toCommentResponseListDto(comments));
+    }
+
+    @Operation(summary = "대댓글 조회")
+    @GetMapping("comment/{comment_id}/reply")
+    public ApiResponse<List<CommentResponseDTO.CommentDTO>> getReplyList(
+            @PathVariable("comment_id") Long commentId,
+            @AuthenticationPrincipal CustomMemberDetails memberDetails,
+            @PageableDefault(size = 10) Pageable pageable
+    ) {
+        Long requesterId = memberDetails.getId();
+        List<Comment> replies = commentService.getReplies(commentId, requesterId, pageable);
+        return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toCommentResponseListDto(replies));
     }
 }

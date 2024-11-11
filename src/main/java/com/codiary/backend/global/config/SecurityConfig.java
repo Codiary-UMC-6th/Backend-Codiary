@@ -59,6 +59,10 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v2/posts/poplular/list", "/api/v2/posts/latest/list", "/api/v2/posts/comments/list/{postId}", "/api/v2/posts/search/title/body/member/project/categories").permitAll()
 
                                 // Comment 관련 접근
+                                .requestMatchers("/api/v2/post/{post_id}/comment").permitAll() // 게시물에 댓글 생성, 조회
+                                .requestMatchers("/api/v2/comment/{comment_id}/reply").permitAll() // 댓글에 대댓글 생성, 조회
+                                .requestMatchers("/api/v2/comment/{comment_id}").permitAll() // 댓글 & 대댓글 수정 삭제
+
                                 // Team 관련 접근
                                 .requestMatchers("/api/v2/teams/team_member").permitAll()
                                 .requestMatchers("/api/v2/teams/{team_id}/profile_image").permitAll()

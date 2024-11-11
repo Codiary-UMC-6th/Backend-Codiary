@@ -8,6 +8,7 @@ import com.codiary.backend.domain.comment.entity.Comment;
 import com.codiary.backend.domain.comment.entity.QComment;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
@@ -47,5 +48,20 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
                 .fetch();
 
         return comments;
+    }
+
+    @Override
+    public Optional<Comment> findByIdWithReplies(Long commentId) {
+        QComment child = new QComment("child");
+        Comment fetchedComment = queryFactory
+                .selectFrom(comment)
+                .leftJoin(comment.member, member)
+                .leftJoin(comment.post, post)
+                .leftJoin(comment.childComments, child).fetchJoin()
+                .where(comment.commentId.eq(commentId))
+                .orderBy(comment.createdAt.asc())
+                .fetchOne();
+
+        return Optional.ofNullable(fetchedComment);
     }
 }
