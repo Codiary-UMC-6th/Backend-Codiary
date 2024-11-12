@@ -43,16 +43,17 @@ public class Comment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    private Comment parentId;
+    private Comment parent;
 
-    @OneToMany(mappedBy = "parentId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> childComments = new ArrayList<>();
 
     @Builder
-    public Comment(String commentBody, Member member, Post post) {
+    public Comment(String commentBody, Member member, Post post, Comment parent) {
         this.commentBody = commentBody;
         this.member = member;
         this.post = post;
+        this.parent = parent;
     }
 
     public void setMember(Member member) {
