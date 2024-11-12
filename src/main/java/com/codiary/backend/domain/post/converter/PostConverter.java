@@ -1,18 +1,17 @@
 package com.codiary.backend.domain.post.converter;
 
+import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
 import com.codiary.backend.domain.post.entity.Post;
-import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.project.entity.Project;
-import com.codiary.backend.domain.team.entity.Team;
-import org.springframework.data.domain.Page;
 import com.codiary.backend.domain.project.repository.ProjectRepository;
+import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.team.repository.TeamRepository;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class PostConverter {
 
@@ -26,8 +25,11 @@ public class PostConverter {
                 .title(post.getPostTitle())
                 .body(post.getPostBody())
                 .author(post.getMember() != null ? post.getMember().getNickname() : null)
+                .authorImage((post.getMember() != null && post.getMember().getImage() != null)
+                        ? post.getMember().getImage().getImageUrl()
+                        : "")
                 .createdAt(post.getCreatedAt())
-                .thumbnailImage(post.getThumbnailImage() != null ? post.getThumbnailImage().getFileUrl() : null)
+                .thumbnailImage(post.getThumbnailImage() != null ? post.getThumbnailImage().getFileUrl() : "")
                 .build();
     }
 
