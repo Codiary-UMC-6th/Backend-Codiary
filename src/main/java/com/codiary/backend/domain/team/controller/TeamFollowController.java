@@ -17,7 +17,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v2/follow/teams/{team_id}")
+@RequestMapping("/api/v2/follow/team/{team_id}")
 @Tag(name = "팀 팔로우 API", description = "팀 팔로우와 관련된 API 입니다.")
 public class TeamFollowController {
 
@@ -43,7 +43,7 @@ public class TeamFollowController {
     }
 
     @Operation(summary = "팀 팔로워 리스트 조회", description = "{team_id}에 해당하는 팀의 팔로워 리스트를 조회힙니다. 팀에 소속된 사용자만 사용 가능합니다.")
-    @GetMapping("followers")
+    @GetMapping("follower")
     public ApiResponse<TeamResponseDTO.TeamFollowersDTO> getFollowers(@PathVariable("team_id") Long teamId) {
         Member member = memberCommandService.getRequester();
         List<TeamFollow> followers = teamFollowService.getFollowers(teamId, member);
