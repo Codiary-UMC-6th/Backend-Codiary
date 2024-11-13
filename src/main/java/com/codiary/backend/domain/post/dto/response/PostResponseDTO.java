@@ -25,6 +25,15 @@ public class PostResponseDTO {
     ) {
     }
 
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record PostTitleResponseDTO(
+            Long id,
+            String title
+    ) {
+    }
+
     @Getter
     @Builder
     @AllArgsConstructor

@@ -7,6 +7,8 @@ import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.member.service.MemberQueryService;
+import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.techstack.enumerate.TechStack;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
@@ -16,6 +18,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -79,11 +86,24 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberTechStackResponseDto(updatedMember));
     }
 
-    @GetMapping("/calendar")
-    @Operation(summary = "사용자 캘린더 조회", description = "마이페이지 사용자 캘린더 조회 기능")
-    public ApiResponse<MemberResponseDTO.MemberCalendarDTO> getCalendar(@AuthenticationPrincipal CustomMemberDetails customMemberDetails) {
+    @GetMapping("/calendar/month")
+    @Operation(summary = "월별 사용자 캘린더 조회", description = "마이페이지 사용자 월별 캘린더 조회 기능")
+    public ApiResponse<MemberResponseDTO.MonthCalendarDTO> getCalendar(@AuthenticationPrincipal CustomMemberDetails customMemberDetails,
+                                                                        @RequestParam("year") String year,
+                                                                        @RequestParam("month") String month){
+        int yearInt = Integer.parseInt(year);
+        int monthInt = Integer.parseInt(month);
+        YearMonth yearMonth = YearMonth.of(yearInt, monthInt);
+        Map<LocalDate, List<Project>> projects = memberQueryService.getProjectsByMonth(customMemberDetails.getId(), yearMonth);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMonthCalendarResponseDto(projects));
+    }
+
+    @GetMapping("/calendar/day")
+    @Operation(summary = "날짜 별 사용자 캘린더 조회", description = "프로젝트별 사용자 POST 조회 기능")
+    public ApiResponse<MemberResponseDTO.DayCalendarDTO> getCalendar(@AuthenticationPrincipal CustomMemberDetails customMemberDetails,
+                                                                        @RequestParam("date") LocalDate date){
         Long memberId = customMemberDetails.getId();
-        Member fetchedMember = memberQueryService.getUserInfo(memberId);
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toMemberCalendarResponseDto(fetchedMember));
+        Map<Project, List<Post>> postList = memberQueryService.getPostsByDay(memberId, date);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toDayCalendarResponseDto(postList));
     }
 }

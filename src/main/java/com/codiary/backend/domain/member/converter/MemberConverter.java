@@ -4,14 +4,16 @@ import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.member.entity.Follow;
 import com.codiary.backend.domain.member.entity.Member;
+import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
+import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.domain.project.dto.response.ProjectResponseDTO;
+import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
 import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.techstack.entity.TechStacks;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MemberConverter {
@@ -77,7 +79,7 @@ public class MemberConverter {
                 .collect(Collectors.toList());
     }
 
-    public static MemberResponseDTO.SimpleMemberProfileDTO tosimpleMemberProfileResponseDto(Member member){
+    public static MemberResponseDTO.SimpleMemberProfileDTO tosimpleMemberProfileResponseDto(Member member) {
         return MemberResponseDTO.SimpleMemberProfileDTO.builder()
                 .userId(member.getMemberId())
                 .userName(member.getNickname())
@@ -85,7 +87,7 @@ public class MemberConverter {
                 .build();
     }
 
-    public static List<MemberResponseDTO.SimpleMemberProfileDTO> toSimpleMemberProfileListResponseDto(List<Member> members){
+    public static List<MemberResponseDTO.SimpleMemberProfileDTO> toSimpleMemberProfileListResponseDto(List<Member> members) {
         return members.stream()
                 .map(member -> MemberResponseDTO.SimpleMemberProfileDTO.builder()
                         .userId(member.getMemberId())
@@ -118,22 +120,41 @@ public class MemberConverter {
         return member;
     }
 
-    // 캘린더
-    public static MemberResponseDTO.MemberCalendarDTO toMemberCalendarResponseDto(Member member) {
-        Map<String, List<MemberResponseDTO.MemberCalendarDTO.ProjectsAndTitlesByDate>> postMap = new HashMap<>();
-        member.getPostList().forEach(post -> {
-            String date = post.getCreatedAt().toLocalDate().toString();
-            if (postMap.containsKey(date)) {
-                postMap.get(date).add(new MemberResponseDTO.MemberCalendarDTO.ProjectsAndTitlesByDate(post.getProject().getProjectName(), List.of(post.getPostTitle())));
-            } else {
-                List<MemberResponseDTO.MemberCalendarDTO.ProjectsAndTitlesByDate> projectsAndTitles = new ArrayList<>();
-                projectsAndTitles.add(new MemberResponseDTO.MemberCalendarDTO.ProjectsAndTitlesByDate(post.getProject().getProjectName(), List.of(post.getPostTitle())));
-                postMap.put(date, projectsAndTitles);
+    public static MemberResponseDTO.MonthCalendarDTO toMonthCalendarResponseDto(Map<LocalDate, List<Project>> projects) {
+        Map<String, List<ProjectResponseDTO.SimpleProjectResponseDTO>> projectMap = new HashMap<>();
+        projects.forEach((date, projectList) -> {
+            List<ProjectResponseDTO.SimpleProjectResponseDTO> projectResponses = projectList.stream()
+                    .filter(Objects::nonNull)
+                    .map(project -> ProjectResponseDTO.SimpleProjectResponseDTO.builder()
+                            .projectId(project.getProjectId())
+                            .name(project.getProjectName())
+                            .build())
+                    .toList();
+            if (!projectResponses.isEmpty()) {
+                projectMap.put(date.toString(), projectResponses);
             }
         });
+        return MemberResponseDTO.MonthCalendarDTO.builder()
+                .projectsByDate(projectMap)
+                .build();
+    }
 
-        return MemberResponseDTO.MemberCalendarDTO.builder()
-                .projectsAndTitlesByDate(postMap)
+    public static MemberResponseDTO.DayCalendarDTO toDayCalendarResponseDto(Map<Project, List<Post>> posts){
+        Map<String, List<PostResponseDTO.PostTitleResponseDTO>> postMap = new HashMap<>();
+        posts.forEach((project, postList) -> {
+            List<PostResponseDTO.PostTitleResponseDTO> postResponses = postList.stream()
+                    .filter(Objects::nonNull)
+                    .map(post -> PostResponseDTO.PostTitleResponseDTO.builder()
+                            .id(post.getPostId())
+                            .title(post.getPostTitle())
+                            .build())
+                    .toList();
+            if (!postResponses.isEmpty()) {
+                postMap.put(project.getProjectName(), postResponses);
+            }
+        });
+        return MemberResponseDTO.DayCalendarDTO.builder()
+                .postsByDate(postMap)
                 .build();
     }
 }
