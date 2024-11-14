@@ -70,7 +70,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .leftJoin(post.member, author)
                 .leftJoin(author.image, memberImage)
                 .where(
-                        author.followings.any().fromMember.memberId.eq(memberId)
+                        author.followers.any().fromMember.memberId.eq(memberId)
                                 .and(
                                         post.postAccess.eq(PostAccess.ENTIRE)
                                                 .or(post.postAccess.eq(PostAccess.TEAM)
@@ -88,7 +88,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .from(post)
                 .leftJoin(post.member, author)
                 .where(
-                        author.followings.any().fromMember.memberId.eq(memberId)
+                        author.followers.any().fromMember.memberId.eq(memberId)
                                 .and(
                                         post.postAccess.eq(PostAccess.ENTIRE)
                                                 .or(post.postAccess.eq(PostAccess.TEAM)
