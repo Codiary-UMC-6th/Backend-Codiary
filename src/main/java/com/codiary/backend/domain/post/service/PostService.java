@@ -2,7 +2,6 @@ package com.codiary.backend.domain.post.service;
 
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.entity.MemberCategory;
-import com.codiary.backend.domain.member.repository.FollowRepository;
 import com.codiary.backend.domain.member.repository.MemberCategoryRepository;
 import com.codiary.backend.domain.member.repository.MemberRepository;
 import com.codiary.backend.domain.post.entity.Post;
@@ -21,11 +20,10 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final MemberCategoryRepository memberCategoryRepository;
-    private final FollowRepository followRepository;
 
-    public Page<Post> searchPost(String keyword, Pageable pageable) {
+    public Page<Post> searchPost(Long memberId, String keyword, Pageable pageable) {
         //business logic & return
-        return postRepository.searchPost(keyword, pageable);
+        return postRepository.searchPost(memberId, keyword, pageable);
     }
 
     // 인기글 조회
@@ -60,7 +58,7 @@ public class PostService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // business logic: 다이어리 조회
-        Page<Post> posts = postRepository.findPostsByMemberWithAuthorInfoOrderByDesc(member, pageable);
+        Page<Post> posts = postRepository.findPostsByMemberWithAuthorInfoOrderByDesc(member.getMemberId(), pageable);
 
         // business logic & return
         return posts;

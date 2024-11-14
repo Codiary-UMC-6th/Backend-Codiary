@@ -1,11 +1,9 @@
 package com.codiary.backend.domain.post.repository;
 
-import static com.codiary.backend.domain.member.entity.QFollow.follow;
 import static com.codiary.backend.domain.member.entity.QMember.member;
 import static com.codiary.backend.domain.member.entity.QMemberImage.memberImage;
 import static com.codiary.backend.domain.post.entity.QPost.post;
 
-import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.entity.QMember;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
@@ -23,11 +21,19 @@ import org.springframework.data.domain.Pageable;
 public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
-    public Page<Post> searchPost(String keyword, Pageable pageable) {
+    @Override
+    public Page<Post> searchPost(Long memberId, String keyword, Pageable pageable) {
         List<Post> postList = queryFactory
                 .selectDistinct(post)
                 .from(post)
+                .leftJoin(post.member, member)
+                .leftJoin(member.image, memberImage)
                 .where(keywordEq(keyword)) // Full-Text Search 조건
+                .where(
+                        post.postAccess.eq(PostAccess.ENTIRE)
+                                .or(post.postAccess.eq(PostAccess.TEAM)
+                                        .and(post.team.teamMemberList.any().member.memberId.eq(memberId)))
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -52,7 +58,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
-    public Page<Post> findPostsByMemberWithAuthorInfoOrderByDesc(Member memberEntity, Pageable pageable) {
+    public Page<Post> findPostsByMemberWithAuthorInfoOrderByDesc(Long memberId, Pageable pageable) {
         // 매핑: post 정보 & 작성자 정보들 & 팔로워들 & 팔로워 정보들
         // 조건: 팔로워가 요청자일 것
         QMember author = new QMember("author");
@@ -63,11 +69,14 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .from(post)
                 .leftJoin(post.member, author)
                 .leftJoin(author.image, memberImage)
-                .leftJoin(follow).on(author.eq(follow.toMember))
-                .leftJoin(follow.fromMember, requester)
                 .where(
-                        requester.eq(memberEntity)
-                                .and(post.postAccess.eq(PostAccess.ENTIRE))
+                        author.followings.any().fromMember.memberId.eq(memberId)
+                                .and(
+                                        post.postAccess.eq(PostAccess.ENTIRE)
+                                                .or(post.postAccess.eq(PostAccess.TEAM)
+                                                        .and(post.team.teamMemberList.any().member.memberId.eq(
+                                                                memberId)))
+                                )
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -78,11 +87,14 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .select(post.countDistinct())
                 .from(post)
                 .leftJoin(post.member, author)
-                .leftJoin(follow).on(author.eq(follow.toMember))
-                .leftJoin(follow.fromMember, requester)
                 .where(
-                        requester.eq(memberEntity)
-                                .and(post.postAccess.eq(PostAccess.ENTIRE))
+                        author.followings.any().fromMember.memberId.eq(memberId)
+                                .and(
+                                        post.postAccess.eq(PostAccess.ENTIRE)
+                                                .or(post.postAccess.eq(PostAccess.TEAM)
+                                                        .and(post.team.teamMemberList.any().member.memberId.eq(
+                                                                memberId)))
+                                )
                 )
                 .fetchOne();
 

@@ -124,33 +124,37 @@ public class PostController {
 
     // 전체 인기글 조회
     @Operation(summary = "전체 인기글 조회")
-    @GetMapping("popular")
+    @GetMapping("/popular")
     public ApiResponse<?> getPopularPosts(@PageableDefault(size = 9) Pageable pageable) {
-        return ApiResponse.onSuccess(SuccessStatus.POST_OK, null);
+        Page<Post> postPage = postService.getPopularPosts(pageable);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
     // 관심 카테고리 인기글 조회
     @Operation(summary = "관심 카테고리 인기글 조회")
-    @GetMapping("popular/{category_id}")
-    public ApiResponse<?> getCategoryPopularPosts(
+    @GetMapping("/popular/{category_id}")
+    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getCategoryPopularPosts(
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
-            @PathVariable("category_id") String categoryId,
+            @PathVariable("category_id") Long categoryId,
             @PageableDefault(size = 9) Pageable pageable
     ) {
-        return ApiResponse.onSuccess(SuccessStatus.POST_OK, null);
+        Long memberId = memberDetails.getId();
+        Page<Post> postPage = postService.getCategoryPopularPosts(memberId, categoryId, pageable);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
     // 최신글 조회
     @Operation(summary = "최신글 조회")
-    @GetMapping("latest")
-    public ApiResponse<?> getLatestPosts(@PageableDefault(size = 9) Pageable pageable) {
+    @GetMapping("/latest")
+    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getLatestPosts(
+            @PageableDefault(size = 9) Pageable pageable) {
         Page<Post> postPage = postService.getLatestPosts(pageable);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
     // 팔로잉 게시글 리스트 조회
     @Operation(summary = "팔로잉 멤버 게시글 조회")
-    @GetMapping("following")
+    @GetMapping("/following")
     public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getFollowingMemberPosts(
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
             @PageableDefault(size = 9) Pageable pageable
@@ -164,8 +168,12 @@ public class PostController {
     @GetMapping("/search")
     public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> searchPost(
             @RequestParam(value = "keyword", defaultValue = "", required = false) String keyword,
-            @PageableDefault(size = 9) Pageable pageable) {
-        Page<Post> postPage = postService.searchPost(keyword, pageable);
+            @AuthenticationPrincipal CustomMemberDetails memberDetails,
+            @PageableDefault(size = 9) Pageable pageable
+    ) {
+        Long memberId = (memberDetails == null) ? 0 : memberDetails.getId();
+        Page<Post> postPage = postService.searchPost(memberId, keyword, pageable);
+
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
