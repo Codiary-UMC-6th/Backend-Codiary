@@ -18,6 +18,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,12 +34,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
-import java.util.Set;
 
 
 @RequiredArgsConstructor
@@ -169,7 +169,7 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
-    // 관심 카테고리 인기글 조회 (구현 전)
+    // 관심 카테고리 인기글 조회
     @Operation(summary = "관심 카테고리 인기글 조회")
     @GetMapping("/popular/{category_id}")
     public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getCategoryPopularPosts(
@@ -221,7 +221,10 @@ public class PostController {
     // 게시글의 카테고리 설정 및 변경
     @PatchMapping("/category/{postId}")
     @Operation(summary = "게시글의 카테고리 설정 및 변경 API", description = "게시글의 카테고리를 설정 및 변경합니다.")
-    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCategory(@PathVariable Long postId, @RequestBody Set<String> categoryNames){
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCategory(
+            @PathVariable Long postId,
+            @RequestBody Set<String> categoryNames
+    ) {
         Member member = memberCommandService.getRequester();
         jwtTokenProvider.isValidToken(member.getMemberId());
 
