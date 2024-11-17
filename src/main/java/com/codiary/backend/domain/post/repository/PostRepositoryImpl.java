@@ -1,10 +1,10 @@
 package com.codiary.backend.domain.post.repository;
 
+import static com.codiary.backend.domain.member.entity.QFollow.follow;
 import static com.codiary.backend.domain.member.entity.QMember.member;
 import static com.codiary.backend.domain.member.entity.QMemberImage.memberImage;
 import static com.codiary.backend.domain.post.entity.QPost.post;
 
-import com.codiary.backend.domain.member.entity.QMember;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -29,11 +29,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .leftJoin(post.member, member)
                 .leftJoin(member.image, memberImage)
                 .where(keywordEq(keyword)) // Full-Text Search 조건
-                .where(
-                        post.postAccess.eq(PostAccess.ENTIRE)
-                                .or(post.postAccess.eq(PostAccess.TEAM)
-                                        .and(post.team.teamMemberList.any().member.memberId.eq(memberId)))
-                )
+                .where(canAccess(memberId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -58,60 +54,43 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
-    public Page<Post> findPostsByMemberWithAuthorInfoOrderByDesc(Long memberId, Pageable pageable) {
-        // 매핑: post 정보 & 작성자 정보들 & 팔로워들 & 팔로워 정보들
-        // 조건: 팔로워가 요청자일 것
-        QMember author = new QMember("author");
-        QMember requester = new QMember("requester");
-
+    public Page<Post> getLatestPostsOfFollowings(Long memberId, Pageable pageable) {
         List<Post> posts = queryFactory
                 .selectDistinct(post)
                 .from(post)
-                .leftJoin(post.member, author)
-                .leftJoin(author.image, memberImage)
-                .where(
-                        author.followers.any().fromMember.memberId.eq(memberId)
-                                .and(
-                                        post.postAccess.eq(PostAccess.ENTIRE)
-                                                .or(post.postAccess.eq(PostAccess.TEAM)
-                                                        .and(post.team.teamMemberList.any().member.memberId.eq(
-                                                                memberId)))
-                                )
-                )
+                .leftJoin(post.member, member)
+                .leftJoin(member.image, memberImage)
+                .leftJoin(member.followers, follow)
+                .where(follow.followStatus.eq(true)
+                        .and(follow.fromMember.memberId.eq(memberId).and(canAccess(memberId))))
+                .orderBy(post.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(post.createdAt.desc())
                 .fetch();
 
         Long total = queryFactory
                 .select(post.countDistinct())
                 .from(post)
-                .leftJoin(post.member, author)
-                .where(
-                        author.followers.any().fromMember.memberId.eq(memberId)
-                                .and(
-                                        post.postAccess.eq(PostAccess.ENTIRE)
-                                                .or(post.postAccess.eq(PostAccess.TEAM)
-                                                        .and(post.team.teamMemberList.any().member.memberId.eq(
-                                                                memberId)))
-                                )
-                )
+                .leftJoin(post.member, member)
+                .leftJoin(member.followers, follow)
+                .where(follow.followStatus.eq(true)
+                        .and(follow.fromMember.memberId.eq(memberId).and(canAccess(memberId))))
                 .fetchOne();
 
         return new PageImpl<>(posts, pageable, total);
     }
 
     @Override
-    public Page<Post> findPostsWithAuthorInfoOrderByCreatedAtDesc(Pageable pageable) {
+    public Page<Post> getLatestPosts(Pageable pageable) {
         List<Post> posts = queryFactory
                 .selectDistinct(post)
                 .from(post)
                 .leftJoin(post.member, member)
                 .leftJoin(member.image, memberImage)
                 .where(post.postAccess.eq(PostAccess.ENTIRE))
+                .orderBy(post.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(post.createdAt.desc())
                 .fetch();
 
         Long total = queryFactory
@@ -122,5 +101,52 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetchOne();
 
         return new PageImpl<>(posts, pageable, total);
+    }
+
+    @Override
+    public Page<Post> getPopularPosts(Pageable pageable) {
+        List<Post> posts = queryFactory
+                .selectDistinct(post)
+                .from(post)
+                .where(post.postAccess.eq(PostAccess.ENTIRE))
+                .orderBy(post.commentList.size().add(post.bookmarkList.size()).desc(),
+                        post.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory
+                .select(post.countDistinct())
+                .from(post)
+                .where(post.postAccess.eq(PostAccess.ENTIRE))
+                .fetchOne();
+
+        return new PageImpl<>(posts, pageable, total);
+    }
+
+    @Override
+    public Page<Post> getPopularPostsByCategoryId(Long memberId, Long categoryId, Pageable pageable) {
+        List<Post> posts = queryFactory
+                .selectDistinct(post)
+                .from(post)
+                .where(post.categoriesList.any().categoryId.eq(categoryId).and(canAccess(memberId)))
+                .orderBy(post.commentList.size().add(post.bookmarkList.size()).desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory
+                .select(post.countDistinct())
+                .from(post)
+                .where(post.categoriesList.any().categoryId.eq(categoryId).and(canAccess(memberId)))
+                .fetchOne();
+
+        return new PageImpl<>(posts, pageable, total);
+    }
+
+    private BooleanExpression canAccess(Long memberId) {
+        return post.postAccess.eq(PostAccess.ENTIRE)
+                .or(post.postAccess.eq(PostAccess.TEAM)
+                        .and(post.team.teamMemberList.any().member.memberId.eq(memberId)));
     }
 }

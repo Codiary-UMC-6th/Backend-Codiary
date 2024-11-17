@@ -130,7 +130,7 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
-    // 관심 카테고리 인기글 조회
+    // 관심 카테고리 인기글 조회 (구현 전)
     @Operation(summary = "관심 카테고리 인기글 조회")
     @GetMapping("/popular/{category_id}")
     public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getCategoryPopularPosts(

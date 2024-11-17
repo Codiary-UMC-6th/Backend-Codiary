@@ -7,7 +7,11 @@ import org.springframework.data.domain.Pageable;
 public interface PostRepositoryCustom {
     Page<Post> searchPost(Long memberId, String keyword, Pageable pageable);
 
-    Page<Post> findPostsByMemberWithAuthorInfoOrderByDesc(Long memberId, Pageable pageable);
+    Page<Post> getLatestPostsOfFollowings(Long memberId, Pageable pageable);
 
-    Page<Post> findPostsWithAuthorInfoOrderByCreatedAtDesc(Pageable pageable);
+    Page<Post> getLatestPosts(Pageable pageable);
+
+    Page<Post> getPopularPosts(Pageable pageable);
+
+    Page<Post> getPopularPostsByCategoryId(Long memberId, Long categoryId, Pageable pageable);
 }
