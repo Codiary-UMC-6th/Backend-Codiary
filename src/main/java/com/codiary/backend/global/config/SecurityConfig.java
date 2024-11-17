@@ -61,6 +61,10 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v2/post/latest", "api/v2/post/following").permitAll() // 전체 최신글 조회 & 팔로잉 멤버들의 최신글 조회
 
                                 // Comment 관련 접근
+                                .requestMatchers("/api/v2/post/{post_id}/comment").permitAll() // 게시물에 댓글 생성, 조회
+                                .requestMatchers("/api/v2/comment/{comment_id}/reply").permitAll() // 댓글에 대댓글 생성, 조회
+                                .requestMatchers("/api/v2/comment/{comment_id}").permitAll() // 댓글 & 대댓글 수정 삭제
+
                                 // Team 관련 접근
                                 .requestMatchers("/api/v2/team/team_member").permitAll()
                                 .requestMatchers("/api/v2/team/{team_id}/profile_image").permitAll()

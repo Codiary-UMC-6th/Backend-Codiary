@@ -26,14 +26,14 @@ public class AuthController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
     }
 
-    @GetMapping("sign_up/emails/check")
+    @GetMapping("sign_up/email/check")
     @Operation(summary = "이메일 중복 확인")
     public ApiResponse<String> checkEmailDuplication(@Valid @RequestParam String email) {
         String response = authService.checkEmailDuplication(email);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
     }
 
-    @GetMapping("sign_up/nicknames/check")
+    @GetMapping("sign_up/nickname/check")
     @Operation(summary = "닉네임 중복 확인")
     public ApiResponse<String> checkNicknameDuplication(@Valid @RequestParam String nickname) {
         String response = authService.checkNicknameDuplication(nickname);

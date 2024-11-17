@@ -99,5 +99,16 @@ public class Post extends BaseEntity {
     this.categoriesList.clear();
     this.categoriesList.addAll(categories);
   }
-  
+
+
+  @Builder
+  @Getter
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class PostAdjacent{
+    Post laterPost;
+    Post olderPost;
+  }
+
+
 }

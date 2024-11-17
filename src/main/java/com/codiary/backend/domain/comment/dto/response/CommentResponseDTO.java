@@ -15,11 +15,13 @@ public class CommentResponseDTO {
             Long commentId,
             String commentBody,
             Long postId,
+            Long parentId,
             Long commenterId,
             String commenterProfileImageUrl,
             String commenterNickname,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt
+            LocalDateTime updatedAt,
+            Integer numberOfReply
     ) {
     }
 }

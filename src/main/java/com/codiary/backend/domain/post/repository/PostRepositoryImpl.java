@@ -6,6 +6,7 @@ import static com.codiary.backend.domain.member.entity.QMemberImage.memberImage;
 import static com.codiary.backend.domain.post.entity.QPost.post;
 
 import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -16,6 +17,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.codiary.backend.domain.post.entity.QPost.post;
+import static com.codiary.backend.domain.project.entity.QProject.project;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom {
@@ -53,6 +63,21 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return numberTemplate.gt(0);
     }
 
+    public Map<Project, List<Post>> findPostsForCalendar(Long memberId, LocalDate date) {
+        List<Post> posts = queryFactory
+                .selectFrom(post)
+                .leftJoin(post.project, project).fetchJoin()
+                .where(post.member.memberId.eq(memberId)
+                        .and(post.createdAt.between(date.atStartOfDay(), date.atTime(23, 59, 59))))
+                .fetch();
+
+        return posts.stream()
+                .collect(Collectors.groupingBy(
+                        Post::getProject,
+                        Collectors.collectingAndThen(Collectors.toList(), ArrayList::new)
+                ));
+    }
+    
     @Override
     public Page<Post> getLatestPostsOfFollowings(Long memberId, Pageable pageable) {
         List<Post> posts = queryFactory
