@@ -1,33 +1,45 @@
 package com.codiary.backend.domain.post.controller;
 
+import com.codiary.backend.domain.member.entity.Member;
+import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.post.converter.PostConverter;
-import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
+import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
+import com.codiary.backend.domain.post.entity.Bookmark;
 import com.codiary.backend.domain.post.entity.Post;
-import com.codiary.backend.domain.member.entity.Member;
+import com.codiary.backend.domain.post.service.BookmarkService;
 import com.codiary.backend.domain.post.service.PostCommandService;
 import com.codiary.backend.domain.post.service.PostQueryService;
 import com.codiary.backend.domain.post.service.PostService;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
+import com.codiary.backend.global.jwt.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
-import com.codiary.backend.global.jwt.JwtTokenProvider;
-
-import java.util.Optional;
-import java.util.Set;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RequiredArgsConstructor
@@ -43,6 +55,7 @@ public class PostController {
     private final PostQueryService postQueryService;
     private final MemberCommandService memberCommandService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final BookmarkService bookmarkService;
 
     // 게시글 생성하기
     @PostMapping(consumes = "multipart/form-data")
