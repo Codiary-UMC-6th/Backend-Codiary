@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.project.repository;
 
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.project.entity.Project;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -34,5 +35,13 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
                         post -> post.getCreatedAt().toLocalDate(),
                         Collectors.mapping(Post::getProject, Collectors.collectingAndThen(Collectors.toSet(), ArrayList::new))
                 ));
+    }
+
+    public List<Project> findByMemberProjectMapsMember(Member member) {
+        return queryFactory
+                .selectFrom(project)
+                .leftJoin(project.memberProjectMaps).fetchJoin()
+                .where(project.memberProjectMaps.any().member.eq(member))
+                .fetch();
     }
 }

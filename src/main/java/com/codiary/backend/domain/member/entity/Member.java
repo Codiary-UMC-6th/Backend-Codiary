@@ -134,4 +134,8 @@ public class Member extends BaseEntity {
   public void setTeamMemberList(List<TeamMember> teamMembers) {
     this.teamMemberList = teamMembers;
   }
+
+  public void addProject(MemberProjectMap memberProjectMap) {
+    memberProjectMapList.add(memberProjectMap);
+  }
 }
