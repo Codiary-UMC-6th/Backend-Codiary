@@ -314,8 +314,13 @@ public class PostResponseDTO {
         }
     }
 
-
-
-
-
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record BookmarkDTO(
+            Long bookmarkId,
+            Long memberId,
+            Long postId
+    ) {
+    }
 }

@@ -6,7 +6,9 @@ import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.post.converter.PostConverter;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
+import com.codiary.backend.domain.post.entity.Bookmark;
 import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.domain.post.service.BookmarkService;
 import com.codiary.backend.domain.post.service.PostCommandService;
 import com.codiary.backend.domain.post.service.PostQueryService;
 import com.codiary.backend.domain.post.service.PostService;
@@ -53,6 +55,7 @@ public class PostController {
     private final PostQueryService postQueryService;
     private final MemberCommandService memberCommandService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final BookmarkService bookmarkService;
 
     // 게시글 생성하기
     @PostMapping(consumes = "multipart/form-data")
@@ -223,5 +226,31 @@ public class PostController {
 
         Post updatedPost = postCommandService.setPostCategories(postId, categoryNames);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toSetPostCategoriesResultDTO(updatedPost));
+    }
+
+    // 북마크 추가
+    @PostMapping("/{post_id}/bookmark")
+    @Operation(summary = "게시글 북마크")
+    public ApiResponse<PostResponseDTO.BookmarkDTO> bookmarkPost(
+            @PathVariable("post_id") Long postId,
+            @AuthenticationPrincipal CustomMemberDetails memberDetails
+    ) {
+        Long memberId = memberDetails.getId();
+        Bookmark bookmark = bookmarkService.bookmarkPost(memberId, postId);
+
+        return ApiResponse.onSuccess(SuccessStatus.BOOKMARK_OK, PostConverter.toBookmarkDTO(bookmark));
+    }
+
+    // 북마크 삭제
+    @DeleteMapping("/{post_id}/bookmark")
+    @Operation(summary = "게시글 북마크 취소")
+    public ApiResponse<String> cancelBookmark(
+            @PathVariable("post_id") Long postId,
+            @AuthenticationPrincipal CustomMemberDetails memberDetails
+    ) {
+        Long memberId = memberDetails.getId();
+        String response = bookmarkService.cancelBookmark(memberId, postId);
+
+        return ApiResponse.onSuccess(SuccessStatus.BOOKMARK_OK, response);
     }
 }

@@ -3,6 +3,7 @@ package com.codiary.backend.domain.post.converter;
 import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
+import com.codiary.backend.domain.post.entity.Bookmark;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.project.entity.Project;
@@ -428,5 +429,12 @@ public class PostConverter {
                 .build();
     }
 
+    public static PostResponseDTO.BookmarkDTO toBookmarkDTO(Bookmark bookmark) {
+        return PostResponseDTO.BookmarkDTO.builder()
+                .bookmarkId(bookmark.getId())
+                .postId(bookmark.getPost().getPostId())
+                .memberId(bookmark.getMember().getMemberId())
+                .build();
+    }
 
 }
