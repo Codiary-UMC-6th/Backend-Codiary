@@ -4,11 +4,12 @@ import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 public class PostResponseDTO {
 
@@ -312,8 +313,13 @@ public class PostResponseDTO {
         }
     }
 
-
-
-
-
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record BookmarkDTO(
+            Long bookmarkId,
+            Long memberId,
+            Long postId
+    ) {
+    }
 }
