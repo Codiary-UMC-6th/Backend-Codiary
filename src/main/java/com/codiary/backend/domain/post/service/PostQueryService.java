@@ -33,6 +33,12 @@ public class PostQueryService {
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
 
+    public Post findById(Long postId) {
+        Post post = postRepository.findById(postId).get();
+        return postRepository.save(post);
+    }
+
+
     public Page<Post> getPostsByMember(Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
         Member member = memberRepository.findById(memberId)
