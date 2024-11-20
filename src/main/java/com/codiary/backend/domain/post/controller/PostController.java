@@ -161,11 +161,13 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostAdjacentDTO(postQueryService.findAdjacentPosts(postId)));
     }
 
-    // 전체 인기글 조회
-    @Operation(summary = "전체 인기글 조회")
-    @GetMapping("/popular")
-    public ApiResponse<?> getPopularPosts(@PageableDefault(size = 9) Pageable pageable) {
-        Page<Post> postPage = postService.getPopularPosts(pageable);
+    // 전체 인기글 or 최신글 조회
+    @Operation(summary = "공개글 리스트 조회", description = "popular/latest 입력 시 인기글/최신글 조회")
+    @GetMapping("/list")
+    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getPostList(
+            @PageableDefault(size = 9) Pageable pageable
+    ) {
+        Page<Post> postPage = postService.getPostList(pageable);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
@@ -179,15 +181,6 @@ public class PostController {
     ) {
         Long memberId = memberDetails.getId();
         Page<Post> postPage = postService.getCategoryPopularPosts(memberId, categoryId, pageable);
-        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
-    }
-
-    // 최신글 조회
-    @Operation(summary = "최신글 조회")
-    @GetMapping("/latest")
-    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getLatestPosts(
-            @PageableDefault(size = 9) Pageable pageable) {
-        Page<Post> postPage = postService.getLatestPosts(pageable);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 

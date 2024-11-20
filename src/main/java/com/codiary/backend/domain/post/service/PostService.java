@@ -24,10 +24,10 @@ public class PostService {
         return postRepository.searchPost(memberId, keyword, pageable);
     }
 
-    // 인기글 조회
-    public Page<Post> getPopularPosts(Pageable pageable) {
+    // 인기글 or 최신글 조회
+    public Page<Post> getPostList(Pageable pageable) {
         // business logic & return
-        return postRepository.getPopularPosts(pageable);
+        return postRepository.getPostList(pageable);
     }
 
     // 카테고리 인기글 조회
@@ -41,12 +41,6 @@ public class PostService {
 
         // business logic & return
         return postRepository.getPopularPostsByCategoryId(memberId, memberCategoryId, pageable);
-    }
-
-    // 최신글 조회
-    public Page<Post> getLatestPosts(Pageable pageable) {
-        // business logic & return
-        return postRepository.getLatestPosts(pageable);
     }
 
     // 팔로잉 멤버 게시글 조회
