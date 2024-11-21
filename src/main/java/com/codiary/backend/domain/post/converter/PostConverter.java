@@ -1,18 +1,18 @@
 package com.codiary.backend.domain.post.converter;
 
+import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
+import com.codiary.backend.domain.post.entity.Bookmark;
 import com.codiary.backend.domain.post.entity.Post;
-import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.project.entity.Project;
-import com.codiary.backend.domain.team.entity.Team;
-import org.springframework.data.domain.Page;
 import com.codiary.backend.domain.project.repository.ProjectRepository;
+import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.team.repository.TeamRepository;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 
 public class PostConverter {
 
@@ -426,5 +426,12 @@ public class PostConverter {
                 .build();
     }
 
+    public static PostResponseDTO.BookmarkDTO toBookmarkDTO(Bookmark bookmark) {
+        return PostResponseDTO.BookmarkDTO.builder()
+                .bookmarkId(bookmark.getId())
+                .postId(bookmark.getPost().getPostId())
+                .memberId(bookmark.getMember().getMemberId())
+                .build();
+    }
 
 }
