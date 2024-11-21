@@ -47,4 +47,11 @@ public class ProjectController {
         return ApiResponse.onSuccess(SuccessStatus.PROJECT_OK, ProjectConverter.toSimpleProjectResponseDTO(project));
     }
 
+    @Operation(summary = "팀 프로젝트 조회", description = "팀 프로젝트를 조회합니다.")
+    @GetMapping("/team/{team_id}")
+    public ApiResponse<List<ProjectResponseDTO.SimpleProjectResponseDTO>> getTeamProject(@AuthenticationPrincipal CustomMemberDetails memberDetails,
+                                                                                         @PathVariable("team_id") Long teamId) {
+        List<Project> projects = projectService.getTeamProject(teamId, memberDetails.getId());
+        return ApiResponse.onSuccess(SuccessStatus.PROJECT_OK, ProjectConverter.toSimpleProjectListResponseDTO(projects));
+    }
 }

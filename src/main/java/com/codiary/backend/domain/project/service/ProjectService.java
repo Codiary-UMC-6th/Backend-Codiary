@@ -82,4 +82,20 @@ public class ProjectService {
             return project;
         }
     }
+
+    public List<Project> getTeamProject(Long teamId, Long memberId) {
+        // validation
+        Team team = teamRepository.findByTeamIdAndDeletedAtIsNull(teamId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (teamRepository.isTeamMember(team, member)) {
+            throw new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS);
+        }
+
+        // return
+        return projectRepository.findByTeamProjectMapsTeamId(teamId);
+    }
 }

@@ -55,4 +55,16 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
                 )
                 .fetch();
     }
+
+    public List<Project> findByTeamProjectMapsTeamId(Long teamId) {
+        return queryFactory
+                .selectFrom(project)
+                .leftJoin(project.team, team)
+                .where(
+                        team.deletedAt.isNull()
+                                .and(team.teamId.eq(teamId))
+                                .and(project.deletedAt.isNull())
+                )
+                .fetch();
+    }
 }

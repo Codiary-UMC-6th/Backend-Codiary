@@ -11,4 +11,6 @@ public interface ProjectRepositoryCustom {
     Map<LocalDate, List<Project>> findProjectsForCalendar(Long memberId, LocalDate startDate, LocalDate endDate);
 
     List<Project> findByMemberProjectMapsMember(Member member);
+
+    List<Project> findByTeamProjectMapsTeamId(Long teamId);
 }
