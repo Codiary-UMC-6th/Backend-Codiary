@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 import static com.codiary.backend.domain.post.entity.QPost.post;
 import static com.codiary.backend.domain.project.entity.QProject.project;
+import static com.codiary.backend.domain.team.entity.QTeam.team;
+import static com.codiary.backend.domain.team.entity.QTeamMember.teamMember;
 
 @RequiredArgsConstructor
 public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
@@ -40,8 +42,17 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
     public List<Project> findByMemberProjectMapsMember(Member member) {
         return queryFactory
                 .selectFrom(project)
-                .leftJoin(project.memberProjectMaps).fetchJoin()
-                .where(project.memberProjectMaps.any().member.eq(member))
+                .leftJoin(project.member)
+                .leftJoin(project.team, team)
+                .leftJoin(team.teamMemberList, teamMember)
+                .where(
+                        project.member.eq(member)
+                                .and(project.deletedAt.isNull())
+                                .or(
+                                        team.teamMemberList.any().member.eq(member)
+                                                .and(team.deletedAt.isNull())
+                                )
+                )
                 .fetch();
     }
 }

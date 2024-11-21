@@ -25,7 +25,8 @@ public class ProjectResponseDTO {
     public record ProjectDetailResponseDTO(
             Long projectId,
             String name,
-            List<MemberResponseDTO.SimpleMemberProfileDTO> members
+            Boolean isTeam,
+            List<MemberResponseDTO.SimpleMemberProfileDTO> projectMembers
     ) {
     }
 }

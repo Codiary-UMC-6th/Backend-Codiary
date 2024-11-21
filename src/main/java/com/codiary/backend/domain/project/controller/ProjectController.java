@@ -38,4 +38,13 @@ public class ProjectController {
         return ApiResponse.onSuccess(SuccessStatus.PROJECT_OK, ProjectConverter.toSimpleProjectListResponseDTO(projects));
     }
 
+    @Operation(summary = "팀 프로젝트 생성", description = "팀 프로젝트를 생성합니다.")
+    @PostMapping("/create/team/{team_id}/{project_name}")
+    public ApiResponse<ProjectResponseDTO.SimpleProjectResponseDTO> createTeamProject(@AuthenticationPrincipal CustomMemberDetails memberDetails,
+                                                                 @PathVariable("team_id") Long teamId,
+                                                                 @PathVariable("project_name") String projectName) {
+        Project project = projectService.createTeamProject(memberDetails.getId(), teamId, projectName);
+        return ApiResponse.onSuccess(SuccessStatus.PROJECT_OK, ProjectConverter.toSimpleProjectResponseDTO(project));
+    }
+
 }

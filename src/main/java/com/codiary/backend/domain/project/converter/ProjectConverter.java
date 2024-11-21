@@ -9,12 +9,18 @@ import java.util.stream.Collectors;
 
 public class ProjectConverter {
     public static ProjectResponseDTO.ProjectDetailResponseDTO toProjectDetailResponseDTO(Project project) {
+        Boolean isTeam = project.getTeam() != null;
         return ProjectResponseDTO.ProjectDetailResponseDTO.builder()
                 .projectId(project.getProjectId())
                 .name(project.getProjectName())
-                .members(project.getMemberProjectMaps().stream()
-                        .map(memberProjectMap -> MemberConverter.tosimpleMemberProfileResponseDto(memberProjectMap.getMember()))
-                        .collect(Collectors.toList()))
+                .isTeam(isTeam)
+                .projectMembers(
+                        isTeam
+                                ? project.getTeam().getTeamMemberList().stream()
+                                .map(teamMember -> MemberConverter.toSimpleMemberProfileResponseDto(teamMember.getMember()))
+                                .collect(Collectors.toList())
+                                : List.of(MemberConverter.toSimpleMemberProfileResponseDto(project.getMember()))
+                )
                 .build();
     }
 

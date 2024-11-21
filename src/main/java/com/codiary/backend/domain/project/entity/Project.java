@@ -1,7 +1,8 @@
 package com.codiary.backend.domain.project.entity;
 
-import com.codiary.backend.domain.member.entity.MemberProjectMap;
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,13 +26,20 @@ public class Project extends BaseEntity {
   private String projectName;
 
   @OneToMany(mappedBy = "project")
-  private List<MemberProjectMap> memberProjectMaps = new ArrayList<>();
+  private List<Post> posts = new ArrayList<>();
 
-  @OneToMany(mappedBy = "project")
-    private List<Post> posts = new ArrayList<>();
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "team_id")
+  private Team team;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "member_id")
+  private Member member;
 
   @Builder
-  public Project(String projectName) {
+  public Project(Team team, Member member, String projectName) {
+    this.team = team;
+    this.member = member;
     this.projectName = projectName;
   }
 }

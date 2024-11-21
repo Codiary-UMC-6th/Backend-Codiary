@@ -72,7 +72,7 @@ public class TeamConverter {
     public static TeamResponseDTO.TeamMemberDTO toTeamMemberResponseDTO(TeamMember teamMember){
         return TeamResponseDTO.TeamMemberDTO.builder()
                 .teamMemberId(teamMember.getTeamMemberId())
-                .member(MemberConverter.tosimpleMemberProfileResponseDto(teamMember.getMember()))
+                .member(MemberConverter.toSimpleMemberProfileResponseDto(teamMember.getMember()))
                 .teamMemberRole(teamMember.getTeamMemberRole().name())
                 .teamMemberPosition(teamMember.getMemberPosition())
                 .build();
