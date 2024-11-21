@@ -56,7 +56,9 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v2/post","/api/v2/post/{postId}", "/api/v2/post/visibility/{postId}", "/api/v2/post/coauthor/{postId}", "/api/v2/post/category/{postId}").permitAll()
                                 .requestMatchers("/api/v2/post/title/paging", "/api/v2/post/team/{teamId}/{postId}", "/api/v2/post/team/{teamId}/member/{memberId}/paging", "/api/v2/post/project/{projectId}/team/{teamId}/paging").permitAll()
                                 .requestMatchers("/api/v2/post/project/{projectId}/member/{memberId}/paging", "/api/v2/post/member/{memberId}/paging", "/api/v2/post/category/paging", "/api/v2/post/{postId}/adjacent").permitAll()
-                                .requestMatchers("/api/v2/post/poplular/list", "/api/v2/post/latest/list", "/api/v2/post/comment/list/{postId}", "/api/v2/post/search/title/body/member/project/category").permitAll()
+                                .requestMatchers("/api/v2/post/comment/list/{postId}", "/api/v2/post/search/title/body/member/project/category").permitAll()
+                                .requestMatchers("/api/v2/post/popular", "api/v2/post/popular/{category_id}").permitAll() // 전체 인기글 조회 & 관심 카테고리 인기글 조회
+                                .requestMatchers("/api/v2/post/latest", "api/v2/post/following").permitAll() // 전체 최신글 조회 & 팔로잉 멤버들의 최신글 조회
 
                                 // Comment 관련 접근
                                 .requestMatchers("/api/v2/post/{post_id}/comment").permitAll() // 게시물에 댓글 생성, 조회

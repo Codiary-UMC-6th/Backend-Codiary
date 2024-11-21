@@ -21,6 +21,7 @@ public class PostResponseDTO {
             String title,
             String body,
             String author,
+            String authorImage,
             LocalDateTime createdAt,
             String thumbnailImage
     ) {

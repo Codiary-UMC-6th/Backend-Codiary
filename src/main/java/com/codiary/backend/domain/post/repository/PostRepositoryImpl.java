@@ -1,34 +1,44 @@
 package com.codiary.backend.domain.post.repository;
 
+import static com.codiary.backend.domain.member.entity.QFollow.follow;
+import static com.codiary.backend.domain.member.entity.QMember.member;
+import static com.codiary.backend.domain.member.entity.QMemberImage.memberImage;
+import static com.codiary.backend.domain.post.entity.QPost.post;
+import static com.codiary.backend.domain.project.entity.QProject.project;
+
 import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.project.entity.Project;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static com.codiary.backend.domain.post.entity.QPost.post;
-import static com.codiary.backend.domain.project.entity.QProject.project;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
-    public Page<Post> searchPost(String keyword, Pageable pageable) {
+    @Override
+    public Page<Post> searchPost(Long memberId, String keyword, Pageable pageable) {
         List<Post> postList = queryFactory
                 .selectDistinct(post)
                 .from(post)
+                .leftJoin(post.member, member)
+                .leftJoin(member.image, memberImage)
                 .where(keywordEq(keyword)) // Full-Text Search 조건
+                .where(canAccess(memberId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -43,10 +53,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     private BooleanExpression keywordEq(String keyword) {
-        if(keyword == null || keyword.isEmpty()) {
+        if (keyword == null || keyword.isEmpty()) {
             return null;
         }
-        NumberExpression<Double> numberTemplate = Expressions.numberTemplate(Double.class,"function('match', {0}, {1}, {2})", post.postTitle, post.postBody, keyword);
+        NumberExpression<Double> numberTemplate = Expressions.numberTemplate(Double.class,
+                "function('match', {0}, {1}, {2})", post.postTitle, post.postBody, keyword);
 
         return numberTemplate.gt(0);
     }
@@ -64,5 +75,110 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         Post::getProject,
                         Collectors.collectingAndThen(Collectors.toList(), ArrayList::new)
                 ));
+    }
+
+    @Override
+    public Page<Post> getLatestPostsOfFollowings(Long memberId, Pageable pageable) {
+        List<Post> posts = queryFactory
+                .selectDistinct(post)
+                .from(post)
+                .leftJoin(post.member, member)
+                .leftJoin(member.image, memberImage)
+                .leftJoin(member.followers, follow)
+                .where(follow.followStatus.eq(true)
+                        .and(follow.fromMember.memberId.eq(memberId).and(canAccess(memberId))))
+                .orderBy(post.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory
+                .select(post.countDistinct())
+                .from(post)
+                .leftJoin(post.member, member)
+                .leftJoin(member.followers, follow)
+                .where(follow.followStatus.eq(true)
+                        .and(follow.fromMember.memberId.eq(memberId).and(canAccess(memberId))))
+                .fetchOne();
+
+        return new PageImpl<>(posts, pageable, total);
+    }
+
+    @Override
+    public Page<Post> getPostList(Pageable pageable) {
+        OrderSpecifier[] orderSpecifiers = createPostListOrderSpecifier(pageable.getSort());
+
+        List<Post> posts = queryFactory
+                .selectDistinct(post)
+                .from(post)
+                .where(post.postAccess.eq(PostAccess.ENTIRE))
+                .orderBy(orderSpecifiers)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory
+                .select(post.countDistinct())
+                .from(post)
+                .where(post.postAccess.eq(PostAccess.ENTIRE))
+                .fetchOne();
+
+        return new PageImpl<>(posts, pageable, total);
+    }
+
+    private OrderSpecifier[] createPostListOrderSpecifier(Sort sort) {
+        List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
+
+        for (Sort.Order order : sort) {
+            if (order.getProperty().equals("latest")) {
+                orderSpecifiers.add(
+                        new OrderSpecifier<>(
+                                Order.DESC,
+                                post.createdAt
+                        )
+                );
+            } else if (order.getProperty().equals("popular")) {
+                orderSpecifiers.add(
+                        new OrderSpecifier<>(
+                                Order.DESC,
+                                post.commentList.size().add(post.bookmarkList.size())
+                        )
+                );
+                orderSpecifiers.add(
+                        new OrderSpecifier<>(
+                                Order.DESC,
+                                post.createdAt
+                        )
+                );
+            }
+        }
+
+        return orderSpecifiers.toArray(new OrderSpecifier[0]);
+    }
+
+    @Override
+    public Page<Post> getPopularPostsByCategoryId(Long memberId, Long categoryId, Pageable pageable) {
+        List<Post> posts = queryFactory
+                .selectDistinct(post)
+                .from(post)
+                .where(post.categoriesList.any().categoryId.eq(categoryId).and(canAccess(memberId)))
+                .orderBy(post.commentList.size().add(post.bookmarkList.size()).desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory
+                .select(post.countDistinct())
+                .from(post)
+                .where(post.categoriesList.any().categoryId.eq(categoryId).and(canAccess(memberId)))
+                .fetchOne();
+
+        return new PageImpl<>(posts, pageable, total);
+    }
+
+    private BooleanExpression canAccess(Long memberId) {
+        return post.postAccess.eq(PostAccess.ENTIRE)
+                .or(post.postAccess.eq(PostAccess.TEAM)
+                        .and(post.team.teamMemberList.any().member.memberId.eq(memberId)));
     }
 }
