@@ -60,7 +60,8 @@ public class PostController {
     // 게시글 생성하기
     @PostMapping(consumes = "multipart/form-data")
     @Operation(summary = "게시글 생성 API", description = "게시글을 생성합니다. **카테고리 설정은 게시글 생성과는 별도로 설정해야 됩니다.**")
-    public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(@ModelAttribute PostRequestDTO.CreatePostRequestDTO request) {
+    public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(
+            @ModelAttribute PostRequestDTO.CreatePostRequestDTO request) {
         Member member = memberCommandService.getRequester();
         jwtTokenProvider.isValidToken(member.getMemberId());
 
@@ -72,18 +73,22 @@ public class PostController {
     // 멤버의 게시글 수정하기
     @PatchMapping(path = "/{postId}", consumes = "multipart/form-data")
     @Operation(summary = "게시글 수정 API", description = "게시글을 수정합니다.")
-    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(@ModelAttribute PostRequestDTO.UpdatePostDTO request, @PathVariable Long postId){
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(
+            @ModelAttribute PostRequestDTO.UpdatePostDTO request, 
+            @PathVariable Long postId
+    ) {
         Member member = memberCommandService.getRequester();
         jwtTokenProvider.isValidToken(member.getMemberId());
 
-        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(postCommandService.updatePost(postId, request)));
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK,
+                PostConverter.toUpdatePostResultDTO(postCommandService.updatePost(postId, request)));
     }
 
 
     // 게시글 삭제하기
     @DeleteMapping("/{postId}")
     @Operation(summary = "게시글 삭제 API", description = "게시글을 삭제합니다.")
-    public ApiResponse<?> deletePost(@PathVariable Long postId){
+    public ApiResponse<?> deletePost(@PathVariable Long postId) {
         Member member = memberCommandService.getRequester();
         jwtTokenProvider.isValidToken(member.getMemberId());
 
@@ -125,8 +130,7 @@ public class PostController {
         Page<Post> posts = postQueryService.getPostsByTeamInProject(projectId, teamId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toTeamPostInProjectPreviewListDTO(posts));
     }
-
-
+    
     // 팀별 저자의 게시글 리스트 페이징 조회
     @GetMapping("/team/{teamId}/member/{memberId}/paging")
     @Operation(summary = "팀별 저자의 게시글 리스트 페이징 조회 API", description = "팀별 저자의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**", security = @SecurityRequirement(name = "accessToken"))
@@ -134,8 +138,7 @@ public class PostController {
         Page<Post> posts = postQueryService.getPostsByMemberInTeam(teamId, memberId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toMemberPostInTeamPreviewListDTO(posts));
     }
-
-
+    
     // 제목으로 게시글 리스트 페이징 조회
     @GetMapping("/title/paging")
     @Operation(summary = "제목으로 게시글 리스트 페이징 조회 API", description = "제목으로 게시글 리스트를 페이징으로 조회합니다. Param으로 제목을 입력하세요.", security = @SecurityRequirement(name = "accessToken"))
@@ -161,14 +164,52 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostAdjacentDTO(postQueryService.findAdjacentPosts(postId)));
     }
 
+    // 전체 인기글 or 최신글 조회
+    @Operation(summary = "공개글 리스트 조회", description = "popular/latest 입력 시 인기글/최신글 조회")
+    @GetMapping("/list")
+    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getPostList(
+            @PageableDefault(size = 9) Pageable pageable
+    ) {
+        Page<Post> postPage = postService.getPostList(pageable);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
+    }
+
+    // 관심 카테고리 인기글 조회
+    @Operation(summary = "관심 카테고리 인기글 조회")
+    @GetMapping("/popular/{category_id}")
+    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getCategoryPopularPosts(
+            @AuthenticationPrincipal CustomMemberDetails memberDetails,
+            @PathVariable("category_id") Long categoryId,
+            @PageableDefault(size = 9) Pageable pageable
+    ) {
+        Long memberId = memberDetails.getId();
+        Page<Post> postPage = postService.getCategoryPopularPosts(memberId, categoryId, pageable);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
+    }
+
+    // 팔로잉 게시글 리스트 조회
+    @Operation(summary = "팔로잉 멤버 게시글 조회")
+    @GetMapping("/following")
+    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getFollowingMemberPosts(
+            @AuthenticationPrincipal CustomMemberDetails memberDetails,
+            @PageableDefault(size = 9) Pageable pageable
+    ) {
+        Page<Post> postPage = postService.getFollowingMemberPosts(memberDetails.getId(), pageable);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
+    }
+
 
     // 게시글 검색 결과 페이지네이션
     @Operation(summary = "게시글 검색 결과 페이지네이션", description = "게시글(제목/내용) 키워드 검색 결과를 페이지네이션하여 반환합니다.")
     @GetMapping("/search")
     public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> searchPost(
             @RequestParam(value = "keyword", defaultValue = "", required = false) String keyword,
-            @PageableDefault(size = 9) Pageable pageable) {
-        Page<Post> postPage = postService.searchPost(keyword, pageable);
+            @AuthenticationPrincipal CustomMemberDetails memberDetails,
+            @PageableDefault(size = 9) Pageable pageable
+    ) {
+        Long memberId = (memberDetails == null) ? 0 : memberDetails.getId();
+        Page<Post> postPage = postService.searchPost(memberId, keyword, pageable);
+
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
@@ -176,7 +217,10 @@ public class PostController {
     // 게시글의 카테고리 설정 및 변경
     @PatchMapping("/category/{postId}")
     @Operation(summary = "게시글의 카테고리 설정 및 변경 API", description = "게시글의 카테고리를 설정 및 변경합니다.")
-    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCategory(@PathVariable Long postId, @RequestBody Set<String> categoryNames){
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCategory(
+            @PathVariable Long postId,
+            @RequestBody Set<String> categoryNames
+    ) {
         Member member = memberCommandService.getRequester();
         jwtTokenProvider.isValidToken(member.getMemberId());
 
