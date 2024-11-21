@@ -9,6 +9,7 @@ import com.codiary.backend.domain.project.repository.ProjectRepository;
 import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.team.repository.TeamRepository;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
+import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.PostHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -150,7 +151,11 @@ public class PostQueryService {
     }
 
 
+    public Page<Post> getBookmarkPost(Long memberId, Pageable pageable){
+        //validation
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-
-
+        return postRepository.findByBookmarkPostList(member, pageable);
+    }
 }

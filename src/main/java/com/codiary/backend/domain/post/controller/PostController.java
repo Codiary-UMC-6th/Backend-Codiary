@@ -209,4 +209,13 @@ public class PostController {
 
         return ApiResponse.onSuccess(SuccessStatus.BOOKMARK_OK, response);
     }
+
+
+    @GetMapping("/bookmark/paging")
+    @Operation(summary = "북마크한 게시글 조회")
+    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getBookmarkPost(@AuthenticationPrincipal CustomMemberDetails memberDetails,
+                                                                              @PageableDefault(size = 9) Pageable pageable) {
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK,
+                PostConverter.toPostListResponseDto(postQueryService.getBookmarkPost(memberDetails.getId(), pageable)));
+    }
 }

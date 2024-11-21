@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.post.repository;
 
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.project.entity.Project;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.codiary.backend.domain.post.entity.QBookmark.bookmark;
 import static com.codiary.backend.domain.post.entity.QPost.post;
 import static com.codiary.backend.domain.project.entity.QProject.project;
 
@@ -64,5 +66,29 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                         Post::getProject,
                         Collectors.collectingAndThen(Collectors.toList(), ArrayList::new)
                 ));
+    }
+
+    public Page<Post> findByBookmarkPostList(Member member, Pageable pageable) {
+        List<Post> postList = queryFactory
+                .select(post)
+                .distinct()
+                .from(post)
+                .leftJoin(post.bookmarkList, bookmark).fetchJoin()
+                .where(bookmark.member.memberId.eq(member.getMemberId())
+                        .and(post.deletedAt.isNull()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(bookmark.createdAt.desc(), bookmark.id.desc())
+                .fetch();
+
+        Long total = queryFactory
+                .select(post.count())
+                .from(post)
+                .leftJoin(post.bookmarkList, bookmark)
+                .where(bookmark.member.memberId.eq(member.getMemberId())
+                        .and(post.deletedAt.isNull()))
+                .fetchOne();
+
+        return new PageImpl<>(postList, pageable, total);
     }
 }
