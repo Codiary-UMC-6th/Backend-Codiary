@@ -209,4 +209,12 @@ public class PostController {
 
         return ApiResponse.onSuccess(SuccessStatus.BOOKMARK_OK, response);
     }
+
+    @GetMapping("/following/paging")
+    @Operation(summary = "팔로잉한 멤버/팀의 게시글 리스트 페이징 조회 API", description = "팔로잉한 멤버/팀의 게시글 리스트를 페이징으로 조회합니다. **첫 페이지는 0부터 입니다.**")
+    public ApiResponse<PostResponseDTO.PostPreviewListDTO> findPostByFollowing(@AuthenticationPrincipal CustomMemberDetails memberDetails,
+                                                                               @PageableDefault(size = 9) Pageable pageable) {
+        Page<Post> posts = postQueryService.getPostsByFollowing(memberDetails.getId(), pageable);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPreviewListDTO(posts));
+    }
 }

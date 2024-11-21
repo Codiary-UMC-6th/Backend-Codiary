@@ -12,4 +12,6 @@ import java.util.Map;
 public interface PostRepositoryCustom {
     Page<Post> searchPost(String keyword, Pageable pageable);
     Map<Project, List<Post>> findPostsForCalendar(Long memberId, LocalDate date);
+
+    Page<Post> findPostsByFollowing(Long id, Pageable pageable);
 }
