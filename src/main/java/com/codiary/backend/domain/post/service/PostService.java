@@ -55,4 +55,11 @@ public class PostService {
         // business logic & return
         return posts;
     }
+
+    public Page<Post> searchPostsByName(
+            Long memberId, String authorName, String teamName, String projectName, Pageable pageable
+    ) {
+        // business logic & response
+        return postRepository.getPostsByName(memberId, authorName, teamName, projectName, pageable);
+    }
 }

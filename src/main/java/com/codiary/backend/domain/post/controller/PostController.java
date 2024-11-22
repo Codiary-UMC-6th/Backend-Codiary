@@ -228,6 +228,22 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toSetPostCategoriesResultDTO(updatedPost));
     }
 
+    // 게시글 검색 (저자 이름, 팀 이름, 프로젝트 이름으로 검색)
+    @GetMapping("/search_by_name")
+    @Operation(summary = "게시글 검색 (저자 이름, 팀 이름, 프로젝트 이름으로 검색)")
+    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> searchByName(
+            @RequestParam(value = "author", defaultValue = "", required = false) String authorName,
+            @RequestParam(value = "team", defaultValue = "", required = false) String teamName,
+            @RequestParam(value = "project", defaultValue = "", required = false) String projectName,
+            @AuthenticationPrincipal CustomMemberDetails memberDetails,
+            @PageableDefault(size = 9) Pageable pageable
+    ) {
+        Long memberId = memberDetails != null ? memberDetails.getId() : 0;
+        Page<Post> postPage = postService.searchPostsByName(memberId, authorName, teamName, projectName, pageable);
+
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
+    }
+
     // 북마크 추가
     @PostMapping("/{post_id}/bookmark")
     @Operation(summary = "게시글 북마크")

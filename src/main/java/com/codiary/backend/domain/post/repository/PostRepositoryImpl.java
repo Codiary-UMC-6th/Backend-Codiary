@@ -5,10 +5,13 @@ import static com.codiary.backend.domain.member.entity.QMember.member;
 import static com.codiary.backend.domain.member.entity.QMemberImage.memberImage;
 import static com.codiary.backend.domain.post.entity.QPost.post;
 import static com.codiary.backend.domain.project.entity.QProject.project;
+import static com.codiary.backend.domain.team.entity.QTeam.team;
+import static com.codiary.backend.domain.team.entity.QTeamProfileImage.teamProfileImage;
 
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.project.entity.Project;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -180,5 +183,61 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return post.postAccess.eq(PostAccess.ENTIRE)
                 .or(post.postAccess.eq(PostAccess.TEAM)
                         .and(post.team.teamMemberList.any().member.memberId.eq(memberId)));
+    }
+
+    @Override
+    public Page<Post> getPostsByName(
+            Long memberId, String authorName, String teamName, String projectName, Pageable pageable
+    ) {
+        BooleanBuilder booleanBuilder = searchBy(authorName, teamName, projectName);
+
+        List<Post> posts = queryFactory
+                .selectDistinct(post)
+                .from(post)
+                // member join
+                .leftJoin(post.member, member)
+                .leftJoin(member.image, memberImage)
+                // team join
+                .leftJoin(post.team, team)
+                .leftJoin(team.profileImage, teamProfileImage)
+                // project join
+                .leftJoin(post.project, project)
+                // 조건 탐색
+                .where(
+                        canAccess(memberId).and(booleanBuilder)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory
+                .select(post.countDistinct())
+                .from(post)
+                // member join
+                .leftJoin(post.member, member)
+                // team join
+                .leftJoin(post.team, team)
+                // project join
+                .leftJoin(post.project, project)
+                // 조건 탐색
+                .where(
+                        canAccess(memberId).and(booleanBuilder)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchOne();
+
+        return new PageImpl<>(posts, pageable, total);
+    }
+
+    private BooleanBuilder searchBy(String authorName, String teamName, String projectName) {
+        if (!authorName.isEmpty()) {
+            return new BooleanBuilder().and(member.nickname.contains(authorName));
+        } else if (!teamName.isEmpty()) {
+            return new BooleanBuilder().and(team.name.contains(teamName));
+        } else if (!projectName.isEmpty()) {
+            return new BooleanBuilder().and(project.projectName.contains(projectName));
+        }
+        return new BooleanBuilder();
     }
 }
