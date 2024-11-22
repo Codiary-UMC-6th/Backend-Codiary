@@ -31,7 +31,7 @@ public class PostService {
     }
 
     // 카테고리 인기글 조회
-    public Page<Post> getCategoryPopularPosts(Long memberId, Long memberCategoryId, Pageable pageable) {
+    public Page<Post> getCategoryPosts(Long memberId, Long memberCategoryId, Pageable pageable) {
         // validation: 멤버 존재하는지
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -40,7 +40,7 @@ public class PostService {
 //                .orElseThrow(() -> new GeneralException(ErrorStatus.CATEGORY_NOT_FOUND));
 
         // business logic & return
-        return postRepository.getPopularPostsByCategoryId(memberId, memberCategoryId, pageable);
+        return postRepository.getPostsByCategoryId(memberId, memberCategoryId, pageable);
     }
 
     // 팔로잉 멤버 게시글 조회

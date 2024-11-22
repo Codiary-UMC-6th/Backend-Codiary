@@ -174,16 +174,16 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
-    // 관심 카테고리 인기글 조회
-    @Operation(summary = "관심 카테고리 인기글 조회")
-    @GetMapping("/popular/{category_id}")
+    // 카테고리 인기글 조회
+    @Operation(summary = "카테고리 인기글/최신글 조회 (popular/latest 입력 (기본 popular)")
+    @GetMapping("/category/{category_id}")
     public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getCategoryPopularPosts(
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
             @PathVariable("category_id") Long categoryId,
-            @PageableDefault(size = 9) Pageable pageable
+            @PageableDefault(size = 9, sort = "popular") Pageable pageable
     ) {
         Long memberId = memberDetails.getId();
-        Page<Post> postPage = postService.getCategoryPopularPosts(memberId, categoryId, pageable);
+        Page<Post> postPage = postService.getCategoryPosts(memberId, categoryId, pageable);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 

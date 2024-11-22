@@ -160,12 +160,12 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     }
 
     @Override
-    public Page<Post> getPopularPostsByCategoryId(Long memberId, Long categoryId, Pageable pageable) {
+    public Page<Post> getPostsByCategoryId(Long memberId, Long categoryId, Pageable pageable) {
         List<Post> posts = queryFactory
                 .selectDistinct(post)
                 .from(post)
                 .where(post.categoriesList.any().categoryId.eq(categoryId).and(canAccess(memberId)))
-                .orderBy(post.commentList.size().add(post.bookmarkList.size()).desc())
+                .orderBy(createPostListOrderSpecifier(pageable.getSort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
