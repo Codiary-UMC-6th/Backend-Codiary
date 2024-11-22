@@ -187,16 +187,16 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
-    // 팔로잉 게시글 리스트 조회
-    @Operation(summary = "팔로잉 멤버 게시글 조회")
-    @GetMapping("/following")
-    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getFollowingMemberPosts(
-            @AuthenticationPrincipal CustomMemberDetails memberDetails,
-            @PageableDefault(size = 9) Pageable pageable
-    ) {
-        Page<Post> postPage = postService.getFollowingMemberPosts(memberDetails.getId(), pageable);
-        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
-    }
+//    // 팔로잉 게시글 리스트 조회
+//    @Operation(summary = "팔로잉 멤버 게시글 조회")
+//    @GetMapping("/following")
+//    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getFollowingMemberPosts(
+//            @AuthenticationPrincipal CustomMemberDetails memberDetails,
+//            @PageableDefault(size = 9) Pageable pageable
+//    ) {
+//        Page<Post> postPage = postService.getFollowingMemberPosts(memberDetails.getId(), pageable);
+//        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
+//    }
 
 
     // 게시글 검색 결과 페이지네이션
