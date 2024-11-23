@@ -10,6 +10,7 @@ import com.codiary.backend.domain.post.converter.PostFileConverter;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.entity.PostFile;
+import com.codiary.backend.domain.post.repository.AuthorRepository;
 import com.codiary.backend.domain.post.repository.PostFileRepository;
 import com.codiary.backend.domain.post.repository.PostRepository;
 import com.codiary.backend.domain.project.repository.ProjectRepository;
@@ -39,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostCommandService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final AuthorRepository authorRepository;
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
     private final UuidRepository uuidRepository;
@@ -96,14 +98,12 @@ public class PostCommandService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        // validation: 수정 권한 확인
-        if (!(post.getMember().equals(member) || post.getAuthorList().contains(member))) {
+        // validation: 수정 권한 확인 (작성자 or 공동 작성자 유무)
+        if (!(post.getMember().equals(member) || authorRepository.existsByPostAndMember(post, member))) {
             throw new PostHandler(ErrorStatus.POST_UPDATE_UNAUTHORIZED);
         }
 
-        Member getMember = memberCommandService.getRequester();
-        Post updatePost = postRepository.findById(postId).get();
-        updatePost.update(request);
+        post.update(request);
 
         // 새로운 이미지 추가
         if (request.getAddedPostFiles() != null) {
@@ -115,25 +115,25 @@ public class PostCommandService {
                 Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
                 String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), file);
 
-                PostFile newPostFile = PostFileConverter.toPostFile(fileUrl, updatePost, file.getOriginalFilename());
+                PostFile newPostFile = PostFileConverter.toPostFile(fileUrl, post, file.getOriginalFilename());
                 postFileRepository.save(newPostFile);
 
-                updatePost.getPostFileList().add(newPostFile);
+                post.getPostFileList().add(newPostFile);
             }
         }
 
         // 대표 사진 설정
         String thumbnailImageName = request.getThumbnailImageName();
-        for (PostFile postFile : updatePost.getPostFileList()) {
+        for (PostFile postFile : post.getPostFileList()) {
             if (postFile.getFileName() == thumbnailImageName) {
-                updatePost.setThumbnailImage(postFile);
+                post.setThumbnailImage(postFile);
             }
         }
-        if (updatePost.getPostFileList().size() != 0 && updatePost.getThumbnailImage() == null) {
-            updatePost.setThumbnailImage(updatePost.getPostFileList().get(0));
+        if (post.getPostFileList().size() != 0 && post.getThumbnailImage() == null) {
+            post.setThumbnailImage(post.getPostFileList().get(0));
         }
 
-        return postRepository.save(updatePost);
+        return postRepository.save(post);
     }
 
 

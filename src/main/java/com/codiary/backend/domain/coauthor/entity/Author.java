@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 public class Author {
 
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "co_author_id", nullable = false,columnDefinition = "bigint")
-  private Long coAuthorId;
+  @Column(name = "author_id", nullable = false,columnDefinition = "bigint")
+  private Long authorId;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "member_id")
