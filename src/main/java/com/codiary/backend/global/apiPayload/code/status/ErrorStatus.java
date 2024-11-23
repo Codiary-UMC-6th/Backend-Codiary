@@ -40,7 +40,7 @@ public enum ErrorStatus implements BaseErrorCode {
     TEAM_ALREADY_EXISTS(HttpStatus.CONFLICT, "TEAM_2003", "이미 존재하는 팀입니다."),
     TEAM_ADMIN_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "TEAM_2004", "관리자 권한이 없습니다."),
     TEAM_MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "TEAM_2005", "이미 존재하는 팀원입니다."),
-    TEAM_LEADER_NOT_FOUND(HttpStatus.BAD_REQUEST, "TEAM_2006", "팀 관리자를 찾을 수 없습니다"),
+    TEAM_ADMIN_NOT_FOUND(HttpStatus.BAD_REQUEST, "TEAM_2006", "팀 관리자를 찾을 수 없습니다"),
     TEAM_MEMBER_ONLY_ACCESS(HttpStatus.BAD_REQUEST, "TEAM_2007", "팀 멤버만 접근할 수 있습니다."),
     TEAM_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "TEAM_2008", "팀 멤버를 찾을 수 없습니다."),
     TEAM_MEMBER_OVER(HttpStatus.BAD_REQUEST, "TEAM_2009", "추가할 수 있는 구성원 수를 초과했습니다."),
