@@ -61,12 +61,11 @@ public class PostController {
     @PostMapping(consumes = "multipart/form-data")
     @Operation(summary = "게시글 생성 API", description = "게시글을 생성합니다. **카테고리 설정은 게시글 생성과는 별도로 설정해야 됩니다.**")
     public ApiResponse<PostResponseDTO.CreatePostResultDTO> createPost(
-            @ModelAttribute PostRequestDTO.CreatePostRequestDTO request) {
-        Member member = memberCommandService.getRequester();
-        jwtTokenProvider.isValidToken(member.getMemberId());
-
-        //Post newPost = postCommandService.createPost(request);
-        Post newPost = postCommandService.createPost(request);
+            @ModelAttribute PostRequestDTO.CreatePostRequestDTO request,
+            @AuthenticationPrincipal CustomMemberDetails memberDetails
+    ) {
+        Long memberId = memberDetails.getId();
+        Post newPost = postCommandService.createPost(memberId, request);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toCreateResultDTO(newPost));
     }
 

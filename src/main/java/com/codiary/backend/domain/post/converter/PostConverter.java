@@ -1,15 +1,14 @@
 package com.codiary.backend.domain.post.converter;
 
 import com.codiary.backend.domain.category.entity.Category;
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.domain.post.dto.response.PostResponseDTO;
 import com.codiary.backend.domain.post.entity.Bookmark;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.project.entity.Project;
-import com.codiary.backend.domain.project.repository.ProjectRepository;
 import com.codiary.backend.domain.team.entity.Team;
-import com.codiary.backend.domain.team.repository.TeamRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
@@ -35,18 +34,11 @@ public class PostConverter {
     }
 
 
-    public static Post toPost(PostRequestDTO.CreatePostRequestDTO request, TeamRepository teamRepository, ProjectRepository projectRepository) {
-        Team team = null;
-        Project project = null;
-        if (request.getTeamId() != null) {
-            team = teamRepository.findById(request.getTeamId()).orElseThrow(() -> new IllegalArgumentException("Team not found with id: " + request.getTeamId()));
-        }
-        if (request.getProjectId() != null) {
-            project = projectRepository.findById(request.getProjectId()).orElseThrow(() -> new IllegalArgumentException("Project not found with id: " + request.getProjectId()));
-        }
+    public static Post toPost(PostRequestDTO.CreatePostRequestDTO request, Team team, Project project, Member member) {
         return Post.builder()
                 .postTitle(request.getPostTitle())
                 .postBody(request.getPostBody())
+                .member(member)
                 .team(team)
                 .project(project)
                 .postStatus(request.getPostStatus() != null ? request.getPostStatus() : true)  // 기본값 설정

@@ -2,6 +2,7 @@ package com.codiary.backend.domain.post.service;
 
 import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.domain.category.service.CategoryService;
+import com.codiary.backend.domain.coauthor.entity.Author;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.repository.MemberRepository;
 import com.codiary.backend.domain.member.service.MemberCommandService;
@@ -13,7 +14,10 @@ import com.codiary.backend.domain.post.entity.PostFile;
 import com.codiary.backend.domain.post.repository.AuthorRepository;
 import com.codiary.backend.domain.post.repository.PostFileRepository;
 import com.codiary.backend.domain.post.repository.PostRepository;
+import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.project.repository.ProjectRepository;
+import com.codiary.backend.domain.team.entity.Team;
+import com.codiary.backend.domain.team.entity.TeamMember;
 import com.codiary.backend.domain.team.repository.TeamRepository;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
@@ -50,15 +54,31 @@ public class PostCommandService {
     private final AmazonS3Manager s3Manager;
 
     // 포스트 생성
-    public Post createPost(PostRequestDTO.CreatePostRequestDTO request) {
+    public Post createPost(Long memberId, PostRequestDTO.CreatePostRequestDTO request) {
+        // validation: member|team|project 유무 확인 (team 및 project 없는 경우 null)
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Team team = request.getTeamId() == null ? null
+                : teamRepository.findById(request.getTeamId()).orElse(null);
+        Project project = request.getProjectId() == null ? null
+                : projectRepository.findById(request.getProjectId()).orElse(null);
 
-        Post newPost = PostConverter.toPost(request, teamRepository, projectRepository);
-        Member getMember = memberCommandService.getRequester();
-
-        newPost.setMember(getMember);
-
+        Post newPost = PostConverter.toPost(request, team, project, member);
         Post tempPost = postRepository.save(newPost);
-        tempPost.setPostFileList(new ArrayList<>());
+
+        // 팀 post의 경우 팀 멤버를 공통 저자로 추가
+        if (team != null) {
+            List<Author> authorList = new ArrayList<>();
+            for (TeamMember teamMember : team.getTeamMemberList()) {
+                Author author = Author.builder()
+                        .member(teamMember.getMember())
+                        .post(tempPost)
+                        .build();
+                authorList.add(author);
+                authorRepository.save(author);
+            }
+            tempPost.setAuthorList(authorList);
+        }
 
         if (request.getPostFiles() != null) {
             for (MultipartFile file : request.getPostFiles()) {
