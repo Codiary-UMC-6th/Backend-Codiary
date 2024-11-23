@@ -151,6 +151,15 @@ public class PostQueryService {
     }
 
 
+    public Page<Post> getPostsByFollowing(Long id, Pageable pageable) {
+        //validation
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        //return
+        return postRepository.findPostsByFollowing(id, pageable);
+    }
+
     public Page<Post> getBookmarkPost(Long memberId, Pageable pageable){
         //validation
         Member member = memberRepository.findById(memberId)

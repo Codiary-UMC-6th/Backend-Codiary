@@ -26,9 +26,11 @@ public class PostConverter {
                 .title(post.getPostTitle())
                 .body(post.getPostBody())
                 .author(post.getMember() != null ? post.getMember().getNickname() : null)
-                .authorImage(post.getMember() != null ? post.getMember().getImage().getImageUrl() : null)
+                .authorImage((post.getMember() != null && post.getMember().getImage() != null)
+                        ? post.getMember().getImage().getImageUrl()
+                        : "")
                 .createdAt(post.getCreatedAt())
-                .thumbnailImage(post.getThumbnailImage() != null ? post.getThumbnailImage().getFileUrl() : null)
+                .thumbnailImage(post.getThumbnailImage() != null ? post.getThumbnailImage().getFileUrl() : "")
                 .build();
     }
 
