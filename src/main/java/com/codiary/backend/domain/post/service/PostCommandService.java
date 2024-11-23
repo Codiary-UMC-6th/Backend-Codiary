@@ -14,19 +14,22 @@ import com.codiary.backend.domain.post.repository.PostFileRepository;
 import com.codiary.backend.domain.post.repository.PostRepository;
 import com.codiary.backend.domain.project.repository.ProjectRepository;
 import com.codiary.backend.domain.team.repository.TeamRepository;
+import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
+import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
+import com.codiary.backend.global.apiPayload.exception.handler.PostHandler;
 import com.codiary.backend.global.common.uuid.Uuid;
 import com.codiary.backend.global.common.uuid.UuidRepository;
 import com.codiary.backend.global.s3.AmazonS3Manager;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -38,7 +41,7 @@ public class PostCommandService {
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
-    private final UuidRepository uuidRepository; // 추가
+    private final UuidRepository uuidRepository;
     private final PostFileRepository postFileRepository;
     private final MemberCommandService memberCommandService;
     private final CategoryService categoryService;
@@ -87,7 +90,17 @@ public class PostCommandService {
     }
 
 
-    public Post updatePost(Long postId, PostRequestDTO.UpdatePostDTO request) {
+    public Post updatePost(Long postId, Long memberId, PostRequestDTO.UpdatePostDTO request) {
+        // validation: 다이어리 및 멤버 유무 확인
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // validation: 수정 권한 확인
+        if (!(post.getMember().equals(member) || post.getAuthorList().contains(member))) {
+            throw new PostHandler(ErrorStatus.POST_UPDATE_UNAUTHORIZED);
+        }
+
         Member getMember = memberCommandService.getRequester();
         Post updatePost = postRepository.findById(postId).get();
         updatePost.update(request);

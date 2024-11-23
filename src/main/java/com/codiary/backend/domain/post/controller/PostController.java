@@ -75,13 +75,12 @@ public class PostController {
     @Operation(summary = "게시글 수정 API", description = "게시글을 수정합니다.")
     public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(
             @ModelAttribute PostRequestDTO.UpdatePostDTO request,
-            @PathVariable Long postId
+            @PathVariable Long postId,
+            @AuthenticationPrincipal CustomMemberDetails memberDetails
     ) {
-        Member member = memberCommandService.getRequester();
-        jwtTokenProvider.isValidToken(member.getMemberId());
-
-        return ApiResponse.onSuccess(SuccessStatus.POST_OK,
-                PostConverter.toUpdatePostResultDTO(postCommandService.updatePost(postId, request)));
+        Long memberId = memberDetails.getId();
+        Post updatedPost = postCommandService.updatePost(postId, memberId, request);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(updatedPost));
     }
 
 
