@@ -18,4 +18,6 @@ public interface PostRepositoryCustom {
     Page<Post> getPopularPostsByCategoryId(Long memberId, Long categoryId, Pageable pageable);
     
     Map<Project, List<Post>> findPostsForCalendar(Long memberId, LocalDate date);
+
+    Page<Post> findPostsByFollowing(Long id, Pageable pageable);
 }
