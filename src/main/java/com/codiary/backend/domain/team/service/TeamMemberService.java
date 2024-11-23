@@ -25,13 +25,12 @@ public class TeamMemberService {
     @Transactional
     public TeamMember addTeamMember(Long requestMemberId, Long teamId, TeamRequestDTO.TeamMemberDTO request) {
         // validation: 팀/멤버 유효성 확인
-        // 존재하는 닉네임인지, 이미 추가한 팀원인지 유효성 검사
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
         Member requestMember = memberRepository.findById(requestMemberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-        // validation: 팀원 여부 확인 & 관리자 권한 확인
+        // validation: 요청자 팀원 여부 확인 & 관리자 권한 확인
         TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, requestMember)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS));
         if (!teamMember.getTeamMemberRole().equals(TeamMemberRole.ADMIN)) {
@@ -63,20 +62,22 @@ public class TeamMemberService {
 
     @Transactional
     public void deleteTeamMember(Long requestMemberId, Long teamId, Long memberId) {
-        //validation: 팀/요청자/팀원 유효성 및 요청자가 팀원인지, 존재하는 팀원인지 유효성 검사
+        // validation: 팀/요청자/멤버 유효성 확인
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
-
-        Member requester = memberRepository.findById(requestMemberId)
+        Member requestMember = memberRepository.findById(requestMemberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-        if(!teamMemberRepository.existsByTeamAndMember(team, requester)){
-            throw new GeneralException(ErrorStatus.TEAM_MEMBER_NOT_FOUND);
+        // validation: 요청자 팀원 여부 확인 & 관리자 권한 확인
+        TeamMember requestTeamMember = teamMemberRepository.findByTeamAndMember(team, requestMember)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS));
+        if (!requestTeamMember.getTeamMemberRole().equals(TeamMemberRole.ADMIN)) {
+            throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
         }
 
+        //validation: 존재하는 팀원인지 유효성 검사
         TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, member)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_MEMBER_NOT_FOUND));
 
