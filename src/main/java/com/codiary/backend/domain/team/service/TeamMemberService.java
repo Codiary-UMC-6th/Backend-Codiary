@@ -77,11 +77,18 @@ public class TeamMemberService {
             throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
         }
 
-        //validation: 존재하는 팀원인지 유효성 검사
+        // validation: 요청자 본인 삭제 시 관리자가 유무 확인
+        if (requestMember.equals(member)) {
+            if (teamMemberRepository.countTeamMembersByTeamAndTeamMemberRole(team, TeamMemberRole.ADMIN) == 1) {
+                throw new GeneralException(ErrorStatus.TEAM_ADMIN_MINIMUM_REQUIRED);
+            }
+        }
+
+        // validation: 존재하는 팀원인지 유효성 검사
         TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, member)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_MEMBER_NOT_FOUND));
 
-        //business logic: 팀원 삭제
+        // business logic: 팀원 삭제
         teamMemberRepository.delete(teamMember);
     }
 
