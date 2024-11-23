@@ -174,29 +174,29 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
-    // 관심 카테고리 인기글 조회
-    @Operation(summary = "관심 카테고리 인기글 조회")
-    @GetMapping("/popular/{category_id}")
+    // 카테고리 인기글 조회
+    @Operation(summary = "카테고리 인기글/최신글 조회 (popular/latest 입력 (기본 popular)")
+    @GetMapping("/category/{category_id}")
     public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getCategoryPopularPosts(
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
             @PathVariable("category_id") Long categoryId,
-            @PageableDefault(size = 9) Pageable pageable
+            @PageableDefault(size = 9, sort = "popular") Pageable pageable
     ) {
         Long memberId = memberDetails.getId();
-        Page<Post> postPage = postService.getCategoryPopularPosts(memberId, categoryId, pageable);
+        Page<Post> postPage = postService.getCategoryPosts(memberId, categoryId, pageable);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
-    // 팔로잉 게시글 리스트 조회
-    @Operation(summary = "팔로잉 멤버 게시글 조회")
-    @GetMapping("/following")
-    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getFollowingMemberPosts(
-            @AuthenticationPrincipal CustomMemberDetails memberDetails,
-            @PageableDefault(size = 9) Pageable pageable
-    ) {
-        Page<Post> postPage = postService.getFollowingMemberPosts(memberDetails.getId(), pageable);
-        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
-    }
+//    // 팔로잉 게시글 리스트 조회
+//    @Operation(summary = "팔로잉 멤버 게시글 조회")
+//    @GetMapping("/following")
+//    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getFollowingMemberPosts(
+//            @AuthenticationPrincipal CustomMemberDetails memberDetails,
+//            @PageableDefault(size = 9) Pageable pageable
+//    ) {
+//        Page<Post> postPage = postService.getFollowingMemberPosts(memberDetails.getId(), pageable);
+//        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
+//    }
 
 
     // 게시글 검색 결과 페이지네이션
@@ -226,6 +226,22 @@ public class PostController {
 
         Post updatedPost = postCommandService.setPostCategories(postId, categoryNames);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toSetPostCategoriesResultDTO(updatedPost));
+    }
+
+    // 게시글 검색 (저자 이름, 팀 이름, 프로젝트 이름으로 검색)
+    @GetMapping("/search_by_name")
+    @Operation(summary = "게시글 검색 (저자 이름, 팀 이름, 프로젝트 이름으로 검색)")
+    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> searchByName(
+            @RequestParam(value = "author", defaultValue = "", required = false) String authorName,
+            @RequestParam(value = "team", defaultValue = "", required = false) String teamName,
+            @RequestParam(value = "project", defaultValue = "", required = false) String projectName,
+            @AuthenticationPrincipal CustomMemberDetails memberDetails,
+            @PageableDefault(size = 9) Pageable pageable
+    ) {
+        Long memberId = memberDetails != null ? memberDetails.getId() : 0;
+        Page<Post> postPage = postService.searchPostsByName(memberId, authorName, teamName, projectName, pageable);
+
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
 
     // 북마크 추가

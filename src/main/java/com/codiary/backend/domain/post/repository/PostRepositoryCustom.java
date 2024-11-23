@@ -16,10 +16,13 @@ public interface PostRepositoryCustom {
 
     Page<Post> getPostList(Pageable pageable);
 
-    Page<Post> getPopularPostsByCategoryId(Long memberId, Long categoryId, Pageable pageable);
+    Page<Post> getPostsByCategoryId(Long memberId, Long categoryId, Pageable pageable);
 
     Map<Project, List<Post>> findPostsForCalendar(Long memberId, LocalDate date);
 
     Page<Post> findPostsByFollowing(Long id, Pageable pageable);
+    
     Page<Post> findByBookmarkPostList(Member member, Pageable pageable);
+    
+    Page<Post> getPostsByName(Long memberId, String authorName, String teamName, String projectName, Pageable pageable);
 }
