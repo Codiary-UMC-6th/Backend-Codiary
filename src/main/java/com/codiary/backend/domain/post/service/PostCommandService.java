@@ -20,6 +20,7 @@ import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.team.entity.TeamMember;
 import com.codiary.backend.domain.team.repository.TeamRepository;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
+import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.apiPayload.exception.handler.PostHandler;
 import com.codiary.backend.global.common.uuid.Uuid;
@@ -68,6 +69,9 @@ public class PostCommandService {
 
         // 팀 post의 경우 팀 멤버를 공통 저자로 추가
         if (team != null) {
+            if (!teamRepository.isTeamMember(team, member)) {
+                throw new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS);
+            }
             List<Author> authorList = new ArrayList<>();
             for (TeamMember teamMember : team.getTeamMemberList()) {
                 Author author = Author.builder()
