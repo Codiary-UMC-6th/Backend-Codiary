@@ -21,6 +21,7 @@ public class PostResponseDTO {
             String title,
             String body,
             String author,
+            String authorImage,
             LocalDateTime createdAt,
             String thumbnailImage
     ) {
@@ -91,7 +92,9 @@ public class PostResponseDTO {
         PostAccess postAccess,
         PostFileResponseDTO.PostFileListDTO postFileList,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        String authorImage,
+        String authorNickname
     ){
     }
 

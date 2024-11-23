@@ -83,6 +83,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
         Long total = queryFactory
                 .select(post.count())
+                .distinct()
                 .from(post)
                 .leftJoin(post.bookmarkList, bookmark)
                 .where(bookmark.member.memberId.eq(member.getMemberId())
