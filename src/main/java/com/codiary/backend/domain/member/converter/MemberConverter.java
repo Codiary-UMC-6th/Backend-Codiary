@@ -79,7 +79,7 @@ public class MemberConverter {
                 .collect(Collectors.toList());
     }
 
-    public static MemberResponseDTO.SimpleMemberProfileDTO tosimpleMemberProfileResponseDto(Member member) {
+    public static MemberResponseDTO.SimpleMemberProfileDTO toSimpleMemberProfileResponseDto(Member member) {
         return MemberResponseDTO.SimpleMemberProfileDTO.builder()
                 .userId(member.getMemberId())
                 .userName(member.getNickname())

@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.project.repository;
 
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.project.entity.Project;
 
 import java.time.LocalDate;
@@ -8,4 +9,8 @@ import java.util.Map;
 
 public interface ProjectRepositoryCustom {
     Map<LocalDate, List<Project>> findProjectsForCalendar(Long memberId, LocalDate startDate, LocalDate endDate);
+
+    List<Project> findByMemberProjectMapsMember(Member member);
+
+    List<Project> findByTeamProjectMapsTeamId(Long teamId);
 }

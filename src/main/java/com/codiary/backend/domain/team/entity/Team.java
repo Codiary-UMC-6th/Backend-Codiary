@@ -1,6 +1,7 @@
 package com.codiary.backend.domain.team.entity;
 
 import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.team.dto.request.TeamRequestDTO;
 import com.codiary.backend.global.common.BaseEntity;
 import jakarta.persistence.CascadeType;
@@ -51,7 +52,7 @@ public class Team extends BaseEntity {
   private String instagram;
 
   @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<TeamProjectMap> teamProjectMapList = new ArrayList<>();
+  private List<Project> projectList = new ArrayList<>();
 
   @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Post> postList = new ArrayList<>();
@@ -69,7 +70,7 @@ public class Team extends BaseEntity {
   private TeamProfileImage profileImage;
 
   @Builder
-    public Team(Long teamId, String name, String intro, String github, String email, String linkedin, String discord, String instagram, List<TeamProjectMap> teamProjectMapList, List<Post> postList, List<TeamMember> teamMemberList, List<TeamFollow> followers, TeamBannerImage bannerImage, TeamProfileImage profileImage) {
+    public Team(Long teamId, String name, String intro, String github, String email, String linkedin, String discord, String instagram, List<Post> postList, List<TeamMember> teamMemberList, List<TeamFollow> followers, TeamBannerImage bannerImage, TeamProfileImage profileImage) {
         this.teamId = teamId;
         this.name = name;
         this.intro = intro;
@@ -78,7 +79,6 @@ public class Team extends BaseEntity {
         this.linkedin = linkedin;
         this.discord = discord;
         this.instagram = instagram;
-        this.teamProjectMapList = teamProjectMapList;
         this.postList = postList;
         this.teamMemberList = teamMemberList;
         this.followers = followers;
