@@ -35,6 +35,10 @@ public class TeamMemberService {
             throw new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS);
         }
 
+        if (teamMemberRepository.countTeamMembersByTeam(team) >= 10) {
+            throw new GeneralException(ErrorStatus.TEAM_MEMBER_OVER);
+        }
+
         Member newMember = memberRepository.findByNicknameIgnoreCase(request.memberNickName().toString())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
