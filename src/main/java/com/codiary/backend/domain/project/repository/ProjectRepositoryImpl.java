@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.project.repository;
 
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.project.entity.Project;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -13,6 +14,8 @@ import java.util.stream.Collectors;
 
 import static com.codiary.backend.domain.post.entity.QPost.post;
 import static com.codiary.backend.domain.project.entity.QProject.project;
+import static com.codiary.backend.domain.team.entity.QTeam.team;
+import static com.codiary.backend.domain.team.entity.QTeamMember.teamMember;
 
 @RequiredArgsConstructor
 public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
@@ -34,5 +37,34 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
                         post -> post.getCreatedAt().toLocalDate(),
                         Collectors.mapping(Post::getProject, Collectors.collectingAndThen(Collectors.toSet(), ArrayList::new))
                 ));
+    }
+
+    public List<Project> findByMemberProjectMapsMember(Member member) {
+        return queryFactory
+                .selectFrom(project)
+                .leftJoin(project.member)
+                .leftJoin(project.team, team)
+                .leftJoin(team.teamMemberList, teamMember)
+                .where(
+                        project.member.eq(member)
+                                .and(project.deletedAt.isNull())
+                                .or(
+                                        team.teamMemberList.any().member.eq(member)
+                                                .and(team.deletedAt.isNull())
+                                )
+                )
+                .fetch();
+    }
+
+    public List<Project> findByTeamProjectMapsTeamId(Long teamId) {
+        return queryFactory
+                .selectFrom(project)
+                .leftJoin(project.team, team)
+                .where(
+                        team.deletedAt.isNull()
+                                .and(team.teamId.eq(teamId))
+                                .and(project.deletedAt.isNull())
+                )
+                .fetch();
     }
 }

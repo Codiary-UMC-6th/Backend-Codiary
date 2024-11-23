@@ -2,6 +2,7 @@ package com.codiary.backend.domain.member.entity;
 
 import com.codiary.backend.domain.coauthor.entity.Authors;
 import com.codiary.backend.domain.comment.entity.Comment;
+import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.enumerate.MemberState;
 import com.codiary.backend.domain.post.entity.Bookmark;
@@ -87,7 +88,7 @@ public class Member extends BaseEntity {
   private List<Authors> authorsList = new ArrayList<>();
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<MemberProjectMap> memberProjectMapList = new ArrayList<>();
+  private List<Project> projectList = new ArrayList<>();
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> commentList = new ArrayList<>();
@@ -134,10 +135,6 @@ public class Member extends BaseEntity {
 
   public void setImage(MemberImage image) {
     this.image = image;
-  }
-
-  public void setMemberProjectMapList(List<MemberProjectMap> projects) {
-    this.memberProjectMapList = projects;
   }
 
   public void setTeamMemberList(List<TeamMember> teamMembers) {

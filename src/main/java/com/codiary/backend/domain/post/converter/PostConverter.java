@@ -122,6 +122,8 @@ public class PostConverter {
                 .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
+                .authorImage(post.getMember().getImage().getImageUrl())
+                .authorNickname(post.getMember().getNickname())
                 .build();
     }
 

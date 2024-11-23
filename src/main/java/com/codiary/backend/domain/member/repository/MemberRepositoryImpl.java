@@ -1,8 +1,8 @@
 package com.codiary.backend.domain.member.repository;
 
 import com.codiary.backend.domain.member.entity.Member;
-import com.codiary.backend.domain.member.entity.MemberProjectMap;
 import com.codiary.backend.domain.team.entity.TeamMember;
+import com.codiary.backend.domain.project.entity.Project;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +13,6 @@ import static com.codiary.backend.domain.category.entity.QCategory.category;
 import static com.codiary.backend.domain.member.entity.QMember.member;
 import static com.codiary.backend.domain.member.entity.QMemberCategory.memberCategory;
 import static com.codiary.backend.domain.techstack.entity.QTechStacks.techStacks;
-import static com.codiary.backend.domain.member.entity.QMemberProjectMap.memberProjectMap;
 import static com.codiary.backend.domain.project.entity.QProject.project;
 import static com.codiary.backend.domain.team.entity.QTeamMember.teamMember;
 import static com.codiary.backend.domain.team.entity.QTeam.team;
@@ -88,13 +87,12 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
     }
 
     private void fetchMemberProjects(Long userId, Member fetchedMember) {
-        List<MemberProjectMap> projects = queryFactory
-                .selectFrom(memberProjectMap)
-                .leftJoin(memberProjectMap.project, project)
-                .where(memberProjectMap.member.memberId.eq(userId))
+        List<Project> projects = queryFactory
+                .selectFrom(project)
+                .leftJoin(member.projectList, project)
+                .where(member.memberId.eq(userId)
+                        .and(project.deletedAt.isNull()))
                 .fetch();
-
-        fetchedMember.setMemberProjectMapList(projects);
     }
 
     private void fetchTeamMembers(Long userId, Member fetchedMember) {
