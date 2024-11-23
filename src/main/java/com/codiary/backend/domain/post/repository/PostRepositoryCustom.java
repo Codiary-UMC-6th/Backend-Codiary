@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.post.repository;
 
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.project.entity.Project;
 import java.time.LocalDate;
@@ -16,8 +17,9 @@ public interface PostRepositoryCustom {
     Page<Post> getPostList(Pageable pageable);
 
     Page<Post> getPopularPostsByCategoryId(Long memberId, Long categoryId, Pageable pageable);
-    
+
     Map<Project, List<Post>> findPostsForCalendar(Long memberId, LocalDate date);
 
     Page<Post> findPostsByFollowing(Long id, Pageable pageable);
+    Page<Post> findByBookmarkPostList(Member member, Pageable pageable);
 }

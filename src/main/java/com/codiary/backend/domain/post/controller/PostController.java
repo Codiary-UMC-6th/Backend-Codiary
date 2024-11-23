@@ -74,7 +74,7 @@ public class PostController {
     @PatchMapping(path = "/{postId}", consumes = "multipart/form-data")
     @Operation(summary = "게시글 수정 API", description = "게시글을 수정합니다.")
     public ApiResponse<PostResponseDTO.UpdatePostResultDTO> updatePost(
-            @ModelAttribute PostRequestDTO.UpdatePostDTO request, 
+            @ModelAttribute PostRequestDTO.UpdatePostDTO request,
             @PathVariable Long postId
     ) {
         Member member = memberCommandService.getRequester();
@@ -130,7 +130,7 @@ public class PostController {
         Page<Post> posts = postQueryService.getPostsByTeamInProject(projectId, teamId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toTeamPostInProjectPreviewListDTO(posts));
     }
-    
+
     // 팀별 저자의 게시글 리스트 페이징 조회
     @GetMapping("/team/{teamId}/member/{memberId}/paging")
     @Operation(summary = "팀별 저자의 게시글 리스트 페이징 조회 API", description = "팀별 저자의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**", security = @SecurityRequirement(name = "accessToken"))
@@ -138,7 +138,7 @@ public class PostController {
         Page<Post> posts = postQueryService.getPostsByMemberInTeam(teamId, memberId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toMemberPostInTeamPreviewListDTO(posts));
     }
-    
+
     // 제목으로 게시글 리스트 페이징 조회
     @GetMapping("/title/paging")
     @Operation(summary = "제목으로 게시글 리스트 페이징 조회 API", description = "제목으로 게시글 리스트를 페이징으로 조회합니다. Param으로 제목을 입력하세요.", security = @SecurityRequirement(name = "accessToken"))
@@ -260,5 +260,13 @@ public class PostController {
                                                                                @PageableDefault(size = 9) Pageable pageable) {
         Page<Post> posts = postQueryService.getPostsByFollowing(memberDetails.getId(), pageable);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPreviewListDTO(posts));
+    }
+
+    @GetMapping("/bookmark/paging")
+    @Operation(summary = "북마크한 게시글 조회")
+    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getBookmarkPost(@AuthenticationPrincipal CustomMemberDetails memberDetails,
+                                                                                    @PageableDefault(size = 9) Pageable pageable) {
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK,
+                PostConverter.toPostListResponseDto(postQueryService.getBookmarkPost(memberDetails.getId(), pageable)));
     }
 }

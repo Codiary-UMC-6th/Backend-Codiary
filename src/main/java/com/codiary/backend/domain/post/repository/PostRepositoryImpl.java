@@ -6,6 +6,7 @@ import static com.codiary.backend.domain.member.entity.QMemberImage.memberImage;
 import static com.codiary.backend.domain.post.entity.QPost.post;
 import static com.codiary.backend.domain.project.entity.QProject.project;
 
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.project.entity.Project;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import static com.codiary.backend.domain.post.entity.QBookmark.bookmark;
 import static com.codiary.backend.domain.member.entity.QFollow.follow;
 import static com.codiary.backend.domain.member.entity.QMember.member;
 import static com.codiary.backend.domain.post.entity.QPost.post;
@@ -233,5 +235,30 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .fetchOne();
 
         return new PageImpl<>(posts, pageable, total);
+    }
+
+    public Page<Post> findByBookmarkPostList(Member member, Pageable pageable) {
+        List<Post> postList = queryFactory
+                .select(post)
+                .distinct()
+                .from(post)
+                .leftJoin(post.bookmarkList, bookmark).fetchJoin()
+                .where(bookmark.member.memberId.eq(member.getMemberId())
+                        .and(post.deletedAt.isNull()))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(bookmark.createdAt.desc(), bookmark.id.desc())
+                .fetch();
+
+        Long total = queryFactory
+                .select(post.count())
+                .distinct()
+                .from(post)
+                .leftJoin(post.bookmarkList, bookmark)
+                .where(bookmark.member.memberId.eq(member.getMemberId())
+                        .and(post.deletedAt.isNull()))
+                .fetchOne();
+
+        return new PageImpl<>(postList, pageable, total);
     }
 }

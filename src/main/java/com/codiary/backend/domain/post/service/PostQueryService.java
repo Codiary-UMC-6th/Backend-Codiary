@@ -159,4 +159,12 @@ public class PostQueryService {
         //return
         return postRepository.findPostsByFollowing(id, pageable);
     }
+
+    public Page<Post> getBookmarkPost(Long memberId, Pageable pageable){
+        //validation
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return postRepository.findByBookmarkPostList(member, pageable);
+    }
 }

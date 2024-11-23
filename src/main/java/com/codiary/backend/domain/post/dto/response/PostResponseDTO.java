@@ -92,7 +92,9 @@ public class PostResponseDTO {
         PostAccess postAccess,
         PostFileResponseDTO.PostFileListDTO postFileList,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        String authorImage,
+        String authorNickname
     ){
     }
 
