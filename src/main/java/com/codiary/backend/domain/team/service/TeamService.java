@@ -123,14 +123,16 @@ public class TeamService {
 
     @Transactional
     public TeamProfileImage setTeamProfileImage(Long teamId, Long memberId, TeamRequestDTO.TeamImageDTO request) {
-        // validation: member 유효성 확인 / team 존재 여부 확인  / 수정 페이지 접근 권환 확인
+        // validation: member 및 team 유무 확인
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
         Team team = teamRepository.findByTeamIdAndDeletedAtIsNull(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
 
-        if (!teamRepository.isTeamMember(team, member)) {
+        // validation: 요청자 팀원 여부 확인 & 관리자 권한 확인
+        TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS));
+        if (!teamMember.getTeamMemberRole().equals(TeamMemberRole.ADMIN)) {
             throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
         }
 
@@ -160,14 +162,16 @@ public class TeamService {
 
     @Transactional
     public String deleteTeamProfileImage(Long teamId, Long memberId) {
-        // validation: member 유효성 확인 / team 존재 여부 확인  / 수정 페이지 접근 권환 확인
+        // validation: member 및 team 유무 확인
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
         Team team = teamRepository.findByTeamIdAndDeletedAtIsNull(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
 
-        if (!teamRepository.isTeamMember(team, member)) {
+        // validation: 요청자 팀원 여부 확인 & 관리자 권한 확인
+        TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS));
+        if (!teamMember.getTeamMemberRole().equals(TeamMemberRole.ADMIN)) {
             throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
         }
 
@@ -184,14 +188,16 @@ public class TeamService {
 
     @Transactional
     public TeamBannerImage setTeamBannerImage(Long teamId, Long memberId, TeamRequestDTO.TeamImageDTO request) {
-        // validation: member 유효성 확인 / team 존재 여부 확인  / 수정 페이지 접근 권환 확인
+        // validation: member 및 team 유무 확인
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
         Team team = teamRepository.findByTeamIdAndDeletedAtIsNull(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
 
-        if (!teamRepository.isTeamMember(team, member)) {
+        // validation: 요청자 팀원 여부 확인 & 관리자 권한 확인
+        TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS));
+        if (!teamMember.getTeamMemberRole().equals(TeamMemberRole.ADMIN)) {
             throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
         }
 
@@ -221,14 +227,16 @@ public class TeamService {
 
     @Transactional
     public String deleteTeamBannerImage(Long teamId, Long memberId) {
-        // validation: member 유효성 확인 / team 존재 여부 확인  / 수정 페이지 접근 권환 확인
+        // validation: member 및 team 유무 확인
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
         Team team = teamRepository.findByTeamIdAndDeletedAtIsNull(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
 
-        if (!teamRepository.isTeamMember(team, member)) {
+        // validation: 요청자 팀원 여부 확인 & 관리자 권한 확인
+        TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, member)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS));
+        if (!teamMember.getTeamMemberRole().equals(TeamMemberRole.ADMIN)) {
             throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
         }
 

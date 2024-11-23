@@ -40,7 +40,8 @@ public class TeamController {
     @Operation(summary = "팀 생성")
     public ApiResponse<TeamResponseDTO.TeamDTO> createTeam(
             @RequestBody TeamRequestDTO.CreateTeamDTO request,
-            @AuthenticationPrincipal CustomMemberDetails memberDetails) {
+            @AuthenticationPrincipal CustomMemberDetails memberDetails
+    ) {
         Team newTeam = teamService.createTeam(request, memberDetails.getId());
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamResponseDto(newTeam));
     }
