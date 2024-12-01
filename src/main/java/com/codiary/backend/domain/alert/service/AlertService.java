@@ -8,6 +8,8 @@ import com.codiary.backend.domain.member.repository.FollowRepository;
 import com.codiary.backend.domain.post.converter.PostConverter;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
+import com.codiary.backend.domain.team.entity.TeamFollow;
+import com.codiary.backend.domain.team.repository.TeamFollowRepository;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -23,18 +25,12 @@ public class AlertService {
     private final NewPostAlertRepository postAlertRepository;
     private final FollowRepository followRepository;
     private final EmitterRepository emitterRepository;
+    private final TeamFollowRepository teamFollowRepository;
 
     public SseEmitter connect(Long memberId) {
         SseEmitter emitter = emitterRepository.save(memberId, new SseEmitter(TIMEOUT));
 
-        try {
-            emitter.send(SseEmitter.event()
-                    .name("on connect")
-                    .data("연결되었습니다!")
-            );
-        } catch (IOException e) {
-            // 해당 emitter 를 삭제
-        }
+        send(emitter, "On Connect", "연결되었습니다!", memberId);
 
         return emitter;
     }
@@ -49,23 +45,34 @@ public class AlertService {
         Member poster = post.getMember();
         List<Member> followList = followRepository.findByToMemberAndFollowStatusTrue(poster)
                 .stream().map(Follow::getFromMember).toList();
-        Map<Long, SseEmitter> emitterList = emitterRepository.getEmittersByMembersId(
+        Map<Long, SseEmitter> emitters = emitterRepository.getEmittersByMembersId(
                 followList.stream()
                         .filter(member -> true) // 이후에 알람 on off 유무 확인
                         .map(Member::getMemberId).toList()
         );
 
         // 알람 보내기
-        emitterList.forEach(
+        emitters.forEach(
                 (key, emitter) -> {
-                    try {
-                        emitter.send(SseEmitter.event().name("following member's new post")
-                                .data(PostConverter.toSimplePostResponseDto(post)));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    send(emitter, "following member's new post", PostConverter.toSimplePostResponseDto(post), key);
                 }
         );
+
+        if (post.getTeam() != null) {
+            // 팀 팔로워들 추출 후, 알람을 켜놓은 사람들 id 리스트를 바탕으로 emitter 받아오기
+            Map<Long, SseEmitter> emitterMap = emitterRepository.getEmittersByMembersId(
+                    teamFollowRepository.findFollowersByTeamId(post.getTeam().getTeamId())
+                            .stream().map(TeamFollow::getMember)
+                            .filter(member -> true) // 이후에 알람 on off 유무 확인
+                            .map(Member::getMemberId).toList()
+            );
+
+            emitterMap.forEach(
+                    (key, emitter) -> {
+                        send(emitter, "following team's new post", PostConverter.toSimplePostResponseDto(post), key);
+                    }
+            );
+        }
     }
 
     private void send(SseEmitter emitter, String name, Object data, Long emitterId) {
