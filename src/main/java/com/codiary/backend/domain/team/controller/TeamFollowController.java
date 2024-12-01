@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.team.controller;
 
+import com.codiary.backend.domain.alert.service.AlertService;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.team.converter.TeamConverter;
@@ -10,10 +11,13 @@ import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,12 +27,15 @@ public class TeamFollowController {
 
     private final TeamFollowService teamFollowService;
     private final MemberCommandService memberCommandService;
+    private final AlertService alertService;
 
     @Operation(summary = "팀 팔로우/언팔로우", description = "{team_id}에 해당하는 팀에 대한 팔로우/언팔로우 기능을 수행합니다.")
     @PostMapping()
     public ApiResponse<TeamResponseDTO.TeamFollowDTO> followTeam(@PathVariable("team_id") Long teamId) {
         Member requester = memberCommandService.getRequester();
         TeamFollow teamFollow = teamFollowService.followTeam(teamId, requester);
+
+        alertService.sendTeamFollowAlert(teamFollow);
 
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamFollowResponseDTO(teamFollow));
     }

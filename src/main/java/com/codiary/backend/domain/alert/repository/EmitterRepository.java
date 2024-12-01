@@ -32,6 +32,10 @@ public class EmitterRepository {
         return emitterList;
     }
 
+    public SseEmitter getEmitterByMemberId(Long memberId) {
+        return emitters.get(memberId);
+    }
+
     public void deleteAllEmittersAboutMember(Long memberId) {
         emitters.remove(memberId);
     }
