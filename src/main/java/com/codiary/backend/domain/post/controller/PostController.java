@@ -255,6 +255,8 @@ public class PostController {
         Long memberId = memberDetails.getId();
         Bookmark bookmark = bookmarkService.bookmarkPost(memberId, postId);
 
+        alertService.sendBookmarkAlert(bookmark);
+
         return ApiResponse.onSuccess(SuccessStatus.BOOKMARK_OK, PostConverter.toBookmarkDTO(bookmark));
     }
 
