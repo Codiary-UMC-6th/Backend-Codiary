@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.team.controller;
 
+import com.codiary.backend.domain.alert.service.AlertService;
 import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.team.converter.TeamConverter;
 import com.codiary.backend.domain.team.dto.request.TeamRequestDTO;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TeamController {
     private final TeamService teamService;
     private final TeamMemberService teamMemberService;
+    private final AlertService alertService;
 
     @PostMapping("")
     @Operation(summary = "팀 생성")
@@ -85,6 +87,7 @@ public class TeamController {
             @AuthenticationPrincipal CustomMemberDetails memberDetails
     ) {
         TeamMember teamMember = teamMemberService.addTeamMember(memberDetails.getId(), teamId, request);
+        alertService.sendTeamAppendAlert(teamMember);
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamMemberResponseDTO(teamMember));
     }
 
@@ -96,6 +99,7 @@ public class TeamController {
             @AuthenticationPrincipal CustomMemberDetails memberDetails
     ) {
         teamMemberService.deleteTeamMember(memberDetails.getId(), teamId, memberId);
+        alertService.sendTeamExiledAlert(teamId, memberId);
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, "팀원 삭제가 완료되었습니다.");
     }
 
