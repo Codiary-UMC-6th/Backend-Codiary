@@ -63,6 +63,7 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMENT_UPDATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "COMMENT_4007", "댓글 수정 권한이 없습니다."),
     COMMENT_DELETE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "COMMENT_4008", "댓글 삭제 권한이 없습니다."),
     COMMENT_READ_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "COMMENT_4009", "댓글 읽기 권한이 없습니다."),
+    COMMENT_REPLY_OF_REPLY_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "COMMENT_4010", "대댓글에 댓글을 달 수 없습니다."),
 
 
     // 북마크 관련 에러 6000

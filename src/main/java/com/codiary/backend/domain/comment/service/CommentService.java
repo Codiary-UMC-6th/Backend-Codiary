@@ -63,11 +63,14 @@ public class CommentService {
     }
 
     public Comment replyToComment(Long commentId, Long replierId, CommentRequestDTO.CommentDTO request) {
-        // validation: 사용자 유무, 댓글 유무
+        // validation: 사용자 유무, 댓글 유무, 대댓글에 댓글 방지
         Member replier = memberRepository.findById(replierId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+        if (comment.getPost() == null) {
+            throw new GeneralException(ErrorStatus.COMMENT_REPLY_OF_REPLY_NOT_ALLOWED);
+        }
         Post post = postRepository.findById(comment.getPost().getPostId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 

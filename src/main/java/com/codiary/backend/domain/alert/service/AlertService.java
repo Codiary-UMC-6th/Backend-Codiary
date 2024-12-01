@@ -2,16 +2,20 @@ package com.codiary.backend.domain.alert.service;
 
 import com.codiary.backend.domain.alert.repository.EmitterRepository;
 import com.codiary.backend.domain.alert.repository.NewPostAlertRepository;
+import com.codiary.backend.domain.comment.converter.CommentConverter;
+import com.codiary.backend.domain.comment.entity.Comment;
 import com.codiary.backend.domain.member.converter.MemberConverter;
 import com.codiary.backend.domain.member.entity.Follow;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.repository.FollowRepository;
 import com.codiary.backend.domain.post.converter.PostConverter;
+import com.codiary.backend.domain.post.entity.Bookmark;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.team.converter.TeamConverter;
 import com.codiary.backend.domain.team.entity.TeamFollow;
 import com.codiary.backend.domain.team.entity.TeamMember;
+import com.codiary.backend.domain.team.enumerate.TeamMemberRole;
 import com.codiary.backend.domain.team.repository.TeamFollowRepository;
 import com.codiary.backend.domain.team.repository.TeamMemberRepository;
 import java.io.IOException;
@@ -40,6 +44,48 @@ public class AlertService {
         return emitter;
     }
 
+    public void sendBookmarkAlert(Bookmark bookmark) {
+        // 알람 on/off 확인
+
+        // 작성자 id 구하기
+        Long memberId = bookmark.getPost().getMember().getMemberId();
+
+        // 게시물 작성자에게 알림
+        SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
+        send(emitter, "Bookmark", PostConverter.toBookmarkDTO(bookmark), memberId);
+    }
+
+    public void sendCommentAlert(Comment comment) {
+        // 알람 on/off 확인
+
+        // 다이어리 작성자 id 구하기
+        // 댓글이면 post 가져오고 대댓글이면 댓글 타고 post 가져옴
+        Long memberId = comment.getPost() != null
+                ? comment.getPost().getMember().getMemberId()
+                : comment.getParent().getPost().getMember().getMemberId();
+        
+        // 본인의 다이어리인 경우 알람 X
+        if (memberId.equals(comment.getMember().getMemberId())) {
+            return;
+        }
+
+        // 게시물 작성자에게 알림
+        SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
+        send(emitter, "Comment", CommentConverter.toCommentResponseDto(comment), memberId);
+    }
+
+    public void sendTeamAppendAlert(TeamMember teamMember) {
+        Long memberId = teamMember.getMember().getMemberId();
+
+        SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
+        send(emitter, "Join in Team", TeamConverter.toTeamMemberResponseDTO(teamMember), memberId);
+    }
+
+    public void sendTeamExiledAlert(Long teamId, Long memberId) {
+        SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
+        send(emitter, "Kicked out of Team", "id: " + teamId + " 팀에서 추방되셨습니다.", memberId);
+    }
+
     public void sendTeamFollowAlert(TeamFollow teamFollow) {
         // 팔로우 요청인지 확인
         if (teamFollow.getFollowStatus().equals(false)) {
@@ -50,6 +96,7 @@ public class AlertService {
         List<TeamMember> teamMembers = teamMemberRepository.findTeamMembersByTeam(teamFollow.getTeam());
         List<Long> membersId = teamMembers.stream()
                 .filter(teamMember -> true) // 알람 on/off 확인
+                .filter(teamMember -> teamMember.getTeamMemberRole().equals(TeamMemberRole.ADMIN))
                 .map(teamMember -> teamMember.getMember().getMemberId())
                 .toList();
 
@@ -118,6 +165,10 @@ public class AlertService {
     }
 
     private void send(SseEmitter emitter, String name, Object data, Long emitterId) {
+        if (emitter == null) {
+            return;
+        }
+
         try {
             emitter.send(SseEmitter.event()
                     .name(name)
