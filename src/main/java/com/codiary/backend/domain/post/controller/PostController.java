@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.post.controller;
 
+import com.codiary.backend.domain.alert.service.AlertService;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.member.service.MemberCommandService;
@@ -56,6 +57,7 @@ public class PostController {
     private final MemberCommandService memberCommandService;
     private final JwtTokenProvider jwtTokenProvider;
     private final BookmarkService bookmarkService;
+    private final AlertService alertService;
 
     // 게시글 생성하기
     @PostMapping(consumes = "multipart/form-data")
@@ -66,6 +68,7 @@ public class PostController {
     ) {
         Long memberId = memberDetails.getId();
         Post newPost = postCommandService.createPost(memberId, request);
+        alertService.sendNewPostAlert(newPost);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toCreateResultDTO(newPost));
     }
 
