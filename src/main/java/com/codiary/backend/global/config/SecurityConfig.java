@@ -73,6 +73,8 @@ public class SecurityConfig {
                                 // Calendar 관련 접근
                                 // Project 관련 접근
                                 // Category 관련 접근
+                                // 알람 관련 접근
+                                .requestMatchers("/api/v2/connect", "/api/v2/disconnect").permitAll()
                                 // 기타 관련 접근
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()

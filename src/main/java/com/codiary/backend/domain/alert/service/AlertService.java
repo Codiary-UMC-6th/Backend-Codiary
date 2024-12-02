@@ -44,6 +44,12 @@ public class AlertService {
         return emitter;
     }
 
+    public void disconnect(Long memberId) {
+        SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
+        send(emitter, "disconnect", "알람 연결이 해지되었습니다.", memberId);
+        emitterRepository.deleteAllEmittersAboutMember(memberId);
+    }
+
     public void sendBookmarkAlert(Bookmark bookmark) {
         // 알람 on/off 확인
 
