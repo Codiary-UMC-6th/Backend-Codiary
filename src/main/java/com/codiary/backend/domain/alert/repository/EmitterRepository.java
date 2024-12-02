@@ -1,6 +1,7 @@
 package com.codiary.backend.domain.alert.repository;
 
 import com.codiary.backend.domain.alert.entity.AlertEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,9 @@ public class EmitterRepository {
         return sseEmitter;
     }
 
-    public void save(AlertEvent event) {
+    public AlertEvent save(AlertEvent event) {
         events.put(event.getEventId(), event);
+        return event;
     }
 
     public Map<Long, SseEmitter> getEmittersByMembersId(List<Long> receiversId) {
@@ -44,5 +46,19 @@ public class EmitterRepository {
 
     public void deleteAllEmittersAboutMember(Long memberId) {
         emitters.remove(memberId);
+    }
+
+    public List<AlertEvent> getEventsAfterLastEvent(String lastEventId, Long receiverId) {
+        List<AlertEvent> eventList = new ArrayList<>();
+
+        events.forEach(
+                (key, event) -> {
+                    if (lastEventId.compareTo(key) < 0 && event.getAlertMemberIdList().contains(receiverId)) {
+                        eventList.add(event);
+                    }
+                }
+        );
+
+        return eventList;
     }
 }

@@ -40,16 +40,29 @@ public class AlertService {
     public SseEmitter connect(Long memberId, String lastEvent) {
         SseEmitter emitter = emitterRepository.save(memberId, new SseEmitter(TIMEOUT));
 
-        send(emitter, EventCategory.COMMENT.name(), "연결되었습니다!", memberId);
+        AlertEvent event = AlertEvent.builder()
+                .eventId(String.valueOf(System.currentTimeMillis()))
+                .kindOfEvent(EventCategory.CONNECT)
+                .data("연결되었습니다!")
+                .build();
+        send(emitter, event, memberId);
 
         // 쌓여있는 알림이 있다면 전송
+        sendLostEvent(memberId, emitter, lastEvent);
 
         return emitter;
     }
 
     public void disconnect(Long memberId) {
         SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
-        send(emitter, EventCategory.DISCONNECT.name(), "알람 연결이 해지되었습니다.", memberId);
+
+        AlertEvent event = AlertEvent.builder()
+                .eventId(String.valueOf(System.currentTimeMillis()))
+                .kindOfEvent(EventCategory.DISCONNECT)
+                .data("연결이 해지되었습니다!")
+                .build();
+        send(emitter, event, memberId);
+
         emitterRepository.deleteAllEmittersAboutMember(memberId);
     }
 
@@ -59,14 +72,20 @@ public class AlertService {
         // 작성자 id 구하기
         Long memberId = bookmark.getPost().getMember().getMemberId();
 
+        // 이벤트 저장
+        AlertEvent event = saveEvent(
+                EventCategory.BOOKMARK,
+                PostConverter.toBookmarkDTO(bookmark),
+                new ArrayList<>() {
+                    {
+                        add(memberId);
+                    }
+                }
+        );
+
         // 게시물 작성자에게 알림
         SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
-        send(emitter, EventCategory.BOOKMARK.name(), PostConverter.toBookmarkDTO(bookmark), memberId);
-
-        // 이벤트 저장
-        saveEvent(EventCategory.BOOKMARK, PostConverter.toBookmarkDTO(bookmark), new ArrayList<>() {{
-            add(memberId);
-        }});
+        send(emitter, event, memberId);
     }
 
     public void sendCommentAlert(Comment comment) {
@@ -83,42 +102,55 @@ public class AlertService {
             return;
         }
 
-        // 게시물 작성자에게 알림
+        // 작성자의 emitter 조회
         SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
-        send(emitter, EventCategory.COMMENT.name(), CommentConverter.toCommentResponseDto(comment), memberId);
 
         // 이벤트 저장
-        saveEvent(EventCategory.COMMENT, CommentConverter.toCommentResponseDto(comment), new ArrayList<>() {
-            {
-                add(memberId);
-            }
-        });
+        AlertEvent event = saveEvent(
+                EventCategory.COMMENT,
+                CommentConverter.toCommentResponseDto(comment),
+                new ArrayList<>() {
+                    {
+                        add(memberId);
+                    }
+                }
+        );
+
+        // 알림 전송
+        send(emitter, event, memberId);
     }
 
     public void sendTeamAppendAlert(TeamMember teamMember) {
         Long memberId = teamMember.getMember().getMemberId();
 
         SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
-        send(emitter, EventCategory.JOIN_TEAM.name(), TeamConverter.toTeamMemberResponseDTO(teamMember), memberId);
 
         // 이벤트 저장
-        saveEvent(EventCategory.JOIN_TEAM, TeamConverter.toTeamMemberResponseDTO(teamMember), new ArrayList<>() {
-            {
-                add(memberId);
-            }
-        });
+        AlertEvent event = saveEvent(
+                EventCategory.JOIN_TEAM,
+                TeamConverter.toTeamMemberResponseDTO(teamMember),
+                new ArrayList<>() {
+                    {
+                        add(memberId);
+                    }
+                }
+        );
+
+        send(emitter, event, memberId);
     }
 
     public void sendTeamExiledAlert(Long teamId, Long memberId) {
         SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
-        send(emitter, EventCategory.KICKED_OUT_TEAM.name(), "id: " + teamId + " 팀에서 추방되셨습니다.", memberId);
 
         // 이벤트 저장
-        saveEvent(EventCategory.KICKED_OUT_TEAM, "id: " + teamId + " 팀에서 추방되셨습니다.", new ArrayList<>() {
+        AlertEvent event = saveEvent(EventCategory.KICKED_OUT_TEAM, "id: " + teamId + " 팀에서 추방되셨습니다.",
+                new ArrayList<>() {
             {
                 add(memberId);
             }
         });
+
+        send(emitter, event, memberId);
     }
 
     public void sendTeamFollowAlert(TeamFollow teamFollow) {
@@ -135,21 +167,20 @@ public class AlertService {
                 .map(teamMember -> teamMember.getMember().getMemberId())
                 .toList();
 
+        // 이벤트 저장
+        AlertEvent event = saveEvent(
+                EventCategory.TEAM_FOLLOW,
+                TeamConverter.toTeamFollowResponseDTO(teamFollow),
+                membersId
+        );
+
         // 팔로우 알림 전송
         Map<Long, SseEmitter> emitters = emitterRepository.getEmittersByMembersId(membersId);
         emitters.forEach(
                 (key, emitter) -> {
-                    send(
-                            emitter,
-                            EventCategory.TEAM_FOLLOW.name(),
-                            TeamConverter.toTeamFollowResponseDTO(teamFollow),
-                            key
-                    );
+                    send(emitter, event, key);
                 }
         );
-
-        // 이벤트 저장
-        saveEvent(EventCategory.TEAM_FOLLOW, TeamConverter.toTeamFollowResponseDTO(teamFollow), membersId);
     }
 
     public void sendMemberFollowAlert(Follow follow) {
@@ -158,19 +189,18 @@ public class AlertService {
             return;
         }
 
-        // validation : 요청 on/off 상태 확인
-
-        // 팔로우 알림 전송
-        SseEmitter emitter = emitterRepository.getEmitterByMemberId(follow.getToMember().getMemberId());
-        send(emitter, EventCategory.FOLLOW.name(), MemberConverter.toFollowDto(follow),
-                follow.getToMember().getMemberId());
-
         // 이벤트 저장
-        saveEvent(EventCategory.FOLLOW, MemberConverter.toFollowDto(follow), new ArrayList<>() {
+        AlertEvent event = saveEvent(EventCategory.FOLLOW, MemberConverter.toFollowDto(follow), new ArrayList<>() {
             {
                 add(follow.getToMember().getMemberId());
             }
         });
+
+        // validation : 요청 on/off 상태 확인
+
+        // 팔로우 알림 전송
+        SseEmitter emitter = emitterRepository.getEmitterByMemberId(follow.getToMember().getMemberId());
+        send(emitter, event, follow.getToMember().getMemberId());
     }
 
     public void sendNewPostAlert(Post post) {
@@ -190,20 +220,19 @@ public class AlertService {
                 .map(Member::getMemberId).toList();
         Map<Long, SseEmitter> emitters = emitterRepository.getEmittersByMembersId(followIdList);
 
+        // 이벤트 저장
+        AlertEvent event = saveEvent(
+                EventCategory.FOLLOWING_MEMBER_NEW_POST,
+                PostConverter.toSimplePostResponseDto(post),
+                followIdList
+        );
+
         // 알람 보내기
         emitters.forEach(
                 (key, emitter) -> {
-                    send(
-                            emitter,
-                            EventCategory.FOLLOWING_MEMBER_NEW_POST.name(),
-                            PostConverter.toSimplePostResponseDto(post),
-                            key
-                    );
+                    send(emitter, event, key);
                 }
         );
-
-        // 이벤트 저장
-        saveEvent(EventCategory.FOLLOWING_MEMBER_NEW_POST, PostConverter.toSimplePostResponseDto(post), followIdList);
 
         // 팀 소속 게시물인 경우
         if (post.getTeam() != null) {
@@ -214,44 +243,81 @@ public class AlertService {
                     .map(Member::getMemberId).toList();
             Map<Long, SseEmitter> emitterMap = emitterRepository.getEmittersByMembersId(memberIdList);
 
-            emitterMap.forEach(
-                    (key, emitter) -> {
-                        send(
-                                emitter,
-                                EventCategory.FOLLOWING_TEAM_NEW_POST.name(),
-                                PostConverter.toSimplePostResponseDto(post),
-                                key
-                        );
-                    }
+            // 이벤트 저장
+            AlertEvent teamEvent = saveEvent(
+                    EventCategory.FOLLOWING_TEAM_NEW_POST,
+                    PostConverter.toSimplePostResponseDto(post),
+                    memberIdList
             );
 
-            // 이벤트 저장
-            saveEvent(EventCategory.FOLLOWING_TEAM_NEW_POST, PostConverter.toSimplePostResponseDto(post), memberIdList);
+            emitterMap.forEach(
+                    (key, emitter) -> {
+                        send(emitter, teamEvent, key);
+                    }
+            );
         }
     }
 
-    private void send(SseEmitter emitter, String name, Object data, Long emitterId) {
+    private void send(SseEmitter emitter, AlertEvent event, Long emitterId) {
         if (emitter == null) {
             return;
         }
 
         try {
             emitter.send(SseEmitter.event()
-                    .name(name)
-                    .data(data)
+                    .id(event.getEventId())
+                    .name(event.getKindOfEvent().name())
+                    .data(event.getData())
             );
         } catch (IOException e) {
             emitterRepository.deleteAllEmittersAboutMember(emitterId);
         }
     }
 
-    private void saveEvent(EventCategory kindOfEvent, Object data, List<Long> receiverList) {
+    private void send(SseEmitter emitter, List<AlertEvent> eventList, Long emitterId) {
+        if (emitter == null) {
+            return;
+        }
+
+        try {
+            emitter.send(SseEmitter.event()
+                    .name("LOST_EVENTS")
+                    .data(eventList)
+            );
+        } catch (IOException e) {
+            emitterRepository.deleteAllEmittersAboutMember(emitterId);
+        }
+    }
+
+    private AlertEvent saveEvent(EventCategory kindOfEvent, Object data, List<Long> receiverList) {
         AlertEvent event = AlertEvent.builder()
                 .kindOfEvent(kindOfEvent)
                 .eventId(String.valueOf(System.currentTimeMillis()))
                 .alertMemberIdList(receiverList)
                 .data(data)
                 .build();
-        emitterRepository.save(event);
+        return emitterRepository.save(event);
+    }
+
+    private void sendLostEvent(Long memberId, SseEmitter emitter, String lastEventId) {
+        // 마지막 수신 이벤트 값이 없으면 무시
+        System.out.println("im in!" + lastEventId);
+        if (lastEventId == null || lastEventId.isEmpty()) {
+            return;
+        }
+
+        System.out.println("im in!");
+        // 해당 멤버에게 가야할 놓친 이벤트 탐색
+        List<AlertEvent> eventList = emitterRepository.getEventsAfterLastEvent(lastEventId, memberId);
+
+        System.out.println("size:" + eventList.size());
+
+        // 알람 전송
+        send(emitter, eventList, memberId);
+//        for (AlertEvent event : eventList) {
+//            // 각 이벤트에 대한 알람 on/off 확인 필요
+//            System.out.println(memberId);
+//            send(emitter, event, memberId);
+//        }
     }
 }
