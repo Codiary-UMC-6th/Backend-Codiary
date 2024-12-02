@@ -1,7 +1,8 @@
 package com.codiary.backend.domain.alert.service;
 
+import com.codiary.backend.domain.alert.entity.AlertEvent;
+import com.codiary.backend.domain.alert.entity.EventCategory;
 import com.codiary.backend.domain.alert.repository.EmitterRepository;
-import com.codiary.backend.domain.alert.repository.NewPostAlertRepository;
 import com.codiary.backend.domain.comment.converter.CommentConverter;
 import com.codiary.backend.domain.comment.entity.Comment;
 import com.codiary.backend.domain.member.converter.MemberConverter;
@@ -19,6 +20,7 @@ import com.codiary.backend.domain.team.enumerate.TeamMemberRole;
 import com.codiary.backend.domain.team.repository.TeamFollowRepository;
 import com.codiary.backend.domain.team.repository.TeamMemberRepository;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -30,23 +32,24 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 public class AlertService {
     private static final Long TIMEOUT = 24 * 60 * 60 * 1000L;
 
-    private final NewPostAlertRepository postAlertRepository;
     private final FollowRepository followRepository;
     private final EmitterRepository emitterRepository;
     private final TeamFollowRepository teamFollowRepository;
     private final TeamMemberRepository teamMemberRepository;
 
-    public SseEmitter connect(Long memberId) {
+    public SseEmitter connect(Long memberId, String lastEvent) {
         SseEmitter emitter = emitterRepository.save(memberId, new SseEmitter(TIMEOUT));
 
-        send(emitter, "On Connect", "연결되었습니다!", memberId);
+        send(emitter, EventCategory.COMMENT.name(), "연결되었습니다!", memberId);
+
+        // 쌓여있는 알림이 있다면 전송
 
         return emitter;
     }
 
     public void disconnect(Long memberId) {
         SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
-        send(emitter, "disconnect", "알람 연결이 해지되었습니다.", memberId);
+        send(emitter, EventCategory.DISCONNECT.name(), "알람 연결이 해지되었습니다.", memberId);
         emitterRepository.deleteAllEmittersAboutMember(memberId);
     }
 
@@ -58,7 +61,12 @@ public class AlertService {
 
         // 게시물 작성자에게 알림
         SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
-        send(emitter, "Bookmark", PostConverter.toBookmarkDTO(bookmark), memberId);
+        send(emitter, EventCategory.BOOKMARK.name(), PostConverter.toBookmarkDTO(bookmark), memberId);
+
+        // 이벤트 저장
+        saveEvent(EventCategory.BOOKMARK, PostConverter.toBookmarkDTO(bookmark), new ArrayList<>() {{
+            add(memberId);
+        }});
     }
 
     public void sendCommentAlert(Comment comment) {
@@ -69,7 +77,7 @@ public class AlertService {
         Long memberId = comment.getPost() != null
                 ? comment.getPost().getMember().getMemberId()
                 : comment.getParent().getPost().getMember().getMemberId();
-        
+
         // 본인의 다이어리인 경우 알람 X
         if (memberId.equals(comment.getMember().getMemberId())) {
             return;
@@ -77,19 +85,40 @@ public class AlertService {
 
         // 게시물 작성자에게 알림
         SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
-        send(emitter, "Comment", CommentConverter.toCommentResponseDto(comment), memberId);
+        send(emitter, EventCategory.COMMENT.name(), CommentConverter.toCommentResponseDto(comment), memberId);
+
+        // 이벤트 저장
+        saveEvent(EventCategory.COMMENT, CommentConverter.toCommentResponseDto(comment), new ArrayList<>() {
+            {
+                add(memberId);
+            }
+        });
     }
 
     public void sendTeamAppendAlert(TeamMember teamMember) {
         Long memberId = teamMember.getMember().getMemberId();
 
         SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
-        send(emitter, "Join in Team", TeamConverter.toTeamMemberResponseDTO(teamMember), memberId);
+        send(emitter, EventCategory.JOIN_TEAM.name(), TeamConverter.toTeamMemberResponseDTO(teamMember), memberId);
+
+        // 이벤트 저장
+        saveEvent(EventCategory.JOIN_TEAM, TeamConverter.toTeamMemberResponseDTO(teamMember), new ArrayList<>() {
+            {
+                add(memberId);
+            }
+        });
     }
 
     public void sendTeamExiledAlert(Long teamId, Long memberId) {
         SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
-        send(emitter, "Kicked out of Team", "id: " + teamId + " 팀에서 추방되셨습니다.", memberId);
+        send(emitter, EventCategory.KICKED_OUT_TEAM.name(), "id: " + teamId + " 팀에서 추방되셨습니다.", memberId);
+
+        // 이벤트 저장
+        saveEvent(EventCategory.KICKED_OUT_TEAM, "id: " + teamId + " 팀에서 추방되셨습니다.", new ArrayList<>() {
+            {
+                add(memberId);
+            }
+        });
     }
 
     public void sendTeamFollowAlert(TeamFollow teamFollow) {
@@ -110,9 +139,17 @@ public class AlertService {
         Map<Long, SseEmitter> emitters = emitterRepository.getEmittersByMembersId(membersId);
         emitters.forEach(
                 (key, emitter) -> {
-                    send(emitter, "team follow", TeamConverter.toTeamFollowResponseDTO(teamFollow), key);
+                    send(
+                            emitter,
+                            EventCategory.TEAM_FOLLOW.name(),
+                            TeamConverter.toTeamFollowResponseDTO(teamFollow),
+                            key
+                    );
                 }
         );
+
+        // 이벤트 저장
+        saveEvent(EventCategory.TEAM_FOLLOW, TeamConverter.toTeamFollowResponseDTO(teamFollow), membersId);
     }
 
     public void sendMemberFollowAlert(Follow follow) {
@@ -125,7 +162,15 @@ public class AlertService {
 
         // 팔로우 알림 전송
         SseEmitter emitter = emitterRepository.getEmitterByMemberId(follow.getToMember().getMemberId());
-        send(emitter, "follow", MemberConverter.toFollowDto(follow), follow.getToMember().getMemberId());
+        send(emitter, EventCategory.FOLLOW.name(), MemberConverter.toFollowDto(follow),
+                follow.getToMember().getMemberId());
+
+        // 이벤트 저장
+        saveEvent(EventCategory.FOLLOW, MemberConverter.toFollowDto(follow), new ArrayList<>() {
+            {
+                add(follow.getToMember().getMemberId());
+            }
+        });
     }
 
     public void sendNewPostAlert(Post post) {
@@ -140,33 +185,48 @@ public class AlertService {
         Member poster = post.getMember();
         List<Member> followList = followRepository.findByToMemberAndFollowStatusTrue(poster)
                 .stream().map(Follow::getFromMember).toList();
-        Map<Long, SseEmitter> emitters = emitterRepository.getEmittersByMembersId(
-                followList.stream()
+        List<Long> followIdList = followList.stream()
                         .filter(member -> true) // 이후에 알람 on off 유무 확인
-                        .map(Member::getMemberId).toList()
-        );
+                .map(Member::getMemberId).toList();
+        Map<Long, SseEmitter> emitters = emitterRepository.getEmittersByMembersId(followIdList);
 
         // 알람 보내기
         emitters.forEach(
                 (key, emitter) -> {
-                    send(emitter, "following member's new post", PostConverter.toSimplePostResponseDto(post), key);
+                    send(
+                            emitter,
+                            EventCategory.FOLLOWING_MEMBER_NEW_POST.name(),
+                            PostConverter.toSimplePostResponseDto(post),
+                            key
+                    );
                 }
         );
 
+        // 이벤트 저장
+        saveEvent(EventCategory.FOLLOWING_MEMBER_NEW_POST, PostConverter.toSimplePostResponseDto(post), followIdList);
+
+        // 팀 소속 게시물인 경우
         if (post.getTeam() != null) {
             // 팀 팔로워들 추출 후, 알람을 켜놓은 사람들 id 리스트를 바탕으로 emitter 받아오기
-            Map<Long, SseEmitter> emitterMap = emitterRepository.getEmittersByMembersId(
-                    teamFollowRepository.findFollowersByTeamId(post.getTeam().getTeamId())
+            List<Long> memberIdList = teamFollowRepository.findFollowersByTeamId(post.getTeam().getTeamId())
                             .stream().map(TeamFollow::getMember)
                             .filter(member -> true) // 이후에 알람 on off 유무 확인
-                            .map(Member::getMemberId).toList()
-            );
+                    .map(Member::getMemberId).toList();
+            Map<Long, SseEmitter> emitterMap = emitterRepository.getEmittersByMembersId(memberIdList);
 
             emitterMap.forEach(
                     (key, emitter) -> {
-                        send(emitter, "following team's new post", PostConverter.toSimplePostResponseDto(post), key);
+                        send(
+                                emitter,
+                                EventCategory.FOLLOWING_TEAM_NEW_POST.name(),
+                                PostConverter.toSimplePostResponseDto(post),
+                                key
+                        );
                     }
             );
+
+            // 이벤트 저장
+            saveEvent(EventCategory.FOLLOWING_TEAM_NEW_POST, PostConverter.toSimplePostResponseDto(post), memberIdList);
         }
     }
 
@@ -183,5 +243,15 @@ public class AlertService {
         } catch (IOException e) {
             emitterRepository.deleteAllEmittersAboutMember(emitterId);
         }
+    }
+
+    private void saveEvent(EventCategory kindOfEvent, Object data, List<Long> receiverList) {
+        AlertEvent event = AlertEvent.builder()
+                .kindOfEvent(kindOfEvent)
+                .eventId(String.valueOf(System.currentTimeMillis()))
+                .alertMemberIdList(receiverList)
+                .data(data)
+                .build();
+        emitterRepository.save(event);
     }
 }

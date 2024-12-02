@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.alert.repository;
 
+import com.codiary.backend.domain.alert.entity.AlertEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +14,15 @@ public class EmitterRepository {
     emitter key 값 member id 로 설정
      */
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
+    private final Map<String, AlertEvent> events = new ConcurrentHashMap<>();
 
     public SseEmitter save(Long memberId, SseEmitter sseEmitter) {
         emitters.put(memberId, sseEmitter);
         return sseEmitter;
+    }
+
+    public void save(AlertEvent event) {
+        events.put(event.getEventId(), event);
     }
 
     public Map<Long, SseEmitter> getEmittersByMembersId(List<Long> receiversId) {

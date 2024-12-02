@@ -4,6 +4,7 @@ import com.codiary.backend.domain.alert.service.AlertService;
 import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,10 +25,11 @@ public class AlertController {
     @GetMapping(path = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "알람")
     public SseEmitter alert(
-            @AuthenticationPrincipal CustomMemberDetails memberDetails
+            @AuthenticationPrincipal CustomMemberDetails memberDetails,
+            @PathParam("last_event") String lastEvent
     ) {
         Long memberId = memberDetails.getId();
-        return alertService.connect(memberId);
+        return alertService.connect(memberId, lastEvent);
     }
 
     @DeleteMapping("/disconnect")
