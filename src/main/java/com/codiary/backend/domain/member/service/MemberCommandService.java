@@ -45,7 +45,9 @@ public class MemberCommandService {
     }
 
     @Transactional
-    public ApiResponse<MemberResponseDTO.MemberImageDTO> updateProfileImage(Member member, MemberRequestDTO.MemberProfileImageRequestDTO request) {
+    public ApiResponse<MemberResponseDTO.MemberImageDTO> updateProfileImage(Long memberId, MemberRequestDTO.MemberProfileImageRequestDTO request) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
         if (member.getImage() != null) {
             s3Manager.deleteFile(member.getImage().getImageUrl());
             memberImageRepository.delete(member.getImage());
@@ -67,7 +69,8 @@ public class MemberCommandService {
     }
 
     @Transactional
-    public ApiResponse<String> deleteProfileImage(Member member) {
+    public ApiResponse<String> deleteProfileImage(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         if (member.getImage() != null) {
             s3Manager.deleteFile(member.getImage().getImageUrl());
             memberImageRepository.delete(member.getImage());
@@ -78,7 +81,8 @@ public class MemberCommandService {
     }
 
     @Transactional
-    public Member updateMemberInfo(Member member, MemberRequestDTO.MemberInfoDTO request){
+    public Member updateMemberInfo(Long memberId, MemberRequestDTO.MemberInfoDTO request){
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         member.updateInfo(request);
         return memberRepository.save(member);
     }
