@@ -301,23 +301,18 @@ public class AlertService {
 
     private void sendLostEvent(Long memberId, SseEmitter emitter, String lastEventId) {
         // 마지막 수신 이벤트 값이 없으면 무시
-        System.out.println("im in!" + lastEventId);
         if (lastEventId == null || lastEventId.isEmpty()) {
             return;
         }
 
-        System.out.println("im in!");
         // 해당 멤버에게 가야할 놓친 이벤트 탐색
         List<AlertEvent> eventList = emitterRepository.getEventsAfterLastEvent(lastEventId, memberId);
 
-        System.out.println("size:" + eventList.size());
-
         // 알람 전송
-        send(emitter, eventList, memberId);
-//        for (AlertEvent event : eventList) {
-//            // 각 이벤트에 대한 알람 on/off 확인 필요
-//            System.out.println(memberId);
-//            send(emitter, event, memberId);
-//        }
+        for (AlertEvent event : eventList) {
+            // 각 이벤트에 대한 알람 on/off 확인 필요
+            System.out.println(event.getEventId());
+            send(emitter, event, memberId);
+        }
     }
 }
