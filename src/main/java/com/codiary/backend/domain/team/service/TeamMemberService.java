@@ -24,55 +24,71 @@ public class TeamMemberService {
 
     @Transactional
     public TeamMember addTeamMember(Long requestMemberId, Long teamId, TeamRequestDTO.TeamMemberDTO request) {
-        //validation: 팀/멤버 유효성 및 팀원 접근인지, 존재하는 닉네임인지, 이미 추가한 팀원인지 유효성 검사
+        // validation: 팀/멤버 유효성 확인
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
-
         Member requestMember = memberRepository.findById(requestMemberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-        if(!teamMemberRepository.existsByTeamAndMember(team, requestMember)){
-            throw new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS);
+        // validation: 요청자 팀원 여부 확인 & 관리자 권한 확인
+        TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, requestMember)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS));
+        if (!teamMember.getTeamMemberRole().equals(TeamMemberRole.ADMIN)) {
+            throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
         }
 
+        // validation: 팀원 초과 여부 확인
+        if (teamMemberRepository.countTeamMembersByTeam(team) >= 10) {
+            throw new GeneralException(ErrorStatus.TEAM_MEMBER_OVER);
+        }
+
+        // validation: 닉네임으로 멤버 조회 및 팀원 여부 파악
         Member newMember = memberRepository.findByNicknameIgnoreCase(request.memberNickName().toString())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
-        if(teamMemberRepository.existsByTeamAndMember(team, newMember)){
+        if (teamMemberRepository.existsByTeamAndMember(team, newMember)) {
             throw new GeneralException(ErrorStatus.TEAM_MEMBER_ALREADY_EXISTS);
         }
 
         //business logic: 팀원 추가
-        TeamMember teamMember = TeamMember.builder()
+        TeamMember newTeamMember = TeamMember.builder()
                 .team(team)
                 .member(newMember)
                 .teamMemberRole(TeamMemberRole.valueOf(request.memberRole()))
                 .build();
 
         //return
-        return teamMemberRepository.save(teamMember);
+        return teamMemberRepository.save(newTeamMember);
     }
 
     @Transactional
     public void deleteTeamMember(Long requestMemberId, Long teamId, Long memberId) {
-        //validation: 팀/요청자/팀원 유효성 및 요청자가 팀원인지, 존재하는 팀원인지 유효성 검사
+        // validation: 팀/요청자/멤버 유효성 확인
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
-
-        Member requester = memberRepository.findById(requestMemberId)
+        Member requestMember = memberRepository.findById(requestMemberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-        if(!teamMemberRepository.existsByTeamAndMember(team, requester)){
-            throw new GeneralException(ErrorStatus.TEAM_MEMBER_NOT_FOUND);
+        // validation: 요청자 팀원 여부 확인 & 관리자 권한 확인
+        TeamMember requestTeamMember = teamMemberRepository.findByTeamAndMember(team, requestMember)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS));
+        if (!requestTeamMember.getTeamMemberRole().equals(TeamMemberRole.ADMIN)) {
+            throw new GeneralException(ErrorStatus.TEAM_ADMIN_UNAUTHORIZED);
         }
 
+        // validation: 요청자 본인 삭제 시 관리자가 유무 확인
+        if (requestMember.equals(member)) {
+            if (teamMemberRepository.countTeamMembersByTeamAndTeamMemberRole(team, TeamMemberRole.ADMIN) == 1) {
+                throw new GeneralException(ErrorStatus.TEAM_ADMIN_MINIMUM_REQUIRED);
+            }
+        }
+
+        // validation: 존재하는 팀원인지 유효성 검사
         TeamMember teamMember = teamMemberRepository.findByTeamAndMember(team, member)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_MEMBER_NOT_FOUND));
 
-        //business logic: 팀원 삭제
+        // business logic: 팀원 삭제
         teamMemberRepository.delete(teamMember);
     }
 

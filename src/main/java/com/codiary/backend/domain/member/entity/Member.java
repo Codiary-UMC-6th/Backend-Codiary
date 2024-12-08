@@ -1,12 +1,12 @@
 package com.codiary.backend.domain.member.entity;
 
-import com.codiary.backend.domain.coauthor.entity.Authors;
+import com.codiary.backend.domain.coauthor.entity.Author;
 import com.codiary.backend.domain.comment.entity.Comment;
-import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.enumerate.MemberState;
 import com.codiary.backend.domain.post.entity.Bookmark;
 import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.team.entity.TeamFollow;
 import com.codiary.backend.domain.team.entity.TeamMember;
 import com.codiary.backend.domain.techstack.entity.TechStacks;
@@ -85,7 +85,7 @@ public class Member extends BaseEntity {
   private List<TeamMember> teamMemberList = new ArrayList<>();
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Authors> authorsList = new ArrayList<>();
+  private List<Author> authorList = new ArrayList<>();
 
   @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Project> projectList = new ArrayList<>();

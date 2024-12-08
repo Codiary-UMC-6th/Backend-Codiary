@@ -2,6 +2,7 @@ package com.codiary.backend.domain.post.service;
 
 import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.domain.category.service.CategoryService;
+import com.codiary.backend.domain.coauthor.entity.Author;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.repository.MemberRepository;
 import com.codiary.backend.domain.member.service.MemberCommandService;
@@ -10,23 +11,31 @@ import com.codiary.backend.domain.post.converter.PostFileConverter;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.entity.PostFile;
+import com.codiary.backend.domain.post.repository.AuthorRepository;
 import com.codiary.backend.domain.post.repository.PostFileRepository;
 import com.codiary.backend.domain.post.repository.PostRepository;
+import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.project.repository.ProjectRepository;
+import com.codiary.backend.domain.team.entity.Team;
+import com.codiary.backend.domain.team.entity.TeamMember;
 import com.codiary.backend.domain.team.repository.TeamRepository;
+import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
+import com.codiary.backend.global.apiPayload.exception.GeneralException;
+import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
+import com.codiary.backend.global.apiPayload.exception.handler.PostHandler;
 import com.codiary.backend.global.common.uuid.Uuid;
 import com.codiary.backend.global.common.uuid.UuidRepository;
 import com.codiary.backend.global.s3.AmazonS3Manager;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -36,24 +45,44 @@ import java.util.stream.Collectors;
 public class PostCommandService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final AuthorRepository authorRepository;
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
-    private final UuidRepository uuidRepository; // 추가
+    private final UuidRepository uuidRepository;
     private final PostFileRepository postFileRepository;
     private final MemberCommandService memberCommandService;
     private final CategoryService categoryService;
     private final AmazonS3Manager s3Manager;
 
     // 포스트 생성
-    public Post createPost(PostRequestDTO.CreatePostRequestDTO request) {
+    public Post createPost(Long memberId, PostRequestDTO.CreatePostRequestDTO request) {
+        // validation: member|team|project 유무 확인 (team 및 project 없는 경우 null)
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Team team = request.getTeamId() == null ? null
+                : teamRepository.findById(request.getTeamId()).orElse(null);
+        Project project = request.getProjectId() == null ? null
+                : projectRepository.findById(request.getProjectId()).orElse(null);
 
-        Post newPost = PostConverter.toPost(request, teamRepository, projectRepository);
-        Member getMember = memberCommandService.getRequester();
-
-        newPost.setMember(getMember);
-
+        Post newPost = PostConverter.toPost(request, team, project, member);
         Post tempPost = postRepository.save(newPost);
-        tempPost.setPostFileList(new ArrayList<>());
+
+        // 팀 post의 경우 팀 멤버를 공통 저자로 추가
+        if (team != null) {
+            if (!teamRepository.isTeamMember(team, member)) {
+                throw new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS);
+            }
+            List<Author> authorList = new ArrayList<>();
+            for (TeamMember teamMember : team.getTeamMemberList()) {
+                Author author = Author.builder()
+                        .member(teamMember.getMember())
+                        .post(tempPost)
+                        .build();
+                authorList.add(author);
+                authorRepository.save(author);
+            }
+            tempPost.setAuthorList(authorList);
+        }
 
         if (request.getPostFiles() != null) {
             for (MultipartFile file : request.getPostFiles()) {
@@ -87,10 +116,18 @@ public class PostCommandService {
     }
 
 
-    public Post updatePost(Long postId, PostRequestDTO.UpdatePostDTO request) {
-        Member getMember = memberCommandService.getRequester();
-        Post updatePost = postRepository.findById(postId).get();
-        updatePost.update(request);
+    public Post updatePost(Long postId, Long memberId, PostRequestDTO.UpdatePostDTO request) {
+        // validation: 다이어리 및 멤버 유무 확인
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // validation: 수정 권한 확인 (작성자 or 공동 작성자 유무)
+        if (!(post.getMember().equals(member) || authorRepository.existsByPostAndMember(post, member))) {
+            throw new PostHandler(ErrorStatus.POST_UPDATE_UNAUTHORIZED);
+        }
+
+        post.update(request);
 
         // 새로운 이미지 추가
         if (request.getAddedPostFiles() != null) {
@@ -102,25 +139,25 @@ public class PostCommandService {
                 Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
                 String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), file);
 
-                PostFile newPostFile = PostFileConverter.toPostFile(fileUrl, updatePost, file.getOriginalFilename());
+                PostFile newPostFile = PostFileConverter.toPostFile(fileUrl, post, file.getOriginalFilename());
                 postFileRepository.save(newPostFile);
 
-                updatePost.getPostFileList().add(newPostFile);
+                post.getPostFileList().add(newPostFile);
             }
         }
 
         // 대표 사진 설정
         String thumbnailImageName = request.getThumbnailImageName();
-        for (PostFile postFile : updatePost.getPostFileList()) {
+        for (PostFile postFile : post.getPostFileList()) {
             if (postFile.getFileName() == thumbnailImageName) {
-                updatePost.setThumbnailImage(postFile);
+                post.setThumbnailImage(postFile);
             }
         }
-        if (updatePost.getPostFileList().size() != 0 && updatePost.getThumbnailImage() == null) {
-            updatePost.setThumbnailImage(updatePost.getPostFileList().get(0));
+        if (post.getPostFileList().size() != 0 && post.getThumbnailImage() == null) {
+            post.setThumbnailImage(post.getPostFileList().get(0));
         }
 
-        return postRepository.save(updatePost);
+        return postRepository.save(post);
     }
 
 
