@@ -88,7 +88,8 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
     private void fetchMemberProjects(Long userId, Member fetchedMember) {
         List<Project> projects = queryFactory
-                .selectFrom(project)
+                .select(project)
+                .from(member)
                 .leftJoin(member.projectList, project)
                 .where(member.memberId.eq(userId)
                         .and(project.deletedAt.isNull()))
