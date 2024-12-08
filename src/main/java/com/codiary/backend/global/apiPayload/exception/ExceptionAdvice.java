@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -51,6 +52,22 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                 });
 
         return handleExceptionInternalArgs(e,HttpHeaders.EMPTY, ErrorStatus.valueOf("_BAD_REQUEST"),request,errors);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(
+            TypeMismatchException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+
+        ErrorStatus errorStatus = ErrorStatus._BAD_REQUEST;
+        ApiResponse<Object> body = ApiResponse.onFailure(errorStatus.getCode(), e.getMessage(), null);
+
+        return super.handleExceptionInternal(
+                e,
+                body,
+                HttpHeaders.EMPTY,
+                errorStatus.getHttpStatus(),
+                request
+        );
     }
 
     @ExceptionHandler
