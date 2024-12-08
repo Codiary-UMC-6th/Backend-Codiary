@@ -2,13 +2,16 @@ package com.codiary.backend.domain.alert.service;
 
 import com.codiary.backend.domain.alert.entity.AlertEvent;
 import com.codiary.backend.domain.alert.entity.EventCategory;
+import com.codiary.backend.domain.alert.entity.EventReceive;
 import com.codiary.backend.domain.alert.repository.EmitterRepository;
+import com.codiary.backend.domain.alert.repository.EventReceiveRepository;
 import com.codiary.backend.domain.comment.converter.CommentConverter;
 import com.codiary.backend.domain.comment.entity.Comment;
 import com.codiary.backend.domain.member.converter.MemberConverter;
 import com.codiary.backend.domain.member.entity.Follow;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.repository.FollowRepository;
+import com.codiary.backend.domain.member.repository.MemberRepository;
 import com.codiary.backend.domain.post.converter.PostConverter;
 import com.codiary.backend.domain.post.entity.Bookmark;
 import com.codiary.backend.domain.post.entity.Post;
@@ -19,6 +22,8 @@ import com.codiary.backend.domain.team.entity.TeamMember;
 import com.codiary.backend.domain.team.enumerate.TeamMemberRole;
 import com.codiary.backend.domain.team.repository.TeamFollowRepository;
 import com.codiary.backend.domain.team.repository.TeamMemberRepository;
+import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
+import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +39,10 @@ public class AlertService {
 
     private final FollowRepository followRepository;
     private final EmitterRepository emitterRepository;
+    private final EventReceiveRepository eventReceiveRepository;
     private final TeamFollowRepository teamFollowRepository;
     private final TeamMemberRepository teamMemberRepository;
+    private final MemberRepository memberRepository;
 
     public SseEmitter connect(Long memberId, String lastEvent) {
         SseEmitter emitter = emitterRepository.save(memberId, new SseEmitter(TIMEOUT));
@@ -67,10 +74,14 @@ public class AlertService {
     }
 
     public void sendBookmarkAlert(Bookmark bookmark) {
-        // 알람 on/off 확인
+        // validation : 작성자 구하기, 알람 on/off 확인
+        Member member = bookmark.getPost().getMember();
+        if (eventReceiveRepository.existsByMemberAndEventCategoryAndStatusFalse(member, EventCategory.BOOKMARK)) {
+            return;
+        }
 
-        // 작성자 id 구하기
-        Long memberId = bookmark.getPost().getMember().getMemberId();
+        // business logic : 이벤트 저장 및 알림
+        Long memberId = member.getMemberId();
 
         // 이벤트 저장
         AlertEvent event = saveEvent(
@@ -89,21 +100,19 @@ public class AlertService {
     }
 
     public void sendCommentAlert(Comment comment) {
-        // 알람 on/off 확인
-
-        // 다이어리 작성자 id 구하기
-        // 댓글이면 post 가져오고 대댓글이면 댓글 타고 post 가져옴
-        Long memberId = comment.getPost() != null
-                ? comment.getPost().getMember().getMemberId()
-                : comment.getParent().getPost().getMember().getMemberId();
-
-        // 본인의 다이어리인 경우 알람 X
-        if (memberId.equals(comment.getMember().getMemberId())) {
+        // validation : 다이어리 작성자 구하기, 알람 on/off 확인, 작성자 댓글인지 확인
+        Member member = comment.getPost() != null
+                ? comment.getPost().getMember()
+                : comment.getParent().getPost().getMember();
+        if (eventReceiveRepository.existsByMemberAndEventCategoryAndStatusFalse(member, EventCategory.COMMENT)) {
+            return;
+        }
+        if (member.equals(comment.getMember())) {
             return;
         }
 
-        // 작성자의 emitter 조회
-        SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
+        // business logic : 이벤트 저장 및 알림
+        Long memberId = member.getMemberId();
 
         // 이벤트 저장
         AlertEvent event = saveEvent(
@@ -116,14 +125,20 @@ public class AlertService {
                 }
         );
 
-        // 알림 전송
+        // 게시물 작성자에게 알림
+        SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
         send(emitter, event, memberId);
     }
 
     public void sendTeamAppendAlert(TeamMember teamMember) {
-        Long memberId = teamMember.getMember().getMemberId();
+        // validation : 합류한 팀원 구하기, 알람 on/off 확인
+        Member member = teamMember.getMember();
+        if (eventReceiveRepository.existsByMemberAndEventCategoryAndStatusFalse(member, EventCategory.JOIN_TEAM)) {
+            return;
+        }
 
-        SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
+        // business logic : 이벤트 저장 및 알림
+        Long memberId = member.getMemberId();
 
         // 이벤트 저장
         AlertEvent event = saveEvent(
@@ -136,11 +151,21 @@ public class AlertService {
                 }
         );
 
+        // 합류한 사용자에게 알림
+        SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
         send(emitter, event, memberId);
     }
 
     public void sendTeamExiledAlert(Long teamId, Long memberId) {
-        SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
+        // validation : 추방된 팀원 구하기, 알람 on/off 확인
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (eventReceiveRepository
+                .existsByMemberAndEventCategoryAndStatusFalse(member, EventCategory.KICKED_OUT_TEAM)) {
+            return;
+        }
+
+        // business logic : 이벤트 저장 및 알림
 
         // 이벤트 저장
         AlertEvent event = saveEvent(EventCategory.KICKED_OUT_TEAM, "id: " + teamId + " 팀에서 추방되셨습니다.",
@@ -150,22 +175,33 @@ public class AlertService {
             }
         });
 
+        // 추방된 사용자에게 알림
+        SseEmitter emitter = emitterRepository.getEmitterByMemberId(memberId);
         send(emitter, event, memberId);
     }
 
     public void sendTeamFollowAlert(TeamFollow teamFollow) {
-        // 팔로우 요청인지 확인
+        // validation : 팔로우 요청인지 확인
         if (teamFollow.getFollowStatus().equals(false)) {
             return;
         }
 
-        // 팀 멤버 id list 구하기
+        // validation & business logic : 알람 on/off 확인 및 관리자 여부 확인 & 팀 멤버 id list 구하기
         List<TeamMember> teamMembers = teamMemberRepository.findTeamMembersByTeam(teamFollow.getTeam());
         List<Long> membersId = teamMembers.stream()
-                .filter(teamMember -> true) // 알람 on/off 확인
+                // 알람 on/off 확인
+                .filter(teamMember ->
+                        !eventReceiveRepository.existsByMemberAndEventCategoryAndStatusFalse(
+                                teamMember.getMember(),
+                                EventCategory.TEAM_FOLLOW
+                        )
+                )
+                // 관리자 여부 확인
                 .filter(teamMember -> teamMember.getTeamMemberRole().equals(TeamMemberRole.ADMIN))
                 .map(teamMember -> teamMember.getMember().getMemberId())
                 .toList();
+
+        // business logic : 이벤트 저장 및 알림
 
         // 이벤트 저장
         AlertEvent event = saveEvent(
@@ -174,7 +210,7 @@ public class AlertService {
                 membersId
         );
 
-        // 팔로우 알림 전송
+        // 팀 관리자들에게 팀 팔로우 알림 전송
         Map<Long, SseEmitter> emitters = emitterRepository.getEmittersByMembersId(membersId);
         emitters.forEach(
                 (key, emitter) -> {
@@ -184,10 +220,16 @@ public class AlertService {
     }
 
     public void sendMemberFollowAlert(Follow follow) {
-        // 팔로우 요청인지 확인
+        // validation : 팔로우 요청인지 확인, 팔로우 대상 사용자 구하기, 알람 on/off 확인
         if (follow.getFollowStatus().equals(false)) {
             return;
         }
+        Member member = follow.getToMember();
+        if (eventReceiveRepository.existsByMemberAndEventCategoryAndStatusFalse(member, EventCategory.FOLLOW)) {
+            return;
+        }
+
+        // business logic : 이벤트 저장 및 알림
 
         // 이벤트 저장
         AlertEvent event = saveEvent(EventCategory.FOLLOW, MemberConverter.toFollowDto(follow), new ArrayList<>() {
@@ -195,8 +237,6 @@ public class AlertService {
                 add(follow.getToMember().getMemberId());
             }
         });
-
-        // validation : 요청 on/off 상태 확인
 
         // 팔로우 알림 전송
         SseEmitter emitter = emitterRepository.getEmitterByMemberId(follow.getToMember().getMemberId());
@@ -206,55 +246,21 @@ public class AlertService {
     public void sendNewPostAlert(Post post) {
         // 작성자 팔로워들에게 알림 + (팀에 속한 글이라면) 팀 팔로워들에게 알림
 
-        // 보내야 할 대상 탐색 ( 공개 범위 )
-        if (!post.getPostAccess().equals(PostAccess.ENTIRE)) {
-            return;
+        // 전체 사용자 대상으로 한 경우에만 알림
+        if (post.getPostAccess().equals(PostAccess.ENTIRE)) {
+
+            // 사용자 팔로워들에게 알림
+            sendMemberNewPostAlert(post);
+
+            // 팀 소속 게시물인 경우 팀 팔로워들에게 알림
+            if (post.getTeam() != null) {
+                sendTeamNewPostAlertToTeamFollowers(post);
+            }
         }
 
-        // 작성자 추출 및 작성자 follow 상태인 사용자 추출
-        Member poster = post.getMember();
-        List<Member> followList = followRepository.findByToMemberAndFollowStatusTrue(poster)
-                .stream().map(Follow::getFromMember).toList();
-        List<Long> followIdList = followList.stream()
-                        .filter(member -> true) // 이후에 알람 on off 유무 확인
-                .map(Member::getMemberId).toList();
-        Map<Long, SseEmitter> emitters = emitterRepository.getEmittersByMembersId(followIdList);
-
-        // 이벤트 저장
-        AlertEvent event = saveEvent(
-                EventCategory.FOLLOWING_MEMBER_NEW_POST,
-                PostConverter.toSimplePostResponseDto(post),
-                followIdList
-        );
-
-        // 알람 보내기
-        emitters.forEach(
-                (key, emitter) -> {
-                    send(emitter, event, key);
-                }
-        );
-
-        // 팀 소속 게시물인 경우
+        // 팀 소속 게시물인 경우 팀 멤버에게 새 글 알림
         if (post.getTeam() != null) {
-            // 팀 팔로워들 추출 후, 알람을 켜놓은 사람들 id 리스트를 바탕으로 emitter 받아오기
-            List<Long> memberIdList = teamFollowRepository.findFollowersByTeamId(post.getTeam().getTeamId())
-                            .stream().map(TeamFollow::getMember)
-                            .filter(member -> true) // 이후에 알람 on off 유무 확인
-                    .map(Member::getMemberId).toList();
-            Map<Long, SseEmitter> emitterMap = emitterRepository.getEmittersByMembersId(memberIdList);
-
-            // 이벤트 저장
-            AlertEvent teamEvent = saveEvent(
-                    EventCategory.FOLLOWING_TEAM_NEW_POST,
-                    PostConverter.toSimplePostResponseDto(post),
-                    memberIdList
-            );
-
-            emitterMap.forEach(
-                    (key, emitter) -> {
-                        send(emitter, teamEvent, key);
-                    }
-            );
+            sendTeamNewPostAlertToTeamMembers(post);
         }
     }
 
@@ -268,21 +274,6 @@ public class AlertService {
                     .id(event.getEventId())
                     .name(event.getKindOfEvent().name())
                     .data(event.getData())
-            );
-        } catch (IOException e) {
-            emitterRepository.deleteAllEmittersAboutMember(emitterId);
-        }
-    }
-
-    private void send(SseEmitter emitter, List<AlertEvent> eventList, Long emitterId) {
-        if (emitter == null) {
-            return;
-        }
-
-        try {
-            emitter.send(SseEmitter.event()
-                    .name("LOST_EVENTS")
-                    .data(eventList)
             );
         } catch (IOException e) {
             emitterRepository.deleteAllEmittersAboutMember(emitterId);
@@ -314,5 +305,126 @@ public class AlertService {
             System.out.println(event.getEventId());
             send(emitter, event, memberId);
         }
+    }
+
+    public EventReceive alertOnOff(EventCategory eventCategory, Long memberId) {
+        // validation : 유저 조회
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // business logic
+        EventReceive eventReceive
+                = eventReceiveRepository.findByMemberAndEventCategory(member, eventCategory).orElse(null);
+
+        if (eventReceive != null) {
+            // 알람 수신 여부 관련 entity 존재하는 경우 (상태 전환)
+            eventReceive.setStatus(!eventReceive.getStatus());
+        } else {
+            // 알람 수신 여부 관련 entity 존재하지 않는 경우 (수신 여부 false 로 생성)
+            eventReceive = EventReceive.builder()
+                    .member(member)
+                    .category(eventCategory)
+                    .status(false)
+                    .build();
+        }
+
+        // response
+        return eventReceiveRepository.save(eventReceive);
+    }
+
+    private void sendMemberNewPostAlert(Post post) {
+
+        // validation & business logic : 팔로워들 알람 on/off 확인 & 수신 대상 id 리스트 구하기
+        List<Long> receiverIdList = followRepository.findByToMemberAndFollowStatusTrue(post.getMember())
+                .stream().map(Follow::getFromMember)
+                // 알람 on/off 확인
+                .filter(
+                        member -> !eventReceiveRepository.existsByMemberAndEventCategoryAndStatusFalse(
+                                member,
+                                EventCategory.FOLLOWING_MEMBER_NEW_POST
+                        )
+                )
+                .map(Member::getMemberId).toList();
+
+        // business logic : 이벤트 저장 및 알림
+
+        // 이벤트 저장
+        AlertEvent event = saveEvent(
+                EventCategory.FOLLOWING_MEMBER_NEW_POST,
+                PostConverter.toSimplePostResponseDto(post),
+                receiverIdList
+        );
+
+        // 팔로워들에게 알람 전송
+        Map<Long, SseEmitter> emitters = emitterRepository.getEmittersByMembersId(receiverIdList);
+        emitters.forEach(
+                (key, emitter) -> {
+                    send(emitter, event, key);
+                }
+        );
+    }
+
+    private void sendTeamNewPostAlertToTeamFollowers(Post post) {
+
+        // validation & business logic : 팔로워들 알람 on/off 확인 & 수신 대상 id 리스트 구하기
+        List<Long> receiverIdList = teamFollowRepository.findFollowersByTeamId(post.getTeam().getTeamId())
+                .stream().map(TeamFollow::getMember)
+                // 알람 on/off 확인
+                .filter(
+                        member -> !eventReceiveRepository.existsByMemberAndEventCategoryAndStatusFalse(
+                                member,
+                                EventCategory.FOLLOWING_TEAM_NEW_POST
+                        )
+                )
+                .map(Member::getMemberId).toList();
+
+        // business logic : 이벤트 저장 및 알림
+
+        // 이벤트 저장
+        AlertEvent event = saveEvent(
+                EventCategory.FOLLOWING_TEAM_NEW_POST,
+                PostConverter.toSimplePostResponseDto(post),
+                receiverIdList
+        );
+
+        // 팀 팔로워들에게 알림 전송
+        Map<Long, SseEmitter> emitterMap = emitterRepository.getEmittersByMembersId(receiverIdList);
+        emitterMap.forEach(
+                (key, emitter) -> {
+                    send(emitter, event, key);
+                }
+        );
+    }
+
+    private void sendTeamNewPostAlertToTeamMembers(Post post) {
+
+        // validation & business logic : 팀 소속 멤버들 알람 on/off 확인 & 수신 대상 id 리스트 구하기
+        List<Long> receiverIdList = teamMemberRepository.findTeamMembersByTeam(post.getTeam())
+                .stream().map(TeamMember::getMember)
+                // 알람 on/off 확인
+                .filter(
+                        member -> !eventReceiveRepository.existsByMemberAndEventCategoryAndStatusFalse(
+                                member,
+                                EventCategory.MY_TEAM_NEW_POST
+                        )
+                )
+                .map(Member::getMemberId).toList();
+
+        // business logic : 이벤트 저장 및 알림
+
+        // 이벤트 저장
+        AlertEvent event = saveEvent(
+                EventCategory.MY_TEAM_NEW_POST,
+                PostConverter.toSimplePostResponseDto(post),
+                receiverIdList
+        );
+
+        // 팀 멤버들에게 알림 전송
+        Map<Long, SseEmitter> emitterMap = emitterRepository.getEmittersByMembersId(receiverIdList);
+        emitterMap.forEach(
+                (key, emitter) -> {
+                    send(emitter, event, key);
+                }
+        );
     }
 }
