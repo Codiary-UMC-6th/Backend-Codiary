@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.member.controller;
 
+import com.codiary.backend.domain.alert.service.AlertService;
 import com.codiary.backend.domain.member.converter.MemberConverter;
 import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.member.entity.Follow;
@@ -10,10 +11,13 @@ import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,6 +27,7 @@ public class FollowController {
 
     private final MemberCommandService memberCommandService;
     private final FollowService followService;
+    private final AlertService alertService;
 
     @Operation(summary = "팔로우 및 취소 기능", description = "id를 가진 유저에 대해 팔로우하거나 취소할 수 있습니다.")
     @PostMapping("/{member_id}")
@@ -30,6 +35,7 @@ public class FollowController {
         Member member = memberCommandService.getRequester();
 
         Follow follow = followService.follow(toId, member);
+        alertService.sendMemberFollowAlert(follow);
 
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toFollowDto(follow));
     }

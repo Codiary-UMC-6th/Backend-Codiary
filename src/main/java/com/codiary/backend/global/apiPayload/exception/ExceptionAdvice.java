@@ -5,9 +5,14 @@ import com.codiary.backend.global.apiPayload.code.ErrorReasonDTO;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,10 +21,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RestControllerAdvice(annotations = {RestController.class})
@@ -37,9 +38,9 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
 
-    //@org.springframework.web.bind.annotation.ExceptionHandler
+    @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
+            MethodArgumentNotValidException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
         Map<String, String> errors = new LinkedHashMap<>();
 
@@ -53,7 +54,23 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         return handleExceptionInternalArgs(e,HttpHeaders.EMPTY, ErrorStatus.valueOf("_BAD_REQUEST"),request,errors);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(
+            TypeMismatchException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+
+        ErrorStatus errorStatus = ErrorStatus._BAD_REQUEST;
+        ApiResponse<Object> body = ApiResponse.onFailure(errorStatus.getCode(), e.getMessage(), null);
+
+        return super.handleExceptionInternal(
+                e,
+                body,
+                HttpHeaders.EMPTY,
+                errorStatus.getHttpStatus(),
+                request
+        );
+    }
+
+    @ExceptionHandler
     public ResponseEntity<Object> exception(Exception e, WebRequest request) {
         e.printStackTrace();
 

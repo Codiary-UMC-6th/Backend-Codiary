@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.comment.controller;
 
+import com.codiary.backend.domain.alert.service.AlertService;
 import com.codiary.backend.domain.comment.converter.CommentConverter;
 import com.codiary.backend.domain.comment.dto.request.CommentRequestDTO;
 import com.codiary.backend.domain.comment.dto.request.CommentRequestDTO.CommentDTO;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController {
 
     private final CommentService commentService;
+    private final AlertService alertService;
 
     @Operation(summary = "댓글 달기")
     @PostMapping("/post/{post_id}/comment")
@@ -42,6 +44,7 @@ public class CommentController {
     ) {
         Long commenterId = memberDetails.getId();
         Comment newComment = commentService.commentOnPost(postId, commenterId, request);
+        alertService.sendCommentAlert(newComment);
         return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toCommentResponseDto(newComment));
     }
 
@@ -54,6 +57,7 @@ public class CommentController {
     ) {
         Long replierId = memberDetails.getId();
         Comment newReply = commentService.replyToComment(commentId, replierId, request);
+        alertService.sendCommentAlert(newReply);
         return ApiResponse.onSuccess(SuccessStatus.COMMENT_OK, CommentConverter.toCommentResponseDto(newReply));
     }
 

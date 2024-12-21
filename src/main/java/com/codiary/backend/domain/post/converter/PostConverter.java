@@ -19,7 +19,7 @@ public class PostConverter {
         return postList.map(PostConverter::toSimplePostResponseDto);
     }
 
-    private static PostResponseDTO.SimplePostResponseDTO toSimplePostResponseDto(Post post) {
+    public static PostResponseDTO.SimplePostResponseDTO toSimplePostResponseDto(Post post) {
         return PostResponseDTO.SimplePostResponseDTO.builder()
                 .id(post.getPostId())
                 .title(post.getPostTitle())

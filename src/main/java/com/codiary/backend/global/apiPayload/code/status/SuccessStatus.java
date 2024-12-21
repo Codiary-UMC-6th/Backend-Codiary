@@ -27,7 +27,9 @@ public enum SuccessStatus implements BaseCode {
     // 회원별 관심 카테고리 관련 응답
     MEMBERCATEGORY_OK(HttpStatus.OK, "MEMBERCATEGORY_8000", "성공입니다."),
     // 프로젝트 관련 응답
-    PROJECT_OK(HttpStatus.OK, "PROJECT_9000", "성공입니다.")
+    PROJECT_OK(HttpStatus.OK, "PROJECT_9000", "성공입니다."),
+    // 알림 관련 응답
+    ALERT_OK(HttpStatus.OK, "ALERT_A000", "성공입니다.")
     ;
 
     private final HttpStatus httpStatus;
