@@ -257,38 +257,23 @@ public class PostQueryService {
     }
 
 
-//    public Post.PostAdjacent findAdjacentPosts(Long postId) {
-//        return Post.PostAdjacent.builder()
-//                .olderPost(postRepository.findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(postId).orElse(null))
-//                .laterPost(postRepository.findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(postId).orElse(null))
-//                .build();
-//    }
-
     public Post.PostAdjacent findAdjacentPosts(Long postId, Long memberId, Long teamId) {
-        // 현재 게시글 조회
-        Post currentPost = postRepository.findById(postId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Post currentPost = postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Member authenticatedMember = getAuthenticatedMember();
 
-        Member authenticatedMember = getAuthenticatedMember(); // 인증된 사용자
-
-        // 멤버 또는 팀 ID를 통해 기준 설정
         Member member = null;
         Team team = null;
 
         if (memberId != null) {
-            member = memberRepository.findById(memberId)
-                    .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+            member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         } else if (teamId != null) {
-            team = teamRepository.findById(teamId)
-                    .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
+            team = teamRepository.findById(teamId).orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
         } else {
             throw new GeneralException(ErrorStatus.INVALID_REQUEST);
         }
 
-        // 현재 게시글에 대한 접근 권한 검증
         validatePostAccess(currentPost, authenticatedMember);
 
-        // 조건에 따라 앞, 뒤 게시글 조회
         Post olderPost = null;
         Post laterPost = null;
 
@@ -296,56 +281,35 @@ public class PostQueryService {
             // 팀 기준으로 앞, 뒤 게시글 조회
             olderPost = postRepository.findTopByTeamAndPostIdLessThanOrderByCreatedAtDescPostIdDesc(team, postId)
                     .filter(post -> {
-                        try {
-                            validatePostAccess(post, authenticatedMember);
-                            return true; // 접근 가능
-                        } catch (GeneralException e) {
-                            return false; // 접근 불가
-                        }
+                        try { validatePostAccess(post, authenticatedMember); return true;
+                        } catch (GeneralException e) { return false; }
                     })
                     .orElse(null);
-
             laterPost = postRepository.findTopByTeamAndPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(team, postId)
                     .filter(post -> {
-                        try {
-                            validatePostAccess(post, authenticatedMember);
-                            return true; // 접근 가능
-                        } catch (GeneralException e) {
-                            return false; // 접근 불가
-                        }
+                        try { validatePostAccess(post, authenticatedMember); return true;
+                        } catch (GeneralException e) { return false; }
                     })
                     .orElse(null);
-        } else {
-            // 멤버 기준으로 앞, 뒤 게시글 조회
+        } else { // 멤버 기준으로 앞, 뒤 게시글 조회
             olderPost = postRepository.findTopByMemberAndPostIdLessThanOrderByCreatedAtDescPostIdDesc(member, postId)
                     .filter(post -> {
-                        try {
-                            validatePostAccess(post, authenticatedMember);
-                            return true; // 접근 가능
-                        } catch (GeneralException e) {
-                            return false; // 접근 불가
-                        }
+                        try { validatePostAccess(post, authenticatedMember); return true;
+                        } catch (GeneralException e) { return false; }
                     })
                     .orElse(null);
-
             laterPost = postRepository.findTopByMemberAndPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(member, postId)
                     .filter(post -> {
-                        try {
-                            validatePostAccess(post, authenticatedMember);
-                            return true; // 접근 가능
-                        } catch (GeneralException e) {
-                            return false; // 접근 불가
-                        }
+                        try { validatePostAccess(post, authenticatedMember); return true;
+                        } catch (GeneralException e) { return false; }
                     })
                     .orElse(null);
         }
-
         return Post.PostAdjacent.builder()
                 .olderPost(olderPost)
                 .laterPost(laterPost)
                 .build();
     }
-
 
 
     public Page<Post> getPostsByFollowing(Long id, Pageable pageable) {
