@@ -62,43 +62,44 @@ public class PostQueryService {
     public Post findById(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
-
         Member member = getAuthenticatedMember();
         validatePostAccess(post, member);
-
         return post;
     }
 
 
     public Page<Post> getPostsByMember(Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
-
-        List<Post> postsByMember = postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
-        List<Post> postsByCoauthor = postRepository.findByAuthorList_MemberOrderByCreatedAtDescPostIdDesc(member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
-
+        Member requestedMember = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        Member authenticatedMember = getAuthenticatedMember();
+        // 게시글 조회
+        List<Post> postsByMember = postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(requestedMember, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        List<Post> postsByCoauthor = postRepository.findByAuthorList_MemberOrderByCreatedAtDescPostIdDesc(requestedMember, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        // 게시글 조회 중복 제거
         Set<Post> uniquePosts = new HashSet<>();
         uniquePosts.addAll(postsByMember);
         uniquePosts.addAll(postsByCoauthor);
+        // 전체 공개 게시글만 반환할지 여부 결정
+        boolean isSameMember = authenticatedMember.equals(requestedMember);
+        List<Post> accessiblePosts = uniquePosts.stream()
+                .filter(post -> {
+                    try {
+                        if (isSameMember) { validatePostAccess(post, authenticatedMember);
+                        }
+                        else { // 다른 사용자: 전체 공개 게시글만 허용
+                            if (post.getPostAccess() != PostAccess.ENTIRE) { throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION); }
+                        } return true;
+                    } catch (GeneralException e) { return false; }})
+                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
+                .toList();
+        // 접근 가능한 게시글이 없으면 예외 발생
+        if (accessiblePosts.isEmpty()) { throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION); }
 
-        List<Post> combinedPosts = new ArrayList<>(uniquePosts);
-        combinedPosts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
-
-        int start = Math.min(page * size, combinedPosts.size());
-        int end = Math.min((page + 1) * size, combinedPosts.size());
-        return new PageImpl<>(combinedPosts.subList(start, end), request, combinedPosts.size());
+        int start = Math.min(page * size, accessiblePosts.size());
+        int end = Math.min((page + 1) * size, accessiblePosts.size());
+        return new PageImpl<>(accessiblePosts.subList(start, end), request, accessiblePosts.size());
     }
 
-
-//    public Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size) {
-//        PageRequest request = PageRequest.of(page, size);
-//        if (optSearch.isPresent()) {
-//            String search = optSearch.get();
-//            return postRepository.findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(search, request);
-//        }
-//        // 검색어 존재 X
-//        return postRepository.findAllByOrderByCreatedAtDesc(request);
-//    }
 
     public Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
@@ -109,7 +110,10 @@ public class PostQueryService {
 
         Member member = getAuthenticatedMember();
         List<Post> accessiblePosts = allPosts.getContent().stream()
-                .filter(post -> { try {validatePostAccess(post, member); return true; } catch (GeneralException e) { return false; } })
+                .filter(post -> {
+                    try {validatePostAccess(post, member);
+                        return true; }
+                    catch (GeneralException e) { return false; } })
                 .toList();
         // 필터링된 결과를 Page로 반환
         return new PageImpl<>(accessiblePosts, request, accessiblePosts.size());
@@ -139,7 +143,10 @@ public class PostQueryService {
         Page<Post> allPosts = postRepository.findByTeamOrderByCreatedAtDescPostIdDesc(team, request);
         // 모든 게시글에 대해 접근 권한 확인
         boolean hasAccess = allPosts.getContent().stream()
-                .allMatch(post -> { try { validatePostAccess(post, member); return true; } catch (GeneralException e) { return false; }});
+                .allMatch(post -> {
+                    try { validatePostAccess(post, member);
+                        return true; }
+                    catch (GeneralException e) { return false; }});
         // 접근 권한이 없으면 예외 발생
         if (!hasAccess) { throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION);}
         return allPosts;

@@ -57,7 +57,7 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_NOT_EXIST_BY_PROJECT(HttpStatus.BAD_REQUEST, "POST_3007", "해당 프로젝트의 다이어리 목록이 없습니다."),
     POST_NOT_EXIST_BY_MEMBER(HttpStatus.BAD_REQUEST, "POST_3008", "해당 멤버의 다이어리 목록이 없습니다."),
     POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST_3009", "포스트가 없습니다."),
-    NO_ACCESS_PERMISSION(HttpStatus.BAD_REQUEST, "POST_3010", "접근 권한이 없습니다."),
+    NO_ACCESS_PERMISSION(HttpStatus.BAD_REQUEST, "POST_3010", "전체 공개 게시글이 없습니다."),
 
     // 코멘트 관련 에러 4000
     COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMMENT_4005", "댓글이 없습니다."),
