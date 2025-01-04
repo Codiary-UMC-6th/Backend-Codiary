@@ -59,8 +59,6 @@ public class PostCommandService {
         // validation: member|team|project 유무 확인 (team 및 project 없는 경우 null)
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-//        Team team = request.getTeamId() == null ? null
-//                : teamRepository.findById(request.getTeamId()).orElse(null);
         // 팀 설정 및 멤버 검증
         Team team = null;
         if (request.getTeamId() != null) {
