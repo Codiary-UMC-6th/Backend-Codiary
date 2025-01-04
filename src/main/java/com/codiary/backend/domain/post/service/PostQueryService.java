@@ -12,10 +12,9 @@ import com.codiary.backend.domain.team.repository.TeamRepository;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.PostHandler;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -73,22 +72,23 @@ public class PostQueryService {
 
     public Page<Post> getPostsByMember(Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
         List<Post> postsByMember = postRepository.findByMemberOrderByCreatedAtDescPostIdDesc(member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
         List<Post> postsByCoauthor = postRepository.findByAuthorList_MemberOrderByCreatedAtDescPostIdDesc(member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
 
-        List<Post> combinedPosts = new ArrayList<>();
-        combinedPosts.addAll(postsByMember);
-        combinedPosts.addAll(postsByCoauthor);
+        Set<Post> uniquePosts = new HashSet<>();
+        uniquePosts.addAll(postsByMember);
+        uniquePosts.addAll(postsByCoauthor);
 
-        if (combinedPosts.isEmpty()) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER); }
+        List<Post> combinedPosts = new ArrayList<>(uniquePosts);
         combinedPosts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
 
         int start = Math.min(page * size, combinedPosts.size());
         int end = Math.min((page + 1) * size, combinedPosts.size());
         return new PageImpl<>(combinedPosts.subList(start, end), request, combinedPosts.size());
     }
+
 
 //    public Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size) {
 //        PageRequest request = PageRequest.of(page, size);
