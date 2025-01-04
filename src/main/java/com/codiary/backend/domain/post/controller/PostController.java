@@ -97,6 +97,16 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, null);
     }
 
+    //특정 게시글 조회
+    @GetMapping("/{postId}")
+    @Operation(summary = "특정 게시글 조회 API", description = "특정 게시글을 조회합니다.")
+    public ApiResponse<PostResponseDTO.PostPreviewDTO> findPost(@PathVariable Long postId){
+        Object request;
+        Post findPost = postQueryService.findById(postId);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPreviewDTO(findPost));
+    }
+
+
     // 저자의 게시글 리스트 페이징 조회
     @GetMapping("/member/{memberId}/paging")
     @Operation(summary = "저자의 게시글 리스트 페이징 조회 API", description = "저자의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**", security = @SecurityRequirement(name = "accessToken"))
