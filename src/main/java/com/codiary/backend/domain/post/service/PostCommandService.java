@@ -11,6 +11,7 @@ import com.codiary.backend.domain.post.converter.PostFileConverter;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.entity.PostFile;
+import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.post.repository.AuthorRepository;
 import com.codiary.backend.domain.post.repository.PostFileRepository;
 import com.codiary.backend.domain.post.repository.PostRepository;
@@ -59,8 +60,23 @@ public class PostCommandService {
         // validation: member|team|project 유무 확인 (team 및 project 없는 경우 null)
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Team team = request.getTeamId() == null ? null
-                : teamRepository.findById(request.getTeamId()).orElse(null);
+        // 팀 설정 및 멤버 검증
+        Team team = null;
+        if (request.getTeamId() != null) {
+            team = teamRepository.findById(request.getTeamId())
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
+
+            // 팀 멤버 검증 (팀 설정은 자신이 속한 팀만 설정 가능)
+            if (!teamRepository.isTeamMember(team, member)) {
+                throw new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS);
+            }
+        }
+
+        // PostAccess가 TEAM인데 팀이 null인 경우 예외 처리
+        if (request.getPostAccess() == PostAccess.TEAM && team == null) {
+            throw new GeneralException(ErrorStatus.TEAM_REQUIRED_FOR_ACCESS);
+        }
+
         Project project = request.getProjectId() == null ? null
                 : projectRepository.findById(request.getProjectId()).orElse(null);
 
@@ -84,6 +100,7 @@ public class PostCommandService {
             tempPost.setAuthorList(authorList);
         }
 
+        // 파일 업로드 처리
         if (request.getPostFiles() != null) {
             for (MultipartFile file : request.getPostFiles()) {
                 if (file.isEmpty()) {

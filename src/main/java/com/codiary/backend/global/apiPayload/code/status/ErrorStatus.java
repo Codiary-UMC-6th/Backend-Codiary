@@ -45,6 +45,7 @@ public enum ErrorStatus implements BaseErrorCode {
     TEAM_MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "TEAM_2008", "팀 멤버를 찾을 수 없습니다."),
     TEAM_MEMBER_OVER(HttpStatus.BAD_REQUEST, "TEAM_2009", "추가할 수 있는 구성원 수를 초과했습니다."),
     TEAM_ADMIN_MINIMUM_REQUIRED(HttpStatus.BAD_REQUEST, "TEAM_2010", "관리자는 최소 1명 이상 존재해야 합니다."),
+    TEAM_REQUIRED_FOR_ACCESS(HttpStatus.BAD_REQUEST, "TEAM_2011", "팀이 있어야 합니다."),
 
     // 포스트 관려 에러 3000
     POST_CREATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3001", "포스트 생성 권한이 없습니다."),
@@ -56,6 +57,8 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_NOT_EXIST_BY_PROJECT(HttpStatus.BAD_REQUEST, "POST_3007", "해당 프로젝트의 다이어리 목록이 없습니다."),
     POST_NOT_EXIST_BY_MEMBER(HttpStatus.BAD_REQUEST, "POST_3008", "해당 멤버의 다이어리 목록이 없습니다."),
     POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST_3009", "포스트가 없습니다."),
+    NO_ACCESS_PERMISSION(HttpStatus.BAD_REQUEST, "POST_3010", "전체 공개 게시글이 없습니다."),
+    INVALID_REQUEST(HttpStatus.BAD_REQUEST, "POST_3011", "멤버 ID 또는 팀 ID 중 하나를 입력해야 합니다."),
 
     // 코멘트 관련 에러 4000
     COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMMENT_4005", "댓글이 없습니다."),

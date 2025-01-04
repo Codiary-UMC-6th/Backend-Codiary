@@ -21,9 +21,12 @@ public class PostResponseDTO {
             String title,
             String body,
             String author,
-            String authorImage,
+            String authorImageUrl,
+            String thumbnailImageUrl,
+            String teamProfileImageUrl,
+            String teamBannerImageUrl,
             LocalDateTime createdAt,
-            String thumbnailImage
+            LocalDateTime updatedAt
     ) {
     }
 
@@ -43,7 +46,11 @@ public class PostResponseDTO {
     public static class CreatePostResultDTO {
         Long postId;
         Long memberId;
+        String authorNickname;
+        String authorProfileImageUrl;
         Long teamId;
+        String teamProfileImageUrl;
+        String teamBannerImageUrl;
         Long projectId;
         String postTitle;
         String postBody;
@@ -53,6 +60,8 @@ public class PostResponseDTO {
         Set<Long> coauthorIds;
         PostAccess postAccess;
         PostFileResponseDTO.PostFileListDTO postFileList;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
     @Getter
@@ -62,7 +71,11 @@ public class PostResponseDTO {
     public static class UpdatePostResultDTO {
         Long postId;
         Long memberId;
+        String authorNickname;
+        String authorProfileImageUrl;
         Long teamId;
+        String teamProfileImageUrl;
+        String teamBannerImageUrl;
         Long projectId;
         String postTitle;
         String postBody;
@@ -72,6 +85,8 @@ public class PostResponseDTO {
         Set<Long> coauthorIds;
         PostAccess postAccess;
         PostFileResponseDTO.PostFileListDTO postFileList;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
 
@@ -81,7 +96,11 @@ public class PostResponseDTO {
     public record PostPreviewDTO ( // Post 조회
         Long postId,
         Long memberId,
+        String authorNickname,
+        String authorProfileImageUrl,
         Long teamId,
+        String teamProfileImageUrl,
+        String teamBannerImageUrl,
         Long projectId,
         String postTitle,
         String postBody,
@@ -92,9 +111,7 @@ public class PostResponseDTO {
         PostAccess postAccess,
         PostFileResponseDTO.PostFileListDTO postFileList,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        String authorImage,
-        String authorNickname
+        LocalDateTime updatedAt
     ){
     }
 
@@ -115,10 +132,14 @@ public class PostResponseDTO {
     @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public record MemberPostPreviewDTO(    // 저자별 Post 조회
-            Long memberId,
+    public record MemberPostPreviewDTO( // 저자별 Post 조회
             Long postId,
+            Long memberId,
+            String authorNickname,
+            String authorProfileImageUrl,
             Long teamId,
+            String teamProfileImageUrl,
+            String teamBannerImageUrl,
             Long projectId,
             String postTitle,
             String postBody,
@@ -150,9 +171,13 @@ public class PostResponseDTO {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record TeamPostPreviewDTO(
-            Long teamId,
             Long postId,
             Long memberId,
+            String authorNickname,
+            String authorProfileImageUrl,
+            Long teamId,
+            String teamProfileImageUrl,
+            String teamBannerImageUrl,
             Long projectId,
             String postTitle,
             String postBody,
@@ -185,10 +210,14 @@ public class PostResponseDTO {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record MemberPostInProjectPreviewDTO(
-            Long projectId,
-            Long memberId,
             Long postId,
+            Long memberId,
+            String authorNickname,
+            String authorProfileImageUrl,
             Long teamId,
+            String teamProfileImageUrl,
+            String teamBannerImageUrl,
+            Long projectId,
             String postTitle,
             String postBody,
             String thumbnailImageUrl,
@@ -220,10 +249,14 @@ public class PostResponseDTO {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record TeamPostInProjectPreviewDTO(
-            Long projectId,
-            Long teamId,
             Long postId,
             Long memberId,
+            String authorNickname,
+            String authorProfileImageUrl,
+            Long teamId,
+            String teamProfileImageUrl,
+            String teamBannerImageUrl,
+            Long projectId,
             String postTitle,
             String postBody,
             String thumbnailImageUrl,
@@ -254,9 +287,13 @@ public class PostResponseDTO {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record MemberPostInTeamPreviewDTO(
-            Long teamId,
-            Long memberId,
             Long postId,
+            Long memberId,
+            String authorNickname,
+            String authorProfileImageUrl,
+            Long teamId,
+            String teamProfileImageUrl,
+            String teamBannerImageUrl,
             Long projectId,
             String postTitle,
             String postBody,
@@ -299,8 +336,11 @@ public class PostResponseDTO {
         public record PostAdjacentPreviewDTO(
                 Long postId,
                 Long memberId,
-                String nickname,
+                String authorNickname,
+                String authorProfileImageUrl,
                 Long teamId,
+                String teamProfileImageUrl,
+                String teamBannerImageUrl,
                 Long projectId,
                 String postTitle,
                 String postBody,

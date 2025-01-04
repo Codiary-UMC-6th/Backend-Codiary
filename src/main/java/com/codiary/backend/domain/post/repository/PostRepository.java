@@ -25,6 +25,15 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     Page<Post> findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(Team team, Member member, Pageable pageable);
     Page<Post> findByTeamAndAuthorList_MemberOrderByCreatedAtDescPostIdDesc(Team team, Member member, Pageable pageable);
 
+    Optional<Post> findTopByMemberAndPostIdLessThanOrderByCreatedAtDescPostIdDesc(Member member, Long postId);
+
+    Optional<Post> findTopByMemberAndPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Member member, Long postId);
+
+    Optional<Post> findTopByTeamAndPostIdLessThanOrderByCreatedAtDescPostIdDesc(Team team, Long postId);
+
+    Optional<Post> findTopByTeamAndPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Team team, Long postId);
+
+
     boolean existsByTeam(Team team);
     boolean existsByProject(Project project);
     boolean existsByMember(Member member);
