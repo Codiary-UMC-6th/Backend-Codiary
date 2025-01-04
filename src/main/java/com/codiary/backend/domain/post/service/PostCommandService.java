@@ -11,6 +11,7 @@ import com.codiary.backend.domain.post.converter.PostFileConverter;
 import com.codiary.backend.domain.post.dto.request.PostRequestDTO;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.entity.PostFile;
+import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.post.repository.AuthorRepository;
 import com.codiary.backend.domain.post.repository.PostFileRepository;
 import com.codiary.backend.domain.post.repository.PostRepository;
@@ -69,6 +70,11 @@ public class PostCommandService {
             if (!teamRepository.isTeamMember(team, member)) {
                 throw new GeneralException(ErrorStatus.TEAM_MEMBER_ONLY_ACCESS);
             }
+        }
+
+        // PostAccess가 TEAM인데 팀이 null인 경우 예외 처리
+        if (request.getPostAccess() == PostAccess.TEAM && team == null) {
+            throw new GeneralException(ErrorStatus.TEAM_REQUIRED_FOR_ACCESS);
         }
 
         Project project = request.getProjectId() == null ? null
