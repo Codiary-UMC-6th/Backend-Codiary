@@ -109,7 +109,7 @@ public class PostController {
 
     // 저자의 게시글 리스트 페이징 조회
     @GetMapping("/member/{memberId}/paging")
-    @Operation(summary = "저자의 게시글 리스트 페이징 조회 API", description = "저자의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**", security = @SecurityRequirement(name = "accessToken"))
+    @Operation(summary = "저자의 게시글 리스트 페이징 조회 API", description = "저자의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**")
     public ApiResponse<PostResponseDTO.MemberPostPreviewListDTO> findPostByMember(@PathVariable Long memberId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size) {
         Page<Post> posts = postQueryService.getPostsByMember(memberId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toMemberPostPreviewListDTO(posts));
@@ -118,7 +118,7 @@ public class PostController {
 
     // 팀의 게시글 리스트 페이징 조회
     @GetMapping("/team/{teamId}/paging")
-    @Operation(summary = "팀의 게시글 리스트 페이징 조회 API", description = "팀의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'를 받습니다. **첫 페이지는 0부터 입니다.**", security = @SecurityRequirement(name = "accessToken"))
+    @Operation(summary = "팀의 게시글 리스트 페이징 조회 API", description = "팀의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'를 받습니다. **첫 페이지는 0부터 입니다.**")
     public ApiResponse<PostResponseDTO.TeamPostPreviewListDTO> findPostByTeam(@PathVariable Long teamId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(6) Integer size){
         Page<Post> posts = postQueryService.getPostsByTeam(teamId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toTeamPostPreviewListDTO(posts));
@@ -127,7 +127,7 @@ public class PostController {
 
     // 프로젝트별 저자의 게시글 리스트 페이징 조회
     @GetMapping("/project/{projectId}/member/{memberId}/paging")
-    @Operation(summary = "프로젝트별 저자의 게시글 리스트 페이징 조회 API", description = "프로젝트별 저자의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**", security = @SecurityRequirement(name = "accessToken"))
+    @Operation(summary = "프로젝트별 저자의 게시글 리스트 페이징 조회 API", description = "프로젝트별 저자의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**")
     public ApiResponse<PostResponseDTO.MemberPostInProjectPreviewListDTO> findPostByMemberInProject(@PathVariable Long projectId, @PathVariable Long memberId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(5) Integer size){
         Page<Post> posts = postQueryService.getPostsByMemberInProject(projectId, memberId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toMemberPostInProjectPreviewListDTO(posts));
@@ -136,7 +136,7 @@ public class PostController {
 
     // 프로젝트별 팀의 게시글 리스트 페이징 조회
     @GetMapping("/project/{projectId}/team/{teamId}/paging")
-    @Operation(summary = "프로젝트별 팀의 게시글 리스트 페이징 조회 API", description = "프로젝트별 팀의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'와 팀의 'teamId'를 받습니다. **첫 페이지는 0부터 입니다.**", security = @SecurityRequirement(name = "accessToken"))
+    @Operation(summary = "프로젝트별 팀의 게시글 리스트 페이징 조회 API", description = "프로젝트별 팀의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 프로젝트의 'projectId'와 팀의 'teamId'를 받습니다. **첫 페이지는 0부터 입니다.**")
     public ApiResponse<PostResponseDTO.TeamPostInProjectPreviewListDTO> findPostByTeamInProject(@PathVariable Long projectId, @PathVariable Long teamId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(6) Integer size){
         Page<Post> posts = postQueryService.getPostsByTeamInProject(projectId, teamId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toTeamPostInProjectPreviewListDTO(posts));
@@ -144,7 +144,7 @@ public class PostController {
 
     // 팀별 저자의 게시글 리스트 페이징 조회
     @GetMapping("/team/{teamId}/member/{memberId}/paging")
-    @Operation(summary = "팀별 저자의 게시글 리스트 페이징 조회 API", description = "팀별 저자의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**", security = @SecurityRequirement(name = "accessToken"))
+    @Operation(summary = "팀별 저자의 게시글 리스트 페이징 조회 API", description = "팀별 저자의 게시글 리스트를 페이징으로 조회하기 위해 'Path Variable'로 해당 팀의 'teamId'와 저자의 'memberId'를 받습니다. **첫 페이지는 0부터 입니다.**")
     public ApiResponse<PostResponseDTO.MemberPostInTeamPreviewListDTO> findPostByMemberInTeam(@PathVariable Long teamId, @PathVariable Long memberId, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(6) Integer size){
         Page<Post> posts = postQueryService.getPostsByMemberInTeam(teamId, memberId, page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toMemberPostInTeamPreviewListDTO(posts));
@@ -152,7 +152,7 @@ public class PostController {
 
     // 제목으로 게시글 리스트 페이징 조회
     @GetMapping("/title/paging")
-    @Operation(summary = "제목으로 게시글 리스트 페이징 조회 API", description = "제목으로 게시글 리스트를 페이징으로 조회합니다. Param으로 제목을 입력하세요.", security = @SecurityRequirement(name = "accessToken"))
+    @Operation(summary = "제목으로 게시글 리스트 페이징 조회 API", description = "제목으로 게시글 리스트를 페이징으로 조회합니다. Param으로 제목을 입력하세요.")
     public ApiResponse<PostResponseDTO.PostPreviewListDTO> findPostsByTitle(@RequestParam Optional<String> search, @RequestParam @Min(0) Integer page, @RequestParam @Min(1) @Max(9) Integer size) {
         Page<Post> posts = postQueryService.getPostsByTitle(Optional.of(search.orElse("")), page, size);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPreviewListDTO(posts));
@@ -170,7 +170,7 @@ public class PostController {
 
     // 인접한 게시글 조회 (이전 게시글, 다음 게시글)
     @GetMapping("/{postId}/adjacent")
-    @Operation(summary = "인접한 게시글 조회 API", description = "특정 게시글의 인접한 게시글을 조회합니다.", security = @SecurityRequirement(name = "accessToken"))
+    @Operation(summary = "인접한 게시글 조회 API", description = "특정 게시글의 인접한 게시글을 조회합니다.")
     public ApiResponse<PostResponseDTO.PostAdjacentDTO> findAdjacentPosts(@PathVariable Long postId){
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostAdjacentDTO(postQueryService.findAdjacentPosts(postId)));
     }

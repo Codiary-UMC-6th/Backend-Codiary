@@ -3,6 +3,7 @@ package com.codiary.backend.domain.post.service;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.repository.MemberRepository;
 import com.codiary.backend.domain.post.entity.Post;
+import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.post.repository.PostRepository;
 import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.project.repository.ProjectRepository;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,9 +36,38 @@ public class PostQueryService {
     private final TeamRepository teamRepository;
     private final ProjectRepository projectRepository;
 
+    private void validatePostAccess(Post post, Member member) {
+        // MEMBER 접근 권한: 작성자만 접근 가능
+        if (post.getPostAccess() == PostAccess.MEMBER && !post.getMember().equals(member)) {
+            throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION);
+        }
+        // TEAM 접근 권한: 팀 멤버만 접근 가능
+        if (post.getPostAccess() == PostAccess.TEAM && post.getTeam() != null) {
+            if (!teamRepository.isTeamMember(post.getTeam(), member)) {
+                throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION);
+            }
+        }
+    }
+
+    private Member getAuthenticatedMember() {
+        // 현재 인증된 사용자 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // username (식별자) 가져오기
+        String username = authentication.getName();
+        // username으로 Member 엔터티 조회
+        return memberRepository.findByEmail(username)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+
     public Post findById(Long postId) {
-        Post post = postRepository.findById(postId).get();
-        return postRepository.save(post);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        Member member = getAuthenticatedMember();
+        validatePostAccess(post, member);
+
+        return post;
     }
 
 
@@ -58,15 +90,49 @@ public class PostQueryService {
         return new PageImpl<>(combinedPosts.subList(start, end), request, combinedPosts.size());
     }
 
+//    public Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size) {
+//        PageRequest request = PageRequest.of(page, size);
+//        if (optSearch.isPresent()) {
+//            String search = optSearch.get();
+//            return postRepository.findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(search, request);
+//        }
+//        // 검색어 존재 X
+//        return postRepository.findAllByOrderByCreatedAtDesc(request);
+//    }
+
     public Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
+
+        // 모든 게시글을 조회
+        Page<Post> allPosts;
         if (optSearch.isPresent()) {
             String search = optSearch.get();
-            return postRepository.findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(search, request);
+            allPosts = postRepository.findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(search, request);
+        } else {
+            allPosts = postRepository.findAllByOrderByCreatedAtDesc(request);
         }
-        // 검색어 존재 X
-        return postRepository.findAllByOrderByCreatedAtDesc(request);
+
+        // 인증된 사용자 가져오기
+        Member member = getAuthenticatedMember();
+
+        // validatePostAccess를 활용하여 접근 권한이 있는 게시글만 필터링
+        List<Post> accessiblePosts = allPosts.getContent().stream()
+                .filter(post -> {
+                    try {
+                        validatePostAccess(post, member); // 권한 확인
+                        return true; // 권한이 있으면 포함
+                    } catch (GeneralException e) {
+                        return false; // 권한 없으면 제외
+                    }
+                })
+                .toList();
+
+        // 필터링된 결과를 Page로 반환
+        return new PageImpl<>(accessiblePosts, request, accessiblePosts.size());
     }
+
+
+
 
     public Page<Post> getPostsByCategories(Optional<String> optSearch, int page, int size) {
         Pageable request = PageRequest.of(page, size);
