@@ -285,10 +285,44 @@ public class PostQueryService {
     }
 
 
-    public Page<Post> getBookmarkPost(Long memberId, Pageable pageable){
-        //validation
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+//    public Page<Post> getBookmarkPost(Long memberId, Pageable pageable){
+//        //validation
+//        Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+//
+//        return postRepository.findByBookmarkPostList(member, pageable);
+//    }
 
-        return postRepository.findByBookmarkPostList(member, pageable);
+    public Page<Post> getBookmarkPost(Long memberId, Pageable pageable) {
+        // 인증된 사용자 가져오기
+        Member authenticatedMember = getAuthenticatedMember();
+
+        // 요청된 사용자와 인증된 사용자가 동일한지 확인
+        if (!authenticatedMember.getMemberId().equals(memberId)) {
+            throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION);
+        }
+
+        // 요청된 사용자의 북마크된 게시글 조회
+        Page<Post> allPosts = postRepository.findByBookmarkPostList(authenticatedMember, pageable);
+
+        // 접근 권한 검증
+        List<Post> accessiblePosts = allPosts.getContent().stream()
+                .filter(post -> {
+                    try {
+                        validatePostAccess(post, authenticatedMember);
+                        return true; // 접근 가능
+                    } catch (GeneralException e) {
+                        return false; // 접근 불가
+                    }
+                })
+                .toList();
+
+        // 접근 가능한 게시글이 없으면 예외 발생
+        if (accessiblePosts.isEmpty()) {
+            throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION);
+        }
+
+        // 필터링된 게시글로 Page 객체 생성
+        return new PageImpl<>(accessiblePosts, pageable, accessiblePosts.size());
     }
+
 }
