@@ -153,28 +153,66 @@ public class PostQueryService {
     }
 
 
+//    public Page<Post> getPostsByMemberInProject(Long projectId, Long memberId, int page, int size) {
+//        PageRequest request = PageRequest.of(page, size);
+//        Project project = projectRepository.findById(projectId)
+//                .orElseThrow(() -> new PostHandler(ErrorStatus.PROJECT_NOT_FOUND));
+//        Member member = memberRepository.findById(memberId)
+//                .orElseThrow(() -> new PostHandler(ErrorStatus.MEMBER_NOT_FOUND));
+//
+//        if (!postRepository.existsByProject(project)) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_PROJECT); }
+//        List<Post> postsByMember = postRepository.findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(project, member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+//        List<Post> postsByCoauthor = postRepository.findByProjectAndAuthorList_MemberOrderByCreatedAtDescPostIdDesc(project, member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+//
+//        List<Post> combinedPosts = new ArrayList<>();
+//        combinedPosts.addAll(postsByMember);
+//        combinedPosts.addAll(postsByCoauthor);
+//
+//        if (combinedPosts.isEmpty()) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER); }
+//        combinedPosts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+//
+//        int start = Math.min(page * size, combinedPosts.size());
+//        int end = Math.min((page + 1) * size, combinedPosts.size());
+//        return new PageImpl<>(combinedPosts.subList(start, end), request, combinedPosts.size());
+//    }
+
     public Page<Post> getPostsByMemberInProject(Long projectId, Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new PostHandler(ErrorStatus.PROJECT_NOT_FOUND));
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new PostHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        if (!postRepository.existsByProject(project)) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_PROJECT); }
-        List<Post> postsByMember = postRepository.findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(project, member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
-        List<Post> postsByCoauthor = postRepository.findByProjectAndAuthorList_MemberOrderByCreatedAtDescPostIdDesc(project, member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new PostHandler(ErrorStatus.PROJECT_NOT_FOUND));
+        Member requestedMember = memberRepository.findById(memberId).orElseThrow(() -> new PostHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member authenticatedMember = getAuthenticatedMember();
 
-        List<Post> combinedPosts = new ArrayList<>();
-        combinedPosts.addAll(postsByMember);
-        combinedPosts.addAll(postsByCoauthor);
+        if (!postRepository.existsByProject(project)) {throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_PROJECT);}
 
-        if (combinedPosts.isEmpty()) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER); }
-        combinedPosts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+        List<Post> postsByMember = postRepository.findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(
+                project, requestedMember, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        List<Post> postsByCoauthor = postRepository.findByProjectAndAuthorList_MemberOrderByCreatedAtDescPostIdDesc(
+                project, requestedMember, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
 
-        int start = Math.min(page * size, combinedPosts.size());
-        int end = Math.min((page + 1) * size, combinedPosts.size());
-        return new PageImpl<>(combinedPosts.subList(start, end), request, combinedPosts.size());
+        Set<Post> uniquePosts = new HashSet<>();
+        uniquePosts.addAll(postsByMember);
+        uniquePosts.addAll(postsByCoauthor);
+
+        List<Post> accessiblePosts = uniquePosts.stream()
+                .filter(post -> {
+                    try {
+                        if (requestedMember.equals(authenticatedMember)) { validatePostAccess(post, authenticatedMember); }
+                        else { // 다른 사용자: 전체 공개 게시글만 허용
+                            if (post.getPostAccess() != PostAccess.ENTIRE) { throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION);}
+                        }
+                        return true;
+                    } catch (GeneralException e) { return false; }})
+                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
+                .toList();
+
+        if (accessiblePosts.isEmpty()) { throw new PostHandler(ErrorStatus.NO_ACCESS_PERMISSION); }
+
+        int start = Math.min(page * size, accessiblePosts.size());
+        int end = Math.min((page + 1) * size, accessiblePosts.size());
+        return new PageImpl<>(accessiblePosts.subList(start, end), request, accessiblePosts.size());
     }
+
 
     public Page<Post> getPostsByTeamInProject(Long projectId, Long teamId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
@@ -185,6 +223,7 @@ public class PostQueryService {
         if (!postRepository.existsByTeam(team)){ throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM); }
         return postRepository.findByProjectAndTeamOrderByCreatedAtDescPostIdDesc(project, team, request);
     }
+
 
     public Page<Post> getPostsByMemberInTeam(Long teamId, Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
@@ -211,6 +250,7 @@ public class PostQueryService {
         return new PageImpl<>(combinedPosts.subList(start, end), request, combinedPosts.size());
     }
 
+
     public Post.PostAdjacent findAdjacentPosts(Long postId) {
         return Post.PostAdjacent.builder()
                 .olderPost(postRepository.findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(postId).orElse(null))
@@ -221,17 +261,15 @@ public class PostQueryService {
 
     public Page<Post> getPostsByFollowing(Long id, Pageable pageable) {
         //validation
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberRepository.findById(id).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-        //return
         return postRepository.findPostsByFollowing(id, pageable);
     }
 
+
     public Page<Post> getBookmarkPost(Long memberId, Pageable pageable){
         //validation
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         return postRepository.findByBookmarkPostList(member, pageable);
     }
