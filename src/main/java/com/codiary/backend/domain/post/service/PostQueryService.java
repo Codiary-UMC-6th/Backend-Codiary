@@ -207,7 +207,7 @@ public class PostQueryService {
                 .filter(post -> {
                     try {
                         validatePostAccess(post, authenticatedMember);
-                        return true; // 접근 가능
+                        return true;
                     } catch (GeneralException e) { return false; }
                 })
                 .toList();
@@ -219,28 +219,65 @@ public class PostQueryService {
 
     public Page<Post> getPostsByMemberInTeam(Long teamId, Long memberId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
+
+        // 팀과 멤버 조회
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.TEAM_NOT_FOUND));
-        Member member = memberRepository.findById(memberId)
+        Member requestedMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member authenticatedMember = getAuthenticatedMember(); // 인증된 사용자
 
-        if (!postRepository.existsByTeam(team)) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM); }
-        if (!postRepository.existsByMember(member)) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER); }
+        // 팀 및 멤버 관련 게시글 존재 확인
+        if (!postRepository.existsByTeam(team)) {
+            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM);
+        }
+        if (!postRepository.existsByMember(requestedMember)) {
+            throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER);
+        }
 
-        List<Post> postsByMember = postRepository.findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(team, member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
-        List<Post> postsByCoauthor = postRepository.findByTeamAndAuthorList_MemberOrderByCreatedAtDescPostIdDesc(team, member, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        // 게시글 조회
+        List<Post> postsByMember = postRepository.findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(
+                team, requestedMember, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        List<Post> postsByCoauthor = postRepository.findByTeamAndAuthorList_MemberOrderByCreatedAtDescPostIdDesc(
+                team, requestedMember, PageRequest.of(0, Integer.MAX_VALUE)).getContent();
 
-        List<Post> combinedPosts = new ArrayList<>();
-        combinedPosts.addAll(postsByMember);
-        combinedPosts.addAll(postsByCoauthor);
+        // 중복 제거 및 리스트 합치기
+        Set<Post> uniquePosts = new HashSet<>();
+        uniquePosts.addAll(postsByMember);
+        uniquePosts.addAll(postsByCoauthor);
 
-        if (combinedPosts.isEmpty()) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_MEMBER); }
-        combinedPosts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+        // 게시글 접근 권한 검증
+        List<Post> accessiblePosts = uniquePosts.stream()
+                .filter(post -> {
+                    try {
+                        if (requestedMember.equals(authenticatedMember)) {
+                            // 요청된 사용자와 인증된 사용자가 같다면 모든 접근 권한 확인
+                            validatePostAccess(post, authenticatedMember);
+                        } else {
+                            // 다른 사용자라면 전체 공개 게시글만 허용
+                            if (post.getPostAccess() != PostAccess.ENTIRE) {
+                                throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION);
+                            }
+                        }
+                        return true; // 접근 가능
+                    } catch (GeneralException e) {
+                        return false; // 접근 불가
+                    }
+                })
+                .sorted(Comparator.comparing(Post::getCreatedAt).reversed()) // 정렬
+                .toList();
 
-        int start = Math.min(page * size, combinedPosts.size());
-        int end = Math.min((page + 1) * size, combinedPosts.size());
-        return new PageImpl<>(combinedPosts.subList(start, end), request, combinedPosts.size());
+        // 접근 가능한 게시글이 없으면 예외 발생
+        if (accessiblePosts.isEmpty()) {
+            throw new PostHandler(ErrorStatus.NO_ACCESS_PERMISSION);
+        }
+
+        // 페이징 처리
+        int start = Math.min(page * size, accessiblePosts.size());
+        int end = Math.min((page + 1) * size, accessiblePosts.size());
+        return new PageImpl<>(accessiblePosts.subList(start, end), request, accessiblePosts.size());
     }
+
 
 
     public Post.PostAdjacent findAdjacentPosts(Long postId) {
