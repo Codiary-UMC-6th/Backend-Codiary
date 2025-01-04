@@ -257,12 +257,95 @@ public class PostQueryService {
     }
 
 
-    public Post.PostAdjacent findAdjacentPosts(Long postId) {
+//    public Post.PostAdjacent findAdjacentPosts(Long postId) {
+//        return Post.PostAdjacent.builder()
+//                .olderPost(postRepository.findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(postId).orElse(null))
+//                .laterPost(postRepository.findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(postId).orElse(null))
+//                .build();
+//    }
+
+    public Post.PostAdjacent findAdjacentPosts(Long postId, Long memberId, Long teamId) {
+        // 현재 게시글 조회
+        Post currentPost = postRepository.findById(postId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        Member authenticatedMember = getAuthenticatedMember(); // 인증된 사용자
+
+        // 멤버 또는 팀 ID를 통해 기준 설정
+        Member member = null;
+        Team team = null;
+
+        if (memberId != null) {
+            member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        } else if (teamId != null) {
+            team = teamRepository.findById(teamId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
+        } else {
+            throw new GeneralException(ErrorStatus.INVALID_REQUEST);
+        }
+
+        // 현재 게시글에 대한 접근 권한 검증
+        validatePostAccess(currentPost, authenticatedMember);
+
+        // 조건에 따라 앞, 뒤 게시글 조회
+        Post olderPost = null;
+        Post laterPost = null;
+
+        if (team != null) {
+            // 팀 기준으로 앞, 뒤 게시글 조회
+            olderPost = postRepository.findTopByTeamAndPostIdLessThanOrderByCreatedAtDescPostIdDesc(team, postId)
+                    .filter(post -> {
+                        try {
+                            validatePostAccess(post, authenticatedMember);
+                            return true; // 접근 가능
+                        } catch (GeneralException e) {
+                            return false; // 접근 불가
+                        }
+                    })
+                    .orElse(null);
+
+            laterPost = postRepository.findTopByTeamAndPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(team, postId)
+                    .filter(post -> {
+                        try {
+                            validatePostAccess(post, authenticatedMember);
+                            return true; // 접근 가능
+                        } catch (GeneralException e) {
+                            return false; // 접근 불가
+                        }
+                    })
+                    .orElse(null);
+        } else {
+            // 멤버 기준으로 앞, 뒤 게시글 조회
+            olderPost = postRepository.findTopByMemberAndPostIdLessThanOrderByCreatedAtDescPostIdDesc(member, postId)
+                    .filter(post -> {
+                        try {
+                            validatePostAccess(post, authenticatedMember);
+                            return true; // 접근 가능
+                        } catch (GeneralException e) {
+                            return false; // 접근 불가
+                        }
+                    })
+                    .orElse(null);
+
+            laterPost = postRepository.findTopByMemberAndPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(member, postId)
+                    .filter(post -> {
+                        try {
+                            validatePostAccess(post, authenticatedMember);
+                            return true; // 접근 가능
+                        } catch (GeneralException e) {
+                            return false; // 접근 불가
+                        }
+                    })
+                    .orElse(null);
+        }
+
         return Post.PostAdjacent.builder()
-                .olderPost(postRepository.findTopByPostIdLessThanOrderByCreatedAtDescPostIdDesc(postId).orElse(null))
-                .laterPost(postRepository.findTopByPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(postId).orElse(null))
+                .olderPost(olderPost)
+                .laterPost(laterPost)
                 .build();
     }
+
 
 
     public Page<Post> getPostsByFollowing(Long id, Pageable pageable) {
@@ -285,43 +368,21 @@ public class PostQueryService {
     }
 
 
-//    public Page<Post> getBookmarkPost(Long memberId, Pageable pageable){
-//        //validation
-//        Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-//
-//        return postRepository.findByBookmarkPostList(member, pageable);
-//    }
-
     public Page<Post> getBookmarkPost(Long memberId, Pageable pageable) {
-        // 인증된 사용자 가져오기
         Member authenticatedMember = getAuthenticatedMember();
-
-        // 요청된 사용자와 인증된 사용자가 동일한지 확인
-        if (!authenticatedMember.getMemberId().equals(memberId)) {
-            throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION);
-        }
-
-        // 요청된 사용자의 북마크된 게시글 조회
+        if (!authenticatedMember.getMemberId().equals(memberId)) { throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION); }
         Page<Post> allPosts = postRepository.findByBookmarkPostList(authenticatedMember, pageable);
 
-        // 접근 권한 검증
         List<Post> accessiblePosts = allPosts.getContent().stream()
                 .filter(post -> {
                     try {
                         validatePostAccess(post, authenticatedMember);
-                        return true; // 접근 가능
-                    } catch (GeneralException e) {
-                        return false; // 접근 불가
-                    }
+                        return true;
+                    } catch (GeneralException e) { return false; }
                 })
                 .toList();
+        if (accessiblePosts.isEmpty()) { throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION); }
 
-        // 접근 가능한 게시글이 없으면 예외 발생
-        if (accessiblePosts.isEmpty()) {
-            throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION);
-        }
-
-        // 필터링된 게시글로 Page 객체 생성
         return new PageImpl<>(accessiblePosts, pageable, accessiblePosts.size());
     }
 

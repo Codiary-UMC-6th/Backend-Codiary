@@ -14,7 +14,9 @@ import com.codiary.backend.domain.post.service.PostCommandService;
 import com.codiary.backend.domain.post.service.PostQueryService;
 import com.codiary.backend.domain.post.service.PostService;
 import com.codiary.backend.global.apiPayload.ApiResponse;
+import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
+import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -170,10 +172,15 @@ public class PostController {
 
     // 인접한 게시글 조회 (이전 게시글, 다음 게시글)
     @GetMapping("/{postId}/adjacent")
-    @Operation(summary = "인접한 게시글 조회 API", description = "특정 게시글의 인접한 게시글을 조회합니다.")
-    public ApiResponse<PostResponseDTO.PostAdjacentDTO> findAdjacentPosts(@PathVariable Long postId){
-        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostAdjacentDTO(postQueryService.findAdjacentPosts(postId)));
+    @Operation(summary = "멤버 또는 팀이 작성한 게시글의 인접한 게시글 조회 API", description = "멤버 또는 팀이 작성한 게시글의 인접한 게시글을 조회합니다.")
+    public ApiResponse<PostResponseDTO.PostAdjacentDTO> findAdjacentPosts(@PathVariable Long postId, @RequestParam(required = false) Long memberId, @RequestParam(required = false) Long teamId) {
+        // 멤버 ID와 팀 ID 둘 다 입력된 경우 예외 처리
+        if (memberId != null && teamId != null) { throw new GeneralException(ErrorStatus.INVALID_REQUEST); }
+
+        Post.PostAdjacent adjacentPosts = postQueryService.findAdjacentPosts(postId, memberId, teamId);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostAdjacentDTO(adjacentPosts));
     }
+
 
     // 전체 인기글 or 최신글 조회
     @Operation(summary = "공개글 리스트 조회", description = "popular/latest 입력 시 인기글/최신글 조회")
