@@ -102,36 +102,18 @@ public class PostQueryService {
 
     public Page<Post> getPostsByTitle(Optional<String> optSearch, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
-
-        // 모든 게시글을 조회
         Page<Post> allPosts;
-        if (optSearch.isPresent()) {
-            String search = optSearch.get();
+        if (optSearch.isPresent()) { String search = optSearch.get();
             allPosts = postRepository.findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(search, request);
-        } else {
-            allPosts = postRepository.findAllByOrderByCreatedAtDesc(request);
-        }
+        } else { allPosts = postRepository.findAllByOrderByCreatedAtDesc(request); }
 
-        // 인증된 사용자 가져오기
         Member member = getAuthenticatedMember();
-
-        // validatePostAccess를 활용하여 접근 권한이 있는 게시글만 필터링
         List<Post> accessiblePosts = allPosts.getContent().stream()
-                .filter(post -> {
-                    try {
-                        validatePostAccess(post, member); // 권한 확인
-                        return true; // 권한이 있으면 포함
-                    } catch (GeneralException e) {
-                        return false; // 권한 없으면 제외
-                    }
-                })
+                .filter(post -> { try {validatePostAccess(post, member); return true; } catch (GeneralException e) { return false; } })
                 .toList();
-
         // 필터링된 결과를 Page로 반환
         return new PageImpl<>(accessiblePosts, request, accessiblePosts.size());
     }
-
-
 
 
     public Page<Post> getPostsByCategories(Optional<String> optSearch, int page, int size) {
@@ -149,10 +131,18 @@ public class PostQueryService {
 
     public Page<Post> getPostsByTeam(Long teamId, int page, int size) {
         PageRequest request = PageRequest.of(page, size);
-        Team team = teamRepository.findById(teamId).get();
+        Team team = teamRepository.findById(teamId)
+             .orElseThrow(() -> new PostHandler(ErrorStatus.TEAM_NOT_FOUND));
+        if (!postRepository.existsByTeam(team)) { throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM); }
 
-        if (!postRepository.existsByTeam(team)){ throw new PostHandler(ErrorStatus.POST_NOT_EXIST_BY_TEAM); }
-        return postRepository.findByTeamOrderByCreatedAtDescPostIdDesc(team, request);
+        Member member = getAuthenticatedMember();
+        Page<Post> allPosts = postRepository.findByTeamOrderByCreatedAtDescPostIdDesc(team, request);
+        // 모든 게시글에 대해 접근 권한 확인
+        boolean hasAccess = allPosts.getContent().stream()
+                .allMatch(post -> { try { validatePostAccess(post, member); return true; } catch (GeneralException e) { return false; }});
+        // 접근 권한이 없으면 예외 발생
+        if (!hasAccess) { throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION);}
+        return allPosts;
     }
 
 
