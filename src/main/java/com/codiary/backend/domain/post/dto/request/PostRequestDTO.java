@@ -75,4 +75,12 @@ public class PostRequestDTO {
         private Long teamId;
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateVisibilityRequestDTO {
+        private String postAccess;  // MEMBER, TEAM, ENTIRE
+    }
+
 }

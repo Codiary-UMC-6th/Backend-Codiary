@@ -264,6 +264,16 @@ public class PostCommandService {
     }
 
 
+    public Post updateVisibility(Long postId, PostRequestDTO.UpdateVisibilityRequestDTO request) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Member authenticatedMember = getAuthenticatedMember();
+
+        if (!post.getMember().equals(authenticatedMember)) { throw new GeneralException(ErrorStatus.POST_ACCESS_SET_UNAUTHORIZED);}
+        post.setPostAccess(PostAccess.valueOf(request.getPostAccess()));
+
+        return postRepository.save(post);
+    }
+
 
 
 }

@@ -329,4 +329,15 @@ public class PostController {
     }
 
 
+    @PatchMapping("/visibility/{postId}")
+    @Operation(summary = "게시글 공개 범위 설정 API", description = "게시글의 공개 범위를 설정합니다. (MEMBER / TEAM / ENTIRE)")
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostVisibility(@PathVariable Long postId, @RequestBody PostRequestDTO.UpdateVisibilityRequestDTO request) {
+        Member member = memberCommandService.getRequester();
+        jwtTokenProvider.isValidToken(member.getMemberId());
+
+        Post updatedPost = postCommandService.updateVisibility(postId, request);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(updatedPost));
+    }
+
+
 }
