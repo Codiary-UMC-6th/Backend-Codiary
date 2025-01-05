@@ -251,6 +251,19 @@ public class PostCommandService {
     }
 
 
+    public Post setPostTeam(Long postId, Long teamId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        Member authenticatedMember = getAuthenticatedMember();
+        validatePostAccess(post, authenticatedMember);
+
+        Team team = teamRepository.findById(teamId).orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
+        post.setTeam(team);
+
+        return postRepository.save(post);
+    }
+
+
 
 
 }
