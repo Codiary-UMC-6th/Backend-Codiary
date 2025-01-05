@@ -34,6 +34,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,6 +56,31 @@ public class PostCommandService {
     private final MemberCommandService memberCommandService;
     private final CategoryService categoryService;
     private final AmazonS3Manager s3Manager;
+
+
+    private void validatePostAccess(Post post, Member member) {
+        // MEMBER 접근 권한: 작성자만 접근 가능
+        if (post.getPostAccess() == PostAccess.MEMBER && !post.getMember().equals(member)) {
+            throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION);
+        }
+        // TEAM 접근 권한: 팀 멤버만 접근 가능
+        if (post.getPostAccess() == PostAccess.TEAM && post.getTeam() != null) {
+            if (!teamRepository.isTeamMember(post.getTeam(), member)) {
+                throw new GeneralException(ErrorStatus.NO_ACCESS_PERMISSION);
+            }
+        }
+    }
+
+    private Member getAuthenticatedMember() {
+        // 현재 인증된 사용자 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // username (식별자) 가져오기
+        String username = authentication.getName();
+        // username으로 Member 엔터티 조회
+        return memberRepository.findByEmail(username)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
 
     // 포스트 생성
     public Post createPost(Long memberId, PostRequestDTO.CreatePostRequestDTO request) {
@@ -203,5 +230,27 @@ public class PostCommandService {
 
         return postRepository.save(post);
     }
+
+
+    public Post updateCoauthors(Long postId, PostRequestDTO.UpdateCoauthorRequestDTO request) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Member authenticatedMember = getAuthenticatedMember();
+        validatePostAccess(post, authenticatedMember);
+        // 기존 공동 저자 리스트 삭제
+        post.getAuthorList().clear();
+        // 새로운 공동 저자 리스트 추가
+        Set<Author> coauthors = request.getMemberIds().stream()
+                .map(newCoauthorId -> {
+                    Member newCoauthor = memberRepository.findById(newCoauthorId).orElseThrow(() -> new IllegalArgumentException("Member not found: " + newCoauthorId));
+                    return Author.createAuthors(post, newCoauthor);
+                })
+                .collect(Collectors.toSet());
+        post.getAuthorList().addAll(coauthors);
+
+        return postRepository.save(post);
+    }
+
+
+
 
 }

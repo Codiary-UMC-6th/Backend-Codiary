@@ -59,6 +59,13 @@ public class PostRequestDTO {
         private List<MultipartFile> addedPostFiles;
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateCoauthorRequestDTO {
+        private List<Long> memberIds;
+    }
 
 
 }

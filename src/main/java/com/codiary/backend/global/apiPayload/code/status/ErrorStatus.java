@@ -59,6 +59,7 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_NOT_FOUND(HttpStatus.BAD_REQUEST, "POST_3009", "포스트가 없습니다."),
     NO_ACCESS_PERMISSION(HttpStatus.BAD_REQUEST, "POST_3010", "전체 공개 게시글이 없습니다."),
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "POST_3011", "멤버 ID 또는 팀 ID 중 하나를 입력해야 합니다."),
+    POST_COAUTHOR_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3012", "공동 저자 설정은 작성자만 가능합니다."),
 
     // 코멘트 관련 에러 4000
     COMMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "COMMENT_4005", "댓글이 없습니다."),
