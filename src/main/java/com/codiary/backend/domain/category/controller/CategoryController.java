@@ -2,6 +2,7 @@ package com.codiary.backend.domain.category.controller;
 
 import com.codiary.backend.domain.category.converter.CategoryConverter;
 import com.codiary.backend.domain.category.dto.CategoryResponseDTO;
+import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.domain.category.service.CategoryService;
 import com.codiary.backend.domain.member.entity.MemberCategory;
 import com.codiary.backend.domain.member.security.CustomMemberDetails;
@@ -42,5 +43,16 @@ public class CategoryController {
     public ApiResponse<String> deleteCategory(@PathVariable("member_category_id") Long memberCategoryId, @AuthenticationPrincipal CustomMemberDetails customMemberDetails) {
         categoryService.deleteCategory(memberCategoryId, customMemberDetails.getId());
         return ApiResponse.onSuccess(SuccessStatus.CATEGORY_OK, "카테고리 삭제가 완료되었습니다.");
+    }
+
+    @Operation(summary = "카테고리 검색", description = "카테고리를 검색합니다.")
+    @GetMapping("/search")
+    public ApiResponse<List<CategoryResponseDTO.SimpleCategoryDTO>> searchCategory(
+            @RequestParam(value = "category", defaultValue = "", required = false) String category,
+            @AuthenticationPrincipal CustomMemberDetails memberDetails
+            ) {
+        Long memberId = memberDetails.getId();
+        List<Category> categories = categoryService.searchCategory(memberId, category);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, CategoryConverter.toSimpleCategoryListDTO(categories));
     }
 }

@@ -1,6 +1,7 @@
 package com.codiary.backend.domain.post.controller;
 
 import com.codiary.backend.domain.alert.service.AlertService;
+import com.codiary.backend.domain.category.dto.CategoryResponseDTO;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.member.service.MemberCommandService;
@@ -230,7 +231,6 @@ public class PostController {
 
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
-
 
     // 게시글의 카테고리 설정 및 변경
     @PatchMapping("/category/{postId}")
