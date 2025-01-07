@@ -126,6 +126,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         List<Post> posts = queryFactory
                 .selectDistinct(post)
                 .from(post)
+                .join(post.team, team).fetchJoin()
                 .where(post.postAccess.eq(PostAccess.ENTIRE))
                 .orderBy(orderSpecifiers)
                 .offset(pageable.getOffset())
