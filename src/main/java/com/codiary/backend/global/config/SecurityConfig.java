@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
+                .csrf().disable()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         authorize -> authorize
@@ -103,9 +104,9 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOriginPatterns(List.of("*", "http://localhost:3000", "https://www.codiary.site", "https://codiary.site", "https://api.codiary.site",
+        config.setAllowedOriginPatterns(List.of("http://localhost:3000", "https://www.codiary.site", "https://codiary.site", "https://api.codiary.site",
                 "http://localhost:3000/", "https://www.codiary.site/", "https://codiary.site/", "https://api.codiary.site/"));
-        config.setAllowedOrigins(List.of("*", "http://localhost:3000", "https://www.codiary.site", "https://codiary.site", "https://api.codiary.site",
+        config.setAllowedOrigins(List.of("http://localhost:3000", "https://www.codiary.site", "https://codiary.site", "https://api.codiary.site",
                 "http://localhost:3000/", "https://www.codiary.site/", "https://codiary.site/", "https://api.codiary.site/"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
