@@ -84,7 +84,7 @@ public class SecurityConfig {
                                 // 알람 관련 접근
                                 .requestMatchers("/api/v2/connect", "/api/v2/disconnect", "/api/v2/alert/**").permitAll()
                                 // 기타 관련 접근
-                                .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                .requestMatchers("/**", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), EmailPasswordAuthenticationFilter.class).build();
@@ -101,7 +101,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOriginPatterns(List.of("*", "http://localhost:3000", "https://www.codiary.site", "https://codiary.site", "https://api.codiary.site"));
+        config.setAllowedOriginPatterns(List.of("*", "http://localhost:3000", "https://*.codiary.site", "http://*.codiary.site"));
         config.setAllowedOrigins(List.of("*", "http://localhost:3000", "https://www.codiary.site", "https://codiary.site", "https://api.codiary.site"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
