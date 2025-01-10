@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -44,9 +45,9 @@ public class SecurityConfig {
 //        return http.build();
         return http
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 // Member 관련 접근
@@ -102,8 +103,10 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOriginPatterns(List.of("*", "http://localhost:3000", "https://*.codiary.site", "http://*.codiary.site"));
-        config.setAllowedOrigins(List.of("*", "http://localhost:3000", "https://www.codiary.site", "https://codiary.site", "https://api.codiary.site"));
+        config.setAllowedOriginPatterns(List.of("*", "http://localhost:3000", "https://www.codiary.site", "https://codiary.site", "https://api.codiary.site",
+                "http://localhost:3000/", "https://www.codiary.site/", "https://codiary.site/", "https://api.codiary.site/"));
+        config.setAllowedOrigins(List.of("*", "http://localhost:3000", "https://www.codiary.site", "https://codiary.site", "https://api.codiary.site",
+                "http://localhost:3000/", "https://www.codiary.site/", "https://codiary.site/", "https://api.codiary.site/"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
