@@ -7,7 +7,10 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class TeamResponseDTO {
 
@@ -88,4 +91,20 @@ public class TeamResponseDTO {
     public record TeamImageDTO(
             String url) {
     }
+
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @Builder
+    public record TeamPreviewDTO (
+        Long teamId,
+        String teamName
+    ){}
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @Builder
+    public record TeamPreviewListDTO (
+        List<TeamResponseDTO.TeamPreviewDTO> teams
+    ){}
 }

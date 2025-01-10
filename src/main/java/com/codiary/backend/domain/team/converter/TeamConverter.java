@@ -9,6 +9,7 @@ import com.codiary.backend.domain.team.entity.TeamMember;
 import com.codiary.backend.domain.team.entity.TeamProfileImage;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class TeamConverter {
     public static TeamResponseDTO.TeamDTO toTeamResponseDto(Team team) {
@@ -96,4 +97,21 @@ public class TeamConverter {
                 .url(bannerImage.getImageUrl())
                 .build();
     }
+
+    public static TeamResponseDTO.TeamPreviewDTO toTeamPreviewDTO(Team team) {
+        return TeamResponseDTO.TeamPreviewDTO.builder()
+                .teamId(team.getTeamId())
+                .teamName(team.getName())
+                .build();
+    }
+
+    public static TeamResponseDTO.TeamPreviewListDTO toTeamPreviewListDTO(List<Team> teamList) {
+        List<TeamResponseDTO.TeamPreviewDTO> teamPreviewDTOList = IntStream.range(0, teamList.size())
+                .mapToObj(i->toTeamPreviewDTO(teamList.get(i)))
+                .collect(Collectors.toList());
+        return TeamResponseDTO.TeamPreviewListDTO.builder()
+                .teams(teamPreviewDTOList)
+                .build();
+    }
+
 }
