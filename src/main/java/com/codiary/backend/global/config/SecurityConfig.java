@@ -85,6 +85,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v2/connect", "/api/v2/disconnect", "/api/v2/alert/**").permitAll()
                                 // 기타 관련 접근
                                 .requestMatchers("/**", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                .requestMatchers("/", "/error").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), EmailPasswordAuthenticationFilter.class).build();
