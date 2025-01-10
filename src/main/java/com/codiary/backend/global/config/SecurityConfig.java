@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         authorize -> authorize
+                                .requestMatchers("/error").permitAll()
                                 // Member 관련 접근
                                 .requestMatchers("/api/v2/auth/**").permitAll()
                                 .requestMatchers("/api/v2/member/**").permitAll()
@@ -86,7 +87,6 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v2/connect", "/api/v2/disconnect", "/api/v2/alert/**").permitAll()
                                 // 기타 관련 접근
                                 .requestMatchers("/**", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                .requestMatchers("/", "/error").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), EmailPasswordAuthenticationFilter.class).build();
