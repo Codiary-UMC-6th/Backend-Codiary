@@ -50,7 +50,6 @@ public class SecurityConfig {
                         authorize -> authorize
                                 // Member 관련 접근
                                 .requestMatchers("/api/v2/auth/**").permitAll()
-                                .requestMatchers("/api/v2/oauth/**").permitAll()
                                 .requestMatchers("/api/v2/member/**").permitAll()
                                 // Post 관련 접근
                                 .requestMatchers("/api/v2/post/**").permitAll()
