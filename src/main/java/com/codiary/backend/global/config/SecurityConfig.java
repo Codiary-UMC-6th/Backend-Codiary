@@ -51,7 +51,9 @@ public class SecurityConfig {
                                 // Member 관련 접근
                                 .requestMatchers("/api/v2/auth/**").permitAll()
                                 .requestMatchers("/api/v2/oauth/**").permitAll()
+                                .requestMatchers("/api/v2/member/**").permitAll()
                                 // Post 관련 접근
+                                .requestMatchers("/api/v2/post/**").permitAll()
                                 .requestMatchers("/api/v2/post/search").permitAll()
                                 .requestMatchers("/api/v2/post","/api/v2/post/{postId}", "/api/v2/post/visibility/{postId}", "/api/v2/post/coauthor/{postId}", "/api/v2/post/category/{postId}").permitAll()
                                 .requestMatchers("/api/v2/post/title/paging", "/api/v2/post/team/{teamId}/{postId}", "/api/v2/post/team/{teamId}/member/{memberId}/paging", "/api/v2/post/project/{projectId}/team/{teamId}/paging").permitAll()
@@ -61,20 +63,26 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v2/post/latest", "api/v2/post/following").permitAll() // 전체 최신글 조회 & 팔로잉 멤버들의 최신글 조회
 
                                 // Comment 관련 접근
+                                .requestMatchers("api/v2/comment/**").permitAll()
                                 .requestMatchers("/api/v2/post/{post_id}/comment").permitAll() // 게시물에 댓글 생성, 조회
                                 .requestMatchers("/api/v2/comment/{comment_id}/reply").permitAll() // 댓글에 대댓글 생성, 조회
                                 .requestMatchers("/api/v2/comment/{comment_id}").permitAll() // 댓글 & 대댓글 수정 삭제
 
                                 // Team 관련 접근
+                                .requestMatchers("/api/v2/team/**").permitAll()
                                 .requestMatchers("/api/v2/team/team_member").permitAll()
                                 .requestMatchers("/api/v2/team/{team_id}/profile_image").permitAll()
                                 .requestMatchers("/api/v2/team/{team_id}/banner_image").permitAll()
-                                // Bookmark 관련 접근
-                                // Calendar 관련 접근
+
+                                // follow 관련 접근
+                                .requestMatchers("/api/v2/follow/**").permitAll()
+
                                 // Project 관련 접근
+                                .requestMatchers("/api/v2/project/**").permitAll()
                                 // Category 관련 접근
+                                .requestMatchers("/api/v2/category/**").permitAll()
                                 // 알람 관련 접근
-                                .requestMatchers("/api/v2/connect", "/api/v2/disconnect").permitAll()
+                                .requestMatchers("/api/v2/connect", "/api/v2/disconnect", "/api/v2/alert/**").permitAll()
                                 // 기타 관련 접근
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
@@ -93,8 +101,8 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOriginPatterns(List.of("*", "http://localhost:3000", "https://www.codiary.site"));
-        config.setAllowedOrigins(List.of("http://localhost:3000", "https://www.codiary.site"));
+        config.setAllowedOriginPatterns(List.of("*", "http://localhost:3000", "https://www.codiary.site", "https://codiary.site", "https://api.codiary.site"));
+        config.setAllowedOrigins(List.of("*", "http://localhost:3000", "https://www.codiary.site", "https://codiary.site", "https://api.codiary.site"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
