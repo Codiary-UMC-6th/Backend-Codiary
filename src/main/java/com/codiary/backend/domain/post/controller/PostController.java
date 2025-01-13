@@ -19,7 +19,6 @@ import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -185,7 +184,7 @@ public class PostController {
     // 전체 인기글 or 최신글 조회
     @Operation(summary = "공개글 리스트 조회", description = "popular/latest 입력 시 인기글/최신글 조회")
     @GetMapping("/list")
-    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getPostList(
+    public ApiResponse<Page<PostResponseDTO.PostPreviewDTO>> getPostList(
             @PageableDefault(size = 9) Pageable pageable
     ) {
         Page<Post> postPage = postService.getPostList(pageable);
@@ -195,7 +194,7 @@ public class PostController {
     // 카테고리 인기글 조회
     @Operation(summary = "카테고리 인기글/최신글 조회 (popular/latest 입력 (기본 popular)")
     @GetMapping("/category/{category_id}")
-    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getCategoryPopularPosts(
+    public ApiResponse<Page<PostResponseDTO.PostPreviewDTO>> getCategoryPopularPosts(
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
             @PathVariable("category_id") Long categoryId,
             @PageableDefault(size = 9, sort = "popular") Pageable pageable
@@ -220,7 +219,7 @@ public class PostController {
     // 게시글 검색 결과 페이지네이션
     @Operation(summary = "게시글 검색 결과 페이지네이션", description = "게시글(제목/내용) 키워드 검색 결과를 페이지네이션하여 반환합니다.")
     @GetMapping("/search")
-    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> searchPost(
+    public ApiResponse<Page<PostResponseDTO.PostPreviewDTO>> searchPost(
             @RequestParam(value = "keyword", defaultValue = "", required = false) String keyword,
             @AuthenticationPrincipal CustomMemberDetails memberDetails,
             @PageableDefault(size = 9) Pageable pageable
@@ -249,7 +248,7 @@ public class PostController {
     // 게시글 검색 (저자 이름, 팀 이름, 프로젝트 이름으로 검색)
     @GetMapping("/search_by_name")
     @Operation(summary = "게시글 검색 (저자 이름, 팀 이름, 프로젝트 이름으로 검색)")
-    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> searchByName(
+    public ApiResponse<Page<PostResponseDTO.PostPreviewDTO>> searchByName(
             @RequestParam(value = "author", defaultValue = "", required = false) String authorName,
             @RequestParam(value = "team", defaultValue = "", required = false) String teamName,
             @RequestParam(value = "project", defaultValue = "", required = false) String projectName,
@@ -300,8 +299,8 @@ public class PostController {
 
     @GetMapping("/bookmark/paging")
     @Operation(summary = "북마크한 게시글 조회")
-    public ApiResponse<Page<PostResponseDTO.SimplePostResponseDTO>> getBookmarkPost(@AuthenticationPrincipal CustomMemberDetails memberDetails,
-                                                                                    @PageableDefault(size = 9) Pageable pageable) {
+    public ApiResponse<Page<PostResponseDTO.PostPreviewDTO>> getBookmarkPost(@AuthenticationPrincipal CustomMemberDetails memberDetails,
+                                                                             @PageableDefault(size = 9) Pageable pageable) {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK,
                 PostConverter.toPostListResponseDto(postQueryService.getBookmarkPost(memberDetails.getId(), pageable)));
     }

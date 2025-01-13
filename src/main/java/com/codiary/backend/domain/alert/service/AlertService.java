@@ -351,7 +351,7 @@ public class AlertService {
         // 이벤트 저장
         AlertEvent event = saveEvent(
                 EventCategory.FOLLOWING_MEMBER_NEW_POST,
-                PostConverter.toSimplePostResponseDto(post),
+                PostConverter.toPostPreviewDTO(post),
                 receiverIdList
         );
 
@@ -383,7 +383,7 @@ public class AlertService {
         // 이벤트 저장
         AlertEvent event = saveEvent(
                 EventCategory.FOLLOWING_TEAM_NEW_POST,
-                PostConverter.toSimplePostResponseDto(post),
+                PostConverter.toPostPreviewDTO(post),
                 receiverIdList
         );
 
@@ -415,7 +415,7 @@ public class AlertService {
         // 이벤트 저장
         AlertEvent event = saveEvent(
                 EventCategory.MY_TEAM_NEW_POST,
-                PostConverter.toSimplePostResponseDto(post),
+                PostConverter.toPostPreviewDTO(post),
                 receiverIdList
         );
 

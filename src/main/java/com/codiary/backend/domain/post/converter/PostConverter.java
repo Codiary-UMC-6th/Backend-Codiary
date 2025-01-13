@@ -15,28 +15,29 @@ import org.springframework.data.domain.Page;
 
 public class PostConverter {
 
-    public static Page<PostResponseDTO.SimplePostResponseDTO> toPostListResponseDto(Page<Post> postList) {
-        return postList.map(PostConverter::toSimplePostResponseDto);
+    public static Page<PostResponseDTO.PostPreviewDTO> toPostListResponseDto(Page<Post> postList) {
+        return postList.map(PostConverter::toPostPreviewDTO);
     }
 
-    public static PostResponseDTO.SimplePostResponseDTO toSimplePostResponseDto(Post post) {
-        return PostResponseDTO.SimplePostResponseDTO.builder()
+    public static PostResponseDTO.PostPreviewDTO toPostPreviewDTO(Post post) {
+        return PostResponseDTO.PostPreviewDTO.builder()
                 .id(post.getPostId())
                 .title(post.getPostTitle())
                 .body(post.getPostBody())
-                .author(post.getMember() != null ? post.getMember().getNickname() : null)
-                .authorImageUrl((post.getMember() != null && post.getMember().getImage() != null)
-                        ? post.getMember().getImage().getImageUrl()
-                        : "")
-                .thumbnailImageUrl(post.getThumbnailImage() != null ? post.getThumbnailImage().getFileUrl() : "")
-                .teamProfileImageUrl((post.getTeam() != null && post.getTeam().getProfileImage() != null)
-                        ? post.getTeam().getProfileImage().getImageUrl()
-                        : "")
-                .teamBannerImageUrl((post.getTeam() != null && post.getTeam().getBannerImage() != null)
-                        ? post.getTeam().getBannerImage().getImageUrl()
-                        : "")
+                .thumbnailImageUrl(post.getThumbnailImage().getFileUrl())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
+
+                .authorId(post.getMember().getMemberId())
+                .authorName(post.getMember().getNickname())
+                .authorImageUrl(post.getMember().getImage().getImageUrl())
+
+                .numberOfCoauthor(post.getAuthorList().size())
+
+                .teamExist((post.getTeam() != null) ? true : false)
+                .teamId((post.getTeam() != null) ? post.getTeam().getTeamId() : null)
+                .teamName((post.getTeam() != null) ? post.getTeam().getName() : null)
+                .teamProfileImageUrl((post.getTeam() != null) ? post.getTeam().getProfileImage().getImageUrl() : null)
                 .build();
     }
 
@@ -118,45 +119,6 @@ public class PostConverter {
                 .build();
     }
 
-    // Post 조회
-    public static PostResponseDTO.PostPreviewDTO toPostPreviewDTO(Post post) {
-        List<String> postCategories = post.getCategoriesList().stream()
-                .map(Category::getName)
-                .collect(Collectors.toList());
-
-        return PostResponseDTO.PostPreviewDTO.builder()
-                .postId(post.getPostId())
-                .memberId(post.getMember().getMemberId())
-                .authorNickname(post.getMember().getNickname())
-                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
-                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
-                .postTitle(post.getPostTitle())
-                .postBody(post.getPostBody())
-                .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", postCategories))
-                .coauthorIds(post.getAuthorList().stream()
-                        .map(author -> author.getMember().getMemberId())
-                        .collect(Collectors.toSet()))
-                .postAccess(post.getPostAccess())
-                .authorProfileImageUrl((post.getMember().getImage() != null)
-                        ? post.getMember().getImage().getImageUrl()
-                        : "")
-                .thumbnailImageUrl((post.getThumbnailImage() != null)
-                        ? post.getThumbnailImage().getFileUrl()
-                        : "")
-                .teamProfileImageUrl((post.getTeam() != null && post.getTeam().getProfileImage() != null)
-                        ? post.getTeam().getProfileImage().getImageUrl()
-                        : "")
-                .teamBannerImageUrl((post.getTeam() != null && post.getTeam().getBannerImage() != null)
-                        ? post.getTeam().getBannerImage().getImageUrl()
-                        : "")
-                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
-                .createdAt(post.getCreatedAt())
-                .updatedAt(post.getUpdatedAt())
-                .authorNickname(post.getMember().getNickname())
-                .build();
-    }
-
     // Post 전체 리스트 조회
     public static PostResponseDTO.PostPreviewListDTO toPostPreviewListDTO(Page<Post> posts) {
         List<PostResponseDTO.PostPreviewDTO> postPreviewDTOList = posts.getContent().stream()
@@ -172,8 +134,6 @@ public class PostConverter {
                 .isLast(posts.isLast())
                 .build();
     }
-
-
 
     // 저자별 Post 조회
     public static PostResponseDTO.MemberPostPreviewDTO toMemberPostPreviewDTO(Post post) {
@@ -445,52 +405,13 @@ public class PostConverter {
                 .build();
     }
 
-    // 특정 Post의 인접한 Post 조회 (이전, 다음 Post 조회)
-    public static PostResponseDTO.PostAdjacentDTO.PostAdjacentPreviewDTO toPostAdjacentPreviewDTO(Post post) {
-        if (post == null) return null;
-
-        List<String> postCategories = post.getCategoriesList().stream()
-                .map(Category::getName)
-                .collect(Collectors.toList());
-
-        return PostResponseDTO.PostAdjacentDTO.PostAdjacentPreviewDTO.builder()
-                .postId(post.getPostId())
-                .memberId(post.getMember().getMemberId())
-                .authorNickname(post.getMember().getNickname())
-                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
-                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
-                .postTitle(post.getPostTitle())
-                .postBody(post.getPostBody())
-                .postStatus(post.getPostStatus())
-                .postCategory(String.join(", ", postCategories))
-                .coauthorIds(post.getAuthorList().stream()
-                        .map(author -> author.getMember().getMemberId())
-                        .collect(Collectors.toSet()))
-                .postAccess(post.getPostAccess())
-                .authorProfileImageUrl((post.getMember().getImage() != null)
-                        ? post.getMember().getImage().getImageUrl()
-                        : "")
-                .thumbnailImageUrl((post.getThumbnailImage() != null)
-                        ? post.getThumbnailImage().getFileUrl()
-                        : "")
-                .teamProfileImageUrl((post.getTeam() != null && post.getTeam().getProfileImage() != null)
-                        ? post.getTeam().getProfileImage().getImageUrl()
-                        : "")
-                .teamBannerImageUrl((post.getTeam() != null && post.getTeam().getBannerImage() != null)
-                        ? post.getTeam().getBannerImage().getImageUrl()
-                        : "")
-                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
-                .createdAt(post.getCreatedAt())
-                .updatedAt(post.getUpdatedAt())
-                .build();
-    }
-
+    // 인접 post 조회
     public static PostResponseDTO.PostAdjacentDTO toPostAdjacentDTO(Post.PostAdjacent adjacent) {
         return PostResponseDTO.PostAdjacentDTO.builder()
                 .hadOlder(adjacent.getOlderPost() != null)
                 .hasLater(adjacent.getLaterPost() != null)
-                .olderPost(toPostAdjacentPreviewDTO(adjacent.getOlderPost()))
-                .laterPost(toPostAdjacentPreviewDTO(adjacent.getLaterPost()))
+                .olderPost(toPostPreviewDTO(adjacent.getOlderPost()))
+                .laterPost(toPostPreviewDTO(adjacent.getLaterPost()))
                 .build();
     }
 
