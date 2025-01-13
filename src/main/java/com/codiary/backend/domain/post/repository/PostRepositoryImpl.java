@@ -3,9 +3,11 @@ package com.codiary.backend.domain.post.repository;
 import static com.codiary.backend.domain.member.entity.QFollow.follow;
 import static com.codiary.backend.domain.member.entity.QMember.member;
 import static com.codiary.backend.domain.member.entity.QMemberImage.memberImage;
+import static com.codiary.backend.domain.post.entity.QBookmark.bookmark;
 import static com.codiary.backend.domain.post.entity.QPost.post;
 import static com.codiary.backend.domain.project.entity.QProject.project;
 import static com.codiary.backend.domain.team.entity.QTeam.team;
+import static com.codiary.backend.domain.team.entity.QTeamFollow.teamFollow;
 import static com.codiary.backend.domain.team.entity.QTeamProfileImage.teamProfileImage;
 
 import com.codiary.backend.domain.member.entity.Member;
@@ -29,14 +31,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
-import static com.codiary.backend.domain.post.entity.QBookmark.bookmark;
-import static com.codiary.backend.domain.member.entity.QFollow.follow;
-import static com.codiary.backend.domain.member.entity.QMember.member;
-import static com.codiary.backend.domain.post.entity.QPost.post;
-import static com.codiary.backend.domain.project.entity.QProject.project;
-import static com.codiary.backend.domain.team.entity.QTeam.team;
-import static com.codiary.backend.domain.team.entity.QTeamFollow.teamFollow;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom {
@@ -126,7 +120,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         List<Post> posts = queryFactory
                 .selectDistinct(post)
                 .from(post)
-                .join(post.team, team).fetchJoin()
+                .leftJoin(post.team, team).fetchJoin()
                 .where(post.postAccess.eq(PostAccess.ENTIRE))
                 .orderBy(orderSpecifiers)
                 .offset(pageable.getOffset())
