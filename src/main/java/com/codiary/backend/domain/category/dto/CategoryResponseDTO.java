@@ -15,4 +15,12 @@ public class CategoryResponseDTO {
             String categoryName,
             Long categoryId
     ) {}
+
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record SimpleCategoryDTO(
+            Long categoryId,
+            String categoryName
+    ) {}
 }

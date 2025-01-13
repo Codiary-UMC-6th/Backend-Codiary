@@ -49,6 +49,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .from(post)
                 .leftJoin(post.member, member)
                 .leftJoin(member.image, memberImage)
+                .leftJoin(post.team, team).fetchJoin()
+                .orderBy(getOrderBy(pageable.getSort()))
                 .where(keywordEq(keyword)) // Full-Text Search 조건
                 .where(canAccess(memberId))
                 .offset(pageable.getOffset())
@@ -59,6 +61,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .select(post.count())
                 .from(post)
                 .where(keywordEq(keyword))  // Full-Text Search 조건
+                .where(canAccess(memberId))
                 .fetchOne();
 
         return new PageImpl<>(postList, pageable, total);
@@ -118,11 +121,12 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     @Override
     public Page<Post> getPostList(Pageable pageable) {
-        OrderSpecifier[] orderSpecifiers = createPostListOrderSpecifier(pageable.getSort());
+        OrderSpecifier[] orderSpecifiers = getOrderBy(pageable.getSort());
 
         List<Post> posts = queryFactory
                 .selectDistinct(post)
                 .from(post)
+                .join(post.team, team).fetchJoin()
                 .where(post.postAccess.eq(PostAccess.ENTIRE))
                 .orderBy(orderSpecifiers)
                 .offset(pageable.getOffset())
@@ -138,7 +142,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return new PageImpl<>(posts, pageable, total);
     }
 
-    private OrderSpecifier[] createPostListOrderSpecifier(Sort sort) {
+    private OrderSpecifier[] getOrderBy(Sort sort) {
         List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
 
         for (Sort.Order order : sort) {
@@ -174,7 +178,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .selectDistinct(post)
                 .from(post)
                 .where(post.categoriesList.any().categoryId.eq(categoryId).and(canAccess(memberId)))
-                .orderBy(createPostListOrderSpecifier(pageable.getSort()))
+                .orderBy(getOrderBy(pageable.getSort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

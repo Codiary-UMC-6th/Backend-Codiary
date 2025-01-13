@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.category.service;
 
+import com.codiary.backend.domain.category.dto.CategoryResponseDTO;
 import com.codiary.backend.domain.category.entity.Category;
 import com.codiary.backend.domain.category.repository.CategoryRepository;
 import com.codiary.backend.domain.member.entity.Member;
@@ -81,5 +82,13 @@ public class CategoryService {
                 .orElseGet(() -> categoryRepository.save(Category.builder()
                         .name(categoryName)
                         .build()));
+    }
+
+    public List<Category> searchCategory(Long memberId, String category) {
+        //validation: 멤버인지 확인
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return categoryRepository.findByNameContaining(category);
     }
 }

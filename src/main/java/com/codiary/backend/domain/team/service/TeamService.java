@@ -18,6 +18,7 @@ import com.codiary.backend.global.common.uuid.Uuid;
 import com.codiary.backend.global.common.uuid.UuidRepository;
 import com.codiary.backend.global.s3.AmazonS3Manager;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -250,4 +251,9 @@ public class TeamService {
         // response: 성공을 반환
         return "성공적으로 삭제되었습니다!";
     }
+
+    public List<Team> getTeams() {
+        return teamRepository.findAllByOrderByTeamIdDesc();
+    }
+
 }

@@ -14,6 +14,7 @@ import com.codiary.backend.domain.team.service.TeamService;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -157,4 +158,14 @@ public class TeamController {
         String response = teamService.deleteTeamBannerImage(teamId, memberId);
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, response);
     }
+
+
+    @GetMapping("/list")
+    @Operation(summary = "팀 리스트 조회 API", description = "팀 설정을 위한 팀 전체 리스트를 조회합니다.")
+    public ApiResponse<TeamResponseDTO.TeamPreviewListDTO> findTeams(){
+        List<Team> teams = teamService.getTeams();
+        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamPreviewListDTO(teams));
+    }
+
+
 }
