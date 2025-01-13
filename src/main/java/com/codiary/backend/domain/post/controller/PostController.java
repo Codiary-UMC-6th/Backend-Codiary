@@ -1,7 +1,6 @@
 package com.codiary.backend.domain.post.controller;
 
 import com.codiary.backend.domain.alert.service.AlertService;
-import com.codiary.backend.domain.category.dto.CategoryResponseDTO;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.member.service.MemberCommandService;
@@ -102,9 +101,12 @@ public class PostController {
     //특정 게시글 조회
     @GetMapping("/{postId}")
     @Operation(summary = "특정 게시글 조회 API", description = "특정 게시글을 조회합니다.")
-    public ApiResponse<PostResponseDTO.PostPreviewDTO> findPost(@PathVariable Long postId){
-        Object request;
-        Post findPost = postQueryService.findById(postId);
+    public ApiResponse<PostResponseDTO.PostPreviewDTO> findPost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal CustomMemberDetails memberDetails
+    ) {
+        Long memberId = (memberDetails != null) ? memberDetails.getId() : 0;
+        Post findPost = postQueryService.findById(postId, memberId);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPreviewDTO(findPost));
     }
 
@@ -200,7 +202,7 @@ public class PostController {
             @PathVariable("category_id") Long categoryId,
             @PageableDefault(size = 9, sort = "popular") Pageable pageable
     ) {
-        Long memberId = memberDetails.getId();
+        Long memberId = (memberDetails != null) ? memberDetails.getId() : 0;
         Page<Post> postPage = postService.getCategoryPosts(memberId, categoryId, pageable);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostListResponseDto(postPage));
     }
@@ -291,16 +293,20 @@ public class PostController {
 
     @GetMapping("/following/paging")
     @Operation(summary = "팔로잉한 멤버/팀의 게시글 리스트 페이징 조회 API", description = "팔로잉한 멤버/팀의 게시글 리스트를 페이징으로 조회합니다. **첫 페이지는 0부터 입니다.**")
-    public ApiResponse<PostResponseDTO.PostPreviewListDTO> findPostByFollowing(@AuthenticationPrincipal CustomMemberDetails memberDetails,
-                                                                               @PageableDefault(size = 9) Pageable pageable) {
+    public ApiResponse<PostResponseDTO.PostPreviewListDTO> findPostByFollowing(
+            @AuthenticationPrincipal CustomMemberDetails memberDetails,
+            @PageableDefault(size = 9) Pageable pageable
+    ) {
         Page<Post> posts = postQueryService.getPostsByFollowing(memberDetails.getId(), pageable);
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPreviewListDTO(posts));
     }
 
     @GetMapping("/bookmark/paging")
     @Operation(summary = "북마크한 게시글 조회")
-    public ApiResponse<Page<PostResponseDTO.PostPreviewDTO>> getBookmarkPost(@AuthenticationPrincipal CustomMemberDetails memberDetails,
-                                                                             @PageableDefault(size = 9) Pageable pageable) {
+    public ApiResponse<Page<PostResponseDTO.PostPreviewDTO>> getBookmarkPost(
+            @AuthenticationPrincipal CustomMemberDetails memberDetails,
+            @PageableDefault(size = 9) Pageable pageable
+    ) {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK,
                 PostConverter.toPostListResponseDto(postQueryService.getBookmarkPost(memberDetails.getId(), pageable)));
     }

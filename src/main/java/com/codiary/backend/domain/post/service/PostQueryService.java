@@ -12,9 +12,11 @@ import com.codiary.backend.domain.team.repository.TeamRepository;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import com.codiary.backend.global.apiPayload.exception.handler.PostHandler;
-
-import java.util.*;
-
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -59,11 +61,9 @@ public class PostQueryService {
     }
 
 
-    public Post findById(Long postId) {
-        Post post = postRepository.findById(postId)
+    public Post findById(Long postId, Long requesterId) {
+        Post post = postRepository.findByIdWithTeam(postId, requesterId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
-        Member member = getAuthenticatedMember();
-        validatePostAccess(post, member);
         return post;
     }
 

@@ -24,20 +24,22 @@ public class PostConverter {
                 .id(post.getPostId())
                 .title(post.getPostTitle())
                 .body(post.getPostBody())
-                .thumbnailImageUrl(post.getThumbnailImage().getFileUrl())
+                .thumbnailImageUrl((post.getThumbnailImage() != null) ? post.getThumbnailImage().getFileUrl() : "")
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
 
                 .authorId(post.getMember().getMemberId())
                 .authorName(post.getMember().getNickname())
-                .authorImageUrl(post.getMember().getImage().getImageUrl())
+                .authorImageUrl((post.getMember().getImage() != null) ? post.getMember().getImage().getImageUrl() : "")
 
                 .numberOfCoauthor(post.getAuthorList().size())
 
                 .teamExist((post.getTeam() != null) ? true : false)
                 .teamId((post.getTeam() != null) ? post.getTeam().getTeamId() : null)
                 .teamName((post.getTeam() != null) ? post.getTeam().getName() : null)
-                .teamProfileImageUrl((post.getTeam() != null) ? post.getTeam().getProfileImage().getImageUrl() : null)
+                .teamProfileImageUrl((post.getTeam() != null && post.getTeam().getProfileImage() != null)
+                        ? post.getTeam().getProfileImage().getImageUrl()
+                        : null)
                 .build();
     }
 

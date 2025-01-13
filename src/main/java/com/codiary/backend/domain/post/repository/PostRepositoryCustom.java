@@ -6,6 +6,7 @@ import com.codiary.backend.domain.project.entity.Project;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -25,4 +26,6 @@ public interface PostRepositoryCustom {
     Page<Post> findByBookmarkPostList(Member member, Pageable pageable);
     
     Page<Post> getPostsByName(Long memberId, String authorName, String teamName, String projectName, Pageable pageable);
+
+    Optional<Post> findByIdWithTeam(Long postId, Long requesterId);
 }
