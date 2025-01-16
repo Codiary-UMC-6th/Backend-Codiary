@@ -54,7 +54,7 @@ public class MemberController {
     @GetMapping("/profile/{member_id}")
     @Operation(summary = "사용자 프로필 기본 정보 조회", description = "마이페이지 사용자 정보 조회 기능")
     public ApiResponse<MemberResponseDTO.SimpleMemberDTO> getUserProfile(@AuthenticationPrincipal CustomMemberDetails memberDetails, @PathVariable(value = "member_id") Long memberId){
-        Member user = memberQueryService.getUserProfile(memberDetails.getId());
+        Member user = memberQueryService.getUserProfile(memberId);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toSimpleMemberResponseDto(user, user));
     }
 
