@@ -93,7 +93,7 @@ public class Post extends BaseEntity {
   public void setMember(Member member) { this.member = member;}
   public void setTeam(Team team) { this.team = team;}
   public void setPostStatus(Boolean postStatus) { this.postStatus = postStatus;}
-
+  public void setPostAccess(PostAccess postAccess) { this.postAccess = postAccess;}
   public void setProject(Project project) { this.project = project;}
 
 

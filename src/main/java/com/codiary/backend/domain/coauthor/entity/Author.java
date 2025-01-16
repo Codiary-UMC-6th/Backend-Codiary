@@ -45,4 +45,13 @@ public class Author {
   public void setMember(Member member) {
     this.member = member;
   }
+
+  public static Author createAuthors(Post post, Member member) {
+    Author authors = new Author();
+    authors.setPost(post);
+    authors.setMember(member);
+    return authors;
+  }
+
+
 }

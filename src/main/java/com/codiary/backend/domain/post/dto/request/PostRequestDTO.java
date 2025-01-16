@@ -59,6 +59,28 @@ public class PostRequestDTO {
         private List<MultipartFile> addedPostFiles;
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateCoauthorRequestDTO {
+        private List<Long> memberIds;
+    }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SetTeamRequestDTO {
+        private Long teamId;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateVisibilityRequestDTO {
+        private String postAccess;  // MEMBER, TEAM, ENTIRE
+    }
 
 }

@@ -305,4 +305,39 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK,
                 PostConverter.toPostListResponseDto(postQueryService.getBookmarkPost(memberDetails.getId(), pageable)));
     }
+
+
+    @PatchMapping("/coauthor/{postId}")
+    @Operation(summary = "게시글 공동 저자 설정 API", description = "게시글의 공동 저자를 설정합니다.")
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostCoauthor(@PathVariable Long postId, @RequestBody PostRequestDTO.UpdateCoauthorRequestDTO request) {
+        Member member = memberCommandService.getRequester();
+        jwtTokenProvider.isValidToken(member.getMemberId());
+
+        Post updatedPost = postCommandService.updateCoauthors(postId, request);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(updatedPost));
+    }
+
+
+    @PatchMapping("/team/{postId}")
+    @Operation(summary = "게시글의 소속 팀 설정 API", description = "게시글의 소속 팀을 설정합니다.")
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostTeam(@PathVariable Long postId, @RequestBody PostRequestDTO.SetTeamRequestDTO request) {
+        Member member = memberCommandService.getRequester();
+        jwtTokenProvider.isValidToken(member.getMemberId());
+
+        Post updatedPost = postCommandService.setPostTeam(postId, request.getTeamId());
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(updatedPost));
+    }
+
+
+    @PatchMapping("/visibility/{postId}")
+    @Operation(summary = "게시글 공개 범위 설정 API", description = "게시글의 공개 범위를 설정합니다. (MEMBER / TEAM / ENTIRE)")
+    public ApiResponse<PostResponseDTO.UpdatePostResultDTO> setPostVisibility(@PathVariable Long postId, @RequestBody PostRequestDTO.UpdateVisibilityRequestDTO request) {
+        Member member = memberCommandService.getRequester();
+        jwtTokenProvider.isValidToken(member.getMemberId());
+
+        Post updatedPost = postCommandService.updateVisibility(postId, request);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toUpdatePostResultDTO(updatedPost));
+    }
+
+
 }
