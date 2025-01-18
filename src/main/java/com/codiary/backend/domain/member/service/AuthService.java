@@ -9,6 +9,8 @@ import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.handler.MemberHandler;
 import com.codiary.backend.global.jwt.JwtTokenProvider;
 import com.codiary.backend.global.jwt.TokenInfo;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,9 +20,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -98,7 +97,7 @@ public class AuthService {
 
             // 3. 인증 정보를 기반으로 JWT 토큰 생성
             Member getMember = memberRepository.findByEmail(request.email()).orElseThrow();
-            TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, getMember.getMemberId());
+            TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 
             return MemberResponseDTO.MemberTokenResponseDTO.builder()
                     .email(getMember.getEmail())
