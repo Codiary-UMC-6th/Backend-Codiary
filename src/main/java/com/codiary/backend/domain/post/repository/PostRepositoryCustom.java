@@ -3,6 +3,7 @@ package com.codiary.backend.domain.post.repository;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.project.entity.Project;
+import com.codiary.backend.domain.team.entity.Team;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -28,4 +29,16 @@ public interface PostRepositoryCustom {
     Page<Post> getPostsByName(Long memberId, String authorName, String teamName, String projectName, Pageable pageable);
 
     Optional<Post> findByIdWithTeam(Long postId, Long requesterId);
+
+    Page<Post> findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(String postTitle, Pageable pageable);
+
+    Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    Optional<Post> findTopByTeamAndPostIdLessThanOrderByCreatedAtDescPostIdDesc(Team team, Long postId);
+
+    Optional<Post> findTopByTeamAndPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Team team, Long postId);
+
+    Optional<Post> findTopByMemberAndPostIdLessThanOrderByCreatedAtDescPostIdDesc(Member member, Long postId);
+
+    Optional<Post> findTopByMemberAndPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Member member, Long postId);
 }
