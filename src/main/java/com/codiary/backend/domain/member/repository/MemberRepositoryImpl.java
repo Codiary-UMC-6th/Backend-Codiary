@@ -12,6 +12,7 @@ import java.util.Optional;
 import static com.codiary.backend.domain.category.entity.QCategory.category;
 import static com.codiary.backend.domain.member.entity.QMember.member;
 import static com.codiary.backend.domain.member.entity.QMemberCategory.memberCategory;
+import static com.codiary.backend.domain.member.entity.QMemberImage.memberImage;
 import static com.codiary.backend.domain.techstack.entity.QTechStacks.techStacks;
 import static com.codiary.backend.domain.project.entity.QProject.project;
 import static com.codiary.backend.domain.team.entity.QTeamMember.teamMember;
@@ -21,6 +22,16 @@ import static com.codiary.backend.domain.team.entity.QTeam.team;
 public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
+    public Optional<Member> findByEmail(String email){
+        Member fetchedMember = queryFactory
+                .selectFrom(member)
+                .leftJoin(member.image, memberImage).fetchJoin()
+                .where(member.email.eq(email))
+                .fetchOne();
+
+        return Optional.ofNullable(fetchedMember);
+    }
 
     public Optional<Member> findMemberWithTechStacksAndProjectsAndTeam(Long userId) {
         Member fetchedMember = queryFactory
@@ -39,6 +50,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
         Member fetchedMember = queryFactory
                 .selectFrom(member)
                 .leftJoin(member.techStackList, techStacks).fetchJoin()
+                .leftJoin(member.image, memberImage).fetchJoin()
                 .where(member.memberId.eq(userId))
                 .fetchOne();
 

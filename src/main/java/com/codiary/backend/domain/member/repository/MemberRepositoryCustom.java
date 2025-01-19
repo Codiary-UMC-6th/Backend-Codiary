@@ -5,6 +5,8 @@ import com.codiary.backend.domain.member.entity.Member;
 import java.util.Optional;
 
 public interface MemberRepositoryCustom {
+    Optional<Member> findByEmail(String email);
+
     Optional<Member> findMemberWithTechStacksAndProjectsAndTeam(Long userId);
     Optional<Member> findMemberWithTechStacks(Long userId);
 
