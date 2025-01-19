@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.member.repository;
 
+import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.team.entity.TeamMember;
 import com.codiary.backend.domain.project.entity.Project;
@@ -127,5 +128,15 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .fetchOne();
 
         return Optional.ofNullable(fetchedMember);
+    }
+
+    public MemberResponseDTO.MemberImageDTO findProfileImageUrl(Long id) {
+        Optional<String> imageUrl = Optional.ofNullable(queryFactory
+                .select(member.image.imageUrl)
+                .from(member)
+                .where(member.memberId.eq(id))
+                .fetchOne());
+
+        return MemberResponseDTO.MemberImageDTO.of(imageUrl.orElse(""));
     }
 }
