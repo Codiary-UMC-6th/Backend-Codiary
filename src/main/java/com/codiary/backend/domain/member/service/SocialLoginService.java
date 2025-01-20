@@ -72,8 +72,7 @@ public class SocialLoginService {
         }
         Member member = memberRepository.findByEmail(userEmail).get();
 
-
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getMemberId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail());
 
         return MemberResponseDTO.MemberTokenResponseDTO.builder()
                 .email(member.getEmail())
@@ -102,7 +101,7 @@ public class SocialLoginService {
         }
         Member member = memberRepository.findByEmail(userEmail).get();
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getMemberId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail());
 
         return MemberResponseDTO.MemberTokenResponseDTO.builder()
                 .email(member.getEmail())
@@ -130,7 +129,7 @@ public class SocialLoginService {
         }
         Member member = memberRepository.findByEmail(userEmail).get();
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getMemberId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail());
 
         return MemberResponseDTO.MemberTokenResponseDTO.builder()
                 .email(member.getEmail())
@@ -161,7 +160,7 @@ public class SocialLoginService {
         }
         Member member = memberRepository.findByEmail(userEmail).get();
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getMemberId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail());
 
         return MemberResponseDTO.MemberTokenResponseDTO.builder()
                 .email(member.getEmail())

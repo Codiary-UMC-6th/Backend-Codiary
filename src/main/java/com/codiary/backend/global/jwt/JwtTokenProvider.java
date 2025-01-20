@@ -42,7 +42,7 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
     }
 
     // token 생성
-    public TokenInfo generateToken(Authentication authentication, Long memberId) {
+    public TokenInfo generateToken(Authentication authentication) {
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -55,7 +55,6 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
-                .claim("memberId", memberId)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -76,7 +75,7 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
     }
 
     // 이메일로 토큰 생성
-    public TokenInfo generateToken(String email, Long memberId) {
+    public TokenInfo generateToken(String email) {
         long now = (new Date()).getTime();
 
         // Access Token 생성
@@ -84,7 +83,6 @@ public class JwtTokenProvider { // 토큰 제작 & 토큰으로 유저 정보 �
         String accessToken = Jwts.builder()
                 .setSubject(email)
                 .claim(AUTHORITIES_KEY, "ROLE_USER")
-                .claim("memberId", memberId)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
