@@ -34,7 +34,13 @@ public class MemberResponseDTO{
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
-    public record MemberImageDTO(String url) {}
+    public record MemberImageDTO(String url) {
+        public static MemberImageDTO of(String url) {
+            return MemberImageDTO.builder()
+                    .url(url)
+                    .build();
+        }
+    }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)

@@ -8,6 +8,7 @@ import com.codiary.backend.domain.member.repository.MemberImageRepository;
 import com.codiary.backend.domain.member.repository.MemberRepository;
 import com.codiary.backend.domain.techstack.entity.TechStacks;
 import com.codiary.backend.domain.techstack.enumerate.TechStack;
+import com.codiary.backend.domain.techstack.repository.TechStackRepository;
 import com.codiary.backend.global.apiPayload.ApiResponse;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.code.status.SuccessStatus;
@@ -22,9 +23,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -34,6 +37,7 @@ public class MemberCommandService {
     private final UuidRepository uuidRepository;
     private final AmazonS3Manager s3Manager;
     private final MemberImageRepository memberImageRepository;
+    private final TechStackRepository techStackRepository;
 
     @Transactional
     public Member getRequester() {
@@ -93,10 +97,9 @@ public class MemberCommandService {
         Member member = memberRepository.findMemberWithTechStacks(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-        if (member.getTechStackList().stream().anyMatch(stack -> stack.getName().equals(techstack))) {
+        if (techStackRepository.existsByNameAndMember(techstack, member)) {
             throw new GeneralException(ErrorStatus.TECH_STACK_ALREADY_EXISTS);
         }
-
         //business logic: 기술스택 추가
         List<TechStacks> techStackList = Optional.of(member.getTechStackList()).orElse(new ArrayList<>());
         TechStacks newTechStack = new TechStacks(techstack, member);

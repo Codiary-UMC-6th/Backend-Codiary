@@ -7,13 +7,14 @@ import com.codiary.backend.domain.member.repository.FollowRepository;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -24,6 +25,7 @@ public class FollowService {
     @Transactional
     public Follow follow(Long toId, Member fromMember) {
         //Validation: fromMember와 toMember 존재 여부 확인/ 자기 자신 팔로우 불가/ 이미 팔로우 중인지 확인
+
         fromMember = memberRepository.findByIdWithAndFollowersAndFollowings(fromMember.getMemberId()).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         Member toMember = memberRepository.findByIdWithFollowers(toId)
