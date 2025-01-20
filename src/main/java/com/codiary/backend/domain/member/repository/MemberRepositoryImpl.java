@@ -73,6 +73,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .selectFrom(member)
                 .leftJoin(member.followers)
                 .leftJoin(member.followings)
+                .leftJoin(member.image, memberImage).fetchJoin()
                 .where(member.memberId.eq(id))
                 .fetchOne();
 
@@ -83,6 +84,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
         Member fetchedMember = queryFactory
                 .selectFrom(member)
                 .leftJoin(member.followings)
+                .leftJoin(member.image, memberImage).fetchJoin()
                 .where(member.memberId.eq(id))
                 .fetchOne();
 
@@ -93,6 +95,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
         Member fetchedMember = queryFactory
                 .selectFrom(member)
                 .leftJoin(member.followers)
+                .leftJoin(member.image, memberImage).fetchJoin()
                 .where(member.memberId.eq(id))
                 .fetchOne();
 
