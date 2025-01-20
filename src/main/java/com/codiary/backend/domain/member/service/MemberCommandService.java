@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,7 @@ public class MemberCommandService {
     private final AmazonS3Manager s3Manager;
     private final MemberImageRepository memberImageRepository;
     private final TechStackRepository techStackRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Member getRequester() {
@@ -87,7 +89,8 @@ public class MemberCommandService {
     @Transactional
     public Member updateMemberInfo(Long memberId, MemberRequestDTO.MemberInfoDTO request){
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-        member.updateInfo(request);
+        String password = request.password() != null ? passwordEncoder.encode(request.password()) : null;
+        member.updateInfo(request, password);
         return memberRepository.save(member);
     }
 
