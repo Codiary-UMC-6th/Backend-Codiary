@@ -31,10 +31,10 @@ public class ProjectController {
         return ApiResponse.onSuccess(SuccessStatus.PROJECT_OK, ProjectConverter.toSimpleProjectResponseDTO(project));
     }
 
-    @Operation(summary = "나의 프로젝트 조회", description = "프로젝트를 조회합니다.")
-    @GetMapping("/my")
-    public ApiResponse<List<ProjectResponseDTO.SimpleProjectResponseDTO>> getMyProject(@AuthenticationPrincipal CustomMemberDetails memberDetails) {
-        List<Project> projects = projectService.getMyProject(memberDetails.getId());
+    @Operation(summary = "사용자의 프로젝트 조회", description = "프로젝트를 조회합니다.")
+    @GetMapping("/{member_id}")
+    public ApiResponse<List<ProjectResponseDTO.SimpleProjectResponseDTO>> getMemberProject(@PathVariable("member_id") Long memberId, @AuthenticationPrincipal CustomMemberDetails memberDetails) {
+        List<Project> projects = projectService.getMemberProject(memberId, memberDetails.getId());
         return ApiResponse.onSuccess(SuccessStatus.PROJECT_OK, ProjectConverter.toSimpleProjectListResponseDTO(projects));
     }
 

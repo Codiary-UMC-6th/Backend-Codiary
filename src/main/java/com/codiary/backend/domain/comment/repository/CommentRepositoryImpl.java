@@ -24,7 +24,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
         QComment child = new QComment("child");
         List<Comment> comments = queryFactory
                 .selectFrom(comment)
-                .leftJoin(comment.member, member)
+                .leftJoin(comment.member, member).fetchJoin()
                 .leftJoin(comment.post, post)
                 .leftJoin(comment.childComments, child).fetchJoin()
                 .where(comment.post.postId.eq(postId))

@@ -6,11 +6,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import java.time.LocalDate;
 import lombok.Builder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDate;
 
 public class MemberRequestDTO {
 
@@ -64,6 +63,9 @@ public class MemberRequestDTO {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @Builder
     public record MemberInfoDTO(
+            String email,
+            String password,
+            String nickname,
             String birth,
             String introduction,
             String github,

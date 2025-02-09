@@ -44,9 +44,11 @@ public class ProjectService {
         }
     }
 
-    public List<Project> getMyProject(Long id) {
+    public List<Project> getMemberProject(Long memberId, Long currentId) {
         //validation
-        Member member = memberRepository.findById(id)
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        Member currentMember = memberRepository.findById(currentId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
         //return
