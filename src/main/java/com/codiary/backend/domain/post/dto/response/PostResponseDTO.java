@@ -348,4 +348,31 @@ public class PostResponseDTO {
             Long postId
     ) {
     }
+
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record PostWithBookmarkDTO(
+            Long postId,
+            Long memberId,
+            String authorNickname,
+            String authorProfileImageUrl,
+            Long teamId,
+            String teamProfileImageUrl,
+            String teamBannerImageUrl,
+            Long projectId,
+            String postTitle,
+            String postBody,
+            String thumbnailImageUrl,
+            Boolean postStatus,
+            String postCategory,
+            Set<Long> coauthorIds,
+            PostAccess postAccess,
+            PostFileResponseDTO.PostFileListDTO postFileList,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            Boolean isBookmarked,
+            Integer bookmarkCount
+    ) {
+    }
 }

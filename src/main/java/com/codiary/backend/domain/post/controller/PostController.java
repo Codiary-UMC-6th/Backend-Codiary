@@ -103,7 +103,7 @@ public class PostController {
     // 특정 게시글 조회 (북마크 여부 포함)
     @GetMapping("/{postId}")
     @Operation(summary = "특정 게시글 조회 API", description = "특정 게시글을 조회하며, 사용자가 해당 게시글을 북마크했는지 여부를 반환합니다.")
-    public ApiResponse<PostResponseDTO.PostPreviewDTO> findPost(
+    public ApiResponse<PostResponseDTO.PostWithBookmarkDTO> findPost(
             @PathVariable Long postId,
             @AuthenticationPrincipal CustomMemberDetails memberDetails) {
         Long memberId = memberDetails.getId();
@@ -111,7 +111,7 @@ public class PostController {
         List<Long> bookmarkedPostIds = bookmarkService.getBookmarkedPostIdsByMemberId(memberId);
         boolean isBookmarked = bookmarkedPostIds.contains(postId);
         int bookmarkCount = bookmarkService.getBookmarkCountByPostId(postId);
-        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPreviewDTOWithBookmark(findPost, isBookmarked, bookmarkCount));
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostWithBookmarkDTO(findPost, isBookmarked, bookmarkCount));
     }
 
 
