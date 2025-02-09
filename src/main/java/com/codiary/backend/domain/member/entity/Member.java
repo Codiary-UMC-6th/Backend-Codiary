@@ -125,12 +125,15 @@ public class Member extends BaseEntity {
     this.image = new MemberImage(this, "");
   }
 
-  public void updateInfo(MemberRequestDTO.MemberInfoDTO memberInfo) {
-    this.birth = memberInfo.birth();
-    this.introduction = memberInfo.introduction();
-    this.github = memberInfo.github();
-    this.linkedin = memberInfo.linkedin();
-    this.discord = memberInfo.discord();
+  public void updateInfo(MemberRequestDTO.MemberInfoDTO memberInfo, String password) {
+    this.nickname = memberInfo.nickname() != null ? memberInfo.nickname() : this.nickname;
+    this.password = password != null ? password : this.password;
+    this.email = memberInfo.email() != null ? memberInfo.email() : this.email;
+    this.birth = memberInfo.birth() != null ? memberInfo.birth() : this.birth;
+    this.introduction = memberInfo.introduction() != null ? memberInfo.introduction() : this.introduction;
+    this.github = memberInfo.github() != null ? memberInfo.github() : this.github;
+    this.linkedin = memberInfo.linkedin() != null ? memberInfo.linkedin() : this.linkedin;
+    this.discord = memberInfo.discord() != null ? memberInfo.discord() : this.discord;
   }
 
   public void setImage(MemberImage image) {
