@@ -1,7 +1,7 @@
-name: Codiary CI/CD
+name: Codiary CD
 
 on:
-  pull_request:
+  push:
     branches:
       - develop
 
