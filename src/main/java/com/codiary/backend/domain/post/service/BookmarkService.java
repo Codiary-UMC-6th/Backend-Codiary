@@ -84,4 +84,9 @@ public class BookmarkService {
     public List<Long> getBookmarkedPostIdsByMemberId(Long memberId) {
         return bookmarkRepository.findBookmarkedPostIdsByMemberId(memberId);
     }
+
+    // 특정 게시글의 북마크 개수 조회
+    public int getBookmarkCountByPostId(Long postId) {
+        return bookmarkRepository.countByPostPostId(postId);
+    }
 }

@@ -112,7 +112,8 @@ public class PostController {
         Post findPost = postQueryService.findById(postId);
         List<Long> bookmarkedPostIds = bookmarkService.getBookmarkedPostIdsByMemberId(memberId);
         boolean isBookmarked = bookmarkedPostIds.contains(postId);
-        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPreviewDTOWithBookmark(findPost, isBookmarked));
+        int bookmarkCount = bookmarkService.getBookmarkCountByPostId(postId);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPreviewDTOWithBookmark(findPost, isBookmarked, bookmarkCount));
     }
 
 

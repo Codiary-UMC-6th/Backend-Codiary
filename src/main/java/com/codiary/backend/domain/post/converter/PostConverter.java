@@ -539,7 +539,7 @@ public class PostConverter {
     }
 
 
-    public static PostResponseDTO.PostPreviewDTO toPostPreviewDTOWithBookmark(Post post, boolean isBookmarked) {
+    public static PostResponseDTO.PostPreviewDTO toPostPreviewDTOWithBookmark(Post post, boolean isBookmarked, int bookmarkCount) {
         List<String> postCategories = post.getCategoriesList().stream()
                 .map(Category::getName)
                 .collect(Collectors.toList());
@@ -574,6 +574,7 @@ public class PostConverter {
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .isBookmarked(isBookmarked)
+                .bookmarkCount(bookmarkCount)
                 .build();
     }
 
