@@ -107,7 +107,7 @@ public class PostController {
             @PathVariable Long postId,
             @AuthenticationPrincipal CustomMemberDetails memberDetails) {
         Long memberId = memberDetails.getId();
-        Post findPost = postQueryService.findById(postId);
+        Post findPost = postQueryService.findById(postId, memberId);
         List<Long> bookmarkedPostIds = bookmarkService.getBookmarkedPostIdsByMemberId(memberId);
         boolean isBookmarked = bookmarkedPostIds.contains(postId);
         int bookmarkCount = bookmarkService.getBookmarkCountByPostId(postId);
