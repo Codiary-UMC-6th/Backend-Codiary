@@ -24,56 +24,64 @@ public class SocialLoginController {
 
     @GetMapping("/login/kakao_url")
     @Operation(summary = "카카오 로그인 url 요청")
-    public ApiResponse<Oauth2ResponseDTO> kakaoLogin() {
-        String url = socialLoginService.getKakaoRedirectUrl();
+    public ApiResponse<Oauth2ResponseDTO> kakaoLogin(@RequestParam("redirect_uri") String redirectUri) {
+        String url = socialLoginService.getKakaoRedirectUrl(redirectUri);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO(url));
     }
 
     @PostMapping("/login/kakao")
     @Operation(summary = "카카오로 로그인")
-    public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> kakaoToken(@RequestParam String code) {
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, socialLoginService.kakaoLogin(code));
+    public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> kakaoToken(
+            @RequestParam("code") String code,
+            @RequestParam("redirect_uri") String redirectUri
+    ) {
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, socialLoginService.kakaoLogin(code, redirectUri));
     }
 
     @GetMapping("/login/naver_url")
     @Operation(summary = "네이버 로그인 url 요청")
-    public ApiResponse<Oauth2ResponseDTO> naverLogin() {
-        String url = socialLoginService.getNaverRedirectUrl();
+    public ApiResponse<Oauth2ResponseDTO> naverLogin(@RequestParam("redirect_uri") String redirectUri) {
+        String url = socialLoginService.getNaverRedirectUrl(redirectUri);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO(url));
     }
 
     @PostMapping("/login/naver")
     @Operation(summary = "네이버로 로그인")
     public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> naverToken(
-            @RequestParam String code,
-            @RequestParam String state
+            @RequestParam("code") String code,
+            @RequestParam("state") String state
     ) {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, socialLoginService.naverLogin(code, state));
     }
 
     @GetMapping("/login/github_url")
     @Operation(summary = "깃허브 로그인 url 요청")
-    public ApiResponse<Oauth2ResponseDTO> githubLogin() {
-        String url = socialLoginService.getGithubRedirectUrl();
+    public ApiResponse<Oauth2ResponseDTO> githubLogin(@RequestParam("redirect_uri") String redirectUri) {
+        String url = socialLoginService.getGithubRedirectUrl(redirectUri);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO(url));
     }
 
     @PostMapping("/login/github")
     @Operation(summary = "깃허브로 로그인")
-    public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> githubToken(@RequestParam String code) {
+    public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> githubToken(
+            @RequestParam("code") String code
+    ) {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, socialLoginService.githubLogin(code));
     }
 
     @GetMapping("/login/google_url")
     @Operation(summary = "구글 로그인 url 요청")
-    public ApiResponse<Oauth2ResponseDTO> googleLogin() {
-        String url = socialLoginService.getGoogleRedirectUrl();
+    public ApiResponse<Oauth2ResponseDTO> googleLogin(@RequestParam("redirect_uri") String redirectUri) {
+        String url = socialLoginService.getGoogleRedirectUrl(redirectUri);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, new Oauth2ResponseDTO(url));
     }
 
     @PostMapping("/login/google")
     @Operation(summary = "구글로 로그인")
-    public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> googleToken(@RequestParam String code) {
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, socialLoginService.googleLogin(code));
+    public ApiResponse<MemberResponseDTO.MemberTokenResponseDTO> googleToken(
+            @RequestParam("code") String code,
+            @RequestParam("redirect_uri") String redirectUri
+    ) {
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, socialLoginService.googleLogin(code, redirectUri));
     }
 }

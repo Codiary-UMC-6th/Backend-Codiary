@@ -1,5 +1,6 @@
 package com.codiary.backend.domain.member.repository;
 
+import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.team.entity.TeamMember;
 import com.codiary.backend.domain.project.entity.Project;
@@ -22,6 +23,16 @@ import static com.codiary.backend.domain.team.entity.QTeam.team;
 public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
+    public Optional<Member> findByEmail(String email){
+        Member fetchedMember = queryFactory
+                .selectFrom(member)
+                .leftJoin(member.image, memberImage).fetchJoin()
+                .where(member.email.eq(email))
+                .fetchOne();
+
+        return Optional.ofNullable(fetchedMember);
+    }
 
     public Optional<Member> findMemberWithTechStacksAndProjectsAndTeam(Long userId) {
         Member fetchedMember = queryFactory
@@ -62,6 +73,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .selectFrom(member)
                 .leftJoin(member.followers)
                 .leftJoin(member.followings)
+                .leftJoin(member.image, memberImage).fetchJoin()
                 .where(member.memberId.eq(id))
                 .fetchOne();
 
@@ -72,6 +84,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
         Member fetchedMember = queryFactory
                 .selectFrom(member)
                 .leftJoin(member.followings)
+                .leftJoin(member.image, memberImage).fetchJoin()
                 .where(member.memberId.eq(id))
                 .fetchOne();
 
@@ -82,6 +95,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
         Member fetchedMember = queryFactory
                 .selectFrom(member)
                 .leftJoin(member.followers)
+                .leftJoin(member.image, memberImage).fetchJoin()
                 .where(member.memberId.eq(id))
                 .fetchOne();
 
@@ -117,5 +131,15 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
                 .fetchOne();
 
         return Optional.ofNullable(fetchedMember);
+    }
+
+    public MemberResponseDTO.MemberImageDTO findProfileImageUrl(Long id) {
+        Optional<String> imageUrl = Optional.ofNullable(queryFactory
+                .select(member.image.imageUrl)
+                .from(member)
+                .where(member.memberId.eq(id))
+                .fetchOne());
+
+        return MemberResponseDTO.MemberImageDTO.of(imageUrl.orElse(""));
     }
 }

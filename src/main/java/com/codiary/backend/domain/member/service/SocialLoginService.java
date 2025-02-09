@@ -32,46 +32,39 @@ public class SocialLoginService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     // 카카오
-    @Value("${kakao.redirect.url}")
-    private String kakaoRedirectUrl;
     @Value("${kakao.client.id}")
     private String kakaoClientId;
 
     // 네이버
-    @Value("${naver.redirect.url}")
-    private String naverRedirectUrl;
     @Value("${naver.client.id}")
     private String naverClientId;
     @Value("${naver.client.secret}")
     private String naverClientSecret;
 
     // 깃허브
-    @Value("${github.redirect.url}")
-    private String githubRedirectUrl;
     @Value("${github.client.id}")
     private String githubClientId;
     @Value("${github.client.secret}")
     private String githubClientSecret;
 
     // 구글
-    @Value("${google.redirect.url}")
-    private String googleRedirectUrl;
     @Value("${google.client.id}")
     private String googleClientId;
     @Value("${google.client.secret}")
     private String googleClientSecret;
 
     // 카카오 로그인
-    public String getKakaoRedirectUrl() {
+    public String getKakaoRedirectUrl(String requestedRedirectUri) {
         String path = "https://kauth.kakao.com/oauth/authorize?response_type=code";
         String clientId = "&client_id=" + kakaoClientId;
-        String redirectUrl = "&redirect_uri=" + kakaoRedirectUrl;
+        String redirectUrl = "&redirect_uri=" + requestedRedirectUri;
 
         return path + clientId + redirectUrl;
     }
-    public MemberResponseDTO.MemberTokenResponseDTO kakaoLogin(String code) {
 
-        String kakaoAccessToken = getKakaoToken(code);
+    public MemberResponseDTO.MemberTokenResponseDTO kakaoLogin(String code, String requestedRedirectUri) {
+
+        String kakaoAccessToken = getKakaoToken(code, requestedRedirectUri);
         String userEmail = getKakaoUserEmail(kakaoAccessToken);
 
         if (!memberRepository.existsByEmail(userEmail)) {
@@ -79,8 +72,7 @@ public class SocialLoginService {
         }
         Member member = memberRepository.findByEmail(userEmail).get();
 
-
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getMemberId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail());
 
         return MemberResponseDTO.MemberTokenResponseDTO.builder()
                 .email(member.getEmail())
@@ -91,7 +83,7 @@ public class SocialLoginService {
     }
 
     // 네이버 로그인
-    public String getNaverRedirectUrl() {
+    public String getNaverRedirectUrl(String naverRedirectUrl) {
         String path = "https://nid.naver.com/oauth2.0/authorize";
         String responseType = "?response_type=code";
         String clientId = "&client_id=" + naverClientId;
@@ -109,7 +101,7 @@ public class SocialLoginService {
         }
         Member member = memberRepository.findByEmail(userEmail).get();
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getMemberId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail());
 
         return MemberResponseDTO.MemberTokenResponseDTO.builder()
                 .email(member.getEmail())
@@ -120,7 +112,7 @@ public class SocialLoginService {
     }
 
     // 깃허브 로그인
-    public String getGithubRedirectUrl() {
+    public String getGithubRedirectUrl(String githubRedirectUrl) {
         String path = "https://github.com/login/oauth/authorize";
         String clientId = "?client_id=" + githubClientId;
         String redirectUrl = "&redirect_url=" + githubRedirectUrl;
@@ -137,7 +129,7 @@ public class SocialLoginService {
         }
         Member member = memberRepository.findByEmail(userEmail).get();
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getMemberId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail());
 
         return MemberResponseDTO.MemberTokenResponseDTO.builder()
                 .email(member.getEmail())
@@ -148,18 +140,19 @@ public class SocialLoginService {
     }
 
     // 구글 로그인
-    public String getGoogleRedirectUrl() {
+    public String getGoogleRedirectUrl(String googleRedirectUri) {
         String path = "https://accounts.google.com/o/oauth2/v2/auth";
         String clientId = "?client_id=" + googleClientId;
-        String redirectUri = "&redirect_uri=" + googleRedirectUrl;
+        String redirectUri = "&redirect_uri=" + googleRedirectUri;
         String responseType = "&response_type=code";
         String scope = "&scope=email";
 
         return path + clientId + redirectUri + responseType + scope;
     }
-    public MemberResponseDTO.MemberTokenResponseDTO googleLogin(String code) {
 
-        String googleAccessToken = getGoogleToken(code);
+    public MemberResponseDTO.MemberTokenResponseDTO googleLogin(String code, String googleRedirectUri) {
+
+        String googleAccessToken = getGoogleToken(code, googleRedirectUri);
         String userEmail = getGoogleUserEmail(googleAccessToken);
 
         if (!memberRepository.existsByEmail(userEmail)) {
@@ -167,7 +160,7 @@ public class SocialLoginService {
         }
         Member member = memberRepository.findByEmail(userEmail).get();
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail(), member.getMemberId());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member.getEmail());
 
         return MemberResponseDTO.MemberTokenResponseDTO.builder()
                 .email(member.getEmail())
@@ -177,7 +170,7 @@ public class SocialLoginService {
                 .build();
     }
 
-    private String getGoogleToken(String codeString) {
+    private String getGoogleToken(String codeString, String googleRedirectUri) {
         // %2F -> / 로 변환해주지 않으면 오류 발생
         codeString = URLDecoder.decode(codeString, StandardCharsets.UTF_8);
 
@@ -185,7 +178,7 @@ public class SocialLoginService {
         String clientId = "?client_id=" + googleClientId;
         String clientSecret = "&client_secret=" + googleClientSecret;
         String code = "&code=" + codeString;
-        String redirectUri = "&redirect_uri=" + googleRedirectUrl;
+        String redirectUri = "&redirect_uri=" + googleRedirectUri;
         String grantType = "&grant_type=authorization_code";
 
         String url = path + clientId + clientSecret + code + redirectUri + grantType;
@@ -301,7 +294,7 @@ public class SocialLoginService {
         return jsonNode.get("access_token").asText();
     }
 
-    private String getKakaoToken(String code) {
+    private String getKakaoToken(String code, String kakaoRedirectUrl) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 
