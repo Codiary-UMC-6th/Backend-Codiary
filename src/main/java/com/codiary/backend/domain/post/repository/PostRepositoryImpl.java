@@ -14,6 +14,7 @@ import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.post.entity.Post;
 import com.codiary.backend.domain.post.enumerate.PostAccess;
 import com.codiary.backend.domain.project.entity.Project;
+import com.codiary.backend.domain.team.entity.Team;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -171,6 +173,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         List<Post> posts = queryFactory
                 .selectDistinct(post)
                 .from(post)
+                .leftJoin(post.team, team).fetchJoin()
                 .where(post.categoriesList.any().categoryId.eq(categoryId).and(canAccess(memberId)))
                 .orderBy(getOrderBy(pageable.getSort()))
                 .offset(pageable.getOffset())
@@ -244,6 +247,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
                 .distinct()
                 .from(post)
                 .leftJoin(post.bookmarkList, bookmark).fetchJoin()
+                .leftJoin(post.team, team).fetchJoin()
                 .where(bookmark.member.memberId.eq(member.getMemberId())
                         .and(post.deletedAt.isNull()))
                 .offset(pageable.getOffset())
@@ -291,18 +295,10 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         Long total = queryFactory
                 .select(post.countDistinct())
                 .from(post)
-                // member join
-                .leftJoin(post.member, member)
-                // team join
-                .leftJoin(post.team, team)
-                // project join
-                .leftJoin(post.project, project)
                 // 조건 탐색
                 .where(
                         canAccess(memberId).and(booleanBuilder)
                 )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .fetchOne();
 
         return new PageImpl<>(posts, pageable, total);
@@ -317,5 +313,116 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
             return new BooleanBuilder().and(project.projectName.contains(projectName));
         }
         return new BooleanBuilder();
+    }
+
+    @Override
+    public Optional<Post> findByIdWithTeam(Long postId, Long requesterId) {
+        Optional<Post> fetchedPost = Optional.ofNullable(queryFactory
+                .select(post)
+                .from(post)
+                .leftJoin(post.team, team).fetchJoin()
+                .leftJoin(team.profileImage, teamProfileImage).fetchJoin()
+                .where(post.postId.eq(postId).and(canAccess(requesterId)))
+                .fetchFirst()
+        );
+        return fetchedPost;
+    }
+
+    @Override
+    public Page<Post> findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(String postTitle, Pageable pageable) {
+        List<Post> posts = queryFactory
+                .select(post)
+                .from(post)
+                .leftJoin(post.team, team).fetchJoin()
+                .leftJoin(team.profileImage, teamProfileImage).fetchJoin()
+                .where(post.postTitle.containsIgnoreCase(postTitle))
+                .orderBy(post.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory
+                .select(post.countDistinct())
+                .from(post)
+                .where(post.postTitle.containsIgnoreCase(postTitle))
+                .fetchOne();
+
+        return new PageImpl<>(posts, pageable, total);
+    }
+
+    @Override
+    public Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable) {
+        List<Post> posts = queryFactory
+                .select(post)
+                .from(post)
+                .leftJoin(post.team, team).fetchJoin()
+                .leftJoin(team.profileImage, teamProfileImage).fetchJoin()
+                .orderBy(post.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = queryFactory
+                .select(post.countDistinct())
+                .from(post)
+                .fetchOne();
+
+        return new PageImpl<>(posts, pageable, total);
+    }
+
+    @Override
+    public Optional<Post> findTopByTeamAndPostIdLessThanOrderByCreatedAtDescPostIdDesc(Team findTeam, Long postId) {
+        Optional<Post> fetchedPost = Optional.ofNullable(queryFactory
+                .select(post)
+                .from(post)
+                .join(post.team, team).fetchJoin()
+                .leftJoin(team.profileImage, teamProfileImage).fetchJoin()
+                .where(post.team.eq(findTeam).and(post.postId.lt(postId)))
+                .orderBy(post.createdAt.desc(), post.postId.desc())
+                .fetchFirst());
+
+        return fetchedPost;
+    }
+
+    @Override
+    public Optional<Post> findTopByTeamAndPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Team findTeam, Long postId) {
+        Optional<Post> fetchedPost = Optional.ofNullable(queryFactory
+                .select(post)
+                .from(post)
+                .join(post.team, team).fetchJoin()
+                .leftJoin(team.profileImage, teamProfileImage).fetchJoin()
+                .where(post.team.eq(findTeam).and(post.postId.gt(postId)))
+                .orderBy(post.createdAt.desc(), post.postId.desc())
+                .fetchFirst());
+
+        return fetchedPost;
+    }
+
+    @Override
+    public Optional<Post> findTopByMemberAndPostIdLessThanOrderByCreatedAtDescPostIdDesc(Member member, Long postId) {
+        Optional<Post> fetchedPost = Optional.ofNullable(queryFactory
+                .select(post)
+                .from(post)
+                .leftJoin(post.team, team).fetchJoin()
+                .leftJoin(team.profileImage, teamProfileImage).fetchJoin()
+                .where(post.member.eq(member).and(post.postId.lt(postId)))
+                .orderBy(post.createdAt.desc(), post.postId.desc())
+                .fetchFirst());
+
+        return fetchedPost;
+    }
+
+    @Override
+    public Optional<Post> findTopByMemberAndPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Member member, Long postId) {
+        Optional<Post> fetchedPost = Optional.ofNullable(queryFactory
+                .select(post)
+                .from(post)
+                .leftJoin(post.team, team).fetchJoin()
+                .leftJoin(team.profileImage, teamProfileImage).fetchJoin()
+                .where(post.member.eq(member).and(post.postId.gt(postId)))
+                .orderBy(post.createdAt.desc(), post.postId.desc())
+                .fetchFirst());
+
+        return fetchedPost;
     }
 }

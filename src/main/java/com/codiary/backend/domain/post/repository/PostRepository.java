@@ -14,8 +14,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
 
-    Page<Post> findAllByPostTitleContainingIgnoreCaseOrderByCreatedAtDesc(String postTitle, Pageable pageable);
-    Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
     Page<Post> findByMemberOrderByCreatedAtDescPostIdDesc(Member member, Pageable pageable);
     Page<Post> findByTeamOrderByCreatedAtDescPostIdDesc(Team team, Pageable pageable);
     Page<Post> findByProjectAndMemberOrderByCreatedAtDescPostIdDesc(Project project, Member member, Pageable pageable);
@@ -24,15 +22,6 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostRepositor
     Page<Post> findByProjectAndTeamOrderByCreatedAtDescPostIdDesc(Project project, Team team, Pageable pageable);
     Page<Post> findByTeamAndMemberOrderByCreatedAtDescPostIdDesc(Team team, Member member, Pageable pageable);
     Page<Post> findByTeamAndAuthorList_MemberOrderByCreatedAtDescPostIdDesc(Team team, Member member, Pageable pageable);
-
-    Optional<Post> findTopByMemberAndPostIdLessThanOrderByCreatedAtDescPostIdDesc(Member member, Long postId);
-
-    Optional<Post> findTopByMemberAndPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Member member, Long postId);
-
-    Optional<Post> findTopByTeamAndPostIdLessThanOrderByCreatedAtDescPostIdDesc(Team team, Long postId);
-
-    Optional<Post> findTopByTeamAndPostIdGreaterThanOrderByCreatedAtAscPostIdAsc(Team team, Long postId);
-
 
     boolean existsByTeam(Team team);
     boolean existsByProject(Project project);

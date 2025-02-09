@@ -16,17 +16,26 @@ public class PostResponseDTO {
     @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public record SimplePostResponseDTO(
+    public record PostPreviewDTO(
+            // post 자체 정보
             Long id,
             String title,
             String body,
-            String author,
-            String authorImageUrl,
             String thumbnailImageUrl,
-            String teamProfileImageUrl,
-            String teamBannerImageUrl,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt
+            LocalDateTime updatedAt,
+            Integer numberOfBookmark,
+            // author 정보
+            Long authorId,
+            String authorName,
+            String authorImageUrl,
+            // coauthor 정보
+            Integer numberOfCoauthor,
+            // team 정보
+            Boolean teamExist, // true 인 경우 아래 내용 작성
+            Long teamId,
+            String teamName,
+            String teamProfileImageUrl
     ) {
     }
 
@@ -87,34 +96,6 @@ public class PostResponseDTO {
         PostFileResponseDTO.PostFileListDTO postFileList;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
-    }
-
-
-    @Builder
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public record PostPreviewDTO ( // Post 조회
-        Long postId,
-        Long memberId,
-        String authorNickname,
-        String authorProfileImageUrl,
-        Long teamId,
-        String teamProfileImageUrl,
-        String teamBannerImageUrl,
-        Long projectId,
-        String postTitle,
-        String postBody,
-        String thumbnailImageUrl,
-        Boolean postStatus,
-        String postCategory,
-        Set<Long> coauthorIds,
-        PostAccess postAccess,
-        PostFileResponseDTO.PostFileListDTO postFileList,
-        boolean isBookmarked,
-        Integer bookmarkCount,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
-    ){
     }
 
     @Builder
@@ -329,8 +310,8 @@ public class PostResponseDTO {
     public record PostAdjacentDTO(
             Boolean hasLater,
             Boolean hadOlder,
-            PostAdjacentPreviewDTO laterPost,
-            PostAdjacentPreviewDTO olderPost
+            PostPreviewDTO laterPost,
+            PostPreviewDTO olderPost
     ) {
         @Builder
         @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -365,6 +346,33 @@ public class PostResponseDTO {
             Long bookmarkId,
             Long memberId,
             Long postId
+    ) {
+    }
+
+    @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public record PostWithBookmarkDTO(
+            Long postId,
+            Long memberId,
+            String authorNickname,
+            String authorProfileImageUrl,
+            Long teamId,
+            String teamProfileImageUrl,
+            String teamBannerImageUrl,
+            Long projectId,
+            String postTitle,
+            String postBody,
+            String thumbnailImageUrl,
+            Boolean postStatus,
+            String postCategory,
+            Set<Long> coauthorIds,
+            PostAccess postAccess,
+            PostFileResponseDTO.PostFileListDTO postFileList,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            Boolean isBookmarked,
+            Integer bookmarkCount
     ) {
     }
 }
