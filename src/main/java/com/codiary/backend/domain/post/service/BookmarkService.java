@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -77,5 +79,9 @@ public class BookmarkService {
 
         // response
         return "북마크가 취소되었습니다.";
+    }
+
+    public List<Long> getBookmarkedPostIdsByMemberId(Long memberId) {
+        return bookmarkRepository.findBookmarkedPostIdsByMemberId(memberId);
     }
 }

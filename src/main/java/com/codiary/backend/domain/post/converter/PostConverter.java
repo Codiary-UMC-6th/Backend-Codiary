@@ -538,4 +538,43 @@ public class PostConverter {
                 .build();
     }
 
+
+    public static PostResponseDTO.PostPreviewDTO toPostPreviewDTOWithBookmark(Post post, boolean isBookmarked) {
+        List<String> postCategories = post.getCategoriesList().stream()
+                .map(Category::getName)
+                .collect(Collectors.toList());
+
+        return PostResponseDTO.PostPreviewDTO.builder()
+                .postId(post.getPostId())
+                .memberId(post.getMember().getMemberId())
+                .authorNickname(post.getMember().getNickname())
+                .teamId(post.getTeam() != null ? post.getTeam().getTeamId() : null)
+                .projectId(post.getProject() != null ? post.getProject().getProjectId() : null)
+                .postTitle(post.getPostTitle())
+                .postBody(post.getPostBody())
+                .postStatus(post.getPostStatus())
+                .postCategory(String.join(", ", postCategories))
+                .coauthorIds(post.getAuthorList().stream()
+                        .map(author -> author.getMember().getMemberId())
+                        .collect(Collectors.toSet()))
+                .postAccess(post.getPostAccess())
+                .authorProfileImageUrl((post.getMember().getImage() != null)
+                        ? post.getMember().getImage().getImageUrl()
+                        : "")
+                .thumbnailImageUrl((post.getThumbnailImage() != null)
+                        ? post.getThumbnailImage().getFileUrl()
+                        : "")
+                .teamProfileImageUrl((post.getTeam() != null && post.getTeam().getProfileImage() != null)
+                        ? post.getTeam().getProfileImage().getImageUrl()
+                        : "")
+                .teamBannerImageUrl((post.getTeam() != null && post.getTeam().getBannerImage() != null)
+                        ? post.getTeam().getBannerImage().getImageUrl()
+                        : "")
+                .postFileList(PostFileConverter.toPostFileListDTO(post.getPostFileList()))
+                .createdAt(post.getCreatedAt())
+                .updatedAt(post.getUpdatedAt())
+                .isBookmarked(isBookmarked)
+                .build();
+    }
+
 }

@@ -24,6 +24,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -100,13 +102,17 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.POST_OK, null);
     }
 
-    //특정 게시글 조회
+    // 특정 게시글 조회 (북마크 여부 포함)
     @GetMapping("/{postId}")
-    @Operation(summary = "특정 게시글 조회 API", description = "특정 게시글을 조회합니다.")
-    public ApiResponse<PostResponseDTO.PostPreviewDTO> findPost(@PathVariable Long postId){
-        Object request;
+    @Operation(summary = "특정 게시글 조회 API", description = "특정 게시글을 조회하며, 사용자가 해당 게시글을 북마크했는지 여부를 반환합니다.")
+    public ApiResponse<PostResponseDTO.PostPreviewDTO> findPost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal CustomMemberDetails memberDetails) {
+        Long memberId = memberDetails.getId();
         Post findPost = postQueryService.findById(postId);
-        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPreviewDTO(findPost));
+        List<Long> bookmarkedPostIds = bookmarkService.getBookmarkedPostIdsByMemberId(memberId);
+        boolean isBookmarked = bookmarkedPostIds.contains(postId);
+        return ApiResponse.onSuccess(SuccessStatus.POST_OK, PostConverter.toPostPreviewDTOWithBookmark(findPost, isBookmarked));
     }
 
 

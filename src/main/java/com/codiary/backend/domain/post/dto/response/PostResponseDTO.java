@@ -110,6 +110,7 @@ public class PostResponseDTO {
         Set<Long> coauthorIds,
         PostAccess postAccess,
         PostFileResponseDTO.PostFileListDTO postFileList,
+        boolean isBookmarked,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
     ){
