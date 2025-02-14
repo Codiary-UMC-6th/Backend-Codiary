@@ -33,7 +33,7 @@ public class MemberQueryServiceTest {
     private final Member member2 = MemberUtilTest.createMember2();
 
     @Nested
-    @DisplayName("getUserInfo 메서드 테스트")
+    @DisplayName("사용자 기본 정보 조회 메서드 테스트")
     class GetUserInfoTest {
 
         @Test
