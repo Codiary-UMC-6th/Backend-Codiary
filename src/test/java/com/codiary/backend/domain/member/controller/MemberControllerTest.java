@@ -81,4 +81,47 @@ public class MemberControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.message").value(ErrorStatus.MEMBER_NOT_FOUND.getMessage())); // 실패 메시지 확인
         }
     }
+
+    @Nested
+    @DisplayName("사용자 정보 조회 메서드 테스트")
+    class GetUserInfoTest {
+        @Test
+        @DisplayName("✅ 사용자 정보 조회 시 사용자 정보를 반환한다.")
+        void getUserInfo_ShouldReturnUserInfo() throws Exception {
+            // given: 사용자 정보 조회 시 사용자 정보 반환
+            String accessToken = jwtTokenProvider.generateToken(member1.getEmail()).getAccessToken();
+            given(memberRepository.findMemberWithTechStacksAndProjectsAndTeam(member1.getMemberId()))
+                    .willReturn(Optional.of(member1));
+
+            // when & then: 사용자 정보 조회 API 호출 시 사용자 정보 반환
+            mockMvc.perform(get("/api/v2/member/info")
+                            .header("Authorization", "Bearer " + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isOk()) // HTTP status 200 OK 응답 검증
+                    .andExpect(jsonPath("$.isSuccess").value(true)) // isSuccess 값 검증
+                    .andExpect(jsonPath("$.code").value("MEMBER_1000")) // code 값 검증
+                    .andExpect(jsonPath("$.message").value("성공입니다.")) // message 값 검증
+                    .andExpect(jsonPath("$.result.member_id").value(member1.getMemberId())) // member_id 값 검증
+                    .andExpect(jsonPath("$.result.nickname").value(member1.getNickname())) // nickname 값 검증
+                    .andExpect(jsonPath("$.result.email").value(member1.getEmail())); // email 값 검증
+        }
+
+        @Test
+        @DisplayName("❌ 사용자 정보 조회 시 사용자 정보가 없는 경우 예외가 발생한다.")
+        void getUserInfo_ShouldReturnError_WhenUserInfoNotFound() throws Exception {
+            // given: 사용자 정보 조회 시 사용자 정보가 없는 경우
+            String accessToken = jwtTokenProvider.generateToken(member1.getEmail()).getAccessToken();
+            given(memberRepository.findMemberWithTechStacksAndProjectsAndTeam(member1.getMemberId()))
+                    .willReturn(Optional.empty());
+
+            // when & then: 사용자 정보 조회 시 사용자 정보가 없는 경우 예외 발생
+            mockMvc.perform(get("/api/v2/member/info")
+                            .header("Authorization", "Bearer " + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest()) // HTTP status 400 Bad Request
+                    .andExpect(jsonPath("$.isSuccess").value(false)) // 실패 여부 확인
+                    .andExpect(jsonPath("$.code").value(ErrorStatus.MEMBER_NOT_FOUND.getCode())) // MEMBER_1001 코드 확인
+                    .andExpect(jsonPath("$.message").value(ErrorStatus.MEMBER_NOT_FOUND.getMessage())); // 실패 메시지 확인
+        }
+    }
 }
