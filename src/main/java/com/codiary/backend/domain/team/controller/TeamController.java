@@ -12,6 +12,7 @@ import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.team.entity.TeamBannerImage;
 import com.codiary.backend.domain.team.entity.TeamMember;
 import com.codiary.backend.domain.team.entity.TeamProfileImage;
+import com.codiary.backend.domain.team.enumerate.TeamMemberRole;
 import com.codiary.backend.domain.team.service.TeamMemberService;
 import com.codiary.backend.domain.team.service.TeamService;
 import com.codiary.backend.global.apiPayload.ApiResponse;
@@ -59,7 +60,10 @@ public class TeamController {
             @AuthenticationPrincipal CustomMemberDetails memberDetails
     ) {
         Team fetchedTeam = teamService.getTeamProfile(teamId, memberDetails.getId());
-        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamProfileResponseDto(fetchedTeam));
+        TeamMember currentMember = teamMemberService.getTeamMemberRoleInTeam(teamId, memberDetails.getId());
+        boolean isAdmin = currentMember != null && currentMember.getTeamMemberRole() == TeamMemberRole.ADMIN;
+
+        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamProfileResponseDto(fetchedTeam, currentMember, isAdmin));
     }
 
     @GetMapping("/{team_id}")
