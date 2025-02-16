@@ -170,6 +170,7 @@ public class TeamController {
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamPreviewListDTO(teams));
     }
 
+
     @GetMapping("/{member_id}/myTeam")
     @Operation(summary = "사용자의 팀 목록 조회", description = "사용자의 팀 목록 조회 기능")
     public ApiResponse<List<TeamResponseDTO.SimpleTeamDTO>> getMemberTeam(@PathVariable("member_id") Long memberId, @AuthenticationPrincipal CustomMemberDetails memberDetails) {
@@ -177,6 +178,13 @@ public class TeamController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, TeamConverter.toSimpleTeamListResponseDTO(teams));
     }
 
+
+    @GetMapping("/check_duplicate")
+    @Operation(summary = "팀 이름 중복 확인 API", description = "팀 이름 중복을 확인합니다.")
+    public ApiResponse<String> checkDuplicateTeamName(@RequestParam("team_name") String teamName){
+        teamService.checkDuplicateTeamName(teamName);
+        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, null);
+    }
 
 
 }

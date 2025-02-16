@@ -48,7 +48,7 @@ public class TeamService {
                 .name(request.name())
                 .intro(request.intro())
                 .github(request.github())
-                .email(member.getEmail())
+                .email(request.adminEmail())
                 .linkedin(request.linkedIn())
                 .instagram(request.instagram())
                 .teamMemberList(new ArrayList<>())
@@ -257,4 +257,9 @@ public class TeamService {
         return teamRepository.findAllByOrderByTeamIdDesc();
     }
 
+    public void checkDuplicateTeamName(String teamName) {
+        if (teamRepository.existsByName(teamName)) {
+            throw new GeneralException(ErrorStatus.TEAM_DUPLICATE_NAME);
+        }
+    }
 }
