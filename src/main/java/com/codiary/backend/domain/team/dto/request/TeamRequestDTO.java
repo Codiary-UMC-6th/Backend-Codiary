@@ -16,7 +16,8 @@ public class TeamRequestDTO {
             String github,
             String linkedIn,
             String discord,
-            String instagram
+            String instagram,
+            String adminEmail
     ) {}
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
