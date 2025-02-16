@@ -1,6 +1,9 @@
 package com.codiary.backend.domain.team.controller;
 
 import com.codiary.backend.domain.alert.service.AlertService;
+import com.codiary.backend.domain.member.converter.MemberConverter;
+import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.team.converter.TeamConverter;
 import com.codiary.backend.domain.team.dto.request.TeamRequestDTO;
@@ -166,6 +169,15 @@ public class TeamController {
         List<Team> teams = teamService.getTeams();
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamPreviewListDTO(teams));
     }
+
+
+    @GetMapping("/{member_id}/myTeam")
+    @Operation(summary = "사용자의 팀 목록 조회", description = "사용자의 팀 목록 조회 기능")
+    public ApiResponse<List<TeamResponseDTO.SimpleTeamDTO>> getMemberTeam(@PathVariable("member_id") Long memberId, @AuthenticationPrincipal CustomMemberDetails memberDetails) {
+        List<TeamMember> teams = teamMemberService.getMemberTeam(memberId, memberDetails.getId());
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, TeamConverter.toSimpleTeamListResponseDTO(teams));
+    }
+
 
     @GetMapping("/check_duplicate")
     @Operation(summary = "팀 이름 중복 확인 API", description = "팀 이름 중복을 확인합니다.")

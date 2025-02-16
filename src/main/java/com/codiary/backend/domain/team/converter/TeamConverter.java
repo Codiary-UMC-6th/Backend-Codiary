@@ -1,6 +1,9 @@
 package com.codiary.backend.domain.team.converter;
 
 import com.codiary.backend.domain.member.converter.MemberConverter;
+import com.codiary.backend.domain.project.converter.ProjectConverter;
+import com.codiary.backend.domain.project.dto.response.ProjectResponseDTO;
+import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
 import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.team.entity.TeamBannerImage;
@@ -10,6 +13,8 @@ import com.codiary.backend.domain.team.entity.TeamProfileImage;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static com.codiary.backend.domain.team.entity.QTeamMember.teamMember;
 
 public class TeamConverter {
     public static TeamResponseDTO.TeamDTO toTeamResponseDto(Team team) {
@@ -113,5 +118,20 @@ public class TeamConverter {
                 .teams(teamPreviewDTOList)
                 .build();
     }
+
+    public static TeamResponseDTO.SimpleTeamDTO toSimpleTeamResponseDTO(TeamMember teamMember) {
+        return TeamResponseDTO.SimpleTeamDTO.builder()
+                .teamId(teamMember.getTeam().getTeamId())
+                .teamName(teamMember.getTeam().getName())
+                .build();
+    }
+
+    public static List<TeamResponseDTO.SimpleTeamDTO> toSimpleTeamListResponseDTO(List<TeamMember> teams) {
+        return teams.stream()
+                .map(TeamConverter::toSimpleTeamResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+
 
 }
