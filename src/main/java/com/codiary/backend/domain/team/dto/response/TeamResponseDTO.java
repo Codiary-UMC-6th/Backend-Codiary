@@ -52,6 +52,8 @@ public class TeamResponseDTO {
             String discord,
             String instagram,
             Boolean isFollowed,
+            Long currentMemberId,
+            Boolean isAdmin,
             List<TeamMemberDTO> teamMemberList) {}
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

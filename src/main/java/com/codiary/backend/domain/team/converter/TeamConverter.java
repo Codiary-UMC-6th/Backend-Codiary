@@ -34,7 +34,7 @@ public class TeamConverter {
     }
 
     //팀 팔로우 여부 구현 후 수정 필요
-    public static TeamResponseDTO.TeamProfileDTO toTeamProfileResponseDto(Team team){
+    public static TeamResponseDTO.TeamProfileDTO toTeamProfileResponseDto(Team team, TeamMember currentMember, boolean isAdmin){
         return TeamResponseDTO.TeamProfileDTO.builder()
                 .teamId(team.getTeamId())
                 .name(team.getName())
@@ -49,6 +49,8 @@ public class TeamConverter {
                 .isFollowed(false)
                 .teamMemberList(team.getTeamMemberList() == null ? null :
                         TeamConverter.toTeamMemberListResponseDTO(team))
+                .currentMemberId(currentMember != null ? currentMember.getTeamMemberId() : null)
+                .isAdmin(isAdmin)
                 .build();
     }
 

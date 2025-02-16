@@ -108,4 +108,12 @@ public class TeamMemberService {
 
         return teamMemberRepository.findByMember(member);
     }
+
+    public TeamMember getTeamMemberRoleInTeam(Long teamId, Long memberId) {
+        return teamMemberRepository.findByTeamAndMember(
+                teamRepository.findById(teamId).orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND)),
+                memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND))
+        ).orElse(null);
+    }
+
 }
