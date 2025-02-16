@@ -53,4 +53,5 @@ public class MemberQueryService{
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         return postRepository.findPostsForCalendar(member.getMemberId(), date);
     }
+
 }

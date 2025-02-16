@@ -101,4 +101,6 @@ public class MemberController {
         Map<Project, List<Post>> postList = memberQueryService.getPostsByDay(memberId, date);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toDayCalendarResponseDto(postList));
     }
+
+
 }

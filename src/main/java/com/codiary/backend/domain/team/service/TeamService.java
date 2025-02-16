@@ -2,6 +2,7 @@ package com.codiary.backend.domain.team.service;
 
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.repository.MemberRepository;
+import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.team.dto.request.TeamRequestDTO;
 import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.team.entity.TeamBannerImage;

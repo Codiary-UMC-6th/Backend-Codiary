@@ -18,4 +18,6 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {
     Long countTeamMembersByTeamAndTeamMemberRole(Team team, TeamMemberRole teamMemberRole);
 
     List<TeamMember> findTeamMembersByTeam(Team team);
+
+    List<TeamMember> findByMember(Member member);
 }
