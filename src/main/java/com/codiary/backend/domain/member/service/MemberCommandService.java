@@ -54,19 +54,21 @@ public class MemberCommandService {
     public ApiResponse<MemberResponseDTO.MemberImageDTO> updateProfileImage(Long memberId, MemberRequestDTO.MemberProfileImageRequestDTO request) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
 
-        if (member.getImage() != null) {
-            s3Manager.deleteFile(member.getImage().getImageUrl());
-            memberImageRepository.delete(member.getImage());
-        }
-
         String uuid = UUID.randomUUID().toString();
         Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
         String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.image());
 
-        MemberImage memberImage = MemberImage.builder()
-                .imageUrl(fileUrl)
-                .member(member)
-                .build();
+        MemberImage memberImage = null;
+        if (member.getImage() == null) {
+            memberImage = MemberImage.builder()
+                    .imageUrl(fileUrl)
+                    .member(member)
+                    .build();
+        } else {
+            memberImage = memberImageRepository.findById(member.getImage().getMemberImageId()).get();
+            s3Manager.deleteFile(memberImage.getImageUrl());
+            memberImage.setImageUrl(fileUrl);
+        }
 
         MemberImage savedImage = memberImageRepository.save(memberImage);
 
