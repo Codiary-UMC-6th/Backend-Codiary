@@ -47,7 +47,7 @@ public class TeamService {
                 .name(request.name())
                 .intro(request.intro())
                 .github(request.github())
-                .email(member.getEmail())
+                .email(request.adminEmail())
                 .linkedin(request.linkedIn())
                 .instagram(request.instagram())
                 .teamMemberList(new ArrayList<>())
