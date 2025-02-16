@@ -46,6 +46,7 @@ public enum ErrorStatus implements BaseErrorCode {
     TEAM_MEMBER_OVER(HttpStatus.BAD_REQUEST, "TEAM_2009", "추가할 수 있는 구성원 수를 초과했습니다."),
     TEAM_ADMIN_MINIMUM_REQUIRED(HttpStatus.BAD_REQUEST, "TEAM_2010", "관리자는 최소 1명 이상 존재해야 합니다."),
     TEAM_REQUIRED_FOR_ACCESS(HttpStatus.BAD_REQUEST, "TEAM_2011", "팀이 있어야 합니다."),
+    TEAM_DUPLICATE_NAME(HttpStatus.BAD_REQUEST, "TEAM_2012", "중복된 팀 이름입니다."),
 
     // 포스트 관려 에러 3000
     POST_CREATE_UNAUTHORIZED(HttpStatus.BAD_REQUEST, "POST_3001", "포스트 생성 권한이 없습니다."),

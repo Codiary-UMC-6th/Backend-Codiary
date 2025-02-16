@@ -10,4 +10,6 @@ public interface TeamRepository extends JpaRepository<Team, Long>, TeamRepositor
     Optional<Team> findByTeamIdAndDeletedAtIsNull(Long teamId);
 
     List<Team> findAllByOrderByTeamIdDesc();
+
+    boolean existsByName(String name);
 }

@@ -167,5 +167,12 @@ public class TeamController {
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamPreviewListDTO(teams));
     }
 
+    @GetMapping("/check_duplicate")
+    @Operation(summary = "팀 이름 중복 확인 API", description = "팀 이름 중복을 확인합니다.")
+    public ApiResponse<String> checkDuplicateTeamName(@RequestParam("team_name") String teamName){
+        teamService.checkDuplicateTeamName(teamName);
+        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, null);
+    }
+
 
 }
