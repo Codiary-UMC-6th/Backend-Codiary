@@ -1,9 +1,12 @@
 package com.codiary.backend.domain.member.controller;
 
+import com.codiary.backend.domain.member.dto.request.MemberRequestDTO;
 import com.codiary.backend.domain.member.entity.Member;
+import com.codiary.backend.domain.member.service.MemberCommandService;
 import com.codiary.backend.domain.member.util.MemberUtilTest;
 import com.codiary.backend.global.apiPayload.code.status.ErrorStatus;
 import com.codiary.backend.global.util.ControllerTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -12,12 +15,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.RestDocumentationExtension;
 
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,6 +33,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("MemberController 테스트")
 public class MemberControllerTest extends ControllerTest {
     private Member member2;
+
+    @MockBean
+    private MemberCommandService memberCommandService;
 
     @BeforeEach
     void setUp() {
@@ -88,7 +96,7 @@ public class MemberControllerTest extends ControllerTest {
         @Test
         @DisplayName("✅ 사용자 정보 조회 시 사용자 정보를 반환한다.")
         void getUserInfo_ShouldReturnUserInfo() throws Exception {
-            // given: 사용자 정보 조회 시 사용자 정보 반환
+            // given: 사용자 정보 조회에 필요한 accessToken, 사용자 정보 Mocking
             String accessToken = jwtTokenProvider.generateToken(member1.getEmail()).getAccessToken();
             given(memberRepository.findMemberWithTechStacksAndProjectsAndTeam(member1.getMemberId()))
                     .willReturn(Optional.of(member1));
@@ -122,6 +130,41 @@ public class MemberControllerTest extends ControllerTest {
                     .andExpect(jsonPath("$.isSuccess").value(false)) // 실패 여부 확인
                     .andExpect(jsonPath("$.code").value(ErrorStatus.MEMBER_NOT_FOUND.getCode())) // MEMBER_1001 코드 확인
                     .andExpect(jsonPath("$.message").value(ErrorStatus.MEMBER_NOT_FOUND.getMessage())); // 실패 메시지 확인
+        }
+    }
+
+    @Nested
+    @DisplayName("사용자 정보 수정 메서드 테스트")
+    class UpdateUserInfoTest {
+        @Test
+        @DisplayName("✅ 사용자 정보 수정 시 사용자 정보를 수정한다.")
+        void updateUserInfo_ShouldUpdateUserInfo() throws Exception {
+            // given: 사용자 정보 수정에 필요한 accessToken, 사용자 정보, updatedMember, DTO Mocking
+            String accessToken = jwtTokenProvider.generateToken(member1.getEmail()).getAccessToken();
+            MemberRequestDTO.MemberInfoDTO requestDTO = MemberUtilTest.toMemberInfoRequestDTO();
+            Member updatedMember = MemberUtilTest.updateMember1();
+            given(memberRepository.findById(member1.getMemberId()))
+                    .willReturn(Optional.of(member1));
+            given(memberCommandService.updateMemberInfo(member1.getMemberId(), requestDTO))
+                    .willReturn(updatedMember);
+
+            // when & then: 사용자 정보 수정 API 호출 시 사용자 정보 수정
+            mockMvc.perform(put("/api/v2/member/info")
+                            .header("Authorization", "Bearer " + accessToken)
+                            .contentType("application/json")
+                            .content(new ObjectMapper().writeValueAsString(requestDTO)))
+                    .andDo(print())
+                    .andExpect(status().isOk()) // HTTP status 200 OK 응답 검증
+                    .andExpect(jsonPath("$.isSuccess").value(true)) // isSuccess 값 검증
+                    .andExpect(jsonPath("$.code").value("MEMBER_1000")) // code 값 검증
+                    .andExpect(jsonPath("$.message").value("성공입니다."))
+                    .andExpect(jsonPath("$.result.email").value(updatedMember.getEmail())) // email 값 검증
+                    .andExpect(jsonPath("$.result.nickname").value(updatedMember.getNickname())) // message 값 검증
+                    .andExpect(jsonPath("$.result.birth").value(updatedMember.getBirth().toString())) // birth 값 검증
+                    .andExpect(jsonPath("$.result.introduction").value(updatedMember.getIntroduction())) // introduction 값 검증
+                    .andExpect(jsonPath("$.result.github").value(updatedMember.getGithub())) // github 값 검증
+                    .andExpect(jsonPath("$.result.linkedin").value(updatedMember.getLinkedin())) // linkedin 값 검증
+                    .andExpect(jsonPath("$.result.discord").value(updatedMember.getDiscord())); // discord 값 검증
         }
     }
 }
