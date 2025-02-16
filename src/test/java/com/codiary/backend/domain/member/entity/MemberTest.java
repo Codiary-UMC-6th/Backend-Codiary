@@ -1,4 +1,4 @@
-package com.codiary.backend.domain;
+package com.codiary.backend.domain.member.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

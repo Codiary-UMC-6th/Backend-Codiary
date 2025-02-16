@@ -143,4 +143,8 @@ public class Member extends BaseEntity {
   public void setTeamMemberList(List<TeamMember> teamMembers) {
     this.teamMemberList = teamMembers;
   }
+
+  public void setMemberId(Long id) { this.memberId = id; }
+
+  public void setEmail(String mail) { this.email = mail; }
 }

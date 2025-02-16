@@ -32,12 +32,6 @@ public class MemberQueryService{
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberRepository.findProfileImageUrl(memberId));
     }
 
-    public Member getUserProfile(Long memberId) {
-        Member user = memberRepository.findMemberWithTechStacksAndProjectsAndTeam(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
-        return user;
-    }
-
     public Member getUserInfo(Long memberId) {
         Member user = memberRepository.findMemberWithTechStacksAndProjectsAndTeam(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
