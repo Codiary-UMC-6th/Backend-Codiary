@@ -256,4 +256,9 @@ public class TeamService {
         return teamRepository.findAllByOrderByTeamIdDesc();
     }
 
+    public void checkDuplicateTeamName(String teamName) {
+        if (teamRepository.existsByName(teamName)) {
+            throw new GeneralException(ErrorStatus.TEAM_DUPLICATE_NAME);
+        }
+    }
 }
