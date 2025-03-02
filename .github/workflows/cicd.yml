@@ -73,10 +73,21 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd .ssh/Backend-Codiary/
-            sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-            sudo docker-compose stop ${{ secrets.DOCKER_SERVICE_NAME }}
-            sudo docker-compose rm -f ${{ secrets.DOCKER_SERVICE_NAME }}
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY}}
-            sudo docker tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY}} ${{ secrets.DOCKER_IMAGE_NAME }}
-            sudo docker compose up -d
+            cd /home/ubuntu
+            NEW_PORT=$(if lsof -i:8080; then echo 8081; else echo 8080; fi)
+            OLD_PORT=$(if [ "$NEW_PORT" = "8080" ]; then echo 8081; else echo 8080; fi)
+
+            echo "Deploying new version on port $NEW_PORT..."
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
+            sudo docker stop backend-$OLD_PORT || true
+            sudo docker rm backend-$OLD_PORT || true
+            sudo docker run -d -p $NEW_PORT:8080 --name backend-$NEW_PORT ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
+
+            echo "Updating Nginx configuration..."
+            sudo sed -i "s/$OLD_PORT/$NEW_PORT/g" /etc/nginx/nginx.conf
+            sudo systemctl reload nginx
+
+            echo "Cleaning up old container..."
+            sudo docker stop backend-$OLD_PORT || true
+            sudo docker rm backend-$OLD_PORT || true
+  
