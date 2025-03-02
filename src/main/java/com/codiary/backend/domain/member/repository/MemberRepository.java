@@ -1,6 +1,8 @@
 package com.codiary.backend.domain.member.repository;
 
 import com.codiary.backend.domain.member.entity.Member;
+
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,6 +13,8 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     Boolean existsByNickname(String nickname);
 
     Optional<Member> findByNicknameIgnoreCase(String nickname);
+
+    List<Member> findAllByNicknameContains(String nickname);
 
     //Optional<Member> findByNickname(String nickname);
 

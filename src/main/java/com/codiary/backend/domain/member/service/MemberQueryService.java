@@ -23,7 +23,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class MemberQueryService{
+public class MemberQueryService {
     private final MemberRepository memberRepository;
     private final ProjectRepository projectRepository;
     private final PostRepository postRepository;
@@ -48,4 +48,7 @@ public class MemberQueryService{
         return postRepository.findPostsForCalendar(member.getMemberId(), date);
     }
 
+    public List<Member> searchMembers(String nickname) {
+        return memberRepository.findAllByNicknameContains(nickname);
+    }
 }

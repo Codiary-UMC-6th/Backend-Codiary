@@ -102,5 +102,10 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toDayCalendarResponseDto(postList));
     }
 
-
+    @GetMapping("all")
+    @Operation(summary = "사용자 검색", description = "모든 사용자 정보 기반 닉네임 검색")
+    public ApiResponse<List<MemberResponseDTO.SimpleMemberDTO>> searchMembers(@RequestParam("nickname") String nickname){
+        List<Member> members = memberQueryService.searchMembers(nickname);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, MemberConverter.toSimpleFollowResponseDto(members));
+    }
 }
