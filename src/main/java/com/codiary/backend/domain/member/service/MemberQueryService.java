@@ -23,7 +23,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class MemberQueryService{
+public class MemberQueryService {
     private final MemberRepository memberRepository;
     private final ProjectRepository projectRepository;
     private final PostRepository postRepository;
@@ -46,5 +46,9 @@ public class MemberQueryService{
     public Map<Project, List<Post>> getPostsByDay(Long memberId, LocalDate date) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
         return postRepository.findPostsForCalendar(member.getMemberId(), date);
+    }
+
+    public List<Member> searchMembers(String nickname) {
+        return memberRepository.findAllByNicknameContains(nickname);
     }
 }
