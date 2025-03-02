@@ -71,6 +71,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     testImplementation 'org.assertj:assertj-core:3.24.2'
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 
