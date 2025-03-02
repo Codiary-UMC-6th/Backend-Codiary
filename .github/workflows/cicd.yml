@@ -75,5 +75,5 @@ jobs:
           port: 22
           script: |
             chmod +x /home/ubuntu/deploy.sh
-            /home/ubuntu/deploy.sh
+            sudo /home/ubuntu/deploy.sh
   
