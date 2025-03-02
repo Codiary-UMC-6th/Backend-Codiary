@@ -2,6 +2,7 @@ package com.codiary.backend.domain.team.service;
 
 import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.repository.MemberRepository;
+import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.team.dto.request.TeamRequestDTO;
 import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.team.entity.TeamBannerImage;
@@ -47,7 +48,7 @@ public class TeamService {
                 .name(request.name())
                 .intro(request.intro())
                 .github(request.github())
-                .email(member.getEmail())
+                .email(request.adminEmail())
                 .linkedin(request.linkedIn())
                 .instagram(request.instagram())
                 .teamMemberList(new ArrayList<>())
@@ -256,4 +257,9 @@ public class TeamService {
         return teamRepository.findAllByOrderByTeamIdDesc();
     }
 
+    public void checkDuplicateTeamName(String teamName) {
+        if (teamRepository.existsByName(teamName)) {
+            throw new GeneralException(ErrorStatus.TEAM_DUPLICATE_NAME);
+        }
+    }
 }

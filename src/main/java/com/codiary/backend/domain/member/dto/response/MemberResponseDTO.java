@@ -115,4 +115,6 @@ public class MemberResponseDTO{
     public record DayCalendarDTO(
             Map<String, List<PostResponseDTO.PostTitleResponseDTO>> postsByDate) {
     }
+
+
 }

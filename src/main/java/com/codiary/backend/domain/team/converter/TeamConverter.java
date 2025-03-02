@@ -1,6 +1,9 @@
 package com.codiary.backend.domain.team.converter;
 
 import com.codiary.backend.domain.member.converter.MemberConverter;
+import com.codiary.backend.domain.project.converter.ProjectConverter;
+import com.codiary.backend.domain.project.dto.response.ProjectResponseDTO;
+import com.codiary.backend.domain.project.entity.Project;
 import com.codiary.backend.domain.team.dto.response.TeamResponseDTO;
 import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.team.entity.TeamBannerImage;
@@ -10,6 +13,8 @@ import com.codiary.backend.domain.team.entity.TeamProfileImage;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static com.codiary.backend.domain.team.entity.QTeamMember.teamMember;
 
 public class TeamConverter {
     public static TeamResponseDTO.TeamDTO toTeamResponseDto(Team team) {
@@ -29,7 +34,7 @@ public class TeamConverter {
     }
 
     //팀 팔로우 여부 구현 후 수정 필요
-    public static TeamResponseDTO.TeamProfileDTO toTeamProfileResponseDto(Team team){
+    public static TeamResponseDTO.TeamProfileDTO toTeamProfileResponseDto(Team team, TeamMember currentMember, boolean isAdmin){
         return TeamResponseDTO.TeamProfileDTO.builder()
                 .teamId(team.getTeamId())
                 .name(team.getName())
@@ -44,6 +49,8 @@ public class TeamConverter {
                 .isFollowed(false)
                 .teamMemberList(team.getTeamMemberList() == null ? null :
                         TeamConverter.toTeamMemberListResponseDTO(team))
+                .currentMemberId(currentMember != null ? currentMember.getTeamMemberId() : null)
+                .isAdmin(isAdmin)
                 .build();
     }
 
@@ -113,5 +120,20 @@ public class TeamConverter {
                 .teams(teamPreviewDTOList)
                 .build();
     }
+
+    public static TeamResponseDTO.SimpleTeamDTO toSimpleTeamResponseDTO(TeamMember teamMember) {
+        return TeamResponseDTO.SimpleTeamDTO.builder()
+                .teamId(teamMember.getTeam().getTeamId())
+                .teamName(teamMember.getTeam().getName())
+                .build();
+    }
+
+    public static List<TeamResponseDTO.SimpleTeamDTO> toSimpleTeamListResponseDTO(List<TeamMember> teams) {
+        return teams.stream()
+                .map(TeamConverter::toSimpleTeamResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+
 
 }

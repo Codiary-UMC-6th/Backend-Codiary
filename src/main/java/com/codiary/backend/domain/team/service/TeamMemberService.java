@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -96,4 +98,22 @@ public class TeamMemberService {
         return teamRepository.findByIdWithTeamMemberList(teamId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND));
     }
+
+    public List<TeamMember> getMemberTeam(Long memberId, Long currentId) {
+        //validation
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+        Member currentMember = memberRepository.findById(currentId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return teamMemberRepository.findByMember(member);
+    }
+
+    public TeamMember getTeamMemberRoleInTeam(Long teamId, Long memberId) {
+        return teamMemberRepository.findByTeamAndMember(
+                teamRepository.findById(teamId).orElseThrow(() -> new GeneralException(ErrorStatus.TEAM_NOT_FOUND)),
+                memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.MEMBER_NOT_FOUND))
+        ).orElse(null);
+    }
+
 }

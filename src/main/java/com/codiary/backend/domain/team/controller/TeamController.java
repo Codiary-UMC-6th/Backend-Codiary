@@ -1,6 +1,9 @@
 package com.codiary.backend.domain.team.controller;
 
 import com.codiary.backend.domain.alert.service.AlertService;
+import com.codiary.backend.domain.member.converter.MemberConverter;
+import com.codiary.backend.domain.member.dto.response.MemberResponseDTO;
+import com.codiary.backend.domain.member.entity.Member;
 import com.codiary.backend.domain.member.security.CustomMemberDetails;
 import com.codiary.backend.domain.team.converter.TeamConverter;
 import com.codiary.backend.domain.team.dto.request.TeamRequestDTO;
@@ -9,6 +12,7 @@ import com.codiary.backend.domain.team.entity.Team;
 import com.codiary.backend.domain.team.entity.TeamBannerImage;
 import com.codiary.backend.domain.team.entity.TeamMember;
 import com.codiary.backend.domain.team.entity.TeamProfileImage;
+import com.codiary.backend.domain.team.enumerate.TeamMemberRole;
 import com.codiary.backend.domain.team.service.TeamMemberService;
 import com.codiary.backend.domain.team.service.TeamService;
 import com.codiary.backend.global.apiPayload.ApiResponse;
@@ -56,7 +60,10 @@ public class TeamController {
             @AuthenticationPrincipal CustomMemberDetails memberDetails
     ) {
         Team fetchedTeam = teamService.getTeamProfile(teamId, memberDetails.getId());
-        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamProfileResponseDto(fetchedTeam));
+        TeamMember currentMember = teamMemberService.getTeamMemberRoleInTeam(teamId, memberDetails.getId());
+        boolean isAdmin = currentMember != null && currentMember.getTeamMemberRole() == TeamMemberRole.ADMIN;
+
+        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamProfileResponseDto(fetchedTeam, currentMember, isAdmin));
     }
 
     @GetMapping("/{team_id}")
@@ -165,6 +172,22 @@ public class TeamController {
     public ApiResponse<TeamResponseDTO.TeamPreviewListDTO> findTeams(){
         List<Team> teams = teamService.getTeams();
         return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, TeamConverter.toTeamPreviewListDTO(teams));
+    }
+
+
+    @GetMapping("/{member_id}/myTeam")
+    @Operation(summary = "사용자의 팀 목록 조회", description = "사용자의 팀 목록 조회 기능")
+    public ApiResponse<List<TeamResponseDTO.SimpleTeamDTO>> getMemberTeam(@PathVariable("member_id") Long memberId, @AuthenticationPrincipal CustomMemberDetails memberDetails) {
+        List<TeamMember> teams = teamMemberService.getMemberTeam(memberId, memberDetails.getId());
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, TeamConverter.toSimpleTeamListResponseDTO(teams));
+    }
+
+
+    @GetMapping("/check_duplicate")
+    @Operation(summary = "팀 이름 중복 확인 API", description = "팀 이름 중복을 확인합니다.")
+    public ApiResponse<String> checkDuplicateTeamName(@RequestParam("team_name") String teamName){
+        teamService.checkDuplicateTeamName(teamName);
+        return ApiResponse.onSuccess(SuccessStatus.TEAM_OK, null);
     }
 
 
