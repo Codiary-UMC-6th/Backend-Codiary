@@ -74,7 +74,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
             sudo chmod +x /home/ubuntu/.ssh/Backend-Codiary/deploy.sh
             sudo /home/ubuntu/.ssh/Backend-Codiary/deploy.sh
   
