@@ -81,6 +81,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            sudo chmod +x /home/ubuntu/.ssh/Backend-Codiary/deploy.sh
-            sudo /home/ubuntu/.ssh/Backend-Codiary/deploy.sh
+            cd /home/ubuntu/.ssh/Backend-Codiary/
+            sudo chmod +x ./deploy.sh
+            sudo ./deploy.sh
   
