@@ -43,7 +43,7 @@ public class MemberController {
 
     @GetMapping("/test3")
     public ApiResponse<String> test() {
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "asdf");
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "asdf11111111");
     }
 
     @PatchMapping(path = "/profile-image", consumes = "multipart/form-data")
