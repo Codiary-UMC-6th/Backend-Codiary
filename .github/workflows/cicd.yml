@@ -65,13 +65,6 @@ jobs:
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }} ./
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
 
-      # Docker Image Push
-      - name: Docker Image push B
-        run: |
-          echo ${{ secrets.DOCKERHUB_PASSWORD_2 }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME_2 }} --password-stdin
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME_2 }}/${{ secrets.DOCKERHUB_REPOSITORY }} ./
-          docker push ${{ secrets.DOCKERHUB_USERNAME_2 }}/${{ secrets.DOCKERHUB_REPOSITORY }}
-
       # Docker Compose
       - name: Execute deploy.sh script remotely
         uses: appleboy/ssh-action@master
