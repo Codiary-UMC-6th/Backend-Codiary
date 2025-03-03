@@ -41,7 +41,7 @@ public class MemberController {
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
 
-    @GetMapping("/test2")
+    @GetMapping("/test3")
     public ApiResponse<String> test() {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, "asdf");
     }
